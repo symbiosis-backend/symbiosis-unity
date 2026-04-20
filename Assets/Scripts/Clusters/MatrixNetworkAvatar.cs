@@ -43,7 +43,6 @@ namespace MahjongGame.Clusters
                 LocalAvatar = this;
 
             ApplyOwnerVisuals();
-            DontDestroyOnLoad(gameObject);
         }
 
         public override void OnStopClient()
