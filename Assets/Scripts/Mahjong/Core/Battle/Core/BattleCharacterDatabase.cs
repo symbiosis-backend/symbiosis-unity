@@ -43,6 +43,7 @@ namespace MahjongGame
         }
 
         public const int DefaultFirstPaidCharacterPrice = 10000;
+        public static event Action CatalogChanged;
 
         [Serializable]
         public struct BattleCharacterStats
@@ -106,6 +107,9 @@ namespace MahjongGame
             public AssetReferenceGameObject ProfileModelAddress;
             public AssetReferenceGameObject LobbyModelAddress;
             public AssetReferenceGameObject BattleModelAddress;
+            public string ProfileModelAddressKey;
+            public string LobbyModelAddressKey;
+            public string BattleModelAddressKey;
 
             [Header("3D Animation Controllers")]
             public RuntimeAnimatorController ProfileAnimatorController;
@@ -128,6 +132,9 @@ namespace MahjongGame
             public AssetReferenceGameObject SelectModelAddress => ProfileModelAddress;
             public AssetReferenceGameObject DisplayModelAddress => IsValidAddress(LobbyModelAddress) ? LobbyModelAddress : ProfileModelAddress;
             public AssetReferenceGameObject CombatModelAddress => IsValidAddress(BattleModelAddress) ? BattleModelAddress : DisplayModelAddress;
+            public string SelectModelKey => ProfileModelAddressKey;
+            public string DisplayModelKey => !string.IsNullOrWhiteSpace(LobbyModelAddressKey) ? LobbyModelAddressKey : ProfileModelAddressKey;
+            public string CombatModelKey => !string.IsNullOrWhiteSpace(BattleModelAddressKey) ? BattleModelAddressKey : DisplayModelKey;
             public string ServerKey => string.IsNullOrWhiteSpace(ServerId) ? Id : ServerId;
             public string LocalizedDisplayName => BattleCharacterDatabase.GetLocalizedDisplayName(this);
 
@@ -184,6 +191,9 @@ namespace MahjongGame
                 return ProfileModelPrefab != null ||
                        LobbyModelPrefab != null ||
                        BattleModelPrefab != null ||
+                       !string.IsNullOrWhiteSpace(ProfileModelAddressKey) ||
+                       !string.IsNullOrWhiteSpace(LobbyModelAddressKey) ||
+                       !string.IsNullOrWhiteSpace(BattleModelAddressKey) ||
                        IsValidAddress(ProfileModelAddress) ||
                        IsValidAddress(LobbyModelAddress) ||
                        IsValidAddress(BattleModelAddress);
@@ -193,6 +203,46 @@ namespace MahjongGame
             {
                 return reference != null && reference.RuntimeKeyIsValid();
             }
+        }
+
+        [Serializable]
+        public sealed class RemoteCharacterCatalog
+        {
+            public bool success;
+            public string version;
+            public string checkedAt;
+            public RemoteCharacterData[] characters;
+        }
+
+        [Serializable]
+        public sealed class RemoteCharacterData
+        {
+            public string id;
+            public string serverId;
+            public string displayName;
+            public string animalType;
+            public string gender;
+            public bool isEnabled = true;
+            public bool isStarterFree;
+            public string unlockType;
+            public string priceCurrency;
+            public int priceAmount;
+            public int sortOrder;
+            public RemoteCharacterStats stats;
+            public string profileModelAddressKey;
+            public string lobbyModelAddressKey;
+            public string battleModelAddressKey;
+        }
+
+        [Serializable]
+        public sealed class RemoteCharacterStats
+        {
+            public int maxHp;
+            public int attack;
+            public float armor;
+            public float parryChance;
+            public float critChance;
+            public float critDamageMultiplier;
         }
 
         [Header("Catalog Settings")]
@@ -404,6 +454,32 @@ namespace MahjongGame
             return true;
         }
 
+        public bool ApplyRemoteCatalog(RemoteCharacterCatalog catalog)
+        {
+            if (catalog == null || !catalog.success || catalog.characters == null)
+                return false;
+
+            bool changed = false;
+
+            for (int i = 0; i < catalog.characters.Length; i++)
+            {
+                RemoteCharacterData remote = catalog.characters[i];
+                if (remote == null || string.IsNullOrWhiteSpace(remote.id))
+                    continue;
+
+                BattleCharacterData data = FindOrCreateCharacter(remote.id.Trim());
+                ApplyRemoteCharacter(data, remote);
+                changed = true;
+            }
+
+            if (!changed)
+                return false;
+
+            InitializeRuntimeData();
+            CatalogChanged?.Invoke();
+            return true;
+        }
+
         public void RebuildCache()
         {
             byId.Clear();
@@ -447,6 +523,70 @@ namespace MahjongGame
         {
             SanitizeAll();
             RebuildCache();
+        }
+
+        private BattleCharacterData FindOrCreateCharacter(string id)
+        {
+            BattleCharacterData existing = FindExistingCharacter(characters, id);
+            if (existing != null)
+                return existing;
+
+            BattleCharacterData created = new BattleCharacterData
+            {
+                Id = id,
+                ServerId = id,
+                DisplayName = id,
+                IsEnabled = true,
+            };
+
+            characters.Add(created);
+            return created;
+        }
+
+        private static void ApplyRemoteCharacter(BattleCharacterData data, RemoteCharacterData remote)
+        {
+            data.Id = remote.id.Trim();
+            data.ServerId = string.IsNullOrWhiteSpace(remote.serverId) ? data.Id : remote.serverId.Trim();
+
+            if (!string.IsNullOrWhiteSpace(remote.displayName))
+                data.DisplayName = remote.displayName.Trim();
+
+            data.AnimalType = ParseEnum(remote.animalType, data.AnimalType);
+            data.Gender = ParseEnum(remote.gender, data.Gender);
+            data.IsEnabled = remote.isEnabled;
+            data.IsStarterFree = remote.isStarterFree;
+            data.UnlockType = ParseEnum(remote.unlockType, data.UnlockType);
+            data.PriceCurrency = ParseEnum(remote.priceCurrency, data.PriceCurrency);
+            data.PriceAmount = Mathf.Max(0, remote.priceAmount);
+            data.SortOrder = remote.sortOrder;
+
+            if (remote.stats != null)
+            {
+                data.Stats = new BattleCharacterStats(
+                    remote.stats.maxHp,
+                    remote.stats.attack,
+                    remote.stats.armor,
+                    remote.stats.parryChance,
+                    remote.stats.critChance,
+                    remote.stats.critDamageMultiplier);
+            }
+
+            data.ProfileModelAddressKey = CleanKey(remote.profileModelAddressKey);
+            data.LobbyModelAddressKey = CleanKey(remote.lobbyModelAddressKey);
+            data.BattleModelAddressKey = CleanKey(remote.battleModelAddressKey);
+        }
+
+        private static T ParseEnum<T>(string value, T fallback) where T : struct
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return fallback;
+
+            return Enum.TryParse(value.Trim(), true, out T parsed) ? parsed : fallback;
+        }
+
+        private static string CleanKey(string value)
+        {
+            return string.IsNullOrWhiteSpace(value) ? string.Empty : value.Trim();
         }
 
         private void SanitizeAll()

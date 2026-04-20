@@ -80,6 +80,8 @@ namespace MahjongGame
 
         private void OnDestroy()
         {
+            BattleCharacterDatabase.CatalogChanged -= OnCharacterCatalogChanged;
+
             if (initializeRoutine != null)
             {
                 StopCoroutine(initializeRoutine);
@@ -145,6 +147,12 @@ namespace MahjongGame
 
             if (unlockedCharacterIds.Count == 0)
                 return 0;
+
+            BattleCharacterDatabase.BattleCharacterData data =
+                DatabaseReady() ? database.GetCharacterOrNull(characterId) : null;
+
+            if (data != null && data.PriceAmount > 0)
+                return Mathf.Max(0, data.PriceAmount);
 
             int purchasedCount = CountPurchasedCharacters();
             int price = firstPaidCharacterPrice + purchasedCount * paidCharacterPriceStep;
@@ -214,6 +222,19 @@ namespace MahjongGame
                 return false;
 
             return database.TryApplyCharacterStatsToHub(selectedCharacterId);
+        }
+
+        public void RefreshAfterCatalogChanged()
+        {
+            if (!TryResolveDatabaseAndPrepare())
+                return;
+
+            EnsureValidState();
+
+            if (autoApplyStatsOnLoad)
+                ApplySelectedCharacterStatsToHub();
+
+            RaiseSelectionChanged();
         }
 
         public void Save()
@@ -300,6 +321,8 @@ namespace MahjongGame
             }
 
             LoadFromPrefs();
+            BattleCharacterDatabase.CatalogChanged -= OnCharacterCatalogChanged;
+            BattleCharacterDatabase.CatalogChanged += OnCharacterCatalogChanged;
             EnsureValidState();
             RaiseSelectionChanged();
 
@@ -552,6 +575,11 @@ namespace MahjongGame
         {
             SelectedCharacterChanged?.Invoke(selectedCharacterId);
             SelectionStateChanged?.Invoke();
+        }
+
+        private void OnCharacterCatalogChanged()
+        {
+            RefreshAfterCatalogChanged();
         }
     }
 }

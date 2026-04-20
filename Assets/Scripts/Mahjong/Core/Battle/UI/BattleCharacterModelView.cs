@@ -34,7 +34,7 @@ namespace MahjongGame
 
         private GameObject currentInstance;
         private GameObject currentPrefab;
-        private AssetReferenceGameObject currentAddress;
+        private string currentAddressKey;
         private AsyncOperationHandle<GameObject>? currentAddressHandle;
         private Coroutine loadRoutine;
         private int loadVersion;
@@ -78,11 +78,23 @@ namespace MahjongGame
             mirrorX = flipX;
             currentData = data;
 
+            string addressKey = ResolveModelAddressKey(data);
+            if (!string.IsNullOrWhiteSpace(addressKey))
+            {
+                EnsureModelRoot();
+                BeginAddressableLoad(data, addressKey);
+
+                if (hideFallbackImageWhenModelIsShown && fallbackImage != null)
+                    fallbackImage.enabled = false;
+
+                return true;
+            }
+
             AssetReferenceGameObject address = ResolveModelAddress(data);
             if (BattleCharacterDatabase.BattleCharacterData.IsValidAddress(address))
             {
                 EnsureModelRoot();
-                BeginAddressableLoad(data, address);
+                BeginAddressableLoad(data, address.RuntimeKey);
 
                 if (hideFallbackImageWhenModelIsShown && fallbackImage != null)
                     fallbackImage.enabled = false;
@@ -121,7 +133,7 @@ namespace MahjongGame
         {
             ClearInstance();
             currentPrefab = null;
-            currentAddress = null;
+            currentAddressKey = string.Empty;
             currentData = null;
         }
 
@@ -157,12 +169,14 @@ namespace MahjongGame
 
         private void BeginAddressableLoad(
             BattleCharacterDatabase.BattleCharacterData data,
-            AssetReferenceGameObject address)
+            object runtimeKey)
         {
-            if (loadRoutine != null && currentAddress == address)
+            string key = runtimeKey == null ? string.Empty : runtimeKey.ToString();
+
+            if (loadRoutine != null && string.Equals(currentAddressKey, key, System.StringComparison.Ordinal))
                 return;
 
-            if (currentInstance != null && currentAddress == address)
+            if (currentInstance != null && string.Equals(currentAddressKey, key, System.StringComparison.Ordinal))
             {
                 ApplyTransform();
                 FollowUiAnchor();
@@ -170,19 +184,19 @@ namespace MahjongGame
             }
 
             ClearInstance();
-            currentAddress = address;
+            currentAddressKey = key;
             currentPrefab = null;
 
             int version = ++loadVersion;
-            loadRoutine = StartCoroutine(LoadAddressableModel(data, address, version));
+            loadRoutine = StartCoroutine(LoadAddressableModel(data, runtimeKey, version));
         }
 
         private IEnumerator LoadAddressableModel(
             BattleCharacterDatabase.BattleCharacterData data,
-            AssetReferenceGameObject address,
+            object runtimeKey,
             int version)
         {
-            AsyncOperationHandle<GameObject> handle = Addressables.LoadAssetAsync<GameObject>(address.RuntimeKey);
+            AsyncOperationHandle<GameObject> handle = Addressables.LoadAssetAsync<GameObject>(runtimeKey);
             currentAddressHandle = handle;
             yield return handle;
 
@@ -198,7 +212,7 @@ namespace MahjongGame
 
             if (handle.Status != AsyncOperationStatus.Succeeded || handle.Result == null)
             {
-                Debug.LogWarning("[BattleCharacterModelView] Could not load addressable character model: " + address.RuntimeKey, this);
+                Debug.LogWarning("[BattleCharacterModelView] Could not load addressable character model: " + runtimeKey, this);
                 Hide();
                 yield break;
             }
@@ -242,6 +256,26 @@ namespace MahjongGame
 
                 default:
                     return data.DisplayModelAddress;
+            }
+        }
+
+        private string ResolveModelAddressKey(BattleCharacterDatabase.BattleCharacterData data)
+        {
+            if (data == null)
+                return string.Empty;
+
+            switch (context)
+            {
+                case ModelContext.Profile:
+                    return !string.IsNullOrWhiteSpace(data.ProfileModelAddressKey)
+                        ? data.ProfileModelAddressKey
+                        : data.DisplayModelKey;
+
+                case ModelContext.Battle:
+                    return data.CombatModelKey;
+
+                default:
+                    return data.DisplayModelKey;
             }
         }
 
