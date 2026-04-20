@@ -276,6 +276,7 @@ namespace MahjongGame
                 yield return null;
 
             GlobalChatBootstrap.EnsureForCurrentScene();
+            FriendsBootstrap.EnsureForCurrentScene();
             LogRuntime("LoadLobbyRoutine done. Target=" + lobbySceneName);
         }
 
