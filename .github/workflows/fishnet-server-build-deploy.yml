@@ -1,0 +1,86 @@
+name: Build FishNet Server
+
+on:
+  workflow_dispatch:
+
+env:
+  UNITY_EXE: C:\Program Files\Unity\Hub\Editor\6000.4.3f1\Editor\Unity.exe
+  FISHNET_SERVER_TARGET: linux
+  FISHNET_SERVER_OUTPUT_PATH: Builds/Server/Linux/SymbiosisServer.x86_64
+  SERVER_RELEASES_PATH: ${{ secrets.FISHNET_SERVER_RELEASES_PATH || '/opt/symbiosis/fishnet-server/releases' }}
+
+jobs:
+  build-server:
+    runs-on:
+      - self-hosted
+      - Windows
+      - X64
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Check Required Tools And Secrets
+        shell: pwsh
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
+        run: |
+          if (-not (Test-Path $env:UNITY_EXE)) {
+            Write-Error "Unity executable was not found at '$env:UNITY_EXE'."
+          }
+          foreach ($name in @('SERVER_HOST', 'SERVER_USER', 'SERVER_SSH_KEY')) {
+            if ([string]::IsNullOrWhiteSpace([Environment]::GetEnvironmentVariable($name))) {
+              Write-Error "$name secret is empty or missing."
+            }
+          }
+          Write-Host "FishNet server build target: $env:FISHNET_SERVER_TARGET"
+
+      - name: Build Dedicated Server
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path 'Builds/Server/Linux', 'Builds/Logs' | Out-Null
+          & $env:UNITY_EXE `
+            -batchmode `
+            -quit `
+            -projectPath $env:GITHUB_WORKSPACE `
+            -buildTarget StandaloneLinux64 `
+            -executeMethod MahjongGame.EditorTools.FishNetServerBuild.BuildCiServer `
+            -logFile "$env:GITHUB_WORKSPACE\Builds\Logs\FishNetServerBuild.log"
+          if ($LASTEXITCODE -ne 0) {
+            if (Test-Path 'Builds/Logs/FishNetServerBuild.log') {
+              Get-Content 'Builds/Logs/FishNetServerBuild.log' -Tail 250
+            }
+            exit $LASTEXITCODE
+          }
+          if (-not (Test-Path $env:FISHNET_SERVER_OUTPUT_PATH)) {
+            Write-Error "Build did not create '$env:FISHNET_SERVER_OUTPUT_PATH'."
+          }
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: symbiosis-fishnet-server-${{ github.run_number }}
+          path: |
+            Builds/Server/**
+            Builds/Logs/FishNetServerBuild.log
+          if-no-files-found: error
+
+      - name: Upload Server To VPS
+        shell: pwsh
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
+        run: |
+          $keyPath = Join-Path $env:RUNNER_TEMP 'symbiosis-server-key'
+          $env:SERVER_SSH_KEY -replace "`r`n", "`n" | Set-Content -LiteralPath $keyPath -NoNewline -Encoding ascii
+          $releasePath = "$env:SERVER_RELEASES_PATH/${{ github.run_number }}"
+          ssh -i $keyPath -o StrictHostKeyChecking=no "$env:SERVER_USER@$env:SERVER_HOST" "mkdir -p '$releasePath'"
+          scp -r -i $keyPath -o StrictHostKeyChecking=no `
+            'Builds/Server/Linux/*' `
+            "$env:SERVER_USER@$env:SERVER_HOST`:$releasePath/"
+          ssh -i $keyPath -o StrictHostKeyChecking=no "$env:SERVER_USER@$env:SERVER_HOST" "chmod +x '$releasePath/SymbiosisServer.x86_64' && ln -sfn '$releasePath' '/opt/symbiosis/fishnet-server/current' && ls -lah '/opt/symbiosis/fishnet-server/current'"
