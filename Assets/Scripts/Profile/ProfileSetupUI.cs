@@ -12,6 +12,8 @@ namespace MahjongGame
         [Header("Links")]
         [SerializeField] private ProfileBootstrap bootstrap;
         [SerializeField] private TMP_InputField nameInput;
+        [SerializeField] private TMP_InputField emailInput;
+        [SerializeField] private TMP_InputField passwordInput;
         [SerializeField] private TMP_InputField ageInput;
         [SerializeField] private Image avatarPreview;
         [SerializeField] private TextMeshProUGUI errorText;
@@ -36,6 +38,7 @@ namespace MahjongGame
         private Button femaleButton;
         private Button otherButton;
         private Button continueButton;
+        private Button loginButton;
         private TextMeshProUGUI idPreviewText;
         private TextMeshProUGUI avatarIndexText;
         private PlayerGender selectedGender = PlayerGender.NotSpecified;
@@ -61,6 +64,9 @@ namespace MahjongGame
             if (continueButton != null)
                 continueButton.interactable = true;
 
+            if (loginButton != null)
+                loginButton.interactable = true;
+
             if (nameInput != null)
             {
                 nameInput.text = string.Empty;
@@ -71,6 +77,12 @@ namespace MahjongGame
 
             if (ageInput != null)
                 ageInput.text = string.Empty;
+
+            if (emailInput != null)
+                emailInput.text = string.Empty;
+
+            if (passwordInput != null)
+                passwordInput.text = string.Empty;
 
             selectedGender = PlayerGender.NotSpecified;
             currentAvatarIndex = Mathf.Clamp(currentAvatarIndex, 0, GetLastAvatarIndex());
@@ -152,6 +164,15 @@ namespace MahjongGame
             Anchor(idPreviewText.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f));
 
             nameInput = CreateInputField(rightPane.transform, "NameInput", "Nickname");
+            emailInput = CreateInputField(rightPane.transform, "EmailInput", "Email");
+            emailInput.contentType = TMP_InputField.ContentType.EmailAddress;
+            emailInput.keyboardType = TouchScreenKeyboardType.EmailAddress;
+            emailInput.characterLimit = 64;
+
+            passwordInput = CreateInputField(rightPane.transform, "PasswordInput", "Password");
+            passwordInput.contentType = TMP_InputField.ContentType.Password;
+            passwordInput.characterLimit = 64;
+
             ageInput = CreateInputField(rightPane.transform, "AgeInput", "Age");
             ageInput.contentType = TMP_InputField.ContentType.IntegerNumber;
             ageInput.characterLimit = 3;
@@ -167,6 +188,7 @@ namespace MahjongGame
             Anchor(errorText.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0.5f, 0f));
 
             continueButton = CreateButton(rightPane.transform, "ContinueButton", "Continue", 24f);
+            loginButton = CreateButton(rightPane.transform, "LoginButton", "Login", 22f);
 
             ApplyResponsiveLayout();
         }
@@ -190,6 +212,9 @@ namespace MahjongGame
 
             if (continueButton != null)
                 continueButton.onClick.AddListener(OnClickContinue);
+
+            if (loginButton != null)
+                loginButton.onClick.AddListener(OnClickLogin);
         }
 
         private void UnbindButtons()
@@ -202,6 +227,9 @@ namespace MahjongGame
 
             if (continueButton != null)
                 continueButton.onClick.RemoveListener(OnClickContinue);
+
+            if (loginButton != null)
+                loginButton.onClick.RemoveListener(OnClickLogin);
         }
 
         private void SelectGender(PlayerGender gender)
@@ -266,6 +294,20 @@ namespace MahjongGame
                     return;
                 }
 
+                string validatedEmail = ValidateAndNormalizeEmail(emailInput != null ? emailInput.text : string.Empty);
+                if (validatedEmail == null)
+                {
+                    ResetContinueState();
+                    return;
+                }
+
+                string validatedPassword = ValidatePassword(passwordInput != null ? passwordInput.text : string.Empty);
+                if (validatedPassword == null)
+                {
+                    ResetContinueState();
+                    return;
+                }
+
                 if (!TryValidateAge(ageInput != null ? ageInput.text : string.Empty, out int age))
                 {
                     ResetContinueState();
@@ -288,7 +330,7 @@ namespace MahjongGame
                 }
 
                 ProfileBootstrap.LogRuntime($"CompleteProfileOnServer start. Avatar={avatarId}, Age={age}, Gender={selectedGender}");
-                StartCoroutine(CompleteProfileOnServerAndContinue(validatedName, avatarId, age));
+                StartCoroutine(CompleteProfileOnServerAndContinue(validatedEmail, validatedPassword, validatedName, avatarId, age));
             }
             catch (Exception ex)
             {
@@ -299,13 +341,62 @@ namespace MahjongGame
             }
         }
 
-        private System.Collections.IEnumerator CompleteProfileOnServerAndContinue(string name, int avatarId, int age)
+        private void OnClickLogin()
+        {
+            if (continueInProgress)
+                return;
+
+            try
+            {
+                continueInProgress = true;
+                SetAccountButtonsInteractable(false);
+                ReleaseActiveInputs();
+
+                if (ProfileService.I == null)
+                {
+                    SetError(GameLocalization.Text("profile.error.service_missing"));
+                    ResetContinueState();
+                    return;
+                }
+
+                string validatedEmail = ValidateAndNormalizeEmail(emailInput != null ? emailInput.text : string.Empty);
+                string validatedPassword = ValidatePassword(passwordInput != null ? passwordInput.text : string.Empty);
+                if (validatedEmail == null || validatedPassword == null)
+                {
+                    ResetContinueState();
+                    return;
+                }
+
+                if (bootstrap == null)
+                    bootstrap = FindAnyObjectByType<ProfileBootstrap>();
+
+                if (bootstrap == null)
+                {
+                    SetError(GameLocalization.Text("profile.error.bootstrap_missing"));
+                    ResetContinueState();
+                    return;
+                }
+
+                StartCoroutine(LoginOnServerAndContinue(validatedEmail, validatedPassword));
+            }
+            catch (Exception ex)
+            {
+                ProfileBootstrap.LogRuntime("ProfileSetup login exception: " + ex);
+                Debug.LogError("[ProfileSetupUI] Login failed: " + ex);
+                SetError("Login failed. Please try again.");
+                ResetContinueState();
+            }
+        }
+
+        private System.Collections.IEnumerator CompleteProfileOnServerAndContinue(string email, string password, string name, int avatarId, int age)
         {
             bool ok = false;
             string error = string.Empty;
             GameLanguage language = AppSettings.I != null ? AppSettings.I.Language : GameLanguage.Turkish;
 
             yield return ProfileService.I.CompleteProfileOnServer(
+                email,
+                password,
                 name,
                 avatarId,
                 age,
@@ -330,6 +421,31 @@ namespace MahjongGame
             yield return ContinueAfterInputSettles();
         }
 
+        private System.Collections.IEnumerator LoginOnServerAndContinue(string email, string password)
+        {
+            bool ok = false;
+            string error = string.Empty;
+
+            yield return ProfileService.I.LoginOnServer(
+                email,
+                password,
+                (success, message) =>
+                {
+                    ok = success;
+                    error = message;
+                }
+            );
+
+            if (!ok)
+            {
+                SetError(string.IsNullOrWhiteSpace(error) ? "Login failed." : error);
+                ResetContinueState();
+                yield break;
+            }
+
+            yield return ContinueAfterInputSettles();
+        }
+
         private System.Collections.IEnumerator ContinueAfterInputSettles()
         {
             ReleaseActiveInputs();
@@ -344,8 +460,16 @@ namespace MahjongGame
         private void ResetContinueState()
         {
             continueInProgress = false;
+            SetAccountButtonsInteractable(true);
+        }
+
+        private void SetAccountButtonsInteractable(bool value)
+        {
             if (continueButton != null)
-                continueButton.interactable = true;
+                continueButton.interactable = value;
+
+            if (loginButton != null)
+                loginButton.interactable = value;
         }
 
         private string ValidateAndNormalizeName(string rawName)
@@ -368,6 +492,39 @@ namespace MahjongGame
                 value = value.Substring(0, maxNameLength);
 
             return string.IsNullOrWhiteSpace(value) ? fallbackPlayerName : value;
+        }
+
+        private string ValidateAndNormalizeEmail(string rawEmail)
+        {
+            string value = string.IsNullOrWhiteSpace(rawEmail) ? string.Empty : rawEmail.Trim().ToLowerInvariant();
+
+            if (string.IsNullOrEmpty(value))
+            {
+                SetError("Enter email.");
+                return null;
+            }
+
+            int at = value.IndexOf('@');
+            int dot = value.LastIndexOf('.');
+            if (at <= 0 || dot <= at + 1 || dot >= value.Length - 1)
+            {
+                SetError("Enter a valid email.");
+                return null;
+            }
+
+            return value;
+        }
+
+        private string ValidatePassword(string rawPassword)
+        {
+            string value = rawPassword ?? string.Empty;
+            if (value.Length < 6)
+            {
+                SetError("Password must be at least 6 characters.");
+                return null;
+            }
+
+            return value;
         }
 
         private bool TryValidateAge(string rawAge, out int age)
@@ -405,6 +562,20 @@ namespace MahjongGame
                 ageInput.characterLimit = 3;
                 ageInput.contentType = TMP_InputField.ContentType.IntegerNumber;
                 ageInput.lineType = TMP_InputField.LineType.SingleLine;
+            }
+
+            if (emailInput != null)
+            {
+                emailInput.characterLimit = 64;
+                emailInput.contentType = TMP_InputField.ContentType.EmailAddress;
+                emailInput.lineType = TMP_InputField.LineType.SingleLine;
+            }
+
+            if (passwordInput != null)
+            {
+                passwordInput.characterLimit = 64;
+                passwordInput.contentType = TMP_InputField.ContentType.Password;
+                passwordInput.lineType = TMP_InputField.LineType.SingleLine;
             }
         }
 
@@ -521,21 +692,26 @@ namespace MahjongGame
             float y = height - 58f;
 
             SetRect(idPreviewText != null ? idPreviewText.rectTransform : null, x, y, fieldWidth, 28f);
-            y -= 74f;
+            y -= 58f;
             SetRect(nameInput != null ? nameInput.transform as RectTransform : null, x, y, fieldWidth, 58f);
-            y -= 78f;
-            SetRect(ageInput != null ? ageInput.transform as RectTransform : null, x, y, Mathf.Min(260f, fieldWidth), 58f);
+            y -= 66f;
+            SetRect(emailInput != null ? emailInput.transform as RectTransform : null, x, y, fieldWidth, 58f);
+            y -= 66f;
+            SetRect(passwordInput != null ? passwordInput.transform as RectTransform : null, x, y, fieldWidth, 58f);
+            y -= 66f;
+            SetRect(ageInput != null ? ageInput.transform as RectTransform : null, x, y, Mathf.Min(260f, fieldWidth), 52f);
             y -= 46f;
             SetRect(rightPaneRect.Find("GenderLabel") as RectTransform, x, y, fieldWidth, 28f);
-            y -= 62f;
+            y -= 56f;
 
             float buttonGap = 12f;
             float genderButtonWidth = (fieldWidth - buttonGap * 2f) / 3f;
-            SetRect(maleButton != null ? maleButton.transform as RectTransform : null, x, y, genderButtonWidth, 54f);
-            SetRect(femaleButton != null ? femaleButton.transform as RectTransform : null, x + genderButtonWidth + buttonGap, y, genderButtonWidth, 54f);
-            SetRect(otherButton != null ? otherButton.transform as RectTransform : null, x + (genderButtonWidth + buttonGap) * 2f, y, genderButtonWidth, 54f);
+            SetRect(maleButton != null ? maleButton.transform as RectTransform : null, x, y, genderButtonWidth, 48f);
+            SetRect(femaleButton != null ? femaleButton.transform as RectTransform : null, x + genderButtonWidth + buttonGap, y, genderButtonWidth, 48f);
+            SetRect(otherButton != null ? otherButton.transform as RectTransform : null, x + (genderButtonWidth + buttonGap) * 2f, y, genderButtonWidth, 48f);
 
-            SetRect(errorText != null ? errorText.rectTransform : null, x, 84f, fieldWidth, 30f);
+            SetRect(errorText != null ? errorText.rectTransform : null, x, 86f, fieldWidth, 30f);
+            SetRect(loginButton != null ? loginButton.transform as RectTransform : null, x, 24f, 180f, 58f);
             SetRect(continueButton != null ? continueButton.transform as RectTransform : null, width - 268f, 24f, 240f, 58f);
         }
 
@@ -643,6 +819,12 @@ namespace MahjongGame
 
             if (ageInput != null)
                 ageInput.DeactivateInputField();
+
+            if (emailInput != null)
+                emailInput.DeactivateInputField();
+
+            if (passwordInput != null)
+                passwordInput.DeactivateInputField();
 
             EventSystem eventSystem = EventSystem.current;
             if (eventSystem != null)

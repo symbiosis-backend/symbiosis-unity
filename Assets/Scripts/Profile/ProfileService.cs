@@ -19,6 +19,7 @@ namespace MahjongGame
 
         private const string BaseUrl = "http://91.99.176.77:8080";
         private const string KeyDeviceId = "symbiosis_server_device_id";
+        private const string KeySessionToken = "symbiosis_server_session_token";
 
         public PlayerProfile Current => currentProfile;
         public string LastServerError => lastServerError;
@@ -111,7 +112,8 @@ namespace MahjongGame
             ServerBootstrapRequest payload = new ServerBootstrapRequest
             {
                 deviceId = GetOrCreateDeviceId(),
-                language = ToServerLanguage(language)
+                language = ToServerLanguage(language),
+                token = GetSessionToken()
             };
 
             yield return SendProfileRequest(
@@ -120,12 +122,15 @@ namespace MahjongGame
                 response =>
                 {
                     ApplyServerUser(response.user);
+                    StoreSessionToken(response.token);
                     Debug.Log("[ProfileService] Server profile loaded");
                 }
             );
         }
 
         public IEnumerator CompleteProfileOnServer(
+            string email,
+            string password,
             string name,
             int avatarId,
             int age,
@@ -139,6 +144,9 @@ namespace MahjongGame
             ServerCompleteProfileRequest payload = new ServerCompleteProfileRequest
             {
                 deviceId = GetOrCreateDeviceId(),
+                token = GetSessionToken(),
+                email = string.IsNullOrWhiteSpace(email) ? string.Empty : email.Trim().ToLowerInvariant(),
+                password = password ?? string.Empty,
                 nickname = string.IsNullOrWhiteSpace(name) ? "Player" : name.Trim(),
                 age = Mathf.Clamp(age, 0, 120),
                 gender = ToServerGender(gender),
@@ -155,6 +163,43 @@ namespace MahjongGame
                 response =>
                 {
                     ApplyServerUser(response.user);
+                    StoreSessionToken(response.token);
+                    ok = true;
+                },
+                requestError =>
+                {
+                    error = requestError;
+                }
+            );
+
+            completed?.Invoke(ok, string.IsNullOrWhiteSpace(error) ? lastServerError : error);
+        }
+
+        public IEnumerator LoginOnServer(
+            string email,
+            string password,
+            Action<bool, string> completed
+        )
+        {
+            lastServerError = string.Empty;
+
+            ServerLoginRequest payload = new ServerLoginRequest
+            {
+                deviceId = GetOrCreateDeviceId(),
+                email = string.IsNullOrWhiteSpace(email) ? string.Empty : email.Trim().ToLowerInvariant(),
+                password = password ?? string.Empty
+            };
+
+            bool ok = false;
+            string error = string.Empty;
+
+            yield return SendProfileRequest(
+                "/login",
+                JsonUtility.ToJson(payload),
+                response =>
+                {
+                    ApplyServerUser(response.user);
+                    StoreSessionToken(response.token);
                     ok = true;
                 },
                 requestError =>
@@ -344,7 +389,7 @@ namespace MahjongGame
 
             currentProfile.EnsureData();
             currentProfile.SetOnlinePlayerId(user.id.ToString());
-            currentProfile.SetGuestState(false);
+            currentProfile.SetGuestState(user.isGuest);
 
             string displayName = string.IsNullOrWhiteSpace(user.nickname) ? "Player" : user.nickname.Trim();
             string publicId = string.IsNullOrWhiteSpace(user.publicPlayerId)
@@ -401,6 +446,20 @@ namespace MahjongGame
             return value;
         }
 
+        private static string GetSessionToken()
+        {
+            return PlayerPrefs.GetString(KeySessionToken, string.Empty);
+        }
+
+        private static void StoreSessionToken(string token)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+                return;
+
+            PlayerPrefs.SetString(KeySessionToken, token);
+            PlayerPrefs.Save();
+        }
+
         private static string ToServerLanguage(GameLanguage language)
         {
             return language switch
@@ -453,12 +512,16 @@ namespace MahjongGame
         {
             public string deviceId;
             public string language;
+            public string token;
         }
 
         [Serializable]
         private sealed class ServerCompleteProfileRequest
         {
             public string deviceId;
+            public string token;
+            public string email;
+            public string password;
             public string nickname;
             public int age;
             public string gender;
@@ -467,10 +530,19 @@ namespace MahjongGame
         }
 
         [Serializable]
+        private sealed class ServerLoginRequest
+        {
+            public string deviceId;
+            public string email;
+            public string password;
+        }
+
+        [Serializable]
         private sealed class ServerProfileResponse
         {
             public bool success;
             public string error;
+            public string token;
             public ServerUserDto user;
         }
 
@@ -487,6 +559,7 @@ namespace MahjongGame
             public string gender;
             public int avatarId;
             public bool profileCompleted;
+            public bool isGuest;
             public string createdAt;
             public string updatedAt;
         }
