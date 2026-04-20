@@ -67,6 +67,10 @@ jobs:
           test -n "$SERVER_SSH_KEY" || { echo "::error::SERVER_SSH_KEY secret is empty or missing."; exit 1; }
           echo "Required secrets are present."
 
+      - name: Prepare Build Folders
+        shell: bash
+        run: mkdir -p Builds/Android Builds/Logs
+
       - name: Build APK
         uses: game-ci/unity-builder@v4
         env:
@@ -81,11 +85,33 @@ jobs:
           unityVersion: 6000.4.2f1
           buildMethod: AndroidCiBuild.BuildApk
           androidExportType: androidPackage
+          customParameters: -logFile Builds/Logs/UnityBuild.log
+
+      - name: Collect Unity Logs
+        if: failure()
+        shell: bash
+        run: |
+          mkdir -p Builds/Logs
+          find Builds -type f -iname "*.log" -print || true
+          if [ -d "$HOME/.config/unity3d" ]; then
+            find "$HOME/.config/unity3d" -type f -iname "*.log" -print -exec cp --parents {} Builds/Logs/ \; || true
+          fi
+          if [ -d /root/.config/unity3d ]; then
+            find /root/.config/unity3d -type f -iname "*.log" -print -exec cp --parents {} Builds/Logs/ \; || true
+          fi
+          ls -R Builds/Logs || true
+
+      - name: Upload Unity Logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unity-build-logs-${{ github.run_number }}
+          path: Builds/Logs/**
+          if-no-files-found: warn
 
       - name: Write Update Manifest
         shell: bash
         run: |
-          mkdir -p Builds/Android
           VERSION_CODE=$((BUILD_VERSION_CODE_OFFSET + GITHUB_RUN_NUMBER))
           jq -n \
             --arg latestVersion "$BUILD_VERSION_NAME" \
