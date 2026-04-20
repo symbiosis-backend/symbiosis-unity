@@ -276,10 +276,6 @@ namespace MahjongGame
                     ? 0
                     : Mathf.Clamp(currentAvatarIndex, 0, avatarSprites.Length - 1);
 
-                ProfileBootstrap.LogRuntime($"CompleteProfile start. Avatar={avatarId}, Age={age}, Gender={selectedGender}");
-                ProfileService.I.CompleteProfile(validatedName, avatarId, age, selectedGender, string.Empty);
-                ProfileBootstrap.LogRuntime("CompleteProfile done");
-
                 if (bootstrap == null)
                     bootstrap = FindAnyObjectByType<ProfileBootstrap>();
 
@@ -291,7 +287,8 @@ namespace MahjongGame
                     return;
                 }
 
-                StartCoroutine(ContinueAfterInputSettles());
+                ProfileBootstrap.LogRuntime($"CompleteProfileOnServer start. Avatar={avatarId}, Age={age}, Gender={selectedGender}");
+                StartCoroutine(CompleteProfileOnServerAndContinue(validatedName, avatarId, age));
             }
             catch (Exception ex)
             {
@@ -300,6 +297,37 @@ namespace MahjongGame
                 SetError("Profile setup failed. Please restart the game.");
                 ResetContinueState();
             }
+        }
+
+        private System.Collections.IEnumerator CompleteProfileOnServerAndContinue(string name, int avatarId, int age)
+        {
+            bool ok = false;
+            string error = string.Empty;
+            GameLanguage language = AppSettings.I != null ? AppSettings.I.Language : GameLanguage.Turkish;
+
+            yield return ProfileService.I.CompleteProfileOnServer(
+                name,
+                avatarId,
+                age,
+                selectedGender,
+                language,
+                (success, message) =>
+                {
+                    ok = success;
+                    error = message;
+                }
+            );
+
+            if (!ok)
+            {
+                ProfileBootstrap.LogRuntime("CompleteProfileOnServer failed: " + error);
+                SetError(string.IsNullOrWhiteSpace(error) ? GameLocalization.Text("profile.error.server") : error);
+                ResetContinueState();
+                yield break;
+            }
+
+            ProfileBootstrap.LogRuntime("CompleteProfileOnServer done");
+            yield return ContinueAfterInputSettles();
         }
 
         private System.Collections.IEnumerator ContinueAfterInputSettles()

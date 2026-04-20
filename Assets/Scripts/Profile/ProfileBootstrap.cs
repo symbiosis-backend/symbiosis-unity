@@ -42,9 +42,11 @@ namespace MahjongGame
         [Header("Generated UI")]
         [SerializeField] private bool autoCreateLanguagePanel = true;
         [SerializeField] private bool autoCreateProfileService = true;
+        [SerializeField] private bool requireServerProfile = true;
 
         private bool started;
         private bool loadingNextScene;
+        private bool resolvingServerProfile;
 
         private void Awake()
         {
@@ -115,34 +117,44 @@ namespace MahjongGame
 
         public void ContinueAfterLanguageSelection()
         {
-            if (loadingNextScene)
+            if (loadingNextScene || resolvingServerProfile)
                 return;
 
+            StartCoroutine(ContinueAfterLanguageSelectionRoutine());
+        }
+
+        private IEnumerator ContinueAfterLanguageSelectionRoutine()
+        {
+            resolvingServerProfile = true;
             SetLanguageSelectionVisible(false);
 
             if (ProfileService.I == null)
             {
                 Debug.LogError("[ProfileBootstrap] ProfileService not found while continuing after language selection.");
                 SetProfileSetupVisible(true);
-                return;
+                resolvingServerProfile = false;
+                yield break;
+            }
+
+            SetLoadingVisible(true);
+
+            GameLanguage language = AppSettings.I != null ? AppSettings.I.Language : GameLanguage.Turkish;
+            yield return ProfileService.I.LoadOrCreateServerProfile(language);
+
+            SetLoadingVisible(false);
+
+            if (ProfileService.I.Current == null && ProfileService.I.HasProfile() && !requireServerProfile)
+            {
+                LogRuntime("Loading cached profile after server profile fallback");
+                ProfileService.I.LoadProfile();
             }
 
             if (ProfileService.I.Current == null)
             {
-                if (ProfileService.I.HasProfile())
-                {
-                    LogRuntime("Loading profile after language selection");
-                    ProfileService.I.LoadProfile();
-                }
-            }
-
-            if (ProfileService.I.Current == null)
-            {
-                if (ProfileService.I.HasProfile())
-                    Debug.LogWarning("[ProfileBootstrap] Stored profile could not be loaded. Creating a fresh local profile after language selection.");
-
-                LogRuntime("Creating profile after language selection");
-                ProfileService.I.CreateNewProfile();
+                Debug.LogError("[ProfileBootstrap] Server profile could not be loaded: " + ProfileService.I.LastServerError);
+                SetProfileSetupVisible(true);
+                resolvingServerProfile = false;
+                yield break;
             }
 
             PlayerProfile profile = ProfileService.I.Current;
@@ -153,6 +165,8 @@ namespace MahjongGame
 
             if (!shouldShowSetup)
                 StartCoroutine(LoadLobbyRoutine());
+
+            resolvingServerProfile = false;
         }
 
         public void ContinueAfterProfileSetup()
