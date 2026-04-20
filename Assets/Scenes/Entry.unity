@@ -865,7 +865,7 @@ MonoBehaviour:
   inputSettleFramesBeforeSceneLoad: 2
   unloadUnusedAssetsBeforeLobby: 0
   playEntryIntro: 1
-  playEntryIntroOnMobile: 0
+  playEntryIntroOnMobile: 1
   entryIntro: {fileID: 1323974432}
   autoCreateLanguagePanel: 1
   autoCreateProfileService: 1

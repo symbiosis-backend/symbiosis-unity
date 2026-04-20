@@ -140,7 +140,7 @@ namespace MahjongGame.EditorTools
             serialized.FindProperty("inputSettleFramesBeforeSceneLoad").intValue = 2;
             serialized.FindProperty("unloadUnusedAssetsBeforeLobby").boolValue = false;
             serialized.FindProperty("playEntryIntro").boolValue = true;
-            serialized.FindProperty("playEntryIntroOnMobile").boolValue = false;
+            serialized.FindProperty("playEntryIntroOnMobile").boolValue = true;
             serialized.FindProperty("entryIntro").objectReferenceValue = intro;
             serialized.FindProperty("autoCreateLanguagePanel").boolValue = true;
             serialized.FindProperty("autoCreateProfileService").boolValue = true;
