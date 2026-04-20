@@ -96,7 +96,29 @@ namespace MahjongGame
             public Sprite LobbySprite;
             public Sprite BattleSprite;
 
+            [Header("3D Models / FBX")]
+            public GameObject ProfileModelPrefab;
+            public GameObject LobbyModelPrefab;
+            public GameObject BattleModelPrefab;
+
+            [Header("3D Animation Controllers")]
+            public RuntimeAnimatorController ProfileAnimatorController;
+            public RuntimeAnimatorController LobbyAnimatorController;
+            public RuntimeAnimatorController BattleAnimatorController;
+
+            [Header("3D Animation Clips")]
+            public AnimationClip ProfileIdleAnimation;
+            public AnimationClip LobbyIdleAnimation;
+            public AnimationClip BattleIdleAnimation;
+            public AnimationClip AttackAnimation;
+            public AnimationClip HitAnimation;
+            public AnimationClip VictoryAnimation;
+            public AnimationClip DefeatAnimation;
+
             public Sprite SelectSprite => ProfileSprite;
+            public GameObject SelectModelPrefab => ProfileModelPrefab;
+            public GameObject DisplayModelPrefab => LobbyModelPrefab != null ? LobbyModelPrefab : ProfileModelPrefab;
+            public GameObject CombatModelPrefab => BattleModelPrefab != null ? BattleModelPrefab : DisplayModelPrefab;
             public string ServerKey => string.IsNullOrWhiteSpace(ServerId) ? Id : ServerId;
             public string LocalizedDisplayName => BattleCharacterDatabase.GetLocalizedDisplayName(this);
 
