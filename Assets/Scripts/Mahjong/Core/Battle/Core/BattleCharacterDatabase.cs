@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.Serialization;
 
 namespace MahjongGame
@@ -101,6 +102,11 @@ namespace MahjongGame
             public GameObject LobbyModelPrefab;
             public GameObject BattleModelPrefab;
 
+            [Header("Remote 3D Models / Addressables")]
+            public AssetReferenceGameObject ProfileModelAddress;
+            public AssetReferenceGameObject LobbyModelAddress;
+            public AssetReferenceGameObject BattleModelAddress;
+
             [Header("3D Animation Controllers")]
             public RuntimeAnimatorController ProfileAnimatorController;
             public RuntimeAnimatorController LobbyAnimatorController;
@@ -119,6 +125,9 @@ namespace MahjongGame
             public GameObject SelectModelPrefab => ProfileModelPrefab;
             public GameObject DisplayModelPrefab => LobbyModelPrefab != null ? LobbyModelPrefab : ProfileModelPrefab;
             public GameObject CombatModelPrefab => BattleModelPrefab != null ? BattleModelPrefab : DisplayModelPrefab;
+            public AssetReferenceGameObject SelectModelAddress => ProfileModelAddress;
+            public AssetReferenceGameObject DisplayModelAddress => IsValidAddress(LobbyModelAddress) ? LobbyModelAddress : ProfileModelAddress;
+            public AssetReferenceGameObject CombatModelAddress => IsValidAddress(BattleModelAddress) ? BattleModelAddress : DisplayModelAddress;
             public string ServerKey => string.IsNullOrWhiteSpace(ServerId) ? Id : ServerId;
             public string LocalizedDisplayName => BattleCharacterDatabase.GetLocalizedDisplayName(this);
 
@@ -168,6 +177,21 @@ namespace MahjongGame
 
                 if (PriceAmount <= 0 && UnlockType != CharacterUnlockType.Default)
                     PriceCurrency = CharacterPriceCurrencyType.None;
+            }
+
+            public bool HasAnyModelReference()
+            {
+                return ProfileModelPrefab != null ||
+                       LobbyModelPrefab != null ||
+                       BattleModelPrefab != null ||
+                       IsValidAddress(ProfileModelAddress) ||
+                       IsValidAddress(LobbyModelAddress) ||
+                       IsValidAddress(BattleModelAddress);
+            }
+
+            public static bool IsValidAddress(AssetReferenceGameObject reference)
+            {
+                return reference != null && reference.RuntimeKeyIsValid();
             }
         }
 
@@ -480,6 +504,7 @@ namespace MahjongGame
                     data.PriceAmount = DefaultFirstPaidCharacterPrice;
                 }
             }
+
         }
 
         private static int CompareCharacters(

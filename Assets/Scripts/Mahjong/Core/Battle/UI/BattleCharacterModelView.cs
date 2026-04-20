@@ -1,4 +1,7 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.UI;
 
 namespace MahjongGame
@@ -31,6 +34,10 @@ namespace MahjongGame
 
         private GameObject currentInstance;
         private GameObject currentPrefab;
+        private AssetReferenceGameObject currentAddress;
+        private AsyncOperationHandle<GameObject>? currentAddressHandle;
+        private Coroutine loadRoutine;
+        private int loadVersion;
         private BattleCharacterDatabase.BattleCharacterData currentData;
         private RectTransform rectTransform;
 
@@ -56,6 +63,8 @@ namespace MahjongGame
 
         private void OnDestroy()
         {
+            ClearInstance();
+
             if (modelRoot != null && modelRoot.gameObject != gameObject)
                 Destroy(modelRoot.gameObject);
         }
@@ -69,7 +78,19 @@ namespace MahjongGame
             mirrorX = flipX;
             currentData = data;
 
-            GameObject prefab = ResolveModelPrefab(data);
+            AssetReferenceGameObject address = ResolveModelAddress(data);
+            if (BattleCharacterDatabase.BattleCharacterData.IsValidAddress(address))
+            {
+                EnsureModelRoot();
+                BeginAddressableLoad(data, address);
+
+                if (hideFallbackImageWhenModelIsShown && fallbackImage != null)
+                    fallbackImage.enabled = false;
+
+                return true;
+            }
+
+            GameObject prefab = ResolveLocalModelPrefab(data);
             if (prefab == null)
             {
                 Hide();
@@ -100,6 +121,7 @@ namespace MahjongGame
         {
             ClearInstance();
             currentPrefab = null;
+            currentAddress = null;
             currentData = null;
         }
 
@@ -114,14 +136,116 @@ namespace MahjongGame
 
         private void ClearInstance()
         {
+            if (loadRoutine != null)
+            {
+                StopCoroutine(loadRoutine);
+                loadRoutine = null;
+            }
+
+            loadVersion++;
+
             if (currentInstance == null)
+            {
+                ReleaseAddressableHandle();
                 return;
+            }
 
             Destroy(currentInstance);
             currentInstance = null;
+            ReleaseAddressableHandle();
         }
 
-        private GameObject ResolveModelPrefab(BattleCharacterDatabase.BattleCharacterData data)
+        private void BeginAddressableLoad(
+            BattleCharacterDatabase.BattleCharacterData data,
+            AssetReferenceGameObject address)
+        {
+            if (loadRoutine != null && currentAddress == address)
+                return;
+
+            if (currentInstance != null && currentAddress == address)
+            {
+                ApplyTransform();
+                FollowUiAnchor();
+                return;
+            }
+
+            ClearInstance();
+            currentAddress = address;
+            currentPrefab = null;
+
+            int version = ++loadVersion;
+            loadRoutine = StartCoroutine(LoadAddressableModel(data, address, version));
+        }
+
+        private IEnumerator LoadAddressableModel(
+            BattleCharacterDatabase.BattleCharacterData data,
+            AssetReferenceGameObject address,
+            int version)
+        {
+            AsyncOperationHandle<GameObject> handle = Addressables.LoadAssetAsync<GameObject>(address.RuntimeKey);
+            currentAddressHandle = handle;
+            yield return handle;
+
+            loadRoutine = null;
+
+            if (version != loadVersion)
+            {
+                if (handle.IsValid())
+                    Addressables.Release(handle);
+
+                yield break;
+            }
+
+            if (handle.Status != AsyncOperationStatus.Succeeded || handle.Result == null)
+            {
+                Debug.LogWarning("[BattleCharacterModelView] Could not load addressable character model: " + address.RuntimeKey, this);
+                Hide();
+                yield break;
+            }
+
+            currentInstance = Instantiate(handle.Result, modelRoot);
+            currentInstance.name = handle.Result.name;
+            ApplyAnimator(data);
+            ApplyTransform();
+            FollowUiAnchor();
+
+            if (hideFallbackImageWhenModelIsShown && fallbackImage != null)
+                fallbackImage.enabled = false;
+        }
+
+        private void ReleaseAddressableHandle()
+        {
+            if (!currentAddressHandle.HasValue)
+                return;
+
+            AsyncOperationHandle<GameObject> handle = currentAddressHandle.Value;
+            if (handle.IsValid())
+                Addressables.Release(handle);
+
+            currentAddressHandle = null;
+        }
+
+        private AssetReferenceGameObject ResolveModelAddress(BattleCharacterDatabase.BattleCharacterData data)
+        {
+            if (data == null)
+                return null;
+
+            switch (context)
+            {
+                case ModelContext.Profile:
+                    return BattleCharacterDatabase.BattleCharacterData.IsValidAddress(data.ProfileModelAddress)
+                        ? data.ProfileModelAddress
+                        : data.DisplayModelAddress;
+
+                case ModelContext.Battle:
+                    return data.CombatModelAddress;
+
+                default:
+                    return data.DisplayModelAddress;
+            }
+        }
+
+        private GameObject ResolveLocalModelPrefab(BattleCharacterDatabase.BattleCharacterData data)
         {
             if (data == null)
                 return null;
@@ -250,7 +374,7 @@ namespace MahjongGame
             if (targetCamera != null)
                 return targetCamera;
 
-            Camera[] cameras = FindObjectsByType<Camera>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            Camera[] cameras = FindObjectsByType<Camera>(FindObjectsInactive.Exclude);
             return cameras.Length > 0 ? cameras[0] : null;
         }
     }
