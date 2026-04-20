@@ -12,6 +12,9 @@ namespace MahjongGame.Clusters
 
         private void Awake()
         {
+            if (clusterId == ClusterService.MatrixId && GetComponent<MatrixClusterRuntime>() == null)
+                gameObject.AddComponent<MatrixClusterRuntime>();
+
             EnsureSceneUi();
         }
 
@@ -46,16 +49,16 @@ namespace MahjongGame.Clusters
             panelRect.offsetMin = Vector2.zero;
             panelRect.offsetMax = Vector2.zero;
 
-            CreateText(panel.transform, cluster.displayName, 64f, FontStyles.Bold, new Vector2(0f, 130f), new Vector2(820f, 96f));
-            CreateText(panel.transform, cluster.description, 24f, FontStyles.Normal, new Vector2(0f, 58f), new Vector2(820f, 52f));
+            CreateText(panel.transform, cluster.displayName, 42f, FontStyles.Bold, new Vector2(0f, 466f), new Vector2(820f, 62f));
+            CreateText(panel.transform, cluster.description, 20f, FontStyles.Normal, new Vector2(0f, 422f), new Vector2(920f, 44f));
 
             if (ClusterService.TryGet(primaryConnectionId, out ClusterDefinition connection))
             {
-                Button travelButton = CreateButton(panel.transform, $"GO TO {connection.displayName.ToUpperInvariant()}", new Vector2(0f, -28f));
+                Button travelButton = CreateButton(panel.transform, $"GO TO {connection.displayName.ToUpperInvariant()}", new Vector2(-190f, -466f));
                 travelButton.onClick.AddListener(TravelToPrimaryConnection);
             }
 
-            Button backButton = CreateButton(panel.transform, "MAIN", new Vector2(0f, -108f));
+            Button backButton = CreateButton(panel.transform, "MAIN", new Vector2(190f, -466f));
             backButton.onClick.AddListener(ReturnToMain);
         }
 

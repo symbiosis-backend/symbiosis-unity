@@ -2,8 +2,10 @@ using System;
 using System.Collections;
 using FishNet.Managing;
 using FishNet.Managing.Object;
+using FishNet.Object;
 using FishNet.Transporting;
 using FishNet.Transporting.Tugboat;
+using MahjongGame.Clusters;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -18,6 +20,7 @@ namespace MahjongGame.Multiplayer
         private const string ClientArg = "-fishnet-client";
         private const string AddressArg = "-fishnet-address";
         private const string PortArg = "-fishnet-port";
+        private const string MatrixPlayerResourcePath = "Network/MatrixNetworkPlayer";
 
         public static RealtimeNetworkBootstrap I { get; private set; }
 
@@ -49,10 +52,47 @@ namespace MahjongGame.Multiplayer
             root.SetActive(false);
             root.AddComponent<Tugboat>();
             NetworkManager manager = root.AddComponent<NetworkManager>();
-            manager.SpawnablePrefabs = ScriptableObject.CreateInstance<DefaultPrefabObjects>();
+            NetworkObject matrixPlayerPrefab = Resources.Load<NetworkObject>(MatrixPlayerResourcePath);
+            if (matrixPlayerPrefab == null)
+                matrixPlayerPrefab = CreateRuntimeMatrixPlayerPrefab();
+
+            manager.SpawnablePrefabs = CreateSpawnablePrefabs(matrixPlayerPrefab);
+            MatrixNetworkSpawner spawner = root.AddComponent<MatrixNetworkSpawner>();
+            spawner.Configure(manager, matrixPlayerPrefab);
             root.AddComponent<RealtimeNetworkBootstrap>();
             PersistentObjectUtility.DontDestroyOnLoad(root);
             root.SetActive(true);
+        }
+
+        private static DefaultPrefabObjects CreateSpawnablePrefabs(NetworkObject matrixPlayerPrefab)
+        {
+            DefaultPrefabObjects prefabs = ScriptableObject.CreateInstance<DefaultPrefabObjects>();
+            if (matrixPlayerPrefab != null)
+            {
+                prefabs.AddObject(matrixPlayerPrefab);
+            }
+            else
+            {
+                Debug.LogWarning($"[RealtimeNetworkBootstrap] Matrix player prefab was not found at Resources/{MatrixPlayerResourcePath}.");
+            }
+
+            return prefabs;
+        }
+
+        private static NetworkObject CreateRuntimeMatrixPlayerPrefab()
+        {
+            GameObject player = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            player.name = "MatrixNetworkPlayerRuntimePrefab";
+            player.transform.localScale = new Vector3(0.55f, 0.55f, 0.55f);
+            Collider collider = player.GetComponent<Collider>();
+            if (collider != null)
+                Destroy(collider);
+
+            NetworkObject networkObject = player.AddComponent<NetworkObject>();
+            player.AddComponent<MatrixNetworkAvatar>();
+            player.SetActive(false);
+            PersistentObjectUtility.DontDestroyOnLoad(player);
+            return networkObject;
         }
 
         private void Awake()

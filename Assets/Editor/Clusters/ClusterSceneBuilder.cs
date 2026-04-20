@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MahjongGame.Clusters;
+using FishNet.Object;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -13,11 +14,13 @@ namespace MahjongGame.EditorTools
     {
         private const string MatrixScenePath = "Assets/Scenes/ClusterMatrix.unity";
         private const string SlumsScenePath = "Assets/Scenes/ClusterSlums.unity";
+        private const string MatrixPlayerPrefabPath = "Assets/Resources/Network/MatrixNetworkPlayer.prefab";
 
         [MenuItem("Symbiosis/Clusters/Rebuild Cluster Scenes")]
         public static void RebuildClusterScenes()
         {
             EnsureScenesFolder();
+            EnsureMatrixPlayerPrefab();
             CreateClusterScene(MatrixScenePath, ClusterService.MatrixId, ClusterService.SlumsId, new Color(0.02f, 0.06f, 0.07f, 1f));
             CreateClusterScene(SlumsScenePath, ClusterService.SlumsId, ClusterService.MatrixId, new Color(0.10f, 0.07f, 0.055f, 1f));
             EnsureBuildSettings();
@@ -30,6 +33,36 @@ namespace MahjongGame.EditorTools
         {
             if (!AssetDatabase.IsValidFolder("Assets/Scenes"))
                 AssetDatabase.CreateFolder("Assets", "Scenes");
+        }
+
+        private static void EnsureMatrixPlayerPrefab()
+        {
+            EnsureFolder("Assets/Resources");
+            EnsureFolder("Assets/Resources/Network");
+
+            GameObject player = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            player.name = "MatrixNetworkPlayer";
+            player.transform.localScale = new Vector3(0.55f, 0.55f, 0.55f);
+
+            Object.DestroyImmediate(player.GetComponent<Collider>());
+            player.AddComponent<NetworkObject>();
+            player.AddComponent<MatrixNetworkAvatar>();
+
+            PrefabUtility.SaveAsPrefabAsset(player, MatrixPlayerPrefabPath);
+            Object.DestroyImmediate(player);
+        }
+
+        private static void EnsureFolder(string folderPath)
+        {
+            if (AssetDatabase.IsValidFolder(folderPath))
+                return;
+
+            string parent = Path.GetDirectoryName(folderPath)?.Replace('\\', '/');
+            string name = Path.GetFileName(folderPath);
+            if (!string.IsNullOrEmpty(parent) && !AssetDatabase.IsValidFolder(parent))
+                EnsureFolder(parent);
+
+            AssetDatabase.CreateFolder(parent, name);
         }
 
         private static void CreateClusterScene(string scenePath, string clusterId, string connectedClusterId, Color backgroundColor)
@@ -46,6 +79,9 @@ namespace MahjongGame.EditorTools
 
             GameObject controllerObject = new GameObject("ClusterSceneController");
             ClusterSceneController controller = controllerObject.AddComponent<ClusterSceneController>();
+            if (clusterId == ClusterService.MatrixId)
+                controllerObject.AddComponent<MatrixClusterRuntime>();
+
             SerializedObject serialized = new SerializedObject(controller);
             serialized.FindProperty("clusterId").stringValue = clusterId;
             serialized.FindProperty("primaryConnectionId").stringValue = connectedClusterId;
