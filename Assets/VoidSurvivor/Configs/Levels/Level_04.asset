@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c8fa9e3d2f84a36aa0a9257d585326a, type: 3}
+  m_Name: Level_04
+  m_EditorClassIdentifier: 
+  levelNumber: 4
+  startDelay: 1
+  waves:
+  - waveId: Wave 1
+    preDelay: 0.6
+    spawnInterval: 0.3
+    enemies:
+    - enemyConfig: {fileID: 11400000, guid: c111111111114aaab111111111111111, type: 2}
+      count: 14
+      speedMultiplier: 1.18
+      healthMultiplier: 1.08
+    - enemyConfig: {fileID: 11400000, guid: e111111111114aaab111111111111111, type: 2}
+      count: 6
+      speedMultiplier: 1.05
+      healthMultiplier: 1
+  - waveId: Wave 2
+    preDelay: 0.8
+    spawnInterval: 0.25
+    enemies:
+    - enemyConfig: {fileID: 11400000, guid: b111111111114aaab111111111111111, type: 2}
+      count: 18
+      speedMultiplier: 1.18
+      healthMultiplier: 1.1

@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8aebdf28f1cb49a283d2fd16a86ef0f1, type: 3}
+  m_Name: VoidVisualConfig
+  m_EditorClassIdentifier: 
+  playerSprite: {fileID: 0}
+  playerColor: {r: 0.35, g: 0.85, b: 1, a: 1}
+  playerSize: {x: 0.55, y: 0.75}
+  usePlayerTrail: 1
+  trailTime: 0.25
+  trailStartWidth: 0.28
+  trailStartColor: {r: 0.25, g: 0.8, b: 1, a: 0.75}
+  trailEndColor: {r: 0.25, g: 0.8, b: 1, a: 0}
+  bulletSprite: {fileID: 0}
+  bulletColor: {r: 0.6, g: 0.95, b: 1, a: 1}
+  bulletSize: {x: 0.13, y: 0.42}
+  enemyFallbackSprite: {fileID: 0}
+  enemyFallbackColor: {r: 0.75, g: 0.15, b: 1, a: 1}
+  enemyFallbackSize: {x: 0.55, y: 0.55}
+  explosionSprite: {fileID: 0}
+  explosionColor: {r: 0.9, g: 0.35, b: 1, a: 0.65}
+  explosionSize: {x: 0.8, y: 0.8}
+  explosionLifetime: 0.35
+  backgroundColor: {r: 0.015, g: 0.01, b: 0.035, a: 1}
+  orthographicSize: 6

@@ -1,0 +1,219 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5687142138387938839
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 353382570823033567}
+  - component: {fileID: 4877934843343785346}
+  m_Layer: 0
+  m_Name: BattleCharasterDatabase
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &353382570823033567
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5687142138387938839}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1570.9167, y: 843.19385, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4877934843343785346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5687142138387938839}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c65c41455fe55c4e9082ebfcdbd7d39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MahjongGame.BattleCharacterDatabase
+  dontDestroyOnLoad: 1
+  autoMarkFirstCharactersAsStarterFree: 1
+  starterFreeCount: 1
+  verboseLogs: 1
+  characters:
+  - Id: Tiger_Male
+    ServerId: Tiger_Male
+    DisplayName: Kaplan
+    AnimalType: 0
+    Gender: 0
+    ProfileSprite: {fileID: 5922086282754563003, guid: 4beddebd96b380348bea41bfb9932ab1, type: 3}
+    LobbySprite: {fileID: -7331025856235524042, guid: fdafa24eaf318484a858ea7f7791b951, type: 3}
+    BattleSprite: {fileID: -1114355159972045852, guid: 6681c6fbf85a3ff42aaaf7ff70cb1597, type: 3}
+    Stats:
+      MaxHp: 1000
+      Attack: 16
+      Armor: 0.05
+      ParryChance: 0.05
+      CritChance: 0.12
+      CritDamageMultiplier: 1.7
+    IsStarterFree: 1
+    UnlockType: 0
+    PriceCurrency: 0
+    PriceAmount: 0
+    SortOrder: 0
+    IsEnabled: 1
+  - Id: Tiger_Female
+    ServerId: Tiger_Female
+    DisplayName: "Di\u015Fi Kaplan"
+    AnimalType: 0
+    Gender: 1
+    ProfileSprite: {fileID: -2092013373732166123, guid: efeebb115566c5f478baaf9346f0d4b0, type: 3}
+    LobbySprite: {fileID: -6548253190619179607, guid: daeca1ee79144cd43b2f3620d38770a2, type: 3}
+    BattleSprite: {fileID: 6881283377525404965, guid: 4380fc0f8eb5f4a40b324964c884f9b1, type: 3}
+    Stats:
+      MaxHp: 1000
+      Attack: 16
+      Armor: 0.05
+      ParryChance: 0.05
+      CritChance: 0.12
+      CritDamageMultiplier: 1.7
+    IsStarterFree: 0
+    UnlockType: 1
+    PriceCurrency: 1
+    PriceAmount: 10000
+    SortOrder: 1
+    IsEnabled: 1
+  - Id: Fox_Male
+    ServerId: Fox_Male
+    DisplayName: Tilki
+    AnimalType: 1
+    Gender: 0
+    ProfileSprite: {fileID: 4136927331722710171, guid: bed3f18d432c16644a93a01ed113e5be, type: 3}
+    LobbySprite: {fileID: 8780525085496321212, guid: 8a09cd700c143d34aa7f8a0d955ccf1c, type: 3}
+    BattleSprite: {fileID: 5653441568391001000, guid: 9c413690306e8fc40a6faf2f46343b14, type: 3}
+    Stats:
+      MaxHp: 900
+      Attack: 14
+      Armor: 0.03
+      ParryChance: 0.12
+      CritChance: 0.18
+      CritDamageMultiplier: 1.8
+    IsStarterFree: 0
+    UnlockType: 1
+    PriceCurrency: 1
+    PriceAmount: 10000
+    SortOrder: 2
+    IsEnabled: 1
+  - Id: Fox_Female
+    ServerId: Fox_Female
+    DisplayName: "Di\u015Fi Tilki"
+    AnimalType: 1
+    Gender: 1
+    ProfileSprite: {fileID: -1823834011136338262, guid: bf48f2aad84ab6747846b5fcbe491e0b, type: 3}
+    LobbySprite: {fileID: 5664021045868730111, guid: fde6ea1b39db3734da352ff0b07a35bb, type: 3}
+    BattleSprite: {fileID: -1804185198696560210, guid: a6849f5af0e38b54f86de21df6c8d479, type: 3}
+    Stats:
+      MaxHp: 900
+      Attack: 14
+      Armor: 0.03
+      ParryChance: 0.12
+      CritChance: 0.17999999
+      CritDamageMultiplier: 1.8
+    IsStarterFree: 0
+    UnlockType: 1
+    PriceCurrency: 1
+    PriceAmount: 10000
+    SortOrder: 3
+    IsEnabled: 1
+  - Id: Wolf_Male
+    ServerId: Wolf_Male
+    DisplayName: Kurt
+    AnimalType: 2
+    Gender: 0
+    ProfileSprite: {fileID: 3131535292473191252, guid: 53756277cce42c94ca47a3084e06d9ee, type: 3}
+    LobbySprite: {fileID: 545131134261710223, guid: b010109bb45cbc840892d0c5411e0ed0, type: 3}
+    BattleSprite: {fileID: -3691030334517025286, guid: fd832e7d2dafac643b411f42e5b8e166, type: 3}
+    Stats:
+      MaxHp: 1100
+      Attack: 15
+      Armor: 0.08
+      ParryChance: 0.1
+      CritChance: 0.1
+      CritDamageMultiplier: 1.65
+    IsStarterFree: 0
+    UnlockType: 1
+    PriceCurrency: 1
+    PriceAmount: 10000
+    SortOrder: 4
+    IsEnabled: 1
+  - Id: Wolf_Female
+    ServerId: Wolf_Female
+    DisplayName: "Di\u015Fi Kurt"
+    AnimalType: 2
+    Gender: 1
+    ProfileSprite: {fileID: -9168346944554896092, guid: 115e160ccbf888641975694f16b178fd, type: 3}
+    LobbySprite: {fileID: 5659714355461499569, guid: 6cfe2c2240dd2464a88f916f16143c61, type: 3}
+    BattleSprite: {fileID: 6363640529827648534, guid: 0f1af8796aa34b54997d34a392e832d5, type: 3}
+    Stats:
+      MaxHp: 1100
+      Attack: 15
+      Armor: 0.08
+      ParryChance: 0.1
+      CritChance: 0.1
+      CritDamageMultiplier: 1.65
+    IsStarterFree: 0
+    UnlockType: 1
+    PriceCurrency: 1
+    PriceAmount: 10000
+    SortOrder: 5
+    IsEnabled: 1
+  - Id: Bear_Male
+    ServerId: Bear_Male
+    DisplayName: "Ay\u0131"
+    AnimalType: 3
+    Gender: 0
+    ProfileSprite: {fileID: -7723284180558215798, guid: 8bb570009401e4c4099bc0026b23e1e6, type: 3}
+    LobbySprite: {fileID: -5691024563735804951, guid: 14398b74b8e47ed4a93be22385e7243e, type: 3}
+    BattleSprite: {fileID: -6053548776758094169, guid: 8f89f3559eecb8f4c9e19d2652c16532, type: 3}
+    Stats:
+      MaxHp: 1300
+      Attack: 12
+      Armor: 0.15
+      ParryChance: 0.08
+      CritChance: 0.06
+      CritDamageMultiplier: 1.5
+    IsStarterFree: 0
+    UnlockType: 1
+    PriceCurrency: 1
+    PriceAmount: 10000
+    SortOrder: 6
+    IsEnabled: 1
+  - Id: Bear_Female
+    ServerId: Bear_Female
+    DisplayName: "Di\u015Fi Ay\u0131"
+    AnimalType: 3
+    Gender: 1
+    ProfileSprite: {fileID: 7720101571090157658, guid: 31bbed2b7b1f09248af08df842f26dc8, type: 3}
+    LobbySprite: {fileID: 7380176090309922993, guid: 2c0bbe7650df64642bd8ef72673d2dad, type: 3}
+    BattleSprite: {fileID: -7933112123717573220, guid: 590c63c062b956246ae85586bb25e686, type: 3}
+    Stats:
+      MaxHp: 1300
+      Attack: 12
+      Armor: 0.15
+      ParryChance: 0.08
+      CritChance: 0.06
+      CritDamageMultiplier: 1.5
+    IsStarterFree: 0
+    UnlockType: 1
+    PriceCurrency: 1
+    PriceAmount: 10000
+    SortOrder: 7
+    IsEnabled: 1
