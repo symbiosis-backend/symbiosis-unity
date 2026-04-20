@@ -275,6 +275,7 @@ namespace MahjongGame
             while (!operation.isDone)
                 yield return null;
 
+            GlobalChatBootstrap.EnsureForCurrentScene();
             LogRuntime("LoadLobbyRoutine done. Target=" + lobbySceneName);
         }
 

@@ -27,6 +27,12 @@ namespace MahjongGame
         private Coroutine refreshRoutine;
         private bool sending;
 
+        private void Awake()
+        {
+            if (toggleButton == null || panelRoot == null)
+                Build(transform);
+        }
+
         public static GlobalChatUI CreateInScene()
         {
             Canvas canvas = FindAnyObjectByType<Canvas>(FindObjectsInactive.Exclude);
@@ -56,7 +62,9 @@ namespace MahjongGame
             root.transform.SetParent(canvas.transform, false);
 
             GlobalChatUI ui = root.AddComponent<GlobalChatUI>();
-            ui.Build(root.transform);
+            if (ui.toggleButton == null || ui.panelRoot == null)
+                ui.Build(root.transform);
+
             return ui;
         }
 

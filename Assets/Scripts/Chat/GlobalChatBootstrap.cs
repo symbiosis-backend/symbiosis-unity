@@ -5,19 +5,32 @@ namespace MahjongGame
 {
     public static class GlobalChatBootstrap
     {
+        private static readonly string[] ChatSceneNames =
+        {
+            "Main",
+            "LobbyMahjong",
+            "LobbyMahjongBattle"
+        };
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Initialize()
         {
             EnsureService();
             SceneManager.sceneLoaded -= OnSceneLoaded;
             SceneManager.sceneLoaded += OnSceneLoaded;
-            EnsureMainMenuUi(SceneManager.GetActiveScene());
+            EnsureForScene(SceneManager.GetActiveScene());
         }
 
         private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             EnsureService();
-            EnsureMainMenuUi(scene);
+            EnsureForScene(scene);
+        }
+
+        public static void EnsureForCurrentScene()
+        {
+            EnsureService();
+            EnsureForScene(SceneManager.GetActiveScene());
         }
 
         private static void EnsureService()
@@ -29,15 +42,26 @@ namespace MahjongGame
             service.AddComponent<GlobalChatService>();
         }
 
-        private static void EnsureMainMenuUi(Scene scene)
+        private static void EnsureForScene(Scene scene)
         {
-            if (!string.Equals(scene.name, "Main", System.StringComparison.Ordinal))
+            if (!ShouldShowChatInScene(scene.name))
                 return;
 
             if (Object.FindAnyObjectByType<GlobalChatUI>(FindObjectsInactive.Include) != null)
                 return;
 
             GlobalChatUI.CreateInScene();
+        }
+
+        private static bool ShouldShowChatInScene(string sceneName)
+        {
+            for (int i = 0; i < ChatSceneNames.Length; i++)
+            {
+                if (string.Equals(sceneName, ChatSceneNames[i], System.StringComparison.Ordinal))
+                    return true;
+            }
+
+            return false;
         }
     }
 }
