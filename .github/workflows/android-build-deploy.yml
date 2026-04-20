@@ -102,6 +102,23 @@ jobs:
             Write-Error "Build did not create '$env:BUILD_OUTPUT_PATH'."
           }
 
+      - name: Build Addressables Remote Content
+        shell: pwsh
+        run: |
+          & $env:UNITY_EXE `
+            -batchmode `
+            -quit `
+            -projectPath $env:GITHUB_WORKSPACE `
+            -buildTarget Android `
+            -executeMethod RemoteContentAddressablesSetup.BuildRemoteContent `
+            -logFile "$env:GITHUB_WORKSPACE\Builds\Logs\AddressablesBuild.log"
+          if ($LASTEXITCODE -ne 0) {
+            if (Test-Path 'Builds/Logs/AddressablesBuild.log') {
+              Get-Content 'Builds/Logs/AddressablesBuild.log' -Tail 250
+            }
+            exit $LASTEXITCODE
+          }
+
       - name: Write Update Manifest
         shell: pwsh
         run: |
@@ -128,6 +145,8 @@ jobs:
             Builds/Android/symbiosis-latest.apk
             Builds/Android/android-update.json
             Builds/Logs/UnityBuild.log
+            Builds/Logs/AddressablesBuild.log
+            ServerData/Android/**
           if-no-files-found: error
 
       - name: Upload APK To VPS
@@ -145,6 +164,25 @@ jobs:
             'Builds/Android/android-update.json' `
             "$env:SERVER_USER@$env:SERVER_HOST`:$env:SERVER_DOWNLOADS_PATH/"
 
+      - name: Upload Addressables To VPS
+        shell: pwsh
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
+        run: |
+          if (-not (Test-Path 'ServerData/Android')) {
+            Write-Host "No Addressables remote content was produced."
+            exit 0
+          }
+
+          $keyPath = Join-Path $env:RUNNER_TEMP 'symbiosis-server-key'
+          $env:SERVER_SSH_KEY -replace "`r`n", "`n" | Set-Content -LiteralPath $keyPath -NoNewline -Encoding ascii
+          ssh -i $keyPath -o StrictHostKeyChecking=no "$env:SERVER_USER@$env:SERVER_HOST" "mkdir -p '$env:SERVER_DOWNLOADS_PATH/addressables/Android'"
+          scp -r -i $keyPath -o StrictHostKeyChecking=no `
+            'ServerData/Android/*' `
+            "$env:SERVER_USER@$env:SERVER_HOST`:$env:SERVER_DOWNLOADS_PATH/addressables/Android/"
+
       - name: Verify VPS Files
         shell: pwsh
         env:
@@ -154,4 +192,4 @@ jobs:
         run: |
           $keyPath = Join-Path $env:RUNNER_TEMP 'symbiosis-server-key'
           $env:SERVER_SSH_KEY -replace "`r`n", "`n" | Set-Content -LiteralPath $keyPath -NoNewline -Encoding ascii
-          ssh -i $keyPath -o StrictHostKeyChecking=no "$env:SERVER_USER@$env:SERVER_HOST" "ls -lh '$env:SERVER_DOWNLOADS_PATH/symbiosis-latest.apk' '$env:SERVER_DOWNLOADS_PATH/android-update.json' && cat '$env:SERVER_DOWNLOADS_PATH/android-update.json'"
+          ssh -i $keyPath -o StrictHostKeyChecking=no "$env:SERVER_USER@$env:SERVER_HOST" "ls -lh '$env:SERVER_DOWNLOADS_PATH/symbiosis-latest.apk' '$env:SERVER_DOWNLOADS_PATH/android-update.json' && cat '$env:SERVER_DOWNLOADS_PATH/android-update.json' && find '$env:SERVER_DOWNLOADS_PATH/addressables/Android' -maxdepth 1 -type f 2>/dev/null | sort | tail -20"
