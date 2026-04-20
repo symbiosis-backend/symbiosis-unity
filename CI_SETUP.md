@@ -15,7 +15,7 @@ VPS upload:
 - `SERVER_HOST` - for example `91.99.176.77`
 - `SERVER_USER` - SSH user that can write to the backend downloads folder
 - `SERVER_SSH_KEY` - private SSH key for that user
-- `SERVER_DOWNLOADS_PATH` - optional, defaults to `/home/deploy/symbiosis-backend/downloads`
+- `SERVER_DOWNLOADS_PATH` - optional, defaults to `/opt/symbiosis/backend/downloads`
 
 Release signing, recommended before public testing:
 

@@ -21,7 +21,7 @@ env:
   BUILD_VERSION_CODE_OFFSET: 1000
   ANDROID_UPDATE_URL: http://91.99.176.77:8080/downloads/symbiosis-latest.apk
   RELEASE_NOTES: ${{ github.event.inputs.releaseNotes || 'New Symbiosis build is available.' }}
-  SERVER_DOWNLOADS_PATH: ${{ secrets.SERVER_DOWNLOADS_PATH || '/home/deploy/symbiosis-backend/downloads' }}
+  SERVER_DOWNLOADS_PATH: ${{ secrets.SERVER_DOWNLOADS_PATH || '/opt/symbiosis/backend/downloads' }}
 
 jobs:
   build-android:
