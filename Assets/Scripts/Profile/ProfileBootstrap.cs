@@ -507,7 +507,7 @@ namespace MahjongGame
 
         private static void ReleaseInputFocus()
         {
-            TMPro.TMP_InputField[] inputs = FindObjectsByType<TMPro.TMP_InputField>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            TMPro.TMP_InputField[] inputs = FindObjectsByType<TMPro.TMP_InputField>(FindObjectsInactive.Include);
             for (int i = 0; i < inputs.Length; i++)
             {
                 if (inputs[i] != null)
