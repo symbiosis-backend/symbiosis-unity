@@ -1,0 +1,122 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      versionName:
+        description: Android version name shown to players
+        required: false
+        default: "1.0"
+      releaseNotes:
+        description: Update notes shown in the game
+        required: false
+        default: "New Symbiosis build is available."
+  push:
+    branches:
+      - main
+
+env:
+  BUILD_OUTPUT_PATH: Builds/Android/symbiosis-latest.apk
+  BUILD_VERSION_NAME: ${{ github.event.inputs.versionName || '1.0' }}
+  BUILD_VERSION_CODE_OFFSET: 1000
+  ANDROID_UPDATE_URL: http://91.99.176.77:8080/downloads/symbiosis-latest.apk
+  RELEASE_NOTES: ${{ github.event.inputs.releaseNotes || 'New Symbiosis build is available.' }}
+  SERVER_DOWNLOADS_PATH: ${{ secrets.SERVER_DOWNLOADS_PATH || '/home/deploy/symbiosis-backend/downloads' }}
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Cache Unity Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-${{ runner.os }}-Android-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-${{ runner.os }}-Android-
+
+      - name: Restore Android Keystore
+        shell: bash
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$ANDROID_KEYSTORE_BASE64" ]; then
+            echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android-release.keystore
+            echo "ANDROID_KEYSTORE_PATH=$PWD/android-release.keystore" >> "$GITHUB_ENV"
+          else
+            echo "No Android keystore secret configured. Unity default signing will be used."
+          fi
+
+      - name: Build APK
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          ANDROID_KEYSTORE_PASS: ${{ secrets.ANDROID_KEYSTORE_PASS }}
+          ANDROID_KEY_ALIAS_NAME: ${{ secrets.ANDROID_KEY_ALIAS_NAME }}
+          ANDROID_KEY_ALIAS_PASS: ${{ secrets.ANDROID_KEY_ALIAS_PASS }}
+        with:
+          targetPlatform: Android
+          unityVersion: auto
+          buildMethod: AndroidCiBuild.BuildApk
+          androidExportType: androidPackage
+
+      - name: Write Update Manifest
+        shell: bash
+        run: |
+          mkdir -p Builds/Android
+          VERSION_CODE=$((BUILD_VERSION_CODE_OFFSET + GITHUB_RUN_NUMBER))
+          jq -n \
+            --arg latestVersion "$BUILD_VERSION_NAME" \
+            --argjson latestVersionCode "$VERSION_CODE" \
+            --arg updateUrl "$ANDROID_UPDATE_URL" \
+            --arg releaseNotes "$RELEASE_NOTES" \
+            --arg builtAt "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
+            --arg commit "$GITHUB_SHA" \
+            '{
+              latestVersion: $latestVersion,
+              latestVersionCode: $latestVersionCode,
+              minimumVersionCode: 1,
+              forceUpdate: false,
+              updateUrl: $updateUrl,
+              releaseNotes: $releaseNotes,
+              builtAt: $builtAt,
+              commit: $commit
+            }' > Builds/Android/android-update.json
+          test -f "${BUILD_OUTPUT_PATH}"
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: symbiosis-android-${{ github.run_number }}
+          path: |
+            Builds/Android/symbiosis-latest.apk
+            Builds/Android/android-update.json
+          if-no-files-found: error
+
+      - name: Upload APK To VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: "Builds/Android/symbiosis-latest.apk,Builds/Android/android-update.json"
+          target: ${{ env.SERVER_DOWNLOADS_PATH }}
+          strip_components: 2
+
+      - name: Verify VPS Files
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            ls -lh "${{ env.SERVER_DOWNLOADS_PATH }}/symbiosis-latest.apk"
+            cat "${{ env.SERVER_DOWNLOADS_PATH }}/android-update.json"
