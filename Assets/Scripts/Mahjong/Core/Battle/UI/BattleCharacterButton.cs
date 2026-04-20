@@ -17,6 +17,7 @@ namespace MahjongGame
         [Header("Button UI")]
         [SerializeField] private Button button;
         [SerializeField] private Image iconImage;
+        [SerializeField] private BattleCharacterModelView iconModelView;
         [SerializeField] private TMP_Text nameText;
         [SerializeField] private TMP_Text priceText;
 
@@ -53,6 +54,9 @@ namespace MahjongGame
         [SerializeField] private Image previewSelectSpriteImage;
         [SerializeField] private Image previewLobbySpriteImage;
         [SerializeField] private Image previewBattleSpriteImage;
+        [SerializeField] private BattleCharacterModelView previewSelectModelView;
+        [SerializeField] private BattleCharacterModelView previewLobbyModelView;
+        [SerializeField] private BattleCharacterModelView previewBattleModelView;
 
         [Header("Auto Find Preview UI")]
         [SerializeField] private bool autoFindPreviewUI = true;
@@ -227,15 +231,19 @@ namespace MahjongGame
 
             if (iconImage != null)
             {
-                Sprite buttonSprite = data.SelectSprite != null
-                    ? data.SelectSprite
-                    : data.LobbySprite != null
-                        ? data.LobbySprite
-                        : data.BattleSprite;
+                bool showingModel = ApplyModel(iconModelView, iconImage, data, BattleCharacterModelView.ModelContext.Profile);
+                if (!showingModel)
+                {
+                    Sprite buttonSprite = data.SelectSprite != null
+                        ? data.SelectSprite
+                        : data.LobbySprite != null
+                            ? data.LobbySprite
+                            : data.BattleSprite;
 
-                iconImage.sprite = buttonSprite;
-                iconImage.enabled = buttonSprite != null;
-                SetImageAlpha(iconImage, buttonSprite != null ? 1f : 0f);
+                    iconImage.sprite = buttonSprite;
+                    iconImage.enabled = buttonSprite != null;
+                    SetImageAlpha(iconImage, buttonSprite != null ? 1f : 0f);
+                }
             }
 
             if (nameText != null)
@@ -376,9 +384,9 @@ namespace MahjongGame
                 previewPriceText.text = BuildPreviewStatusText(data, unlocked);
             }
 
-            ApplyImage(previewSelectSpriteImage, data.SelectSprite);
-            ApplyImage(previewLobbySpriteImage, data.LobbySprite);
-            ApplyImage(previewBattleSpriteImage, data.BattleSprite);
+            ApplyPreviewModelOrImage(ref previewSelectModelView, previewSelectSpriteImage, data, BattleCharacterModelView.ModelContext.Profile, data.SelectSprite);
+            ApplyPreviewModelOrImage(ref previewLobbyModelView, previewLobbySpriteImage, data, BattleCharacterModelView.ModelContext.Lobby, data.LobbySprite);
+            ApplyPreviewModelOrImage(ref previewBattleModelView, previewBattleSpriteImage, data, BattleCharacterModelView.ModelContext.Battle, data.BattleSprite);
         }
 
         private void TryResolveLocalUI()
@@ -389,6 +397,9 @@ namespace MahjongGame
 
             if (iconImage == null || !IsOwnedByThisCard(iconImage))
                 iconImage = FindChildImageByName("Icon");
+
+            if (iconImage != null && (iconModelView == null || !IsOwnedByThisCard(iconModelView)))
+                iconModelView = EnsureModelView(iconImage);
 
             if (scaleTarget == null || scaleTarget == iconImage?.rectTransform)
                 scaleTarget = root;
@@ -428,6 +439,15 @@ namespace MahjongGame
 
             if (previewBattleSpriteImage == null)
                 previewBattleSpriteImage = FindSceneImageByName(previewBattleImageObjectName);
+
+            if (previewSelectSpriteImage != null && previewSelectModelView == null)
+                previewSelectModelView = EnsureModelView(previewSelectSpriteImage);
+
+            if (previewLobbySpriteImage != null && previewLobbyModelView == null)
+                previewLobbyModelView = EnsureModelView(previewLobbySpriteImage);
+
+            if (previewBattleSpriteImage != null && previewBattleModelView == null)
+                previewBattleModelView = EnsureModelView(previewBattleSpriteImage);
         }
 
         [ContextMenu("Battle Character/Apply Standard Card Layout")]
@@ -671,6 +691,53 @@ namespace MahjongGame
             target.sprite = sprite;
             target.enabled = sprite != null;
             SetImageAlpha(target, sprite != null ? 1f : 0f);
+        }
+
+        private void ApplyPreviewModelOrImage(
+            ref BattleCharacterModelView modelView,
+            Image image,
+            BattleCharacterDatabase.BattleCharacterData data,
+            BattleCharacterModelView.ModelContext modelContext,
+            Sprite fallbackSprite)
+        {
+            bool showingModel = ApplyModel(modelView, image, data, modelContext);
+            if (!showingModel)
+                ApplyImage(image, fallbackSprite);
+
+            if (modelView == null && image != null)
+                modelView = image.GetComponent<BattleCharacterModelView>();
+        }
+
+        private bool ApplyModel(
+            BattleCharacterModelView modelView,
+            Image image,
+            BattleCharacterDatabase.BattleCharacterData data,
+            BattleCharacterModelView.ModelContext modelContext)
+        {
+            if (image == null || data == null)
+            {
+                if (modelView != null)
+                    modelView.Hide();
+
+                return false;
+            }
+
+            if (modelView == null)
+                modelView = EnsureModelView(image);
+
+            return modelView != null && modelView.Show(data, modelContext);
+        }
+
+        private BattleCharacterModelView EnsureModelView(Image image)
+        {
+            if (image == null)
+                return null;
+
+            BattleCharacterModelView view = image.GetComponent<BattleCharacterModelView>();
+            if (view == null)
+                view = image.gameObject.AddComponent<BattleCharacterModelView>();
+
+            return view;
         }
 
         private void SetImageAlpha(Image image, float alpha)

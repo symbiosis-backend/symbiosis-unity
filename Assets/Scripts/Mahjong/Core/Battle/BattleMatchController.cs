@@ -31,6 +31,7 @@ namespace MahjongGame
 
         [Header("Player Profile UI")]
         [SerializeField] private Image playerBattleSpriteImage;
+        [SerializeField] private BattleCharacterModelView playerBattleModelView;
         [SerializeField] private TMP_Text playerNameText;
         [SerializeField] private TMP_Text playerRankText;
         [SerializeField] private string playerRankFormat = "{0} {1} RP";
@@ -51,6 +52,7 @@ namespace MahjongGame
 
         [Header("Opponent Profile UI")]
         [SerializeField] private Image opponentBattleSpriteImage;
+        [SerializeField] private BattleCharacterModelView opponentBattleModelView;
         [SerializeField] private TMP_Text opponentNameText;
         [SerializeField] private TMP_Text opponentRankText;
         [SerializeField] private string opponentRankFormat = "{0} {1} RP";
@@ -1042,6 +1044,10 @@ namespace MahjongGame
             if (opponentBattleSpriteImage == null)
                 return;
 
+            BattleCharacterDatabase.BattleCharacterData data = ResolveBattleCharacter(opponentBattleCharacterId);
+            if (ApplyBattleModel(data, ref opponentBattleModelView, opponentBattleSpriteImage, true))
+                return;
+
             Sprite battleSprite = ResolveBattleSprite(opponentBattleCharacterId);
             opponentBattleSpriteImage.sprite = battleSprite;
             opponentBattleSpriteImage.enabled = battleSprite != null;
@@ -1121,6 +1127,10 @@ namespace MahjongGame
             if (playerBattleSpriteImage == null)
                 return;
 
+            BattleCharacterDatabase.BattleCharacterData data = ResolveSelectedBattleCharacter();
+            if (ApplyBattleModel(data, ref playerBattleModelView, playerBattleSpriteImage, false))
+                return;
+
             Sprite battleSprite = ResolveSelectedBattleSprite();
             playerBattleSpriteImage.sprite = battleSprite;
             playerBattleSpriteImage.enabled = battleSprite != null;
@@ -1132,6 +1142,45 @@ namespace MahjongGame
                 new Vector2(0f, 1f),
                 new Vector2(0f, 1f));
             ApplyImageFlip(playerBattleSpriteImage, false);
+        }
+
+        private bool ApplyBattleModel(
+            BattleCharacterDatabase.BattleCharacterData data,
+            ref BattleCharacterModelView modelView,
+            Image anchorImage,
+            bool flipX)
+        {
+            if (anchorImage == null || data == null)
+            {
+                if (modelView != null)
+                    modelView.Hide();
+
+                return false;
+            }
+
+            if (modelView == null)
+                modelView = anchorImage.GetComponent<BattleCharacterModelView>();
+
+            if (modelView == null)
+                modelView = anchorImage.gameObject.AddComponent<BattleCharacterModelView>();
+
+            return modelView.Show(data, BattleCharacterModelView.ModelContext.Battle, flipX);
+        }
+
+        private BattleCharacterDatabase.BattleCharacterData ResolveSelectedBattleCharacter()
+        {
+            if (!BattleCharacterSelectionService.HasInstance)
+                return null;
+
+            return BattleCharacterSelectionService.Instance.GetSelectedCharacter();
+        }
+
+        private BattleCharacterDatabase.BattleCharacterData ResolveBattleCharacter(string characterId)
+        {
+            if (string.IsNullOrWhiteSpace(characterId) || !BattleCharacterDatabase.HasInstance)
+                return null;
+
+            return BattleCharacterDatabase.Instance.GetCharacterOrNull(characterId);
         }
 
         private Sprite ResolveSelectedBattleSprite()

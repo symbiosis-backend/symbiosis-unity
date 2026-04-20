@@ -8,6 +8,7 @@ namespace MahjongGame
     public sealed class BattleLobbyChar : MonoBehaviour
     {
         [SerializeField] private Image target;
+        [SerializeField] private BattleCharacterModelView modelView;
         [SerializeField] private bool preserveAspect = true;
         [SerializeField] private bool hideOnStart = true;
         [SerializeField] private bool useSelectSpriteIfLobbySpriteMissing = true;
@@ -24,6 +25,12 @@ namespace MahjongGame
         {
             if (target == null)
                 target = GetComponent<Image>();
+
+            if (modelView == null)
+                modelView = GetComponent<BattleCharacterModelView>();
+
+            if (modelView == null)
+                modelView = gameObject.AddComponent<BattleCharacterModelView>();
 
             if (hideOnStart && target != null)
                 target.enabled = false;
@@ -58,6 +65,9 @@ namespace MahjongGame
 
             if (!BattleCharacterSelectionService.HasInstance || !BattleCharacterDatabase.HasInstance)
             {
+                if (modelView != null)
+                    modelView.Hide();
+
                 if (hideOnStart && !isConfirmed)
                     target.enabled = false;
 
@@ -67,6 +77,9 @@ namespace MahjongGame
             string id = BattleCharacterSelectionService.Instance.SelectedCharacterId;
             if (string.IsNullOrWhiteSpace(id))
             {
+                if (modelView != null)
+                    modelView.Hide();
+
                 target.enabled = false;
                 return;
             }
@@ -76,9 +89,15 @@ namespace MahjongGame
 
             if (data == null)
             {
+                if (modelView != null)
+                    modelView.Hide();
+
                 target.enabled = false;
                 return;
             }
+
+            if (modelView != null && modelView.Show(data, BattleCharacterModelView.ModelContext.Lobby))
+                return;
 
             Sprite sprite = data.LobbySprite != null
                 ? data.LobbySprite
@@ -100,6 +119,9 @@ namespace MahjongGame
         public void HideNow()
         {
             isConfirmed = false;
+
+            if (modelView != null)
+                modelView.Hide();
 
             if (target != null)
                 target.enabled = false;

@@ -10,6 +10,7 @@ namespace MahjongGame
     {
         [Header("UI")]
         [SerializeField] private Image lobbyCharacterImage;
+        [SerializeField] private BattleCharacterModelView lobbyCharacterModelView;
 
         [Header("Buttons")]
         [SerializeField] private Button selectCharacterButton;
@@ -80,7 +81,8 @@ namespace MahjongGame
             bool hasCharacter = data != null;
             Sprite targetSprite = GetLobbyDisplaySprite(data);
 
-            ApplyLobbyImage(targetSprite);
+            bool showingModel = ApplyLobbyModel(data);
+            ApplyLobbyImage(showingModel ? null : targetSprite);
 
             if (selectedCharacterNameText != null)
                 selectedCharacterNameText.text = hasCharacter ? GetSafeName(data) : emptyNameText;
@@ -147,6 +149,25 @@ namespace MahjongGame
                 FitInside(rt, sprite.rect.width, sprite.rect.height, maxWidth, maxHeight);
 
             rt.anchoredPosition = new Vector2(imageOffsetX, imageOffsetY);
+        }
+
+        private bool ApplyLobbyModel(BattleCharacterDatabase.BattleCharacterData data)
+        {
+            if (lobbyCharacterModelView == null && lobbyCharacterImage != null)
+                lobbyCharacterModelView = lobbyCharacterImage.GetComponent<BattleCharacterModelView>();
+
+            if (lobbyCharacterModelView == null && lobbyCharacterImage != null)
+                lobbyCharacterModelView = lobbyCharacterImage.gameObject.AddComponent<BattleCharacterModelView>();
+
+            if (lobbyCharacterModelView == null || data == null)
+            {
+                if (lobbyCharacterModelView != null)
+                    lobbyCharacterModelView.Hide();
+
+                return false;
+            }
+
+            return lobbyCharacterModelView.Show(data, BattleCharacterModelView.ModelContext.Lobby);
         }
 
         private void FitInside(RectTransform rt, float sourceW, float sourceH, float maxW, float maxH)
