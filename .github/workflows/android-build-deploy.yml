@@ -85,13 +85,22 @@ jobs:
           unityVersion: 6000.4.2f1
           buildMethod: AndroidCiBuild.BuildApk
           androidExportType: androidPackage
-          customParameters: -logFile Builds/Logs/UnityBuild.log
+          customParameters: -logFile /github/workspace/Builds/Logs/UnityBuild.log
 
       - name: Collect Unity Logs
         if: failure()
         shell: bash
         run: |
           mkdir -p Builds/Logs
+          {
+            echo "Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            echo "Commit: $GITHUB_SHA"
+            echo "Unity project version:"
+            cat ProjectSettings/ProjectVersion.txt || true
+            echo
+            echo "Known log files:"
+            find Builds "$HOME/.config/unity3d" /root/.config/unity3d -type f -iname "*.log" -print 2>/dev/null || true
+          } > Builds/Logs/ci-diagnostics.txt
           find Builds -type f -iname "*.log" -print || true
           if [ -d "$HOME/.config/unity3d" ]; then
             find "$HOME/.config/unity3d" -type f -iname "*.log" -print -exec cp --parents {} Builds/Logs/ \; || true
@@ -107,7 +116,7 @@ jobs:
         with:
           name: unity-build-logs-${{ github.run_number }}
           path: Builds/Logs/**
-          if-no-files-found: warn
+          if-no-files-found: error
 
       - name: Write Update Manifest
         shell: bash
