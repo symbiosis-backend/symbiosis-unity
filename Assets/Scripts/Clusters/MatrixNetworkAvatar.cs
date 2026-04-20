@@ -1,6 +1,5 @@
 using FishNet.Object;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace MahjongGame.Clusters
 {
@@ -16,7 +15,7 @@ namespace MahjongGame.Clusters
         private Vector3 targetPosition;
         private float nextSendTime;
 
-        private bool IsInMatrixScene => SceneManager.GetActiveScene().name == ClusterService.MatrixSceneName;
+        private bool IsInMatrixScene => UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == ClusterService.MatrixSceneName;
 
         private void Awake()
         {
