@@ -512,7 +512,7 @@ namespace FishNet.Managing
         }
         private void Reset()
         {
-            ValidateSpawnablePrefabs(true);
+            ValidateSpawnablePrefabs(!Application.isPlaying);
         }
 
 #endif

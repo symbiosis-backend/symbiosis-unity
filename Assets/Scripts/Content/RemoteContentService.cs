@@ -70,16 +70,16 @@ namespace MahjongGame.Content
             AsyncOperationHandle<long> sizeHandle = Addressables.GetDownloadSizeAsync(label);
             yield return sizeHandle;
 
-            if (sizeHandle.Status != AsyncOperationStatus.Succeeded)
+            if (!HandleSucceeded(sizeHandle))
             {
                 LastError = "Could not check remote content size for label: " + label;
                 Debug.LogWarning("[RemoteContentService] " + LastError);
-                Addressables.Release(sizeHandle);
+                ReleaseIfValid(sizeHandle);
                 yield break;
             }
 
             long size = sizeHandle.Result;
-            Addressables.Release(sizeHandle);
+            ReleaseIfValid(sizeHandle);
 
             if (size <= 0)
                 yield break;
@@ -87,13 +87,13 @@ namespace MahjongGame.Content
             AsyncOperationHandle downloadHandle = Addressables.DownloadDependenciesAsync(label);
             yield return downloadHandle;
 
-            if (downloadHandle.Status != AsyncOperationStatus.Succeeded)
+            if (!HandleSucceeded(downloadHandle))
             {
                 LastError = "Could not download remote content label: " + label;
                 Debug.LogWarning("[RemoteContentService] " + LastError);
             }
 
-            Addressables.Release(downloadHandle);
+            ReleaseIfValid(downloadHandle);
         }
 
         private IEnumerator CheckCatalogAfterDelay()
@@ -114,25 +114,25 @@ namespace MahjongGame.Content
             AsyncOperationHandle initHandle = Addressables.InitializeAsync();
             yield return initHandle;
 
-            if (initHandle.Status != AsyncOperationStatus.Succeeded)
+            if (!HandleSucceeded(initHandle))
             {
                 LastError = "Addressables initialization failed.";
                 Debug.LogWarning("[RemoteContentService] " + LastError);
-                Addressables.Release(initHandle);
+                ReleaseIfValid(initHandle);
                 IsChecking = false;
                 yield break;
             }
 
-            Addressables.Release(initHandle);
+            ReleaseIfValid(initHandle);
 
             AsyncOperationHandle<List<string>> checkHandle = Addressables.CheckForCatalogUpdates(false);
             yield return checkHandle;
 
-            if (checkHandle.Status != AsyncOperationStatus.Succeeded)
+            if (!HandleSucceeded(checkHandle))
             {
                 LastError = "Remote catalog check failed.";
                 Debug.LogWarning("[RemoteContentService] " + LastError);
-                Addressables.Release(checkHandle);
+                ReleaseIfValid(checkHandle);
                 IsChecking = false;
                 yield break;
             }
@@ -141,25 +141,47 @@ namespace MahjongGame.Content
             if (catalogs == null || catalogs.Count == 0)
             {
                 LastCheckSucceeded = true;
-                Addressables.Release(checkHandle);
+                ReleaseIfValid(checkHandle);
                 IsChecking = false;
                 yield break;
             }
 
-            Addressables.Release(checkHandle);
+            ReleaseIfValid(checkHandle);
 
             AsyncOperationHandle<List<IResourceLocator>> updateHandle = Addressables.UpdateCatalogs(catalogs, false);
             yield return updateHandle;
 
-            LastCheckSucceeded = updateHandle.Status == AsyncOperationStatus.Succeeded;
+            LastCheckSucceeded = HandleSucceeded(updateHandle);
             if (!LastCheckSucceeded)
             {
                 LastError = "Remote catalog update failed.";
                 Debug.LogWarning("[RemoteContentService] " + LastError);
             }
 
-            Addressables.Release(updateHandle);
+            ReleaseIfValid(updateHandle);
             IsChecking = false;
+        }
+
+        private static bool HandleSucceeded(AsyncOperationHandle handle)
+        {
+            return handle.IsValid() && handle.Status == AsyncOperationStatus.Succeeded;
+        }
+
+        private static bool HandleSucceeded<T>(AsyncOperationHandle<T> handle)
+        {
+            return handle.IsValid() && handle.Status == AsyncOperationStatus.Succeeded;
+        }
+
+        private static void ReleaseIfValid(AsyncOperationHandle handle)
+        {
+            if (handle.IsValid())
+                Addressables.Release(handle);
+        }
+
+        private static void ReleaseIfValid<T>(AsyncOperationHandle<T> handle)
+        {
+            if (handle.IsValid())
+                Addressables.Release(handle);
         }
     }
 }
