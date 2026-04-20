@@ -78,7 +78,7 @@ jobs:
           ANDROID_KEY_ALIAS_PASS: ${{ secrets.ANDROID_KEY_ALIAS_PASS }}
         with:
           targetPlatform: Android
-          unityVersion: 6000.4.3f1
+          unityVersion: 6000.3.13f1
           buildMethod: AndroidCiBuild.BuildApk
           androidExportType: androidPackage
 
