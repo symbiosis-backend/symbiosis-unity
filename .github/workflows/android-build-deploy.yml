@@ -16,6 +16,7 @@ on:
       - main
 
 env:
+  UNITY_EXE: C:\Program Files\Unity\Hub\Editor\6000.4.3f1\Editor\Unity.exe
   BUILD_OUTPUT_PATH: Builds/Android/symbiosis-latest.apk
   BUILD_VERSION_NAME: ${{ github.event.inputs.versionName || '1.0' }}
   BUILD_VERSION_CODE_OFFSET: 1000
@@ -25,7 +26,10 @@ env:
 
 jobs:
   build-android:
-    runs-on: ubuntu-latest
+    runs-on:
+      - self-hosted
+      - Windows
+      - X64
 
     steps:
       - name: Checkout
@@ -41,132 +45,80 @@ jobs:
           restore-keys: |
             Library-${{ runner.os }}-Android-
 
-      - name: Restore Android Keystore
-        shell: bash
-        env:
-          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-        run: |
-          if [ -n "$ANDROID_KEYSTORE_BASE64" ]; then
-            echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android-release.keystore
-            echo "ANDROID_KEYSTORE_PATH=$PWD/android-release.keystore" >> "$GITHUB_ENV"
-          else
-            echo "No Android keystore secret configured. Unity default signing will be used."
-          fi
-
       - name: Check Required Secrets
-        shell: bash
+        shell: pwsh
         env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
           SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
         run: |
-          test -n "$UNITY_LICENSE" || { echo "::error::UNITY_LICENSE secret is empty or missing."; exit 1; }
-          test -n "$SERVER_HOST" || { echo "::error::SERVER_HOST secret is empty or missing."; exit 1; }
-          test -n "$SERVER_USER" || { echo "::error::SERVER_USER secret is empty or missing."; exit 1; }
-          test -n "$SERVER_SSH_KEY" || { echo "::error::SERVER_SSH_KEY secret is empty or missing."; exit 1; }
-          echo "Required secrets are present."
+          if (-not (Test-Path $env:UNITY_EXE)) {
+            Write-Error "Unity executable was not found at '$env:UNITY_EXE'. Install Unity 6000.4.3f1 Android module on this runner or update UNITY_EXE."
+          }
+          foreach ($name in @('SERVER_HOST', 'SERVER_USER', 'SERVER_SSH_KEY')) {
+            if ([string]::IsNullOrWhiteSpace([Environment]::GetEnvironmentVariable($name))) {
+              Write-Error "$name secret is empty or missing."
+            }
+          }
+          Write-Host "Required runner tools and secrets are present."
 
-      - name: Prepare Build Folders
-        shell: bash
-        run: mkdir -p Builds/Android Builds/Logs
+      - name: Restore Android Keystore
+        shell: pwsh
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          if (-not [string]::IsNullOrWhiteSpace($env:ANDROID_KEYSTORE_BASE64)) {
+            $keystorePath = Join-Path $env:RUNNER_TEMP 'android-release.keystore'
+            [IO.File]::WriteAllBytes($keystorePath, [Convert]::FromBase64String($env:ANDROID_KEYSTORE_BASE64))
+            "ANDROID_KEYSTORE_PATH=$keystorePath" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          } else {
+            Write-Host "No Android keystore secret configured. Unity default signing will be used."
+          }
 
       - name: Build APK
-        uses: game-ci/unity-builder@v4
+        shell: pwsh
         env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
           ANDROID_KEYSTORE_PASS: ${{ secrets.ANDROID_KEYSTORE_PASS }}
           ANDROID_KEY_ALIAS_NAME: ${{ secrets.ANDROID_KEY_ALIAS_NAME }}
           ANDROID_KEY_ALIAS_PASS: ${{ secrets.ANDROID_KEY_ALIAS_PASS }}
-        with:
-          targetPlatform: Android
-          unityVersion: 6000.4.2f1
-          buildMethod: AndroidCiBuild.BuildApk
-          androidExportType: androidPackage
-          customParameters: -logFile /github/workspace/Builds/Logs/UnityBuild.log
-
-      - name: Collect Unity Logs
-        if: failure()
-        shell: bash
         run: |
-          mkdir -p Builds/Logs
-          {
-            echo "Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
-            echo "Commit: $GITHUB_SHA"
-            echo "Unity project version:"
-            cat ProjectSettings/ProjectVersion.txt || true
-            echo
-            echo "Known log files:"
-            find Builds "$HOME/.config/unity3d" /root/.config/unity3d -type f -iname "*.log" -print 2>/dev/null || true
-          } > Builds/Logs/ci-diagnostics.txt
-          find Builds -type f -iname "*.log" -print || true
-          if [ -d "$HOME/.config/unity3d" ]; then
-            find "$HOME/.config/unity3d" -type f -iname "*.log" -print -exec cp --parents {} Builds/Logs/ \; || true
-          fi
-          if [ -d /root/.config/unity3d ]; then
-            find /root/.config/unity3d -type f -iname "*.log" -print -exec cp --parents {} Builds/Logs/ \; || true
-          fi
-          ls -R Builds/Logs || true
-
-      - name: Upload Unity Logs
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: unity-build-logs-${{ github.run_number }}
-          path: Builds/Logs/**
-          if-no-files-found: error
-
-      - name: Prepare Failed Logs Folder On VPS
-        if: failure()
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          script: mkdir -p "${{ env.SERVER_DOWNLOADS_PATH }}/ci-logs/${{ github.run_number }}"
-
-      - name: Upload Failed Logs To VPS
-        if: failure()
-        uses: appleboy/scp-action@v0.1.7
-        continue-on-error: true
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          source: "Builds/Logs/ci-diagnostics.txt"
-          target: ${{ env.SERVER_DOWNLOADS_PATH }}/ci-logs/${{ github.run_number }}
-          strip_components: 2
-
-      - name: Print Failed Logs URL
-        if: failure()
-        shell: bash
-        run: |
-          echo "Logs URL: http://${{ secrets.SERVER_HOST }}:8080/downloads/ci-logs/${{ github.run_number }}/ci-diagnostics.txt"
+          New-Item -ItemType Directory -Force -Path 'Builds/Android', 'Builds/Logs' | Out-Null
+          $versionCode = [int]$env:BUILD_VERSION_CODE_OFFSET + [int]$env:GITHUB_RUN_NUMBER
+          "BUILD_VERSION_CODE=$versionCode" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          & $env:UNITY_EXE `
+            -batchmode `
+            -quit `
+            -projectPath $env:GITHUB_WORKSPACE `
+            -buildTarget Android `
+            -executeMethod AndroidCiBuild.BuildApk `
+            -logFile "$env:GITHUB_WORKSPACE\Builds\Logs\UnityBuild.log"
+          if ($LASTEXITCODE -ne 0) {
+            if (Test-Path 'Builds/Logs/UnityBuild.log') {
+              Get-Content 'Builds/Logs/UnityBuild.log' -Tail 250
+            }
+            exit $LASTEXITCODE
+          }
+          if (-not (Test-Path $env:BUILD_OUTPUT_PATH)) {
+            Write-Error "Build did not create '$env:BUILD_OUTPUT_PATH'."
+          }
 
       - name: Write Update Manifest
-        shell: bash
+        shell: pwsh
         run: |
-          VERSION_CODE=$((BUILD_VERSION_CODE_OFFSET + GITHUB_RUN_NUMBER))
-          jq -n \
-            --arg latestVersion "$BUILD_VERSION_NAME" \
-            --argjson latestVersionCode "$VERSION_CODE" \
-            --arg updateUrl "$ANDROID_UPDATE_URL" \
-            --arg releaseNotes "$RELEASE_NOTES" \
-            --arg builtAt "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
-            --arg commit "$GITHUB_SHA" \
-            '{
-              latestVersion: $latestVersion,
-              latestVersionCode: $latestVersionCode,
-              minimumVersionCode: 1,
-              forceUpdate: false,
-              updateUrl: $updateUrl,
-              releaseNotes: $releaseNotes,
-              builtAt: $builtAt,
-              commit: $commit
-            }' > Builds/Android/android-update.json
-          test -f "${BUILD_OUTPUT_PATH}"
+          $manifest = [ordered]@{
+            latestVersion = $env:BUILD_VERSION_NAME
+            latestVersionCode = [int]$env:BUILD_VERSION_CODE
+            minimumVersionCode = 1
+            forceUpdate = $false
+            updateUrl = $env:ANDROID_UPDATE_URL
+            releaseNotes = $env:RELEASE_NOTES
+            builtAt = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
+            commit = $env:GITHUB_SHA
+          }
+          $json = $manifest | ConvertTo-Json -Depth 5
+          $utf8NoBom = [Text.UTF8Encoding]::new($false)
+          [IO.File]::WriteAllText((Join-Path $env:GITHUB_WORKSPACE 'Builds/Android/android-update.json'), $json, $utf8NoBom)
+          Get-Content 'Builds/Android/android-update.json'
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
@@ -175,24 +127,31 @@ jobs:
           path: |
             Builds/Android/symbiosis-latest.apk
             Builds/Android/android-update.json
+            Builds/Logs/UnityBuild.log
           if-no-files-found: error
 
       - name: Upload APK To VPS
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          source: "Builds/Android/symbiosis-latest.apk,Builds/Android/android-update.json"
-          target: ${{ env.SERVER_DOWNLOADS_PATH }}
-          strip_components: 2
+        shell: pwsh
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
+        run: |
+          $keyPath = Join-Path $env:RUNNER_TEMP 'symbiosis-server-key'
+          $env:SERVER_SSH_KEY -replace "`r`n", "`n" | Set-Content -LiteralPath $keyPath -NoNewline -Encoding ascii
+          ssh -i $keyPath -o StrictHostKeyChecking=no "$env:SERVER_USER@$env:SERVER_HOST" "mkdir -p '$env:SERVER_DOWNLOADS_PATH'"
+          scp -i $keyPath -o StrictHostKeyChecking=no `
+            'Builds/Android/symbiosis-latest.apk' `
+            'Builds/Android/android-update.json' `
+            "$env:SERVER_USER@$env:SERVER_HOST`:$env:SERVER_DOWNLOADS_PATH/"
 
       - name: Verify VPS Files
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          script: |
-            ls -lh "${{ env.SERVER_DOWNLOADS_PATH }}/symbiosis-latest.apk"
-            cat "${{ env.SERVER_DOWNLOADS_PATH }}/android-update.json"
+        shell: pwsh
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+          SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
+        run: |
+          $keyPath = Join-Path $env:RUNNER_TEMP 'symbiosis-server-key'
+          $env:SERVER_SSH_KEY -replace "`r`n", "`n" | Set-Content -LiteralPath $keyPath -NoNewline -Encoding ascii
+          ssh -i $keyPath -o StrictHostKeyChecking=no "$env:SERVER_USER@$env:SERVER_HOST" "ls -lh '$env:SERVER_DOWNLOADS_PATH/symbiosis-latest.apk' '$env:SERVER_DOWNLOADS_PATH/android-update.json' && cat '$env:SERVER_DOWNLOADS_PATH/android-update.json'"
