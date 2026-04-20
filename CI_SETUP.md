@@ -28,17 +28,17 @@ If the keystore secrets are missing, Unity default signing is used. That is okay
 
 ## Workflow
 
-### Manual Unity activation
+### Unity Personal license
 
-Use this flow when the Unity account signs in through Google or 2FA and there is no password for CI.
+GameCI v4 uses the Unity license that Unity Hub creates on a local machine. This is the right flow when the Unity account signs in through Google or 2FA and there is no password for CI.
 
-1. Open GitHub Actions.
-2. Run `Request Unity Activation File`.
-3. Download the `unity-activation-file` artifact.
-4. Open `https://license.unity3d.com/manual`.
-5. Sign in to Unity and upload the `.alf` file from the artifact.
-6. Download the generated `.ulf` file.
-7. Open the `.ulf` file as text.
+1. Open Unity Hub locally.
+2. Sign in to Unity Hub.
+3. Open `Preferences` > `Licenses`.
+4. Click `Add`.
+5. Select `Get a free personal license`.
+6. Find the license file at `C:\ProgramData\Unity\Unity_lic.ulf`.
+7. Open `Unity_lic.ulf` as text.
 8. Add the whole file contents as the repository secret `UNITY_LICENSE`.
 
 After `UNITY_LICENSE` is set, the Android build workflow can run without `UNITY_PASSWORD`.
