@@ -350,7 +350,7 @@ namespace MahjongGame
             if (FriendsService.I == null || FriendsService.I.IncomingRequests.Count == 0)
                 return;
 
-            StartCoroutine(FriendsService.I.Accept(FriendsService.I.IncomingRequests[0].id, RefreshStatus));
+            StartCoroutine(FriendsService.I.Accept(FriendsService.I.IncomingRequests[0].id, (_, message) => RefreshStatus(message)));
         }
 
         private void DeclineFirstRequest()
@@ -358,7 +358,7 @@ namespace MahjongGame
             if (FriendsService.I == null || FriendsService.I.IncomingRequests.Count == 0)
                 return;
 
-            StartCoroutine(FriendsService.I.Decline(FriendsService.I.IncomingRequests[0].id, RefreshStatus));
+            StartCoroutine(FriendsService.I.Decline(FriendsService.I.IncomingRequests[0].id, (_, message) => RefreshStatus(message)));
         }
 
         private void RefreshView()
