@@ -7,8 +7,8 @@ This project is prepared for GitHub Actions Android builds.
 Unity activation:
 
 - `UNITY_LICENSE`
-- `UNITY_EMAIL`
-- `UNITY_PASSWORD`
+- `UNITY_EMAIL` - optional when `UNITY_LICENSE` is used
+- `UNITY_PASSWORD` - optional when `UNITY_LICENSE` is used
 
 VPS upload:
 
@@ -27,6 +27,23 @@ Release signing, recommended before public testing:
 If the keystore secrets are missing, Unity default signing is used. That is okay for first CI tests, but Android updates only install cleanly over the previous APK when the signing key is the same.
 
 ## Workflow
+
+### Manual Unity activation
+
+Use this flow when the Unity account signs in through Google or 2FA and there is no password for CI.
+
+1. Open GitHub Actions.
+2. Run `Request Unity Activation File`.
+3. Download the `unity-activation-file` artifact.
+4. Open `https://license.unity3d.com/manual`.
+5. Sign in to Unity and upload the `.alf` file from the artifact.
+6. Download the generated `.ulf` file.
+7. Open the `.ulf` file as text.
+8. Add the whole file contents as the repository secret `UNITY_LICENSE`.
+
+After `UNITY_LICENSE` is set, the Android build workflow can run without `UNITY_PASSWORD`.
+
+### Android build
 
 The workflow file is:
 
