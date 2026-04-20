@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &923059640
+--- !u!1 &231781538
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,8 +127,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 923059642}
-  - component: {fileID: 923059641}
+  - component: {fileID: 231781541}
+  - component: {fileID: 231781540}
+  - component: {fileID: 231781539}
   m_Layer: 0
   m_Name: ClusterSceneController
   m_TagString: Untagged
@@ -136,27 +137,41 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &923059641
+--- !u!114 &231781539
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 923059640}
+  m_GameObject: {fileID: 231781538}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b398f48ea1644d93b8d86ad45cebd328, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MahjongGame.Clusters.ClusterWorldRuntime
+  clusterId: slums
+  exitClusterId: elysium
+--- !u!114 &231781540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 231781538}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 277b821839d2452f882be409e983fd1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MahjongGame.Clusters.ClusterSceneController
   clusterId: slums
-  primaryConnectionId: matrix
---- !u!4 &923059642
+  primaryConnectionId: elysium
+--- !u!4 &231781541
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 923059640}
+  m_GameObject: {fileID: 231781538}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -165,7 +180,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &940551563
+--- !u!1 &1412184779
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -173,9 +188,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 940551566}
-  - component: {fileID: 940551565}
-  - component: {fileID: 940551564}
+  - component: {fileID: 1412184782}
+  - component: {fileID: 1412184781}
+  - component: {fileID: 1412184780}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -183,25 +198,25 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &940551564
+--- !u!81 &1412184780
 AudioListener:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 940551563}
+  m_GameObject: {fileID: 1412184779}
   m_Enabled: 1
---- !u!20 &940551565
+--- !u!20 &1412184781
 Camera:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 940551563}
+  m_GameObject: {fileID: 1412184779}
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.1, g: 0.07, b: 0.055, a: 1}
+  m_BackGroundColor: {r: 0.12, g: 0.08, b: 0.07, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -242,13 +257,13 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!4 &940551566
+--- !u!4 &1412184782
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 940551563}
+  m_GameObject: {fileID: 1412184779}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -261,5 +276,5 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 940551566}
-  - {fileID: 923059642}
+  - {fileID: 1412184782}
+  - {fileID: 231781541}

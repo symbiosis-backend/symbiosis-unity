@@ -136,3 +136,4 @@ MonoBehaviour:
   moveSpeed: 4.5
   sendInterval: 0.05
   remoteLerp: 14
+  pointerStopDistance: 0.12
