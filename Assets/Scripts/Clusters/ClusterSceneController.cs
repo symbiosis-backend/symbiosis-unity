@@ -7,13 +7,12 @@ namespace MahjongGame.Clusters
     [DisallowMultipleComponent]
     public sealed class ClusterSceneController : MonoBehaviour
     {
-        [SerializeField] private string clusterId = ClusterService.MatrixId;
+        [SerializeField] private string clusterId = ClusterService.ElysiumId;
         [SerializeField] private string primaryConnectionId = ClusterService.SlumsId;
 
         private void Awake()
         {
-            if (clusterId == ClusterService.MatrixId && GetComponent<MatrixClusterRuntime>() == null)
-                gameObject.AddComponent<MatrixClusterRuntime>();
+            EnsureWorldRuntime();
 
             EnsureSceneUi();
         }
@@ -60,6 +59,18 @@ namespace MahjongGame.Clusters
 
             Button backButton = CreateButton(panel.transform, "MAIN", new Vector2(190f, -466f));
             backButton.onClick.AddListener(ReturnToMain);
+        }
+
+        private void EnsureWorldRuntime()
+        {
+            if (clusterId != ClusterService.ElysiumId && clusterId != ClusterService.SlumsId)
+                return;
+
+            ClusterWorldRuntime runtime = GetComponent<ClusterWorldRuntime>();
+            if (runtime == null)
+                runtime = gameObject.AddComponent<ClusterWorldRuntime>();
+
+            runtime.Configure(clusterId, primaryConnectionId);
         }
 
         private static Canvas CreateCanvas()
@@ -119,4 +130,5 @@ namespace MahjongGame.Clusters
             return button;
         }
     }
+
 }

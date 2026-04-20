@@ -12,7 +12,7 @@ namespace MahjongGame.EditorTools
 {
     public static class ClusterSceneBuilder
     {
-        private const string MatrixScenePath = "Assets/Scenes/ClusterMatrix.unity";
+        private const string ElysiumScenePath = "Assets/Scenes/ClusterElysium.unity";
         private const string SlumsScenePath = "Assets/Scenes/ClusterSlums.unity";
         private const string MatrixPlayerPrefabPath = "Assets/Resources/Network/MatrixNetworkPlayer.prefab";
 
@@ -21,8 +21,8 @@ namespace MahjongGame.EditorTools
         {
             EnsureScenesFolder();
             EnsureMatrixPlayerPrefab();
-            CreateClusterScene(MatrixScenePath, ClusterService.MatrixId, ClusterService.SlumsId, new Color(0.02f, 0.06f, 0.07f, 1f));
-            CreateClusterScene(SlumsScenePath, ClusterService.SlumsId, ClusterService.MatrixId, new Color(0.10f, 0.07f, 0.055f, 1f));
+            CreateClusterScene(ElysiumScenePath, ClusterService.ElysiumId, ClusterService.SlumsId, new Color(0.05f, 0.11f, 0.10f, 1f));
+            CreateClusterScene(SlumsScenePath, ClusterService.SlumsId, ClusterService.ElysiumId, new Color(0.12f, 0.08f, 0.07f, 1f));
             EnsureBuildSettings();
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -79,8 +79,11 @@ namespace MahjongGame.EditorTools
 
             GameObject controllerObject = new GameObject("ClusterSceneController");
             ClusterSceneController controller = controllerObject.AddComponent<ClusterSceneController>();
-            if (clusterId == ClusterService.MatrixId)
-                controllerObject.AddComponent<MatrixClusterRuntime>();
+            ClusterWorldRuntime runtime = controllerObject.AddComponent<ClusterWorldRuntime>();
+            SerializedObject runtimeSerialized = new SerializedObject(runtime);
+            runtimeSerialized.FindProperty("clusterId").stringValue = clusterId;
+            runtimeSerialized.FindProperty("exitClusterId").stringValue = connectedClusterId;
+            runtimeSerialized.ApplyModifiedPropertiesWithoutUndo();
 
             SerializedObject serialized = new SerializedObject(controller);
             serialized.FindProperty("clusterId").stringValue = clusterId;
@@ -93,7 +96,7 @@ namespace MahjongGame.EditorTools
         private static void EnsureBuildSettings()
         {
             List<EditorBuildSettingsScene> scenes = EditorBuildSettings.scenes.ToList();
-            AddSceneIfMissing(scenes, MatrixScenePath);
+            AddSceneIfMissing(scenes, ElysiumScenePath);
             AddSceneIfMissing(scenes, SlumsScenePath);
             EditorBuildSettings.scenes = scenes.ToArray();
         }

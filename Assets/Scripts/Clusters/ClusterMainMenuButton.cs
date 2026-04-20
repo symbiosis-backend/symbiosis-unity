@@ -15,7 +15,7 @@ namespace MahjongGame.Clusters
             if (canvas == null)
                 canvas = CreateCanvas();
 
-            GameObject root = new GameObject("MatrixClusterButton", typeof(RectTransform), typeof(Image), typeof(Button));
+            GameObject root = new GameObject("ElysiumClusterButton", typeof(RectTransform), typeof(Image), typeof(Button));
             root.transform.SetParent(canvas.transform, false);
             root.layer = canvas.gameObject.layer;
 
@@ -38,7 +38,7 @@ namespace MahjongGame.Clusters
             createdButton.colors = colors;
 
             TextMeshProUGUI label = CreateLabel(root.transform);
-            label.text = "MATRIX";
+            label.text = "ELYSIUM";
 
             ClusterMainMenuButton component = root.AddComponent<ClusterMainMenuButton>();
             component.button = createdButton;
@@ -57,7 +57,7 @@ namespace MahjongGame.Clusters
         private void OnDestroy()
         {
             if (button != null)
-                button.onClick.RemoveListener(EnterMatrix);
+                button.onClick.RemoveListener(EnterElysium);
         }
 
         private void Bind()
@@ -65,13 +65,13 @@ namespace MahjongGame.Clusters
             if (button == null)
                 return;
 
-            button.onClick.RemoveListener(EnterMatrix);
-            button.onClick.AddListener(EnterMatrix);
+            button.onClick.RemoveListener(EnterElysium);
+            button.onClick.AddListener(EnterElysium);
         }
 
-        private static void EnterMatrix()
+        private static void EnterElysium()
         {
-            ClusterService.EnterMatrix();
+            ClusterService.EnterElysium();
         }
 
         private static Canvas CreateCanvas()
