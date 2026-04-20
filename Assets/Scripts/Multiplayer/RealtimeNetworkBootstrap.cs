@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using FishNet.Managing;
+using FishNet.Managing.Object;
 using FishNet.Transporting;
 using FishNet.Transporting.Tugboat;
 using UnityEngine;
@@ -45,10 +46,13 @@ namespace MahjongGame.Multiplayer
                 return;
 
             GameObject root = new GameObject("RealtimeNetworkBootstrap");
+            root.SetActive(false);
             root.AddComponent<Tugboat>();
-            root.AddComponent<NetworkManager>();
+            NetworkManager manager = root.AddComponent<NetworkManager>();
+            manager.SpawnablePrefabs = ScriptableObject.CreateInstance<DefaultPrefabObjects>();
             root.AddComponent<RealtimeNetworkBootstrap>();
             PersistentObjectUtility.DontDestroyOnLoad(root);
+            root.SetActive(true);
         }
 
         private void Awake()

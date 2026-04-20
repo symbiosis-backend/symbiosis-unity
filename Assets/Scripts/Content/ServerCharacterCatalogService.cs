@@ -22,6 +22,9 @@ namespace MahjongGame.Content
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Bootstrap()
         {
+            if (Application.isBatchMode)
+                return;
+
             if (instance != null)
                 return;
 
@@ -50,6 +53,9 @@ namespace MahjongGame.Content
 
         public static void RefreshNow()
         {
+            if (Application.isBatchMode)
+                return;
+
             if (instance == null)
                 Bootstrap();
 
