@@ -58,7 +58,11 @@ jobs:
           }
           foreach ($name in @('SERVER_HOST', 'SERVER_USER', 'SERVER_SSH_KEY')) {
             if ([string]::IsNullOrWhiteSpace([Environment]::GetEnvironmentVariable($name))) {
-              Write-Error "$name secret is empty or missing."
+              Write-Host "Secret availability:"
+              Write-Host "SERVER_HOST present: $(-not [string]::IsNullOrWhiteSpace($env:SERVER_HOST))"
+              Write-Host "SERVER_USER present: $(-not [string]::IsNullOrWhiteSpace($env:SERVER_USER))"
+              Write-Host "SERVER_SSH_KEY present: $(-not [string]::IsNullOrWhiteSpace($env:SERVER_SSH_KEY))"
+              Write-Error "$name secret is empty or missing in this repository or environment."
             }
           }
           Write-Host "Required runner tools and secrets are present."
