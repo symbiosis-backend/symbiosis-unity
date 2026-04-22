@@ -161,19 +161,33 @@ jobs:
           SERVER_USER: ${{ secrets.SERVER_USER }}
           SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
         run: |
+          $deployLog = Join-Path $env:GITHUB_WORKSPACE 'Builds/Logs/DeployUpload.log'
+          New-Item -ItemType Directory -Force -Path (Split-Path $deployLog) | Out-Null
+          "Starting APK deploy at $(Get-Date -Format o)" | Set-Content -LiteralPath $deployLog -Encoding utf8
           $keyPath = Join-Path $env:RUNNER_TEMP 'symbiosis-server-key'
           $serverHost = $env:SERVER_HOST.Trim()
           $serverUser = $env:SERVER_USER.Trim()
           $serverDownloadsPath = $env:SERVER_DOWNLOADS_PATH.Trim()
           $sshKey = $env:SERVER_SSH_KEY.Trim() -replace "\\r\\n", "`n" -replace "\\n", "`n" -replace "`r`n", "`n"
           $sshKey | Set-Content -LiteralPath $keyPath -NoNewline -Encoding ascii
-          icacls $keyPath /inheritance:r /grant:r "$($env:USERNAME):(R)" | Out-Null
+          icacls $keyPath /inheritance:r /grant:r "$($env:USERNAME):(R)" *>&1 | Tee-Object -FilePath $deployLog -Append
           Write-Host "Deploy target: $serverUser@$serverHost"
-          ssh -i $keyPath -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=2 "$serverUser@$serverHost" "mkdir -p '$serverDownloadsPath'"
+          "Deploy target: $serverUser@$serverHost" | Add-Content -LiteralPath $deployLog -Encoding utf8
+          ssh -i $keyPath -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=2 "$serverUser@$serverHost" "mkdir -p '$serverDownloadsPath'" *>&1 | Tee-Object -FilePath $deployLog -Append
+          if ($LASTEXITCODE -ne 0) { throw "Remote mkdir failed with exit code $LASTEXITCODE. See Builds/Logs/DeployUpload.log." }
           scp -i $keyPath -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=20 `
             'Builds/Android/symbiosis-latest.apk' `
             'Builds/Android/android-update.json' `
-            "${serverUser}@${serverHost}:$serverDownloadsPath/"
+            "${serverUser}@${serverHost}:$serverDownloadsPath/" *>&1 | Tee-Object -FilePath $deployLog -Append
+          if ($LASTEXITCODE -ne 0) { throw "APK upload failed with exit code $LASTEXITCODE. See Builds/Logs/DeployUpload.log." }
+
+      - name: Upload Deploy Diagnostic
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy-diagnostic-${{ github.run_number }}
+          path: Builds/Logs/DeployUpload.log
+          if-no-files-found: ignore
 
       - name: Upload Addressables To VPS
         shell: powershell -NoProfile -ExecutionPolicy Bypass -Command ". '{0}'"
