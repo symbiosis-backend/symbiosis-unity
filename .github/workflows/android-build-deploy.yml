@@ -81,6 +81,15 @@ jobs:
             Write-Host "No Android keystore secret configured. Unity default signing will be used."
           }
 
+      - name: Check Unity Editor Is Closed
+        shell: powershell -NoProfile -ExecutionPolicy Bypass -Command ". '{0}'"
+        run: |
+          $openUnityEditors = Get-Process Unity -ErrorAction SilentlyContinue | Where-Object { -not [string]::IsNullOrWhiteSpace($_.MainWindowTitle) }
+          if ($openUnityEditors) {
+            $titles = ($openUnityEditors | ForEach-Object { $_.MainWindowTitle }) -join ', '
+            throw "Close all open Unity Editor windows before running this self-hosted build. Open editors detected: $titles"
+          }
+
       - name: Build Addressables Remote Content
         shell: powershell -NoProfile -ExecutionPolicy Bypass -Command ". '{0}'"
         run: |
@@ -108,6 +117,7 @@ jobs:
           New-Item -ItemType Directory -Force -Path 'Builds/Android', 'Builds/Logs' | Out-Null
           $versionCode = [int]$env:BUILD_VERSION_CODE_OFFSET + [int]$env:GITHUB_RUN_NUMBER
           "BUILD_VERSION_CODE=$versionCode" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          $buildOutputPath = Join-Path $env:GITHUB_WORKSPACE $env:BUILD_OUTPUT_PATH
           & $env:UNITY_EXE `
             -batchmode `
             -quit `
@@ -121,8 +131,11 @@ jobs:
             }
             exit $LASTEXITCODE
           }
-          if (-not (Test-Path $env:BUILD_OUTPUT_PATH)) {
-            Write-Error "Build did not create '$env:BUILD_OUTPUT_PATH'."
+          if (-not (Test-Path $buildOutputPath)) {
+            if (Test-Path 'Builds/Logs/UnityBuild.log') {
+              Get-Content 'Builds/Logs/UnityBuild.log' -Tail 250
+            }
+            throw "Build did not create '$env:BUILD_OUTPUT_PATH'."
           }
 
       - name: Write Update Manifest
