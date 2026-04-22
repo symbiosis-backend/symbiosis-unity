@@ -1,7 +1,7 @@
 {
-  "versionName": "1.0.6",
-  "versionCode": 100006,
+  "versionName": "1.0.7",
+  "versionCode": 100007,
   "minimumVersionCode": 1,
   "forceUpdate": false,
-  "releaseNotes": "Routes online services through HTTPS dlsymbiosis.com for reliable mobile network connections."
+  "releaseNotes": "Adds the project changelog on the website and inside the game menus."
 }
