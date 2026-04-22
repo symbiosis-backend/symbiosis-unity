@@ -21,6 +21,7 @@ env:
   BUILD_VERSION_NAME: ${{ github.event.inputs.versionName || '1.0' }}
   BUILD_VERSION_CODE_OFFSET: 1000
   ANDROID_UPDATE_URL: http://91.99.176.77:8080/downloads/symbiosis-latest.apk
+  PUBLIC_BASE_URL: http://91.99.176.77:8080
   RELEASE_NOTES: ${{ github.event.inputs.releaseNotes || 'New Symbiosis build is available.' }}
   SERVER_DOWNLOADS_PATH: ${{ secrets.SERVER_DOWNLOADS_PATH || '/opt/symbiosis/backend/downloads' }}
 
@@ -179,9 +180,23 @@ jobs:
           $keyPath = Join-Path $env:RUNNER_TEMP 'symbiosis-server-key'
           $env:SERVER_SSH_KEY -replace "`r`n", "`n" | Set-Content -LiteralPath $keyPath -NoNewline -Encoding ascii
           ssh -i $keyPath -o StrictHostKeyChecking=no "$env:SERVER_USER@$env:SERVER_HOST" "mkdir -p '$env:SERVER_DOWNLOADS_PATH/addressables/Android'"
-          scp -r -i $keyPath -o StrictHostKeyChecking=no `
-            'ServerData/Android/*' `
-            "$env:SERVER_USER@$env:SERVER_HOST`:$env:SERVER_DOWNLOADS_PATH/addressables/Android/"
+          $files = Get-ChildItem -Path 'ServerData/Android' -Recurse -File
+          if ($files.Count -eq 0) {
+            Write-Error "ServerData/Android exists but contains no files."
+          }
+          foreach ($file in $files) {
+            $relative = [IO.Path]::GetRelativePath((Resolve-Path 'ServerData/Android').Path, $file.FullName).Replace('\', '/')
+            $remoteDir = [IO.Path]::GetDirectoryName($relative)
+            if ([string]::IsNullOrWhiteSpace($remoteDir)) {
+              $remoteDir = '.'
+            } else {
+              $remoteDir = $remoteDir.Replace('\', '/')
+            }
+            ssh -i $keyPath -o StrictHostKeyChecking=no "$env:SERVER_USER@$env:SERVER_HOST" "mkdir -p '$env:SERVER_DOWNLOADS_PATH/addressables/Android/$remoteDir'"
+            scp -i $keyPath -o StrictHostKeyChecking=no `
+              "$($file.FullName)" `
+              "$env:SERVER_USER@$env:SERVER_HOST`:$env:SERVER_DOWNLOADS_PATH/addressables/Android/$relative"
+          }
 
       - name: Verify VPS Files
         shell: pwsh
@@ -193,3 +208,19 @@ jobs:
           $keyPath = Join-Path $env:RUNNER_TEMP 'symbiosis-server-key'
           $env:SERVER_SSH_KEY -replace "`r`n", "`n" | Set-Content -LiteralPath $keyPath -NoNewline -Encoding ascii
           ssh -i $keyPath -o StrictHostKeyChecking=no "$env:SERVER_USER@$env:SERVER_HOST" "ls -lh '$env:SERVER_DOWNLOADS_PATH/symbiosis-latest.apk' '$env:SERVER_DOWNLOADS_PATH/android-update.json' && cat '$env:SERVER_DOWNLOADS_PATH/android-update.json' && find '$env:SERVER_DOWNLOADS_PATH/addressables/Android' -maxdepth 1 -type f 2>/dev/null | sort | tail -20"
+
+      - name: Verify Public Download URLs
+        shell: pwsh
+        run: |
+          $urls = @(
+            "$env:PUBLIC_BASE_URL/updates/android",
+            "$env:PUBLIC_BASE_URL/updates/android/status",
+            "$env:PUBLIC_BASE_URL/downloads/symbiosis-latest.apk"
+          )
+          foreach ($url in $urls) {
+            Write-Host "Checking $url"
+            $response = Invoke-WebRequest -UseBasicParsing -Uri $url -TimeoutSec 20
+            if ($response.StatusCode -lt 200 -or $response.StatusCode -ge 300) {
+              Write-Error "$url returned HTTP $($response.StatusCode)"
+            }
+          }

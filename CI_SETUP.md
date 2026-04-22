@@ -65,6 +65,26 @@ The game checks:
 
 `http://91.99.176.77:8080/updates/android`
 
+The deployment status endpoint is:
+
+`http://91.99.176.77:8080/updates/android/status`
+
+Local verification:
+
+```powershell
+cd "C:\Unity Projects\Symbiosis"
+.\Tools\Deploy\Verify-SymbiosisServer.ps1
+```
+
+Manual upload, when you have a valid VPS SSH user/key:
+
+```powershell
+cd "C:\Unity Projects\Symbiosis"
+.\Tools\Deploy\Publish-AndroidUpdate.ps1 `
+  -ServerUser deploy `
+  -SshKeyPath "$env:USERPROFILE\.ssh\symbiosis_unity_actions"
+```
+
 ## Connect local repository to GitHub
 
 Create a GitHub repo for the Unity project, then run:
