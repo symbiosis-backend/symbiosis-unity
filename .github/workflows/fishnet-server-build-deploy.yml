@@ -28,6 +28,7 @@ jobs:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
           SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          SERVER_SSH_KEY_B64: ${{ secrets.SERVER_SSH_KEY_B64 }}
         run: |
           if (-not (Test-Path $env:UNITY_EXE)) {
             Write-Error "Unity executable was not found at '$env:UNITY_EXE'."
@@ -80,8 +81,12 @@ jobs:
           $serverHost = $env:SERVER_HOST.Trim()
           $serverUser = $env:SERVER_USER.Trim()
           $serverReleasesPath = $env:SERVER_RELEASES_PATH.Trim()
-          $sshKey = $env:SERVER_SSH_KEY.Trim() -replace "\\r\\n", "`n" -replace "\\n", "`n" -replace "`r`n", "`n"
-          $sshKey | Set-Content -LiteralPath $keyPath -NoNewline -Encoding ascii
+          if (-not [string]::IsNullOrWhiteSpace($env:SERVER_SSH_KEY_B64)) {
+            [IO.File]::WriteAllBytes($keyPath, [Convert]::FromBase64String($env:SERVER_SSH_KEY_B64.Trim()))
+          } else {
+            $sshKey = $env:SERVER_SSH_KEY.Trim() -replace "\\r\\n", "`n" -replace "\\n", "`n" -replace "`r`n", "`n"
+            $sshKey | Set-Content -LiteralPath $keyPath -NoNewline -Encoding ascii
+          }
           icacls $keyPath /inheritance:r /grant:r "$($env:USERNAME):(R)" | Out-Null
           Write-Host "Deploy target: $serverUser@$serverHost"
           $releasePath = "$serverReleasesPath/${{ github.run_number }}"
