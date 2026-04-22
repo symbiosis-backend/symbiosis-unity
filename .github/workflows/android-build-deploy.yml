@@ -47,7 +47,7 @@ jobs:
             Library-${{ runner.os }}-Android-
 
       - name: Check Required Secrets
-        shell: pwsh
+        shell: powershell
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
@@ -68,7 +68,7 @@ jobs:
           Write-Host "Required runner tools and secrets are present."
 
       - name: Restore Android Keystore
-        shell: pwsh
+        shell: powershell
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
         run: |
@@ -81,7 +81,7 @@ jobs:
           }
 
       - name: Build APK
-        shell: pwsh
+        shell: powershell
         env:
           ANDROID_KEYSTORE_PASS: ${{ secrets.ANDROID_KEYSTORE_PASS }}
           ANDROID_KEY_ALIAS_NAME: ${{ secrets.ANDROID_KEY_ALIAS_NAME }}
@@ -108,7 +108,7 @@ jobs:
           }
 
       - name: Build Addressables Remote Content
-        shell: pwsh
+        shell: powershell
         run: |
           & $env:UNITY_EXE `
             -batchmode `
@@ -125,7 +125,7 @@ jobs:
           }
 
       - name: Write Update Manifest
-        shell: pwsh
+        shell: powershell
         run: |
           $manifest = [ordered]@{
             latestVersion = $env:BUILD_VERSION_NAME
@@ -138,7 +138,7 @@ jobs:
             commit = $env:GITHUB_SHA
           }
           $json = $manifest | ConvertTo-Json -Depth 5
-          $utf8NoBom = [Text.UTF8Encoding]::new($false)
+          $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
           [IO.File]::WriteAllText((Join-Path $env:GITHUB_WORKSPACE 'Builds/Android/android-update.json'), $json, $utf8NoBom)
           Get-Content 'Builds/Android/android-update.json'
 
@@ -155,7 +155,7 @@ jobs:
           if-no-files-found: error
 
       - name: Upload APK To VPS
-        shell: pwsh
+        shell: powershell
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
@@ -170,7 +170,7 @@ jobs:
             "$env:SERVER_USER@$env:SERVER_HOST`:$env:SERVER_DOWNLOADS_PATH/"
 
       - name: Upload Addressables To VPS
-        shell: pwsh
+        shell: powershell
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
@@ -189,7 +189,8 @@ jobs:
             Write-Error "ServerData/Android exists but contains no files."
           }
           foreach ($file in $files) {
-            $relative = [IO.Path]::GetRelativePath((Resolve-Path 'ServerData/Android').Path, $file.FullName).Replace('\', '/')
+            $root = (Resolve-Path 'ServerData/Android').Path.TrimEnd('\')
+            $relative = $file.FullName.Substring($root.Length + 1).Replace('\', '/')
             $remoteDir = [IO.Path]::GetDirectoryName($relative)
             if ([string]::IsNullOrWhiteSpace($remoteDir)) {
               $remoteDir = '.'
@@ -203,7 +204,7 @@ jobs:
           }
 
       - name: Verify VPS Files
-        shell: pwsh
+        shell: powershell
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
@@ -214,7 +215,7 @@ jobs:
           ssh -i $keyPath -o StrictHostKeyChecking=no "$env:SERVER_USER@$env:SERVER_HOST" "ls -lh '$env:SERVER_DOWNLOADS_PATH/symbiosis-latest.apk' '$env:SERVER_DOWNLOADS_PATH/android-update.json' && cat '$env:SERVER_DOWNLOADS_PATH/android-update.json' && find '$env:SERVER_DOWNLOADS_PATH/addressables/Android' -maxdepth 1 -type f 2>/dev/null | sort | tail -20"
 
       - name: Verify Public Download URLs
-        shell: pwsh
+        shell: powershell
         run: |
           $urls = @(
             "$env:PUBLIC_BASE_URL/updates/android",
