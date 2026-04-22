@@ -81,6 +81,23 @@ jobs:
             Write-Host "No Android keystore secret configured. Unity default signing will be used."
           }
 
+      - name: Build Addressables Remote Content
+        shell: powershell -NoProfile -ExecutionPolicy Bypass -Command ". '{0}'"
+        run: |
+          & $env:UNITY_EXE `
+            -batchmode `
+            -quit `
+            -projectPath $env:GITHUB_WORKSPACE `
+            -buildTarget Android `
+            -executeMethod RemoteContentAddressablesSetup.BuildRemoteContent `
+            -logFile "$env:GITHUB_WORKSPACE\Builds\Logs\AddressablesBuild.log"
+          if ($LASTEXITCODE -ne 0) {
+            if (Test-Path 'Builds/Logs/AddressablesBuild.log') {
+              Get-Content 'Builds/Logs/AddressablesBuild.log' -Tail 250
+            }
+            exit $LASTEXITCODE
+          }
+
       - name: Build APK
         shell: powershell -NoProfile -ExecutionPolicy Bypass -Command ". '{0}'"
         env:
@@ -106,23 +123,6 @@ jobs:
           }
           if (-not (Test-Path $env:BUILD_OUTPUT_PATH)) {
             Write-Error "Build did not create '$env:BUILD_OUTPUT_PATH'."
-          }
-
-      - name: Build Addressables Remote Content
-        shell: powershell -NoProfile -ExecutionPolicy Bypass -Command ". '{0}'"
-        run: |
-          & $env:UNITY_EXE `
-            -batchmode `
-            -quit `
-            -projectPath $env:GITHUB_WORKSPACE `
-            -buildTarget Android `
-            -executeMethod RemoteContentAddressablesSetup.BuildRemoteContent `
-            -logFile "$env:GITHUB_WORKSPACE\Builds\Logs\AddressablesBuild.log"
-          if ($LASTEXITCODE -ne 0) {
-            if (Test-Path 'Builds/Logs/AddressablesBuild.log') {
-              Get-Content 'Builds/Logs/AddressablesBuild.log' -Tail 250
-            }
-            exit $LASTEXITCODE
           }
 
       - name: Write Update Manifest
