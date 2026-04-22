@@ -66,6 +66,11 @@ public static class AndroidCiBuild
             string.IsNullOrWhiteSpace(keystorePass) ||
             string.IsNullOrWhiteSpace(keyAliasName))
         {
+            if (!string.Equals(Environment.GetEnvironmentVariable("ALLOW_ANDROID_DEBUG_SIGNING"), "true", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException("Android release signing is not configured. Set ANDROID_KEYSTORE_PATH, ANDROID_KEYSTORE_PASS, and ANDROID_KEY_ALIAS_NAME before building a deployable APK.");
+            }
+
             PlayerSettings.Android.useCustomKeystore = false;
             Debug.Log("[AndroidCiBuild] Custom keystore not configured. Unity default signing will be used.");
             return;

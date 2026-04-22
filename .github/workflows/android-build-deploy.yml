@@ -77,8 +77,13 @@ jobs:
             $keystorePath = Join-Path $env:RUNNER_TEMP 'android-release.keystore'
             [IO.File]::WriteAllBytes($keystorePath, [Convert]::FromBase64String($env:ANDROID_KEYSTORE_BASE64))
             "ANDROID_KEYSTORE_PATH=$keystorePath" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          } elseif (-not [string]::IsNullOrWhiteSpace($env:RUNNER_ANDROID_KEYSTORE_PATH)) {
+            if (-not (Test-Path $env:RUNNER_ANDROID_KEYSTORE_PATH)) {
+              throw "RUNNER_ANDROID_KEYSTORE_PATH points to a missing file."
+            }
+            "ANDROID_KEYSTORE_PATH=$env:RUNNER_ANDROID_KEYSTORE_PATH" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
           } else {
-            Write-Host "No Android keystore secret configured. Unity default signing will be used."
+            throw "Android release keystore is not configured. Set ANDROID_KEYSTORE_BASE64 GitHub secret or RUNNER_ANDROID_KEYSTORE_PATH on the self-hosted runner."
           }
 
       - name: Check Unity Editor Is Closed
@@ -116,6 +121,20 @@ jobs:
           ANDROID_KEY_ALIAS_NAME: ${{ secrets.ANDROID_KEY_ALIAS_NAME }}
           ANDROID_KEY_ALIAS_PASS: ${{ secrets.ANDROID_KEY_ALIAS_PASS }}
         run: |
+          if ([string]::IsNullOrWhiteSpace($env:ANDROID_KEYSTORE_PASS) -and -not [string]::IsNullOrWhiteSpace($env:RUNNER_ANDROID_KEYSTORE_PASS)) {
+            $env:ANDROID_KEYSTORE_PASS = $env:RUNNER_ANDROID_KEYSTORE_PASS
+          }
+          if ([string]::IsNullOrWhiteSpace($env:ANDROID_KEY_ALIAS_NAME) -and -not [string]::IsNullOrWhiteSpace($env:RUNNER_ANDROID_KEY_ALIAS_NAME)) {
+            $env:ANDROID_KEY_ALIAS_NAME = $env:RUNNER_ANDROID_KEY_ALIAS_NAME
+          }
+          if ([string]::IsNullOrWhiteSpace($env:ANDROID_KEY_ALIAS_PASS) -and -not [string]::IsNullOrWhiteSpace($env:RUNNER_ANDROID_KEY_ALIAS_PASS)) {
+            $env:ANDROID_KEY_ALIAS_PASS = $env:RUNNER_ANDROID_KEY_ALIAS_PASS
+          }
+          foreach ($name in @('ANDROID_KEYSTORE_PATH', 'ANDROID_KEYSTORE_PASS', 'ANDROID_KEY_ALIAS_NAME')) {
+            if ([string]::IsNullOrWhiteSpace([Environment]::GetEnvironmentVariable($name))) {
+              throw "$name is required for a deployable Android APK."
+            }
+          }
           New-Item -ItemType Directory -Force -Path 'Builds/Android', 'Builds/Logs' | Out-Null
           $versionCode = [int]$env:BUILD_VERSION_CODE_OFFSET + [int]$env:GITHUB_RUN_NUMBER
           "BUILD_VERSION_CODE=$versionCode" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
@@ -140,6 +159,26 @@ jobs:
               Get-Content 'Builds/Logs/UnityBuild.log' -Tail 250
             }
             throw "Build did not create '$env:BUILD_OUTPUT_PATH'."
+          }
+
+      - name: Verify APK Signing
+        shell: powershell -NoProfile -ExecutionPolicy Bypass -Command ". '{0}'"
+        run: |
+          $apkPath = Join-Path $env:GITHUB_WORKSPACE $env:BUILD_OUTPUT_PATH
+          $javaHome = Join-Path (Split-Path $env:UNITY_EXE -Parent) 'Data\PlaybackEngines\AndroidPlayer\OpenJDK'
+          $apksigner = Join-Path (Split-Path $env:UNITY_EXE -Parent) 'Data\PlaybackEngines\AndroidPlayer\SDK\build-tools\36.0.0\apksigner.bat'
+          if (-not (Test-Path $apksigner)) {
+            throw "apksigner was not found at '$apksigner'."
+          }
+          $env:JAVA_HOME = $javaHome
+          $env:PATH = "$javaHome\bin;$env:PATH"
+          $verifyOutput = & $apksigner verify --verbose --print-certs $apkPath 2>&1
+          $verifyOutput | ForEach-Object { Write-Host $_ }
+          if ($LASTEXITCODE -ne 0) {
+            throw "APK signature verification failed."
+          }
+          if (($verifyOutput -join "`n") -match 'CN=Android Debug') {
+            throw "APK is signed with the Android debug certificate. Configure release signing before deployment."
           }
 
       - name: Write Update Manifest
