@@ -9,13 +9,15 @@ using UnityEngine;
 public static class AndroidCiBuild
 {
     private const string DefaultOutputPath = "Builds/Android/symbiosis-latest.apk";
+    private const string VersionFilePath = "ProjectSettings/SymbiosisVersion.json";
 
     public static void BuildApk()
     {
         string outputPath = ReadEnv("BUILD_OUTPUT_PATH", DefaultOutputPath);
-        string versionName = ReadEnv("BUILD_VERSION_NAME", PlayerSettings.bundleVersion);
+        AppVersion version = ReadVersionFile();
+        string versionName = ReadEnv("BUILD_VERSION_NAME", version.versionName);
         int fallbackVersionCode = ReadIntEnv("BUILD_VERSION_CODE_OFFSET", 0) +
-                                  ReadIntEnv("GITHUB_RUN_NUMBER", PlayerSettings.Android.bundleVersionCode + 1);
+                                  ReadIntEnv("GITHUB_RUN_NUMBER", version.versionCode);
         int versionCode = ReadIntEnv("BUILD_VERSION_CODE", fallbackVersionCode);
 
         Directory.CreateDirectory(Path.GetDirectoryName(outputPath) ?? "Builds/Android");
@@ -94,6 +96,29 @@ public static class AndroidCiBuild
     {
         string value = Environment.GetEnvironmentVariable(name);
         return int.TryParse(value, out int result) ? result : fallback;
+    }
+
+    private static AppVersion ReadVersionFile()
+    {
+        if (!File.Exists(VersionFilePath))
+        {
+            throw new FileNotFoundException("Missing Android version file.", VersionFilePath);
+        }
+
+        AppVersion version = JsonUtility.FromJson<AppVersion>(File.ReadAllText(VersionFilePath));
+        if (version == null || string.IsNullOrWhiteSpace(version.versionName) || version.versionCode <= 0)
+        {
+            throw new InvalidOperationException("Invalid version data in " + VersionFilePath);
+        }
+
+        return version;
+    }
+
+    [Serializable]
+    private sealed class AppVersion
+    {
+        public string versionName;
+        public int versionCode;
     }
 }
 #endif

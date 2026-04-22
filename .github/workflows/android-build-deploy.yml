@@ -3,10 +3,6 @@ name: Build Android APK
 on:
   workflow_dispatch:
     inputs:
-      versionName:
-        description: Android version name shown to players
-        required: false
-        default: "1.0"
       releaseNotes:
         description: Update notes shown in the game
         required: false
@@ -18,11 +14,8 @@ on:
 env:
   UNITY_EXE: C:\Program Files\Unity\Hub\Editor\6000.4.3f1\Editor\Unity.exe
   BUILD_OUTPUT_PATH: Builds/Android/symbiosis-latest.apk
-  BUILD_VERSION_NAME: ${{ github.event.inputs.versionName || '1.0' }}
-  BUILD_VERSION_CODE_OFFSET: 1000
   ANDROID_UPDATE_URL: http://91.99.176.77:8080/downloads/symbiosis-latest.apk
   PUBLIC_BASE_URL: http://91.99.176.77:8080
-  RELEASE_NOTES: ${{ github.event.inputs.releaseNotes || 'New Symbiosis build is available.' }}
   SERVER_DOWNLOADS_PATH: ${{ secrets.SERVER_DOWNLOADS_PATH || '/opt/symbiosis/backend/downloads' }}
 
 jobs:
@@ -45,6 +38,31 @@ jobs:
           key: Library-${{ runner.os }}-Android-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
           restore-keys: |
             Library-${{ runner.os }}-Android-
+
+      - name: Load App Version
+        shell: powershell -NoProfile -ExecutionPolicy Bypass -Command ". '{0}'"
+        run: |
+          $versionPath = Join-Path $env:GITHUB_WORKSPACE 'ProjectSettings/SymbiosisVersion.json'
+          if (-not (Test-Path $versionPath)) {
+            throw "Missing version file at ProjectSettings/SymbiosisVersion.json."
+          }
+          $version = Get-Content -LiteralPath $versionPath -Raw | ConvertFrom-Json
+          if ([string]::IsNullOrWhiteSpace($version.versionName) -or [int]$version.versionCode -le 0) {
+            throw "Invalid version file. versionName and positive versionCode are required."
+          }
+          $releaseNotes = $version.releaseNotes
+          if (-not [string]::IsNullOrWhiteSpace('${{ github.event.inputs.releaseNotes }}')) {
+            $releaseNotes = '${{ github.event.inputs.releaseNotes }}'
+          }
+          if ([string]::IsNullOrWhiteSpace($releaseNotes)) {
+            $releaseNotes = 'New Symbiosis build is available.'
+          }
+          "BUILD_VERSION_NAME=$($version.versionName)" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          "BUILD_VERSION_CODE=$([int]$version.versionCode)" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          "MINIMUM_VERSION_CODE=$([int]$version.minimumVersionCode)" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          "FORCE_UPDATE=$([bool]$version.forceUpdate)" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          "RELEASE_NOTES=$releaseNotes" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          Write-Host "Android app version: $($version.versionName) ($([int]$version.versionCode))"
 
       - name: Check Required Secrets
         shell: powershell -NoProfile -ExecutionPolicy Bypass -Command ". '{0}'"
@@ -163,8 +181,6 @@ jobs:
             }
           }
           New-Item -ItemType Directory -Force -Path 'Builds/Android', 'Builds/Logs' | Out-Null
-          $versionCode = [int]$env:BUILD_VERSION_CODE_OFFSET + [int]$env:GITHUB_RUN_NUMBER
-          "BUILD_VERSION_CODE=$versionCode" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
           $buildOutputPath = Join-Path $env:GITHUB_WORKSPACE $env:BUILD_OUTPUT_PATH
           $unityArgs = @(
             '-batchmode',
@@ -214,8 +230,8 @@ jobs:
           $manifest = [ordered]@{
             latestVersion = $env:BUILD_VERSION_NAME
             latestVersionCode = [int]$env:BUILD_VERSION_CODE
-            minimumVersionCode = 1
-            forceUpdate = $false
+            minimumVersionCode = [int]$env:MINIMUM_VERSION_CODE
+            forceUpdate = [bool]::Parse($env:FORCE_UPDATE)
             updateUrl = $env:ANDROID_UPDATE_URL
             releaseNotes = $env:RELEASE_NOTES
             builtAt = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')

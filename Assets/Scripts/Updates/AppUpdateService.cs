@@ -6,6 +6,9 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem.UI;
 #endif
@@ -101,7 +104,21 @@ namespace MahjongGame
 
         private bool ShouldShowUpdate(AppUpdateManifest manifest)
         {
+            if (manifest == null || manifest.latestVersionCode <= 0)
+            {
+                Debug.LogWarning("[AppUpdateService] Update manifest has no valid latestVersionCode.");
+                return false;
+            }
+
             int currentCode = GetCurrentAndroidVersionCode();
+            if (currentCode <= 0)
+            {
+                Debug.LogWarning("[AppUpdateService] Current Android versionCode is unknown. Update prompt will be skipped.");
+                return false;
+            }
+
+            Debug.Log($"[AppUpdateService] Version check. Current={currentCode}, Latest={manifest.latestVersionCode}, Minimum={manifest.minimumVersionCode}, Force={manifest.forceUpdate}");
+
             if (manifest.minimumVersionCode > currentCode)
                 return true;
 
@@ -113,7 +130,10 @@ namespace MahjongGame
 
         private int GetCurrentAndroidVersionCode()
         {
-#if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_EDITOR
+            int editorVersionCode = PlayerSettings.Android.bundleVersionCode;
+            return editorVersionCode > 0 ? editorVersionCode : ResolveFallbackAndroidVersionCode();
+#elif UNITY_ANDROID
             try
             {
                 using AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
@@ -127,8 +147,15 @@ namespace MahjongGame
             {
                 Debug.LogWarning("[AppUpdateService] Could not read Android versionCode: " + ex.Message);
             }
+            return ResolveFallbackAndroidVersionCode();
+#else
+            return ResolveFallbackAndroidVersionCode();
 #endif
-            return Mathf.Max(1, fallbackAndroidVersionCode);
+        }
+
+        private int ResolveFallbackAndroidVersionCode()
+        {
+            return fallbackAndroidVersionCode > 0 ? fallbackAndroidVersionCode : -1;
         }
 
         [Serializable]
