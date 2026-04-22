@@ -161,6 +161,7 @@ jobs:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
           SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          SERVER_SSH_KEY_B64: ${{ secrets.SERVER_SSH_KEY_B64 }}
         run: |
           $deployLog = Join-Path $env:GITHUB_WORKSPACE 'Builds/Logs/DeployUpload.log'
           New-Item -ItemType Directory -Force -Path (Split-Path $deployLog) | Out-Null
