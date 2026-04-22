@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -26,6 +27,7 @@ namespace MahjongGame
         [SerializeField, Min(1)] private int maxPlayerHp = 10;
         [SerializeField, Min(1)] private int maxOpponentHp = 10;
         [SerializeField, Min(1)] private int damagePerPair = 1;
+        [SerializeField, Range(0f, 0.5f)] private float minimumDamagePerPairHpFraction = 0.05f;
 
         [Header("Character Stats")]
         [SerializeField] private bool useSelectedCharacterStats = true;
@@ -35,18 +37,27 @@ namespace MahjongGame
         [Header("Bot Battle Stats")]
         [SerializeField] private bool scaleOpponentStatsFromRank = true;
         [SerializeField, Range(0f, 1f)] private float opponentArmor = 0.03f;
-        [SerializeField, Range(0f, 1f)] private float opponentParryChance = 0.04f;
+        [SerializeField, Range(0f, 1f)] private float opponentParryChance = 0.1f;
         [SerializeField, Range(0f, 1f)] private float opponentCritChance = 0.08f;
         [SerializeField, Min(1f)] private float opponentCritDamageMultiplier = 1.5f;
         [SerializeField] private int opponentRankHpStep = 100;
-        [SerializeField] private int opponentHpPerStep = 35;
+        [SerializeField] private int opponentHpPerStep = 4;
         [SerializeField] private int opponentRankAttackStep = 150;
         [SerializeField] private int opponentAttackPerStep = 1;
+        [SerializeField] private bool clampOpponentStatsToPlayer = true;
+        [SerializeField, Min(1f)] private float maxOpponentHpPlayerFactor = 1.2f;
+        [SerializeField, Min(1f)] private float maxOpponentAttackPlayerFactor = 1.05f;
 
         [Header("UI / Optional")]
         [SerializeField] private TMP_Text playerHpText;
         [SerializeField] private TMP_Text opponentHpText;
         [SerializeField] private string hpPrefix = "HP: ";
+
+        [Header("Parry Zone Duel")]
+        [SerializeField] private bool useParryZoneDuel = true;
+        [SerializeField] private bool createParryChoiceUiIfMissing = true;
+        [SerializeField, Min(0.5f)] private float parryChoiceTimeout = 5f;
+        [SerializeField] private BattleParryChoiceUI parryChoiceUi;
 
         [Header("Debug")]
         [SerializeField] private bool finishMatchDirectlyOnDeath = false;
@@ -56,6 +67,14 @@ namespace MahjongGame
         private int opponentHp;
         private bool combatStarted;
         private bool combatFinished;
+        private bool parryChoiceInProgress;
+        private bool parryBoardLockActive;
+        private bool playerBoardWasLockedBeforeParry;
+        private bool opponentBoardWasLockedBeforeParry;
+        private bool networkPairDamageSuppressed;
+        private BattleBoardSide networkPairDamageSuppressedSide = BattleBoardSide.Opponent;
+        private bool networkPlayerPairDamageSuppressed;
+        private bool networkOpponentPairDamageSuppressed;
         private BattleStatsHub.BattleStatsSnapshot playerStats;
         private BattleStatsHub.BattleStatsSnapshot opponentStats;
 
@@ -88,6 +107,7 @@ namespace MahjongGame
         private void OnDisable()
         {
             UnbindBoards();
+            CancelParryChoice();
         }
 
         public void SetBoards(BattleBoard player, BattleBoard opponent)
@@ -138,8 +158,27 @@ namespace MahjongGame
             NotifyStateChanged();
         }
 
+        public void SetNetworkPairDamageSuppressed(bool value, BattleBoardSide side = BattleBoardSide.Opponent)
+        {
+            networkPairDamageSuppressed = value;
+            networkPairDamageSuppressedSide = side;
+
+            if (side == BattleBoardSide.Player)
+                networkPlayerPairDamageSuppressed = value;
+            else
+                networkOpponentPairDamageSuppressed = value;
+        }
+
+        public void SetNetworkPairDamageSuppressedForBoth(bool value)
+        {
+            networkPairDamageSuppressed = value;
+            networkPlayerPairDamageSuppressed = value;
+            networkOpponentPairDamageSuppressed = value;
+        }
+
         public void StartCombat()
         {
+            CancelParryChoice();
             ResolveCombatStats();
 
             combatStarted = true;
@@ -162,6 +201,8 @@ namespace MahjongGame
 
         public void ResetCombat()
         {
+            CancelParryChoice();
+
             combatStarted = false;
             combatFinished = false;
 
@@ -287,24 +328,123 @@ namespace MahjongGame
 
         private void HandlePlayerPairMatched(BattleBoard _, BattleTile __, BattleTile ___)
         {
-            BattleDamageCalculator.DamageResult result = CalculateDamage(
+            if (networkPlayerPairDamageSuppressed)
+                return;
+
+            if (networkPairDamageSuppressed && networkPairDamageSuppressedSide == BattleBoardSide.Player)
+                return;
+
+            StartCoroutine(ResolvePairAttackRoutine(
+                BattleBoardSide.Player,
                 playerStats,
                 opponentStats.Armor,
-                opponentStats.ParryChance);
-
-            LogDamageRoll("Player", "Opponent", result);
-            ApplyDamageToOpponent(result.FinalDamage);
+                opponentStats.ParryChance,
+                maxOpponentHp));
         }
 
         private void HandleOpponentPairMatched(BattleBoard _, BattleTile __, BattleTile ___)
         {
-            BattleDamageCalculator.DamageResult result = CalculateDamage(
+            if (networkOpponentPairDamageSuppressed)
+                return;
+
+            if (networkPairDamageSuppressed && networkPairDamageSuppressedSide == BattleBoardSide.Opponent)
+                return;
+
+            StartCoroutine(ResolvePairAttackRoutine(
+                BattleBoardSide.Opponent,
                 opponentStats,
                 playerStats.Armor,
-                playerStats.ParryChance);
+                playerStats.ParryChance,
+                maxPlayerHp));
+        }
 
-            LogDamageRoll("Opponent", "Player", result);
-            ApplyDamageToPlayer(result.FinalDamage);
+        private IEnumerator ResolvePairAttackRoutine(
+            BattleBoardSide attackerSide,
+            BattleStatsHub.BattleStatsSnapshot attacker,
+            float targetArmor,
+            float targetParryChance,
+            int targetMaxHp)
+        {
+            while (parryChoiceInProgress && combatStarted && !combatFinished)
+                yield return null;
+
+            if (!combatStarted || combatFinished)
+                yield break;
+
+            BattleBoardSide targetSide = attackerSide == BattleBoardSide.Player
+                ? BattleBoardSide.Opponent
+                : BattleBoardSide.Player;
+
+            string attackerName = attackerSide == BattleBoardSide.Player ? "Player" : "Opponent";
+            string targetName = targetSide == BattleBoardSide.Player ? "Player" : "Opponent";
+
+            BattleDamageCalculator.DamageResult result = useParryZoneDuel
+                ? CalculateDamageWithoutParry(attacker, targetArmor, targetMaxHp)
+                : CalculateDamage(attacker, targetArmor, targetParryChance, targetMaxHp);
+
+            if (ShouldResolveParryDuel(targetParryChance))
+            {
+                parryChoiceInProgress = true;
+                SetBoardsLockedForParry(true);
+
+                bool choiceComplete = false;
+                bool parried = false;
+                BattleHitZone attackZone = BattleHitZone.Middle;
+                BattleHitZone parryZone = BattleHitZone.Middle;
+                BattleHitZone playerZone = GetRandomHitZone();
+                BattleHitZone opponentZone = GetRandomHitZone();
+
+                BattleParryChoiceUI ui = ResolveParryChoiceUi();
+                if (ui != null)
+                {
+                    ui.Show(
+                        attackerSide,
+                        playerZone,
+                        opponentZone,
+                        parryChoiceTimeout,
+                        (chosenAttackZone, chosenParryZone, isParried) =>
+                        {
+                            attackZone = chosenAttackZone;
+                            parryZone = chosenParryZone;
+                            parried = isParried;
+                            choiceComplete = true;
+                        });
+
+                    while (!choiceComplete && combatStarted && !combatFinished)
+                        yield return null;
+
+                    if (!combatStarted || combatFinished)
+                    {
+                        parryChoiceInProgress = false;
+                        SetBoardsLockedForParry(false);
+                        yield break;
+                    }
+                }
+                else
+                {
+                    attackZone = attackerSide == BattleBoardSide.Player ? playerZone : opponentZone;
+                    parryZone = attackerSide == BattleBoardSide.Player ? opponentZone : playerZone;
+                    parried = attackZone == parryZone;
+                }
+
+                result.IsParried = parried;
+                if (parried)
+                    result.FinalDamage = 0;
+
+                parryChoiceInProgress = false;
+                SetBoardsLockedForParry(false);
+
+                Log(
+                    $"Parry zone duel | Attacker={attackerName} Target={targetName} | " +
+                    $"AttackZone={attackZone} ParryZone={parryZone} | Parried={parried}");
+            }
+
+            LogDamageRoll(attackerName, targetName, result);
+
+            if (targetSide == BattleBoardSide.Opponent)
+                ApplyDamageToOpponent(result.FinalDamage);
+            else
+                ApplyDamageToPlayer(result.FinalDamage);
         }
 
         private void FinishCombat(BattleBoardSide deadSide)
@@ -451,6 +591,12 @@ namespace MahjongGame
                 attack = Mathf.Max(attack, Mathf.RoundToInt(playerSnapshot.Attack * ResolveOpponentAttackFactor()));
             }
 
+            if (clampOpponentStatsToPlayer)
+            {
+                hp = Mathf.Min(hp, Mathf.CeilToInt(playerSnapshot.MaxHp * maxOpponentHpPlayerFactor));
+                attack = Mathf.Min(attack, Mathf.CeilToInt(playerSnapshot.Attack * maxOpponentAttackPlayerFactor));
+            }
+
             return new BattleStatsHub.BattleStatsSnapshot(
                 hp,
                 attack,
@@ -493,10 +639,11 @@ namespace MahjongGame
         private BattleDamageCalculator.DamageResult CalculateDamage(
             BattleStatsHub.BattleStatsSnapshot attacker,
             float targetArmor,
-            float targetParryChance)
+            float targetParryChance,
+            int targetMaxHp)
         {
             if (!useCharacterDamageStats)
-                return new BattleDamageCalculator.DamageResult(damagePerPair, false, false);
+                return new BattleDamageCalculator.DamageResult(ResolveMinimumPairDamage(damagePerPair, targetMaxHp), false, false);
 
             int attack = Mathf.Max(0, attacker.Attack);
             float critChance = Mathf.Clamp01(attacker.CritChance);
@@ -518,8 +665,93 @@ namespace MahjongGame
             int finalDamage = Mathf.CeilToInt(damage);
             if (attack > 0 && finalDamage < 1)
                 finalDamage = 1;
+            if (attack > 0)
+                finalDamage = ResolveMinimumPairDamage(finalDamage, targetMaxHp);
 
             return new BattleDamageCalculator.DamageResult(finalDamage, critical, false);
+        }
+
+        private BattleDamageCalculator.DamageResult CalculateDamageWithoutParry(
+            BattleStatsHub.BattleStatsSnapshot attacker,
+            float targetArmor,
+            int targetMaxHp)
+        {
+            return CalculateDamage(attacker, targetArmor, 0f, targetMaxHp);
+        }
+
+        private bool ShouldResolveParryDuel(float targetParryChance)
+        {
+            if (!useParryZoneDuel || !useCharacterDamageStats)
+                return false;
+
+            return Roll(Mathf.Clamp01(targetParryChance));
+        }
+
+        private BattleParryChoiceUI ResolveParryChoiceUi()
+        {
+            if (parryChoiceUi != null)
+                return parryChoiceUi;
+
+            parryChoiceUi = FindAnyObjectByType<BattleParryChoiceUI>(FindObjectsInactive.Include);
+            if (parryChoiceUi != null || !createParryChoiceUiIfMissing)
+                return parryChoiceUi;
+
+            parryChoiceUi = BattleParryChoiceUI.CreateRuntime();
+            return parryChoiceUi;
+        }
+
+        private void CancelParryChoice()
+        {
+            parryChoiceInProgress = false;
+            SetBoardsLockedForParry(false);
+
+            if (parryChoiceUi != null)
+                parryChoiceUi.Cancel();
+        }
+
+        private void SetBoardsLockedForParry(bool locked)
+        {
+            if (locked)
+            {
+                if (parryBoardLockActive)
+                    return;
+
+                parryBoardLockActive = true;
+                playerBoardWasLockedBeforeParry = playerBoard != null && playerBoard.IsInteractionLocked;
+                opponentBoardWasLockedBeforeParry = opponentBoard != null && opponentBoard.IsInteractionLocked;
+
+                if (playerBoard != null)
+                    playerBoard.SetInteractionLocked(true);
+                if (opponentBoard != null)
+                    opponentBoard.SetInteractionLocked(true);
+
+                return;
+            }
+
+            if (!parryBoardLockActive)
+                return;
+
+            if (playerBoard != null)
+                playerBoard.SetInteractionLocked(playerBoardWasLockedBeforeParry);
+            if (opponentBoard != null)
+                opponentBoard.SetInteractionLocked(opponentBoardWasLockedBeforeParry);
+
+            parryBoardLockActive = false;
+        }
+
+        private static BattleHitZone GetRandomHitZone()
+        {
+            return (BattleHitZone)UnityEngine.Random.Range(0, 3);
+        }
+
+        private int ResolveMinimumPairDamage(int baseDamage, int targetMaxHp)
+        {
+            int damage = Mathf.Max(0, baseDamage);
+            if (damage <= 0)
+                return 0;
+
+            int minimum = Mathf.CeilToInt(Mathf.Max(1, targetMaxHp) * minimumDamagePerPairHpFraction);
+            return Mathf.Max(damage, minimum);
         }
 
         private static BattleStatsHub.BattleStatsSnapshot CreateFallbackStats(int maxHp, int attack)
@@ -539,12 +771,18 @@ namespace MahjongGame
             int fallbackAttack)
         {
             return new BattleStatsHub.BattleStatsSnapshot(
-                stats.MaxHp > 0 ? stats.MaxHp : fallbackHp,
+                NormalizeLegacyHp(stats.MaxHp > 0 ? stats.MaxHp : fallbackHp),
                 stats.Attack > 0 ? stats.Attack : fallbackAttack,
                 stats.Armor,
                 stats.ParryChance,
                 stats.CritChance,
                 stats.CritDamageMultiplier);
+        }
+
+        private static int NormalizeLegacyHp(int hp)
+        {
+            int safeHp = Mathf.Max(1, hp);
+            return safeHp >= 300 ? Mathf.Max(1, Mathf.RoundToInt(safeHp / 10f)) : safeHp;
         }
 
         private static bool Roll(float chance)

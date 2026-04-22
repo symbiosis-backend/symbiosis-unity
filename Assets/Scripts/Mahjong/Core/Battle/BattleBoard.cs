@@ -21,6 +21,7 @@ namespace MahjongGame
         public event Action<BattleBoard> Failed;
         public event Action<BattleBoard> BoardStateChanged;
         public event Action<BattleBoard, BattleTile> TileSelected;
+        public event Action<BattleBoard, BattleTile> TileSelectionRequested;
         public event Action<BattleBoard, BattleTile> TileBlockedClicked;
         public event Action<BattleBoard, BattleTile> TileRevealed;
         public event Action<BattleBoard, BattleTile, BattleTile> PairMatched;
@@ -29,6 +30,8 @@ namespace MahjongGame
         [Header("Identity")]
         [SerializeField] private BattleBoardSide side = BattleBoardSide.Player;
         [SerializeField] private bool allowPlayerInput = true;
+        [SerializeField] private bool interactionLocked;
+        [SerializeField] private bool requireExternalSelectionApproval;
 
         [Header("Links")]
         [SerializeField] private BattleTileStore battleStore;
@@ -56,7 +59,13 @@ namespace MahjongGame
 
         [Header("Fit")]
         [SerializeField] private float paddingX = 20f;
-        [SerializeField] private float paddingY = 20f;
+        [SerializeField] private float paddingY = 24f;
+        [SerializeField] private float fitPaddingXPercent = 0.045f;
+        [SerializeField] private float fitPaddingYPercent = 0.075f;
+        [SerializeField] private float minBattleFitPaddingX = 18f;
+        [SerializeField] private float minBattleFitPaddingY = 24f;
+        [SerializeField] private float maxBattleFitPaddingX = 44f;
+        [SerializeField] private float maxBattleFitPaddingY = 64f;
         [SerializeField] private float minFitScale = 0.2f;
         [SerializeField] private float maxFitScale = 1f;
 
@@ -84,6 +93,8 @@ namespace MahjongGame
 
         public BattleBoardSide Side => side;
         public bool AllowPlayerInput => allowPlayerInput;
+        public bool IsInteractionLocked => interactionLocked;
+        public bool RequireExternalSelectionApproval => requireExternalSelectionApproval;
         public bool IsFinished => clearedTriggered || failedTriggered;
         public bool IsBuilt => isBuilt;
         public bool UseOpenRule => useOpenRule;
@@ -142,6 +153,24 @@ namespace MahjongGame
                 return;
 
             allowPlayerInput = value;
+            NotifyBoardStateChanged();
+        }
+
+        public void SetInteractionLocked(bool value)
+        {
+            if (interactionLocked == value)
+                return;
+
+            interactionLocked = value;
+            NotifyBoardStateChanged();
+        }
+
+        public void SetRequireExternalSelectionApproval(bool value)
+        {
+            if (requireExternalSelectionApproval == value)
+                return;
+
+            requireExternalSelectionApproval = value;
             NotifyBoardStateChanged();
         }
 
@@ -264,7 +293,7 @@ namespace MahjongGame
 
         public void Select(BattleTile tile)
         {
-            if (!allowPlayerInput)
+            if (!allowPlayerInput || interactionLocked)
                 return;
 
             TrySelectTile(tile);
@@ -272,12 +301,27 @@ namespace MahjongGame
 
         public void TrySelectTileProxy(BattleTile tile)
         {
+            if (!CanHandleTilePointerClick(tile))
+                return;
+
             TrySelectTile(tile);
+        }
+
+        public bool CanHandleTilePointerClick(BattleTile tile)
+        {
+            return allowPlayerInput &&
+                   !interactionLocked &&
+                   tile != null &&
+                   tile.Owner == this &&
+                   !IsFinished;
         }
 
         public bool TrySelectTile(BattleTile tile)
         {
-            if (tile == null || IsFinished || isResolvingPair)
+            if (interactionLocked || tile == null || IsFinished)
+                return false;
+
+            if (isResolvingPair && !TryDismissPendingMismatchForNextSelection(tile))
                 return false;
 
             if (!IsSelectableClosedTile(tile))
@@ -286,8 +330,49 @@ namespace MahjongGame
             if (useOpenRule && rules != null && !rules.IsTileFree(tile))
                 return false;
 
+            if (requireExternalSelectionApproval)
+            {
+                TileSelectionRequested?.Invoke(this, tile);
+                return true;
+            }
+
             RevealTile(tile);
             return true;
+        }
+
+        public bool TryRevealServerApprovedTileBySpawnedIndex(int tileIndex, string fallbackTileId, out BattleTile revealedTile)
+        {
+            bool previous = requireExternalSelectionApproval;
+            requireExternalSelectionApproval = false;
+            bool revealed = TryRevealTileBySpawnedIndex(tileIndex, fallbackTileId, out revealedTile);
+            requireExternalSelectionApproval = previous;
+            NotifyBoardStateChanged();
+            return revealed;
+        }
+
+        public bool ApplyServerTileIds(IReadOnlyList<string> tileIds)
+        {
+            if (tileIds == null || tileIds.Count == 0)
+                return false;
+
+            EnsureBattleStore();
+            int count = Mathf.Min(tileIds.Count, spawned.Count);
+            for (int i = 0; i < count; i++)
+            {
+                BattleTile tile = spawned[i];
+                if (tile == null)
+                    continue;
+
+                string id = tileIds[i];
+                if (battleStore != null && battleStore.TryGetTileDataById(id, out BattleTileData data))
+                    tile.ApplyData(data);
+                else
+                    tile.SetId(id);
+            }
+
+            rules?.RefreshBlockedView();
+            NotifyBoardStateChanged();
+            return count > 0;
         }
 
         public bool TryRevealTileById(string tileId, out BattleTile revealedTile)
@@ -313,6 +398,28 @@ namespace MahjongGame
             }
 
             return false;
+        }
+
+        public int GetSpawnedTileIndex(BattleTile tile)
+        {
+            return tile != null ? spawned.IndexOf(tile) : -1;
+        }
+
+        public bool TryRevealTileBySpawnedIndex(int tileIndex, string fallbackTileId, out BattleTile revealedTile)
+        {
+            revealedTile = null;
+
+            if (tileIndex >= 0 && tileIndex < spawned.Count)
+            {
+                BattleTile tile = spawned[tileIndex];
+                if (IsSelectableClosedTile(tile) && TrySelectTile(tile))
+                {
+                    revealedTile = tile;
+                    return true;
+                }
+            }
+
+            return TryRevealTileById(fallbackTileId, out revealedTile);
         }
 
         public List<BattleTile> GetFreeTiles()
@@ -372,8 +479,16 @@ namespace MahjongGame
 
         public void RefreshBoard()
         {
+            FitAndCenterIntoBoardArea();
             rules?.RefreshBlockedView();
             CheckClear();
+            NotifyBoardStateChanged();
+        }
+
+        public void RefitIntoBoardArea()
+        {
+            FitAndCenterIntoBoardArea();
+            rules?.RefreshBlockedView();
             NotifyBoardStateChanged();
         }
 
@@ -530,6 +645,29 @@ namespace MahjongGame
             resolveRoutine = null;
         }
 
+        private bool TryDismissPendingMismatchForNextSelection(BattleTile nextTile)
+        {
+            if (nextTile == null || firstRevealed == null || secondRevealed == null)
+                return false;
+
+            if (nextTile == firstRevealed || nextTile == secondRevealed)
+                return false;
+
+            if (string.Equals(firstRevealed.Id, secondRevealed.Id, StringComparison.Ordinal))
+                return false;
+
+            BattleTile first = firstRevealed;
+            BattleTile second = secondRevealed;
+
+            StopResolveRoutine();
+            HideTileToBack(first);
+            HideTileToBack(second);
+            ResetRevealSelection();
+            rules?.RefreshBlockedView();
+            NotifyBoardStateChanged();
+            return true;
+        }
+
         private void StopResolveRoutine()
         {
             if (resolveRoutine == null)
@@ -619,8 +757,12 @@ namespace MahjongGame
             contentSize.x = Mathf.Max(1f, contentSize.x);
             contentSize.y = Mathf.Max(1f, contentSize.y);
 
-            float availableWidth = Mathf.Max(1f, boardArea.rect.width - paddingX * 2f);
-            float availableHeight = Mathf.Max(1f, boardArea.rect.height - paddingY * 2f);
+            float adaptivePaddingX = Mathf.Clamp(boardArea.rect.width * fitPaddingXPercent, minBattleFitPaddingX, maxBattleFitPaddingX);
+            float adaptivePaddingY = Mathf.Clamp(boardArea.rect.height * fitPaddingYPercent, minBattleFitPaddingY, maxBattleFitPaddingY);
+            float safePaddingX = Mathf.Max(paddingX, adaptivePaddingX);
+            float safePaddingY = Mathf.Max(paddingY, adaptivePaddingY);
+            float availableWidth = Mathf.Max(1f, boardArea.rect.width - safePaddingX * 2f);
+            float availableHeight = Mathf.Max(1f, boardArea.rect.height - safePaddingY * 2f);
 
             float scaleX = availableWidth / contentSize.x;
             float scaleY = availableHeight / contentSize.y;

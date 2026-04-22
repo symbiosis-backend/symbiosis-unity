@@ -107,5 +107,27 @@ namespace MahjongGame
             BattleRoundConfig cfg = GetRoundConfig(roundIndex);
             return Mathf.Max(2, cfg.TilesToUse);
         }
+
+        public bool TryGetTileDataById(string id, out BattleTileData data)
+        {
+            data = null;
+            if (string.IsNullOrWhiteSpace(id) || battleTiles == null)
+                return false;
+
+            for (int i = 0; i < battleTiles.Count; i++)
+            {
+                BattleTileData item = battleTiles[i];
+                if (item == null)
+                    continue;
+
+                if (string.Equals(item.Id, id, StringComparison.Ordinal))
+                {
+                    data = item;
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

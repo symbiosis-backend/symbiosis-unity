@@ -192,6 +192,29 @@ namespace MahjongGame
             NotifyStateChanged();
         }
 
+        public void ApplyData(BattleTileData data)
+        {
+            if (data == null)
+                return;
+
+            id = string.IsNullOrWhiteSpace(data.Id) ? string.Empty : data.Id;
+
+            if (data.Prefab != null)
+            {
+                backSprite = data.Prefab.backSprite;
+                faceSprite = data.Prefab.faceSprite;
+                faceIsFullTileArt = data.Prefab.faceIsFullTileArt;
+                size = data.Prefab.size;
+                faceWidthPercent = data.Prefab.faceWidthPercent;
+                faceHeightPercent = data.Prefab.faceHeightPercent;
+                faceOffset = data.Prefab.faceOffset;
+                preserveFaceAspect = data.Prefab.preserveFaceAspect;
+            }
+
+            InitializeVisuals();
+            NotifyStateChanged();
+        }
+
         public void ResetTileState()
         {
             selected = false;
@@ -282,6 +305,9 @@ namespace MahjongGame
         private void OnClick()
         {
             if (!CanBeClicked())
+                return;
+
+            if (owner != null && !owner.CanHandleTilePointerClick(this))
                 return;
 
             if (blocked)
