@@ -23,7 +23,7 @@ jobs:
           lfs: true
 
       - name: Check Required Tools And Secrets
-        shell: pwsh
+        shell: powershell -NoProfile -ExecutionPolicy Bypass -Command ". '{0}'"
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
@@ -40,7 +40,7 @@ jobs:
           Write-Host "FishNet server build target: $env:FISHNET_SERVER_TARGET"
 
       - name: Build Dedicated Server
-        shell: pwsh
+        shell: powershell -NoProfile -ExecutionPolicy Bypass -Command ". '{0}'"
         run: |
           New-Item -ItemType Directory -Force -Path 'Builds/Server/Linux', 'Builds/Logs' | Out-Null
           & $env:UNITY_EXE `
@@ -70,7 +70,7 @@ jobs:
           if-no-files-found: error
 
       - name: Upload Server To VPS
-        shell: pwsh
+        shell: powershell -NoProfile -ExecutionPolicy Bypass -Command ". '{0}'"
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
@@ -85,7 +85,8 @@ jobs:
             Write-Error "Builds/Server/Linux contains no files."
           }
           foreach ($file in $files) {
-            $relative = [IO.Path]::GetRelativePath((Resolve-Path 'Builds/Server/Linux').Path, $file.FullName).Replace('\', '/')
+            $root = (Resolve-Path 'Builds/Server/Linux').Path.TrimEnd('\')
+            $relative = $file.FullName.Substring($root.Length + 1).Replace('\', '/')
             $remoteDir = [IO.Path]::GetDirectoryName($relative)
             if ([string]::IsNullOrWhiteSpace($remoteDir)) {
               $remoteDir = '.'

@@ -47,7 +47,7 @@ jobs:
             Library-${{ runner.os }}-Android-
 
       - name: Check Required Secrets
-        shell: powershell
+        shell: powershell -NoProfile -ExecutionPolicy Bypass -Command ". '{0}'"
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
@@ -68,7 +68,7 @@ jobs:
           Write-Host "Required runner tools and secrets are present."
 
       - name: Restore Android Keystore
-        shell: powershell
+        shell: powershell -NoProfile -ExecutionPolicy Bypass -Command ". '{0}'"
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
         run: |
@@ -81,7 +81,7 @@ jobs:
           }
 
       - name: Build APK
-        shell: powershell
+        shell: powershell -NoProfile -ExecutionPolicy Bypass -Command ". '{0}'"
         env:
           ANDROID_KEYSTORE_PASS: ${{ secrets.ANDROID_KEYSTORE_PASS }}
           ANDROID_KEY_ALIAS_NAME: ${{ secrets.ANDROID_KEY_ALIAS_NAME }}
@@ -108,7 +108,7 @@ jobs:
           }
 
       - name: Build Addressables Remote Content
-        shell: powershell
+        shell: powershell -NoProfile -ExecutionPolicy Bypass -Command ". '{0}'"
         run: |
           & $env:UNITY_EXE `
             -batchmode `
@@ -125,7 +125,7 @@ jobs:
           }
 
       - name: Write Update Manifest
-        shell: powershell
+        shell: powershell -NoProfile -ExecutionPolicy Bypass -Command ". '{0}'"
         run: |
           $manifest = [ordered]@{
             latestVersion = $env:BUILD_VERSION_NAME
@@ -155,7 +155,7 @@ jobs:
           if-no-files-found: error
 
       - name: Upload APK To VPS
-        shell: powershell
+        shell: powershell -NoProfile -ExecutionPolicy Bypass -Command ". '{0}'"
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
@@ -170,7 +170,7 @@ jobs:
             "$env:SERVER_USER@$env:SERVER_HOST`:$env:SERVER_DOWNLOADS_PATH/"
 
       - name: Upload Addressables To VPS
-        shell: powershell
+        shell: powershell -NoProfile -ExecutionPolicy Bypass -Command ". '{0}'"
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
@@ -204,7 +204,7 @@ jobs:
           }
 
       - name: Verify VPS Files
-        shell: powershell
+        shell: powershell -NoProfile -ExecutionPolicy Bypass -Command ". '{0}'"
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_USER: ${{ secrets.SERVER_USER }}
@@ -215,7 +215,7 @@ jobs:
           ssh -i $keyPath -o StrictHostKeyChecking=no "$env:SERVER_USER@$env:SERVER_HOST" "ls -lh '$env:SERVER_DOWNLOADS_PATH/symbiosis-latest.apk' '$env:SERVER_DOWNLOADS_PATH/android-update.json' && cat '$env:SERVER_DOWNLOADS_PATH/android-update.json' && find '$env:SERVER_DOWNLOADS_PATH/addressables/Android' -maxdepth 1 -type f 2>/dev/null | sort | tail -20"
 
       - name: Verify Public Download URLs
-        shell: powershell
+        shell: powershell -NoProfile -ExecutionPolicy Bypass -Command ". '{0}'"
         run: |
           $urls = @(
             "$env:PUBLIC_BASE_URL/updates/android",
