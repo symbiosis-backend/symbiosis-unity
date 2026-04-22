@@ -73,17 +73,30 @@ jobs:
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
         run: |
+          function Get-RunnerEnvValue([string]$name) {
+            $value = [Environment]::GetEnvironmentVariable($name, 'Process')
+            if ([string]::IsNullOrWhiteSpace($value)) {
+              $value = [Environment]::GetEnvironmentVariable($name, 'User')
+            }
+            if ([string]::IsNullOrWhiteSpace($value)) {
+              $value = [Environment]::GetEnvironmentVariable($name, 'Machine')
+            }
+            return $value
+          }
+
           if (-not [string]::IsNullOrWhiteSpace($env:ANDROID_KEYSTORE_BASE64)) {
             $keystorePath = Join-Path $env:RUNNER_TEMP 'android-release.keystore'
             [IO.File]::WriteAllBytes($keystorePath, [Convert]::FromBase64String($env:ANDROID_KEYSTORE_BASE64))
             "ANDROID_KEYSTORE_PATH=$keystorePath" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
-          } elseif (-not [string]::IsNullOrWhiteSpace($env:RUNNER_ANDROID_KEYSTORE_PATH)) {
-            if (-not (Test-Path $env:RUNNER_ANDROID_KEYSTORE_PATH)) {
+          } else {
+            $runnerKeystorePath = Get-RunnerEnvValue 'RUNNER_ANDROID_KEYSTORE_PATH'
+            if ([string]::IsNullOrWhiteSpace($runnerKeystorePath)) {
+              throw "Android release keystore is not configured. Set ANDROID_KEYSTORE_BASE64 GitHub secret or RUNNER_ANDROID_KEYSTORE_PATH on the self-hosted runner."
+            }
+            if (-not (Test-Path $runnerKeystorePath)) {
               throw "RUNNER_ANDROID_KEYSTORE_PATH points to a missing file."
             }
-            "ANDROID_KEYSTORE_PATH=$env:RUNNER_ANDROID_KEYSTORE_PATH" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
-          } else {
-            throw "Android release keystore is not configured. Set ANDROID_KEYSTORE_BASE64 GitHub secret or RUNNER_ANDROID_KEYSTORE_PATH on the self-hosted runner."
+            "ANDROID_KEYSTORE_PATH=$runnerKeystorePath" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
           }
 
       - name: Check Unity Editor Is Closed
@@ -121,14 +134,28 @@ jobs:
           ANDROID_KEY_ALIAS_NAME: ${{ secrets.ANDROID_KEY_ALIAS_NAME }}
           ANDROID_KEY_ALIAS_PASS: ${{ secrets.ANDROID_KEY_ALIAS_PASS }}
         run: |
-          if ([string]::IsNullOrWhiteSpace($env:ANDROID_KEYSTORE_PASS) -and -not [string]::IsNullOrWhiteSpace($env:RUNNER_ANDROID_KEYSTORE_PASS)) {
-            $env:ANDROID_KEYSTORE_PASS = $env:RUNNER_ANDROID_KEYSTORE_PASS
+          function Get-RunnerEnvValue([string]$name) {
+            $value = [Environment]::GetEnvironmentVariable($name, 'Process')
+            if ([string]::IsNullOrWhiteSpace($value)) {
+              $value = [Environment]::GetEnvironmentVariable($name, 'User')
+            }
+            if ([string]::IsNullOrWhiteSpace($value)) {
+              $value = [Environment]::GetEnvironmentVariable($name, 'Machine')
+            }
+            return $value
           }
-          if ([string]::IsNullOrWhiteSpace($env:ANDROID_KEY_ALIAS_NAME) -and -not [string]::IsNullOrWhiteSpace($env:RUNNER_ANDROID_KEY_ALIAS_NAME)) {
-            $env:ANDROID_KEY_ALIAS_NAME = $env:RUNNER_ANDROID_KEY_ALIAS_NAME
+
+          $runnerKeystorePass = Get-RunnerEnvValue 'RUNNER_ANDROID_KEYSTORE_PASS'
+          $runnerKeyAliasName = Get-RunnerEnvValue 'RUNNER_ANDROID_KEY_ALIAS_NAME'
+          $runnerKeyAliasPass = Get-RunnerEnvValue 'RUNNER_ANDROID_KEY_ALIAS_PASS'
+          if ([string]::IsNullOrWhiteSpace($env:ANDROID_KEYSTORE_PASS) -and -not [string]::IsNullOrWhiteSpace($runnerKeystorePass)) {
+            $env:ANDROID_KEYSTORE_PASS = $runnerKeystorePass
           }
-          if ([string]::IsNullOrWhiteSpace($env:ANDROID_KEY_ALIAS_PASS) -and -not [string]::IsNullOrWhiteSpace($env:RUNNER_ANDROID_KEY_ALIAS_PASS)) {
-            $env:ANDROID_KEY_ALIAS_PASS = $env:RUNNER_ANDROID_KEY_ALIAS_PASS
+          if ([string]::IsNullOrWhiteSpace($env:ANDROID_KEY_ALIAS_NAME) -and -not [string]::IsNullOrWhiteSpace($runnerKeyAliasName)) {
+            $env:ANDROID_KEY_ALIAS_NAME = $runnerKeyAliasName
+          }
+          if ([string]::IsNullOrWhiteSpace($env:ANDROID_KEY_ALIAS_PASS) -and -not [string]::IsNullOrWhiteSpace($runnerKeyAliasPass)) {
+            $env:ANDROID_KEY_ALIAS_PASS = $runnerKeyAliasPass
           }
           foreach ($name in @('ANDROID_KEYSTORE_PATH', 'ANDROID_KEYSTORE_PASS', 'ANDROID_KEY_ALIAS_NAME')) {
             if ([string]::IsNullOrWhiteSpace([Environment]::GetEnvironmentVariable($name))) {
