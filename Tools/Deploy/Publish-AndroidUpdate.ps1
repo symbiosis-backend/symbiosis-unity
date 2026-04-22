@@ -2,7 +2,7 @@ param(
     [string]$ServerHost = "91.99.176.77",
     [string]$ServerUser = "deploy",
     [string]$SshKeyPath = "$env:USERPROFILE\.ssh\symbiosis_unity_actions",
-    [string]$ServerDownloadsPath = "/opt/symbiosis/backend/downloads",
+    [string]$ServerDownloadsPath = "/app/downloads",
     [string]$ApkPath = "Builds/Android/symbiosis-latest.apk",
     [string]$ManifestPath = "Builds/Android/android-update.json",
     [string]$AddressablesPath = "ServerData/Android",
@@ -28,10 +28,8 @@ function Require-Directory {
 Require-File $SshKeyPath
 Require-File $ApkPath
 Require-File $ManifestPath
-Require-Directory $AddressablesPath
-
 $remote = "$ServerUser@$ServerHost"
-$sshOptions = @("-i", $SshKeyPath, "-o", "StrictHostKeyChecking=no")
+$sshOptions = @("-i", $SshKeyPath, "-o", "IdentitiesOnly=yes", "-o", "StrictHostKeyChecking=no", "-o", "BatchMode=yes")
 
 Write-Host "Creating remote downloads folders..."
 ssh @sshOptions $remote "mkdir -p '$ServerDownloadsPath' '$ServerDownloadsPath/addressables/Android'"
@@ -39,24 +37,24 @@ ssh @sshOptions $remote "mkdir -p '$ServerDownloadsPath' '$ServerDownloadsPath/a
 Write-Host "Uploading APK and update manifest..."
 scp @sshOptions $ApkPath $ManifestPath "$remote`:$ServerDownloadsPath/"
 
-Write-Host "Uploading Addressables..."
-$root = (Resolve-Path -LiteralPath $AddressablesPath).Path
-$files = Get-ChildItem -LiteralPath $root -Recurse -File
-if ($files.Count -eq 0) {
-    throw "Addressables directory contains no files: $AddressablesPath"
-}
+if (Test-Path -LiteralPath $AddressablesPath -PathType Container) {
+    Write-Host "Uploading Addressables..."
+    $root = (Resolve-Path -LiteralPath $AddressablesPath).Path
+    $files = Get-ChildItem -LiteralPath $root -Recurse -File
+    foreach ($file in $files) {
+        $relative = [IO.Path]::GetRelativePath($root, $file.FullName).Replace("\", "/")
+        $remoteDir = [IO.Path]::GetDirectoryName($relative)
+        if ([string]::IsNullOrWhiteSpace($remoteDir)) {
+            $remoteDir = "."
+        } else {
+            $remoteDir = $remoteDir.Replace("\", "/")
+        }
 
-foreach ($file in $files) {
-    $relative = [IO.Path]::GetRelativePath($root, $file.FullName).Replace("\", "/")
-    $remoteDir = [IO.Path]::GetDirectoryName($relative)
-    if ([string]::IsNullOrWhiteSpace($remoteDir)) {
-        $remoteDir = "."
-    } else {
-        $remoteDir = $remoteDir.Replace("\", "/")
+        ssh @sshOptions $remote "mkdir -p '$ServerDownloadsPath/addressables/Android/$remoteDir'"
+        scp @sshOptions $file.FullName "$remote`:$ServerDownloadsPath/addressables/Android/$relative"
     }
-
-    ssh @sshOptions $remote "mkdir -p '$ServerDownloadsPath/addressables/Android/$remoteDir'"
-    scp @sshOptions $file.FullName "$remote`:$ServerDownloadsPath/addressables/Android/$relative"
+} else {
+    Write-Host "No Addressables directory found at '$AddressablesPath'. Skipping Addressables upload."
 }
 
 Write-Host "Verifying remote files..."
