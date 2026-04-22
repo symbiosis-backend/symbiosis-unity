@@ -188,11 +188,16 @@ jobs:
           $ErrorActionPreference = $previousErrorActionPreference
           "Remote mkdir ssh exit code: $sshExitCode" | Add-Content -LiteralPath $deployLog -Encoding utf8
           if ($sshExitCode -ne 0) { throw "Remote mkdir failed with exit code $sshExitCode. See Builds/Logs/DeployUpload.log." }
+          $previousErrorActionPreference = $ErrorActionPreference
+          $ErrorActionPreference = 'Continue'
           scp -q -i $keyPath -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=20 `
             'Builds/Android/symbiosis-latest.apk' `
             'Builds/Android/android-update.json' `
             "${serverUser}@${serverHost}:$serverDownloadsPath/" *>&1 | Tee-Object -FilePath $deployLog -Append
-          if ($LASTEXITCODE -ne 0) { throw "APK upload failed with exit code $LASTEXITCODE. See Builds/Logs/DeployUpload.log." }
+          $scpExitCode = $LASTEXITCODE
+          $ErrorActionPreference = $previousErrorActionPreference
+          "APK scp exit code: $scpExitCode" | Add-Content -LiteralPath $deployLog -Encoding utf8
+          if ($scpExitCode -ne 0) { throw "APK upload failed with exit code $scpExitCode. See Builds/Logs/DeployUpload.log." }
 
       - name: Upload Deploy Diagnostic
         if: failure()
