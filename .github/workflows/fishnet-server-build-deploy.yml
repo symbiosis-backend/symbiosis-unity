@@ -80,9 +80,12 @@ jobs:
           $serverHost = $env:SERVER_HOST.Trim()
           $serverUser = $env:SERVER_USER.Trim()
           $serverReleasesPath = $env:SERVER_RELEASES_PATH.Trim()
-          $env:SERVER_SSH_KEY -replace "`r`n", "`n" | Set-Content -LiteralPath $keyPath -NoNewline -Encoding ascii
+          $sshKey = $env:SERVER_SSH_KEY.Trim() -replace "\\r\\n", "`n" -replace "\\n", "`n" -replace "`r`n", "`n"
+          $sshKey | Set-Content -LiteralPath $keyPath -NoNewline -Encoding ascii
+          icacls $keyPath /inheritance:r /grant:r "$($env:USERNAME):(R)" | Out-Null
+          Write-Host "Deploy target: $serverUser@$serverHost"
           $releasePath = "$serverReleasesPath/${{ github.run_number }}"
-          ssh -i $keyPath -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=2 "$serverUser@$serverHost" "mkdir -p '$releasePath'"
+          ssh -i $keyPath -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=2 "$serverUser@$serverHost" "mkdir -p '$releasePath'"
           $files = Get-ChildItem -Path 'Builds/Server/Linux' -Recurse -File
           if ($files.Count -eq 0) {
             Write-Error "Builds/Server/Linux contains no files."
@@ -96,9 +99,9 @@ jobs:
             } else {
               $remoteDir = $remoteDir.Replace('\', '/')
             }
-            ssh -i $keyPath -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=2 "$serverUser@$serverHost" "mkdir -p '$releasePath/$remoteDir'"
-            scp -i $keyPath -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=20 `
+            ssh -i $keyPath -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=2 "$serverUser@$serverHost" "mkdir -p '$releasePath/$remoteDir'"
+            scp -i $keyPath -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=20 `
               "$($file.FullName)" `
               "${serverUser}@${serverHost}:$releasePath/$relative"
           }
-          ssh -i $keyPath -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=2 "$serverUser@$serverHost" "chmod +x '$releasePath/SymbiosisServer.x86_64' && ln -sfn '$releasePath' '/opt/symbiosis/fishnet-server/current' && ls -lah '/opt/symbiosis/fishnet-server/current'"
+          ssh -i $keyPath -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=2 "$serverUser@$serverHost" "chmod +x '$releasePath/SymbiosisServer.x86_64' && ln -sfn '$releasePath' '/opt/symbiosis/fishnet-server/current' && ls -lah '/opt/symbiosis/fishnet-server/current'"
