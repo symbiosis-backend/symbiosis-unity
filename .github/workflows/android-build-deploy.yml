@@ -166,8 +166,8 @@ jobs:
           $serverUser = $env:SERVER_USER.Trim()
           $serverDownloadsPath = $env:SERVER_DOWNLOADS_PATH.Trim()
           $env:SERVER_SSH_KEY -replace "`r`n", "`n" | Set-Content -LiteralPath $keyPath -NoNewline -Encoding ascii
-          ssh -i $keyPath -o StrictHostKeyChecking=no "$serverUser@$serverHost" "mkdir -p '$serverDownloadsPath'"
-          scp -i $keyPath -o StrictHostKeyChecking=no `
+          ssh -i $keyPath -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=2 "$serverUser@$serverHost" "mkdir -p '$serverDownloadsPath'"
+          scp -i $keyPath -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=20 `
             'Builds/Android/symbiosis-latest.apk' `
             'Builds/Android/android-update.json' `
             "${serverUser}@${serverHost}:$serverDownloadsPath/"
@@ -189,7 +189,7 @@ jobs:
           $serverUser = $env:SERVER_USER.Trim()
           $serverDownloadsPath = $env:SERVER_DOWNLOADS_PATH.Trim()
           $env:SERVER_SSH_KEY -replace "`r`n", "`n" | Set-Content -LiteralPath $keyPath -NoNewline -Encoding ascii
-          ssh -i $keyPath -o StrictHostKeyChecking=no "$serverUser@$serverHost" "mkdir -p '$serverDownloadsPath/addressables/Android'"
+          ssh -i $keyPath -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=2 "$serverUser@$serverHost" "mkdir -p '$serverDownloadsPath/addressables/Android'"
           $files = Get-ChildItem -Path 'ServerData/Android' -Recurse -File
           if ($files.Count -eq 0) {
             Write-Error "ServerData/Android exists but contains no files."
@@ -203,8 +203,8 @@ jobs:
             } else {
               $remoteDir = $remoteDir.Replace('\', '/')
             }
-            ssh -i $keyPath -o StrictHostKeyChecking=no "$serverUser@$serverHost" "mkdir -p '$serverDownloadsPath/addressables/Android/$remoteDir'"
-            scp -i $keyPath -o StrictHostKeyChecking=no `
+            ssh -i $keyPath -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=2 "$serverUser@$serverHost" "mkdir -p '$serverDownloadsPath/addressables/Android/$remoteDir'"
+            scp -i $keyPath -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=20 `
               "$($file.FullName)" `
               "${serverUser}@${serverHost}:$serverDownloadsPath/addressables/Android/$relative"
           }
@@ -221,7 +221,7 @@ jobs:
           $serverUser = $env:SERVER_USER.Trim()
           $serverDownloadsPath = $env:SERVER_DOWNLOADS_PATH.Trim()
           $env:SERVER_SSH_KEY -replace "`r`n", "`n" | Set-Content -LiteralPath $keyPath -NoNewline -Encoding ascii
-          ssh -i $keyPath -o StrictHostKeyChecking=no "$serverUser@$serverHost" "ls -lh '$serverDownloadsPath/symbiosis-latest.apk' '$serverDownloadsPath/android-update.json' && cat '$serverDownloadsPath/android-update.json' && find '$serverDownloadsPath/addressables/Android' -maxdepth 1 -type f 2>/dev/null | sort | tail -20"
+          ssh -i $keyPath -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=2 "$serverUser@$serverHost" "ls -lh '$serverDownloadsPath/symbiosis-latest.apk' '$serverDownloadsPath/android-update.json' && cat '$serverDownloadsPath/android-update.json' && find '$serverDownloadsPath/addressables/Android' -maxdepth 1 -type f 2>/dev/null | sort | tail -20"
 
       - name: Verify Public Download URLs
         shell: powershell -NoProfile -ExecutionPolicy Bypass -Command ". '{0}'"
