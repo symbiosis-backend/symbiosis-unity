@@ -85,6 +85,25 @@ cd "C:\Unity Projects\Symbiosis"
   -SshKeyPath "$env:USERPROFILE\.ssh\symbiosis_unity_actions"
 ```
 
+## Self-hosted Windows runner as a service
+
+The Android workflow runs on a self-hosted Windows runner with these labels:
+
+`self-hosted`, `Windows`, `X64`
+
+Install it as a Windows service from an elevated PowerShell window:
+
+```powershell
+cd "C:\Unity Projects\Symbiosis"
+.\Tools\Deploy\Install-GitHubRunnerService.ps1 -RegistrationToken "<runner-registration-token>"
+```
+
+You can get the registration token from GitHub:
+
+`symbiosis-unity` > `Settings` > `Actions` > `Runners` > `New self-hosted runner`.
+
+The script downloads the latest Windows x64 GitHub Actions runner, configures it for this repository, installs it as a service, and starts it. Once the service is online, queued Android builds should begin automatically.
+
 ## Connect local repository to GitHub
 
 Create a GitHub repo for the Unity project, then run:
