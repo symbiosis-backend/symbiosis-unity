@@ -167,6 +167,8 @@ jobs:
           New-Item -ItemType Directory -Force -Path (Split-Path $deployLog) | Out-Null
           "Starting APK deploy at $(Get-Date -Format o)" | Set-Content -LiteralPath $deployLog -Encoding utf8
           $keyPath = Join-Path $env:RUNNER_TEMP 'symbiosis-server-key'
+          $apkPath = Join-Path $env:GITHUB_WORKSPACE 'Builds/Android/symbiosis-latest.apk'
+          $manifestPath = Join-Path $env:GITHUB_WORKSPACE 'Builds/Android/android-update.json'
           $serverHost = $env:SERVER_HOST.Trim()
           $serverUser = $env:SERVER_USER.Trim()
           $serverDownloadsPath = $env:SERVER_DOWNLOADS_PATH.Trim()
@@ -191,8 +193,8 @@ jobs:
           $previousErrorActionPreference = $ErrorActionPreference
           $ErrorActionPreference = 'Continue'
           scp -q -i $keyPath -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=20 `
-            'Builds/Android/symbiosis-latest.apk' `
-            'Builds/Android/android-update.json' `
+            "$apkPath" `
+            "$manifestPath" `
             "${serverUser}@${serverHost}:$serverDownloadsPath/" *>&1 | Tee-Object -FilePath $deployLog -Append
           $scpExitCode = $LASTEXITCODE
           $ErrorActionPreference = $previousErrorActionPreference
