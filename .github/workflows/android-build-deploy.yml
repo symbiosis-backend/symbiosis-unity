@@ -93,18 +93,20 @@ jobs:
       - name: Build Addressables Remote Content
         shell: powershell -NoProfile -ExecutionPolicy Bypass -Command ". '{0}'"
         run: |
-          & $env:UNITY_EXE `
-            -batchmode `
-            -quit `
-            -projectPath $env:GITHUB_WORKSPACE `
-            -buildTarget Android `
-            -executeMethod RemoteContentAddressablesSetup.BuildRemoteContent `
-            -logFile "$env:GITHUB_WORKSPACE\Builds\Logs\AddressablesBuild.log"
-          if ($LASTEXITCODE -ne 0) {
+          $unityArgs = @(
+            '-batchmode',
+            '-quit',
+            '-projectPath', $env:GITHUB_WORKSPACE,
+            '-buildTarget', 'Android',
+            '-executeMethod', 'RemoteContentAddressablesSetup.BuildRemoteContent',
+            '-logFile', "$env:GITHUB_WORKSPACE\Builds\Logs\AddressablesBuild.log"
+          )
+          $unityProcess = Start-Process -FilePath $env:UNITY_EXE -ArgumentList $unityArgs -Wait -PassThru
+          if ($unityProcess.ExitCode -ne 0) {
             if (Test-Path 'Builds/Logs/AddressablesBuild.log') {
               Get-Content 'Builds/Logs/AddressablesBuild.log' -Tail 250
             }
-            exit $LASTEXITCODE
+            exit $unityProcess.ExitCode
           }
 
       - name: Build APK
@@ -118,18 +120,20 @@ jobs:
           $versionCode = [int]$env:BUILD_VERSION_CODE_OFFSET + [int]$env:GITHUB_RUN_NUMBER
           "BUILD_VERSION_CODE=$versionCode" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
           $buildOutputPath = Join-Path $env:GITHUB_WORKSPACE $env:BUILD_OUTPUT_PATH
-          & $env:UNITY_EXE `
-            -batchmode `
-            -quit `
-            -projectPath $env:GITHUB_WORKSPACE `
-            -buildTarget Android `
-            -executeMethod AndroidCiBuild.BuildApk `
-            -logFile "$env:GITHUB_WORKSPACE\Builds\Logs\UnityBuild.log"
-          if ($LASTEXITCODE -ne 0) {
+          $unityArgs = @(
+            '-batchmode',
+            '-quit',
+            '-projectPath', $env:GITHUB_WORKSPACE,
+            '-buildTarget', 'Android',
+            '-executeMethod', 'AndroidCiBuild.BuildApk',
+            '-logFile', "$env:GITHUB_WORKSPACE\Builds\Logs\UnityBuild.log"
+          )
+          $unityProcess = Start-Process -FilePath $env:UNITY_EXE -ArgumentList $unityArgs -Wait -PassThru
+          if ($unityProcess.ExitCode -ne 0) {
             if (Test-Path 'Builds/Logs/UnityBuild.log') {
               Get-Content 'Builds/Logs/UnityBuild.log' -Tail 250
             }
-            exit $LASTEXITCODE
+            exit $unityProcess.ExitCode
           }
           if (-not (Test-Path $buildOutputPath)) {
             if (Test-Path 'Builds/Logs/UnityBuild.log') {
