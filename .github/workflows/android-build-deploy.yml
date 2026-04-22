@@ -171,6 +171,8 @@ jobs:
           $serverDownloadsPath = $env:SERVER_DOWNLOADS_PATH.Trim()
           if (-not [string]::IsNullOrWhiteSpace($env:SERVER_SSH_KEY_B64)) {
             [IO.File]::WriteAllBytes($keyPath, [Convert]::FromBase64String($env:SERVER_SSH_KEY_B64.Trim()))
+          } elseif ($env:SERVER_SSH_KEY -notmatch "BEGIN OPENSSH PRIVATE KEY") {
+            [IO.File]::WriteAllBytes($keyPath, [Convert]::FromBase64String($env:SERVER_SSH_KEY.Trim()))
           } else {
             $sshKey = $env:SERVER_SSH_KEY.Trim() -replace "\\r\\n", "`n" -replace "\\n", "`n" -replace "`r`n", "`n"
             $sshKey | Set-Content -LiteralPath $keyPath -NoNewline -Encoding ascii
@@ -218,6 +220,8 @@ jobs:
           $serverDownloadsPath = $env:SERVER_DOWNLOADS_PATH.Trim()
           if (-not [string]::IsNullOrWhiteSpace($env:SERVER_SSH_KEY_B64)) {
             [IO.File]::WriteAllBytes($keyPath, [Convert]::FromBase64String($env:SERVER_SSH_KEY_B64.Trim()))
+          } elseif ($env:SERVER_SSH_KEY -notmatch "BEGIN OPENSSH PRIVATE KEY") {
+            [IO.File]::WriteAllBytes($keyPath, [Convert]::FromBase64String($env:SERVER_SSH_KEY.Trim()))
           } else {
             $sshKey = $env:SERVER_SSH_KEY.Trim() -replace "\\r\\n", "`n" -replace "\\n", "`n" -replace "`r`n", "`n"
             $sshKey | Set-Content -LiteralPath $keyPath -NoNewline -Encoding ascii
@@ -257,6 +261,8 @@ jobs:
           $serverDownloadsPath = $env:SERVER_DOWNLOADS_PATH.Trim()
           if (-not [string]::IsNullOrWhiteSpace($env:SERVER_SSH_KEY_B64)) {
             [IO.File]::WriteAllBytes($keyPath, [Convert]::FromBase64String($env:SERVER_SSH_KEY_B64.Trim()))
+          } elseif ($env:SERVER_SSH_KEY -notmatch "BEGIN OPENSSH PRIVATE KEY") {
+            [IO.File]::WriteAllBytes($keyPath, [Convert]::FromBase64String($env:SERVER_SSH_KEY.Trim()))
           } else {
             $sshKey = $env:SERVER_SSH_KEY.Trim() -replace "\\r\\n", "`n" -replace "\\n", "`n" -replace "`r`n", "`n"
             $sshKey | Set-Content -LiteralPath $keyPath -NoNewline -Encoding ascii
