@@ -240,7 +240,7 @@ namespace MahjongGame
                 panelRect.sizeDelta = new Vector2(620f, 430f);
                 panelRoot.GetComponent<Image>().color = new Color(0.06f, 0.075f, 0.1f, 0.98f);
 
-                TMP_Text title = CreateText(panelRoot.transform, "Title", "Update available", 38f, FontStyles.Bold, TextAlignmentOptions.Center);
+                TMP_Text title = CreateText(panelRoot.transform, "Title", GameLocalization.Text("update.title"), 38f, FontStyles.Bold, TextAlignmentOptions.Center);
                 SetRect(title.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(32f, -86f), new Vector2(-32f, -24f));
 
                 string body = BuildMessage(updateManifest);
@@ -250,12 +250,12 @@ namespace MahjongGame
                 message.fontSizeMax = 22f;
                 SetRect(message.rectTransform, Vector2.zero, Vector2.one, new Vector2(42f, 118f), new Vector2(-42f, -104f));
 
-                Button updateButton = CreateButton(panelRoot.transform, "UpdateButton", "Update", new Vector2(0.5f, 0f), new Vector2(0f, 54f), new Vector2(220f, 58f));
+                Button updateButton = CreateButton(panelRoot.transform, "UpdateButton", GameLocalization.Text("update.button"), new Vector2(0.5f, 0f), new Vector2(0f, 54f), new Vector2(220f, 58f));
                 updateButton.onClick.AddListener(OpenUpdate);
 
                 if (!updateManifest.forceUpdate)
                 {
-                    Button laterButton = CreateButton(panelRoot.transform, "LaterButton", "Later", new Vector2(0.5f, 0f), new Vector2(0f, -18f), new Vector2(160f, 48f));
+                    Button laterButton = CreateButton(panelRoot.transform, "LaterButton", GameLocalization.Text("update.later"), new Vector2(0.5f, 0f), new Vector2(0f, -18f), new Vector2(160f, 48f));
                     laterButton.onClick.AddListener(Close);
                 }
             }
@@ -263,16 +263,16 @@ namespace MahjongGame
             private static string BuildMessage(AppUpdateManifest manifest)
             {
                 StringBuilder builder = new StringBuilder();
-                builder.Append("Installed build is older than the server build.");
+                builder.Append(GameLocalization.Text("update.body_older"));
 
                 if (!string.IsNullOrWhiteSpace(manifest.latestVersion))
-                    builder.AppendLine().Append("Latest version: ").Append(manifest.latestVersion);
+                    builder.AppendLine().Append(GameLocalization.Format("update.latest_version", manifest.latestVersion));
 
                 if (!string.IsNullOrWhiteSpace(manifest.releaseNotes))
                     builder.AppendLine().AppendLine().Append(manifest.releaseNotes);
 
                 if (manifest.forceUpdate)
-                    builder.AppendLine().AppendLine().Append("This update is required.");
+                    builder.AppendLine().AppendLine().Append(GameLocalization.Text("update.required"));
 
                 return builder.ToString();
             }

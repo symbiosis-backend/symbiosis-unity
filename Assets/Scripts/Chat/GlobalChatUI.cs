@@ -16,6 +16,9 @@ namespace MahjongGame
     {
         [SerializeField] private Button toggleButton;
         [SerializeField] private GameObject panelRoot;
+        [SerializeField] private TMP_Text titleText;
+        [SerializeField] private Button globalChannelButton;
+        [SerializeField] private Button mahjongChannelButton;
         [SerializeField] private TMP_Text messagesText;
         [SerializeField] private TMP_Text statusText;
         [SerializeField] private TMP_InputField inputField;
@@ -102,7 +105,7 @@ namespace MahjongGame
             rootRect.offsetMin = Vector2.zero;
             rootRect.offsetMax = Vector2.zero;
 
-            toggleButton = CreateButton(parent, "ChatButton", "Chat", new Vector2(1f, 0f), new Vector2(-138f, 72f), new Vector2(180f, 56f));
+            toggleButton = CreateButton(parent, "ChatButton", GameLocalization.Text("chat.title"), new Vector2(1f, 0f), new Vector2(-138f, 72f), new Vector2(180f, 56f));
 
             panelRoot = new GameObject("ChatPanel", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
             panelRoot.transform.SetParent(parent, false);
@@ -111,13 +114,13 @@ namespace MahjongGame
             panelRect.anchorMax = new Vector2(1f, 0f);
             panelRect.pivot = new Vector2(1f, 0f);
             panelRect.anchoredPosition = new Vector2(-32f, 140f);
-            panelRect.sizeDelta = new Vector2(520f, 520f);
+            panelRect.sizeDelta = new Vector2(520f, 570f);
 
             Image panelImage = panelRoot.GetComponent<Image>();
             panelImage.color = new Color(0.045f, 0.05f, 0.065f, 0.94f);
 
-            TMP_Text title = CreateText(panelRoot.transform, "Title", "Global Chat", 28f, TextAlignmentOptions.Left);
-            RectTransform titleRect = title.rectTransform;
+            titleText = CreateText(panelRoot.transform, "Title", GameLocalization.Text("chat.title"), 28f, TextAlignmentOptions.Left);
+            RectTransform titleRect = titleText.rectTransform;
             titleRect.anchorMin = new Vector2(0f, 1f);
             titleRect.anchorMax = new Vector2(1f, 1f);
             titleRect.pivot = new Vector2(0.5f, 1f);
@@ -125,6 +128,8 @@ namespace MahjongGame
             titleRect.offsetMax = new Vector2(-82f, -14f);
 
             closeButton = CreateButton(panelRoot.transform, "CloseButton", "X", new Vector2(1f, 1f), new Vector2(-34f, -34f), new Vector2(48f, 48f));
+            globalChannelButton = CreateButton(panelRoot.transform, "GlobalChannelButton", "Global", new Vector2(0f, 1f), new Vector2(78f, -92f), new Vector2(118f, 42f));
+            mahjongChannelButton = CreateButton(panelRoot.transform, "MahjongChannelButton", "Mahjong", new Vector2(0f, 1f), new Vector2(208f, -92f), new Vector2(136f, 42f));
 
             GameObject viewport = new GameObject("MessagesViewport", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Mask));
             viewport.transform.SetParent(panelRoot.transform, false);
@@ -132,7 +137,7 @@ namespace MahjongGame
             viewportRect.anchorMin = new Vector2(0f, 0f);
             viewportRect.anchorMax = new Vector2(1f, 1f);
             viewportRect.offsetMin = new Vector2(18f, 104f);
-            viewportRect.offsetMax = new Vector2(-18f, -72f);
+            viewportRect.offsetMax = new Vector2(-18f, -122f);
             viewport.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.18f);
             viewport.GetComponent<Mask>().showMaskGraphic = true;
 
@@ -163,7 +168,7 @@ namespace MahjongGame
             scrollRect.vertical = true;
 
             inputField = CreateInput(panelRoot.transform);
-            sendButton = CreateButton(panelRoot.transform, "SendButton", "Send", new Vector2(1f, 0f), new Vector2(-62f, 52f), new Vector2(104f, 48f));
+            sendButton = CreateButton(panelRoot.transform, "SendButton", GameLocalization.Text("chat.send"), new Vector2(1f, 0f), new Vector2(-62f, 52f), new Vector2(104f, 48f));
 
             statusText = CreateText(panelRoot.transform, "StatusText", "", 15f, TextAlignmentOptions.Left);
             RectTransform statusRect = statusText.rectTransform;
@@ -175,6 +180,7 @@ namespace MahjongGame
 
             panelRoot.SetActive(false);
             Bind();
+            RefreshChannelChrome();
         }
 
         private void Bind()
@@ -197,6 +203,18 @@ namespace MahjongGame
                 sendButton.onClick.AddListener(Send);
             }
 
+            if (globalChannelButton != null)
+            {
+                globalChannelButton.onClick.RemoveListener(SelectGlobalChannel);
+                globalChannelButton.onClick.AddListener(SelectGlobalChannel);
+            }
+
+            if (mahjongChannelButton != null)
+            {
+                mahjongChannelButton.onClick.RemoveListener(SelectMahjongChannel);
+                mahjongChannelButton.onClick.AddListener(SelectMahjongChannel);
+            }
+
             if (inputField != null)
             {
                 inputField.onSubmit.RemoveListener(SendFromSubmit);
@@ -215,8 +233,37 @@ namespace MahjongGame
             if (sendButton != null)
                 sendButton.onClick.RemoveListener(Send);
 
+            if (globalChannelButton != null)
+                globalChannelButton.onClick.RemoveListener(SelectGlobalChannel);
+
+            if (mahjongChannelButton != null)
+                mahjongChannelButton.onClick.RemoveListener(SelectMahjongChannel);
+
             if (inputField != null)
                 inputField.onSubmit.RemoveListener(SendFromSubmit);
+        }
+
+        private void SelectGlobalChannel()
+        {
+            SelectChannel(GlobalChatService.ChannelGlobal);
+        }
+
+        private void SelectMahjongChannel()
+        {
+            SelectChannel(GlobalChatService.ChannelMahjong);
+        }
+
+        private void SelectChannel(string channel)
+        {
+            if (GlobalChatService.I == null)
+                return;
+
+            GlobalChatService.I.SetChannel(channel);
+            RefreshChannelChrome();
+            RefreshMessages();
+
+            if (panelRoot != null && panelRoot.activeSelf)
+                StartCoroutine(GlobalChatService.I.Refresh());
         }
 
         private void TogglePanel()
@@ -321,6 +368,7 @@ namespace MahjongGame
             if (messagesText == null || GlobalChatService.I == null)
                 return;
 
+            RefreshChannelChrome();
             StringBuilder builder = new StringBuilder();
             IReadOnlyList<GlobalChatService.GlobalChatMessage> messages = GlobalChatService.I.Messages;
             for (int i = 0; i < messages.Count; i++)
@@ -329,15 +377,27 @@ namespace MahjongGame
                 if (message == null)
                     continue;
 
-                string name = string.IsNullOrWhiteSpace(message.nickname) ? "Player" : message.nickname.Trim();
+                string name = string.IsNullOrWhiteSpace(message.nickname) ? GameLocalization.Text("common.player") : message.nickname.Trim();
                 string text = string.IsNullOrWhiteSpace(message.text) ? string.Empty : message.text.Trim();
                 builder.Append("<b>").Append(Escape(name)).Append(":</b> ").Append(Escape(text)).AppendLine();
             }
 
-            messagesText.text = builder.Length == 0 ? "No messages yet." : builder.ToString();
+            messagesText.text = builder.Length == 0 ? GameLocalization.Text("chat.empty") : builder.ToString();
 
             if (scrollRect != null)
                 scrollRect.verticalNormalizedPosition = 0f;
+        }
+
+        private void RefreshChannelChrome()
+        {
+            if (GlobalChatService.I == null)
+                return;
+
+            if (titleText != null)
+                titleText.text = GlobalChatService.I.CurrentChannelLabel + " Chat";
+
+            ApplyChannelButton(globalChannelButton, GlobalChatService.I.CurrentChannel == GlobalChatService.ChannelGlobal);
+            ApplyChannelButton(mahjongChannelButton, GlobalChatService.I.CurrentChannel == GlobalChatService.ChannelMahjong);
         }
 
         private void RefreshStatus(string value)
@@ -368,7 +428,7 @@ namespace MahjongGame
             textRect.offsetMin = new Vector2(12f, 4f);
             textRect.offsetMax = new Vector2(-12f, -4f);
 
-            TMP_Text placeholder = CreateText(root.transform, "Placeholder", "Message", 20f, TextAlignmentOptions.Left);
+            TMP_Text placeholder = CreateText(root.transform, "Placeholder", GameLocalization.Text("chat.placeholder"), 20f, TextAlignmentOptions.Left);
             placeholder.color = new Color(1f, 1f, 1f, 0.45f);
             RectTransform placeholderRect = placeholder.rectTransform;
             placeholderRect.anchorMin = Vector2.zero;
@@ -407,6 +467,16 @@ namespace MahjongGame
             textRect.offsetMax = Vector2.zero;
 
             return root.GetComponent<Button>();
+        }
+
+        private static void ApplyChannelButton(Button button, bool active)
+        {
+            if (button == null)
+                return;
+
+            Image image = button.GetComponent<Image>();
+            if (image != null)
+                image.color = active ? new Color(0.22f, 0.58f, 0.62f, 0.98f) : new Color(0.11f, 0.22f, 0.28f, 0.92f);
         }
 
         private static TMP_Text CreateText(Transform parent, string name, string value, float fontSize, TextAlignmentOptions alignment)

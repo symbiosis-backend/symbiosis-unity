@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -30,6 +31,8 @@ namespace MahjongGame
         [SerializeField] private Button russianLanguageButton;
         [SerializeField] private Button englishLanguageButton;
         [SerializeField] private Button turkishLanguageButton;
+        [SerializeField] private Button changeProfileButton;
+        [SerializeField] private Button logoutButton;
 
         [Header("Colors")]
         [SerializeField] private Color enabledColor = Color.white;
@@ -39,9 +42,23 @@ namespace MahjongGame
         [SerializeField] private GameObject gameButtonsRoot;
         [SerializeField] private Button returnToMenuButton;
         [SerializeField] private Button restartButton;
+        [SerializeField] private Button surrenderButton;
 
         [Header("Scene Rules")]
         [SerializeField] private string gameplaySceneName = "GameMahjong";
+        [SerializeField] private string[] gameplaySceneNames =
+        {
+            "GameMahjong",
+            "GameMahjongBattle",
+            "GameOkey",
+            "Voider",
+            "Tetris"
+        };
+        [SerializeField] private string battleGameplaySceneName = "GameMahjongBattle";
+        [SerializeField] private string battleLobbySceneName = "LobbyMahjongBattle";
+        [SerializeField] private string okeyLobbySceneName = "LobbyOkey";
+        [SerializeField] private string mahjongLobbySceneName = "LobbyMahjong";
+        [SerializeField] private string entrySceneName = "Entry";
         [SerializeField] private bool pauseGameWhenOpened = true;
 
         [Header("Visibility Rules")]
@@ -119,7 +136,22 @@ namespace MahjongGame
             public Color LanguageButtonColor = Color.white;
         }
 
-        private bool IsGameScene => SceneManager.GetActiveScene().name == gameplaySceneName;
+        private bool IsGameScene => IsGameplayScene(SceneManager.GetActiveScene().name);
+        private bool IsBattleGameScene => string.Equals(SceneManager.GetActiveScene().name, battleGameplaySceneName, StringComparison.Ordinal);
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        private static void BootstrapRuntimeInstance()
+        {
+            if (instance != null)
+                return;
+
+            SettingsMenuUI existing = FindAnyObjectByType<SettingsMenuUI>(FindObjectsInactive.Include);
+            if (existing != null)
+                return;
+
+            GameObject go = new GameObject("SettingsMenu", typeof(RectTransform));
+            go.AddComponent<SettingsMenuUI>();
+        }
 
         private bool IsBlockedByIntro
         {
@@ -146,7 +178,11 @@ namespace MahjongGame
             transform.SetParent(persistentRoot.transform, false);
 
             EnsureSettingsInstance();
+            EnsureRuntimeUi();
             AutoResolveVisualTargets();
+            EnsureLogoutButton();
+            EnsureChangeProfileButton();
+            EnsureSurrenderButton();
             EnsureDefaultVisualStyles();
 
             if (panelRoot != null)
@@ -297,6 +333,18 @@ namespace MahjongGame
                 turkishLanguageButton.onClick.AddListener(SetTurkishLanguage);
             }
 
+            if (logoutButton != null)
+            {
+                logoutButton.onClick.RemoveListener(LogoutProfile);
+                logoutButton.onClick.AddListener(LogoutProfile);
+            }
+
+            if (changeProfileButton != null)
+            {
+                changeProfileButton.onClick.RemoveListener(ChangeProfile);
+                changeProfileButton.onClick.AddListener(ChangeProfile);
+            }
+
             if (returnToMenuButton != null)
             {
                 returnToMenuButton.onClick.RemoveListener(ReturnToMenu);
@@ -307,6 +355,12 @@ namespace MahjongGame
             {
                 restartButton.onClick.RemoveListener(RestartScene);
                 restartButton.onClick.AddListener(RestartScene);
+            }
+
+            if (surrenderButton != null)
+            {
+                surrenderButton.onClick.RemoveListener(SurrenderBattle);
+                surrenderButton.onClick.AddListener(SurrenderBattle);
             }
         }
 
@@ -336,11 +390,20 @@ namespace MahjongGame
             if (turkishLanguageButton != null)
                 turkishLanguageButton.onClick.RemoveListener(SetTurkishLanguage);
 
+            if (logoutButton != null)
+                logoutButton.onClick.RemoveListener(LogoutProfile);
+
+            if (changeProfileButton != null)
+                changeProfileButton.onClick.RemoveListener(ChangeProfile);
+
             if (returnToMenuButton != null)
                 returnToMenuButton.onClick.RemoveListener(ReturnToMenu);
 
             if (restartButton != null)
                 restartButton.onClick.RemoveListener(RestartScene);
+
+            if (surrenderButton != null)
+                surrenderButton.onClick.RemoveListener(SurrenderBattle);
         }
 
         private void ToggleSound()
@@ -396,6 +459,29 @@ namespace MahjongGame
             RefreshButtons();
         }
 
+        private void LogoutProfile()
+        {
+            CloseInstant();
+
+            if (ProfileService.I != null)
+                ProfileService.I.Logout();
+
+            if (AppSettings.I != null)
+                AppSettings.I.ClearLanguagePreference();
+
+            LoadSceneWithDoor(string.IsNullOrWhiteSpace(entrySceneName) ? "Entry" : entrySceneName);
+        }
+
+        private void ChangeProfile()
+        {
+            CloseInstant();
+
+            if (ProfileService.I != null)
+                ProfileService.I.ChangeProfile();
+
+            LoadSceneWithDoor(string.IsNullOrWhiteSpace(entrySceneName) ? "Entry" : entrySceneName);
+        }
+
         private void RefreshButtons()
         {
             if (AppSettings.I == null)
@@ -446,6 +532,126 @@ namespace MahjongGame
 
             if (turkishLanguageButton == null)
                 turkishLanguageButton = FindButtonByName("BtnLanguageTR");
+
+            if (changeProfileButton == null)
+                changeProfileButton = FindButtonByName("BtnChangeProfile");
+
+            if (logoutButton == null)
+                logoutButton = FindButtonByName("BtnLogoutProfile");
+
+            if (surrenderButton == null)
+                surrenderButton = FindButtonByName("BtnSurrender");
+        }
+
+        private void EnsureSurrenderButton()
+        {
+            if (surrenderButton != null || gameButtonsRoot == null)
+                return;
+
+            Button templateButton = returnToMenuButton != null ? returnToMenuButton : restartButton;
+            Vector2 size = new Vector2(400f, 120f);
+            Image templateImage = null;
+
+            if (templateButton != null)
+            {
+                RectTransform templateRect = templateButton.GetComponent<RectTransform>();
+                if (templateRect != null)
+                    size = templateRect.sizeDelta;
+
+                templateImage = templateButton.image;
+            }
+
+            surrenderButton = CreateRuntimeTextButton(
+                gameButtonsRoot.transform,
+                "BtnSurrender",
+                new Vector2(0.5f, 0.5f),
+                new Vector2(0f, 60f),
+                size,
+                "Surrender",
+                "settings.surrender",
+                RuntimeButtonStyle.Danger);
+
+            if (templateImage != null && templateImage.sprite != null && surrenderButton.image != null)
+            {
+                surrenderButton.image.sprite = templateImage.sprite;
+                surrenderButton.image.type = templateImage.type;
+                surrenderButton.image.preserveAspect = templateImage.preserveAspect;
+            }
+        }
+
+        private void EnsureLogoutButton()
+        {
+            if (logoutButton != null || windowRect == null)
+            {
+                AdjustProfileActionButtonLayout();
+                return;
+            }
+
+            logoutButton = CreateRuntimeTextButton(
+                windowRect,
+                "BtnLogoutProfile",
+                new Vector2(0.5f, 0.5f),
+                new Vector2(170f, -95f),
+                new Vector2(300f, 76f),
+                "Logout",
+                "settings.logout",
+                RuntimeButtonStyle.Danger);
+            AdjustProfileActionButtonLayout();
+        }
+
+        private void EnsureChangeProfileButton()
+        {
+            if (changeProfileButton != null || windowRect == null)
+            {
+                AdjustProfileActionButtonLayout();
+                return;
+            }
+
+            changeProfileButton = CreateRuntimeTextButton(
+                windowRect,
+                "BtnChangeProfile",
+                new Vector2(0.5f, 0.5f),
+                new Vector2(-170f, -95f),
+                new Vector2(300f, 76f),
+                "Change Profile",
+                "settings.change_profile",
+                RuntimeButtonStyle.Action);
+            AdjustProfileActionButtonLayout();
+        }
+
+        private void AdjustProfileActionButtonLayout()
+        {
+            if (windowRect == null)
+                return;
+
+            RectTransform logoutRect = logoutButton != null ? logoutButton.GetComponent<RectTransform>() : null;
+            RectTransform changeRect = changeProfileButton != null ? changeProfileButton.GetComponent<RectTransform>() : null;
+
+            if (logoutRect != null && changeRect != null)
+            {
+                SetCenteredRuntimeRect(changeRect, new Vector2(-170f, -95f), new Vector2(300f, 76f));
+                SetCenteredRuntimeRect(logoutRect, new Vector2(170f, -95f), new Vector2(300f, 76f));
+            }
+            else if (logoutRect != null)
+            {
+                SetCenteredRuntimeRect(logoutRect, new Vector2(0f, -95f), new Vector2(300f, 76f));
+            }
+            else if (changeRect != null)
+            {
+                SetCenteredRuntimeRect(changeRect, new Vector2(0f, -95f), new Vector2(300f, 76f));
+            }
+        }
+
+        private static void SetCenteredRuntimeRect(RectTransform rect, Vector2 position, Vector2 size)
+        {
+            if (rect == null)
+                return;
+
+            rect.anchorMin = new Vector2(0.5f, 0.5f);
+            rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.anchoredPosition = position;
+            rect.sizeDelta = size;
         }
 
         private void EnsureDefaultVisualStyles()
@@ -457,13 +663,23 @@ namespace MahjongGame
             {
                 new SettingsSceneVisualStyle
                 {
+                    SceneName = "GameMahjong",
+                    ApplyOpenButtonRect = true,
+                    OpenButtonAnchorMin = new Vector2(1f, 1f),
+                    OpenButtonAnchorMax = new Vector2(1f, 1f),
+                    OpenButtonPivot = new Vector2(1f, 1f),
+                    OpenButtonPosition = new Vector2(-58f, -42f),
+                    OpenButtonSize = new Vector2(90f, 90f)
+                },
+                new SettingsSceneVisualStyle
+                {
                     SceneName = "GameMahjongBattle",
                     ApplyOpenButtonRect = true,
-                    OpenButtonAnchorMin = new Vector2(0.5f, 1f),
-                    OpenButtonAnchorMax = new Vector2(0.5f, 1f),
-                    OpenButtonPivot = new Vector2(0.5f, 1f),
-                    OpenButtonPosition = new Vector2(0f, -28f),
-                    OpenButtonSize = new Vector2(90f, 90f)
+                    OpenButtonAnchorMin = new Vector2(1f, 1f),
+                    OpenButtonAnchorMax = new Vector2(1f, 1f),
+                    OpenButtonPivot = new Vector2(1f, 1f),
+                    OpenButtonPosition = new Vector2(-58f, -42f),
+                    OpenButtonSize = new Vector2(82f, 82f)
                 },
                 new SettingsSceneVisualStyle
                 {
@@ -501,13 +717,19 @@ namespace MahjongGame
         private void ApplySceneVisualStyle()
         {
             if (!applyVisualOverrides)
+            {
+                ApplyBattleOpenButtonPlacement();
                 return;
+            }
 
             AutoResolveVisualTargets();
 
             SettingsSceneVisualStyle style = ResolveSceneVisualStyle(SceneManager.GetActiveScene().name);
             if (style == null)
+            {
+                ApplyBattleOpenButtonPlacement();
                 return;
+            }
 
             if (style.ApplyOpenButtonRect)
                 ApplyRect(openButtonRect, style.OpenButtonAnchorMin, style.OpenButtonAnchorMax, style.OpenButtonPivot, style.OpenButtonPosition, style.OpenButtonSize);
@@ -564,6 +786,8 @@ namespace MahjongGame
                 ApplyButtonGraphic(turkishLanguageButton, style.TurkishLanguageSprite, style.LanguageButtonColor);
                 RefreshButtons();
             }
+
+            ApplyBattleOpenButtonPlacement();
         }
 
         private static bool HasSettingButtonSprites(SettingsSceneVisualStyle style)
@@ -647,6 +871,20 @@ namespace MahjongGame
             ApplyGraphic(button.image, sprite, color);
         }
 
+        private void ApplyBattleOpenButtonPlacement()
+        {
+            if (!IsBattleGameScene)
+                return;
+
+            ApplyRect(
+                openButtonRect,
+                new Vector2(1f, 1f),
+                new Vector2(1f, 1f),
+                new Vector2(1f, 1f),
+                new Vector2(-58f, -42f),
+                new Vector2(82f, 82f));
+        }
+
         private Button FindButtonByName(string buttonName)
         {
             Transform found = FindChildByName(transform, buttonName);
@@ -673,8 +911,21 @@ namespace MahjongGame
         {
             CloseInstant();
 
-            string sceneName = AppSettings.I != null ? AppSettings.I.MainMenuSceneName : "LobbyMahjong";
+            string activeScene = SceneManager.GetActiveScene().name;
+            string sceneName = ResolveReturnSceneName(activeScene);
             LoadSceneWithDoor(sceneName);
+        }
+
+        private void SurrenderBattle()
+        {
+            CloseInstant();
+
+            BattleMatchController battleMatchController = FindAnyObjectByType<BattleMatchController>(FindObjectsInactive.Include);
+            if (battleMatchController != null && !battleMatchController.IsMatchFinished)
+                battleMatchController.ForceFinishMatch(false);
+
+            MahjongSession.Clear();
+            LoadSceneWithDoor(battleLobbySceneName);
         }
 
         private void RestartScene()
@@ -702,6 +953,7 @@ namespace MahjongGame
         private void ApplySceneMode()
         {
             bool showGameButtons = IsGameScene;
+            bool showSurrender = IsBattleGameScene;
 
             if (gameButtonsRoot != null)
                 gameButtonsRoot.SetActive(showGameButtons);
@@ -711,6 +963,9 @@ namespace MahjongGame
 
             if (restartButton != null)
                 restartButton.gameObject.SetActive(showGameButtons);
+
+            if (surrenderButton != null)
+                surrenderButton.gameObject.SetActive(showSurrender);
         }
 
         private void RefreshOpenButtonVisibility()
@@ -756,6 +1011,216 @@ namespace MahjongGame
             persistentRoot.AddComponent<GraphicRaycaster>();
 
             DontDestroyOnLoad(persistentRoot);
+        }
+
+        private bool IsGameplayScene(string sceneName)
+        {
+            if (string.IsNullOrWhiteSpace(sceneName))
+                return false;
+
+            if (string.Equals(sceneName, gameplaySceneName, StringComparison.Ordinal))
+                return true;
+
+            if (gameplaySceneNames == null)
+                return false;
+
+            for (int i = 0; i < gameplaySceneNames.Length; i++)
+            {
+                string candidate = gameplaySceneNames[i];
+                if (string.IsNullOrWhiteSpace(candidate))
+                    continue;
+
+                if (string.Equals(candidate.Trim(), sceneName, StringComparison.Ordinal))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private string ResolveReturnSceneName(string activeScene)
+        {
+            if (string.Equals(activeScene, battleGameplaySceneName, StringComparison.Ordinal))
+                return battleLobbySceneName;
+
+            if (string.Equals(activeScene, "GameOkey", StringComparison.Ordinal))
+                return okeyLobbySceneName;
+
+            if (!string.IsNullOrWhiteSpace(mahjongLobbySceneName))
+                return mahjongLobbySceneName;
+
+            return AppSettings.I != null ? AppSettings.I.MainMenuSceneName : "LobbyMahjong";
+        }
+
+        private void EnsureRuntimeUi()
+        {
+            if (openButton != null && panelRoot != null)
+                return;
+
+            RectTransform rootRect = GetComponent<RectTransform>();
+            if (rootRect != null)
+            {
+                rootRect.anchorMin = Vector2.zero;
+                rootRect.anchorMax = Vector2.one;
+                rootRect.offsetMin = Vector2.zero;
+                rootRect.offsetMax = Vector2.zero;
+            }
+
+            openButton = CreateRuntimeIconButton(transform, "BtnOpenSettings", new Vector2(1f, 1f), new Vector2(-58f, -42f), new Vector2(82f, 82f), "⚙");
+            openButtonRect = openButton.GetComponent<RectTransform>();
+
+            panelRoot = CreateRuntimePanel(transform, "PanelRoot", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, new Color(0.02f, 0.015f, 0.012f, 0.78f));
+            panelRootRect = panelRoot.GetComponent<RectTransform>();
+            panelBackgroundImage = panelRoot.GetComponent<Image>();
+
+            GameObject shadow = CreateRuntimePanel(panelRoot.transform, "WindowShadow", new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(18f, -18f), new Vector2(920f, 680f), new Color(0f, 0f, 0f, 0.42f));
+            shadow.GetComponent<Image>().raycastTarget = false;
+
+            GameObject window = CreateRuntimePanel(panelRoot.transform, "Window", new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(900f, 660f), new Color(0.075f, 0.06f, 0.047f, 0.97f));
+            windowRect = window.GetComponent<RectTransform>();
+            windowImage = window.GetComponent<Image>();
+            enabledColor = new Color(0.95f, 0.58f, 0.22f, 0.98f);
+            disabledColor = new Color(0.16f, 0.14f, 0.12f, 0.92f);
+
+            GameObject topLine = CreateRuntimePanel(window.transform, "TopAmberLine", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -28f), new Vector2(760f, 5f), new Color(1f, 0.53f, 0.16f, 0.72f));
+            topLine.GetComponent<Image>().raycastTarget = false;
+
+            GameObject bottomLine = CreateRuntimePanel(window.transform, "BottomJadeLine", new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 28f), new Vector2(760f, 4f), new Color(0.31f, 0.8f, 0.55f, 0.42f));
+            bottomLine.GetComponent<Image>().raycastTarget = false;
+
+            soundButton = CreateRuntimeTextButton(window.transform, "BtnSound", new Vector2(0.5f, 0.5f), new Vector2(-260f, 120f), new Vector2(190f, 76f), "Sound", "settings.sound", RuntimeButtonStyle.Setting);
+            musicButton = CreateRuntimeTextButton(window.transform, "BtnMusic", new Vector2(0.5f, 0.5f), new Vector2(0f, 120f), new Vector2(190f, 76f), "Music", "settings.music", RuntimeButtonStyle.Setting);
+            vibrationButton = CreateRuntimeTextButton(window.transform, "BtnVibration", new Vector2(0.5f, 0.5f), new Vector2(260f, 120f), new Vector2(190f, 76f), "Vibration", "settings.vibration", RuntimeButtonStyle.Setting);
+
+            russianLanguageButton = CreateRuntimeTextButton(window.transform, "BtnLanguageRU", new Vector2(0.5f, 0.5f), new Vector2(-260f, 10f), new Vector2(190f, 76f), "RU", "settings.language_ru", RuntimeButtonStyle.Language);
+            englishLanguageButton = CreateRuntimeTextButton(window.transform, "BtnLanguageEN", new Vector2(0.5f, 0.5f), new Vector2(0f, 10f), new Vector2(190f, 76f), "EN", "settings.language_en", RuntimeButtonStyle.Language);
+            turkishLanguageButton = CreateRuntimeTextButton(window.transform, "BtnLanguageTR", new Vector2(0.5f, 0.5f), new Vector2(260f, 10f), new Vector2(190f, 76f), "TR", "settings.language_tr", RuntimeButtonStyle.Language);
+            changeProfileButton = CreateRuntimeTextButton(window.transform, "BtnChangeProfile", new Vector2(0.5f, 0.5f), new Vector2(-170f, -95f), new Vector2(300f, 76f), "Change Profile", "settings.change_profile", RuntimeButtonStyle.Action);
+            logoutButton = CreateRuntimeTextButton(window.transform, "BtnLogoutProfile", new Vector2(0.5f, 0.5f), new Vector2(170f, -95f), new Vector2(300f, 76f), "Logout", "settings.logout", RuntimeButtonStyle.Danger);
+
+            gameButtonsRoot = new GameObject("GameButtonsRoot", typeof(RectTransform));
+            gameButtonsRoot.transform.SetParent(window.transform, false);
+
+            RectTransform gameButtonsRect = gameButtonsRoot.GetComponent<RectTransform>();
+            gameButtonsRect.anchorMin = new Vector2(0.5f, 0.5f);
+            gameButtonsRect.anchorMax = new Vector2(0.5f, 0.5f);
+            gameButtonsRect.pivot = new Vector2(0.5f, 0.5f);
+            gameButtonsRect.anchoredPosition = Vector2.zero;
+            gameButtonsRect.sizeDelta = Vector2.zero;
+
+            returnToMenuButton = CreateRuntimeTextButton(gameButtonsRoot.transform, "BtnReturn", new Vector2(0.5f, 0.5f), new Vector2(-225f, -130f), new Vector2(250f, 78f), "Menu", "settings.menu", RuntimeButtonStyle.Action);
+            restartButton = CreateRuntimeTextButton(gameButtonsRoot.transform, "BtnRestart", new Vector2(0.5f, 0.5f), new Vector2(225f, -130f), new Vector2(250f, 78f), "Restart", "settings.restart", RuntimeButtonStyle.Action);
+            surrenderButton = CreateRuntimeTextButton(gameButtonsRoot.transform, "BtnSurrender", new Vector2(0.5f, 0.5f), new Vector2(0f, -235f), new Vector2(300f, 78f), "Surrender", "settings.surrender", RuntimeButtonStyle.Danger);
+
+            closeButton = CreateRuntimeTextButton(window.transform, "BtnClose", new Vector2(0.5f, 0.5f), new Vector2(0f, -325f), new Vector2(210f, 70f), "Close", "settings.close", RuntimeButtonStyle.Close);
+        }
+
+        private static GameObject CreateRuntimePanel(Transform parent, string objectName, Vector2 anchorMin, Vector2 anchorMax, Vector2 position, Vector2 size, Color color)
+        {
+            GameObject go = new GameObject(objectName, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            go.transform.SetParent(parent, false);
+
+            RectTransform rect = go.GetComponent<RectTransform>();
+            rect.anchorMin = anchorMin;
+            rect.anchorMax = anchorMax;
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.anchoredPosition = position;
+            rect.sizeDelta = size;
+            if (anchorMin == Vector2.zero && anchorMax == Vector2.one)
+            {
+                rect.offsetMin = Vector2.zero;
+                rect.offsetMax = Vector2.zero;
+            }
+
+            Image image = go.GetComponent<Image>();
+            image.color = color;
+            image.raycastTarget = true;
+
+            return go;
+        }
+
+        private static Button CreateRuntimeIconButton(Transform parent, string objectName, Vector2 anchor, Vector2 position, Vector2 size, string label)
+        {
+            Button button = CreateRuntimeTextButton(parent, objectName, anchor, position, size, label);
+            TMP_Text text = button.GetComponentInChildren<TMP_Text>(true);
+            if (text != null)
+                text.fontSize = 24f;
+
+            return button;
+        }
+
+        private enum RuntimeButtonStyle
+        {
+            Setting,
+            Language,
+            Action,
+            Danger,
+            Close
+        }
+
+        private static Button CreateRuntimeTextButton(Transform parent, string objectName, Vector2 anchor, Vector2 position, Vector2 size, string label, string localizationKey = null, RuntimeButtonStyle style = RuntimeButtonStyle.Setting)
+        {
+            GameObject go = new GameObject(objectName, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
+            go.transform.SetParent(parent, false);
+
+            RectTransform rect = go.GetComponent<RectTransform>();
+            rect.anchorMin = anchor;
+            rect.anchorMax = anchor;
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.anchoredPosition = position;
+            rect.sizeDelta = size;
+
+            Image image = go.GetComponent<Image>();
+            image.color = ResolveRuntimeButtonColor(style);
+            image.raycastTarget = true;
+
+            Button button = go.GetComponent<Button>();
+            button.targetGraphic = image;
+
+            GameObject textObject = new GameObject("Label", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
+            textObject.transform.SetParent(go.transform, false);
+
+            RectTransform textRect = textObject.GetComponent<RectTransform>();
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.offsetMin = Vector2.zero;
+            textRect.offsetMax = Vector2.zero;
+
+            TextMeshProUGUI text = textObject.GetComponent<TextMeshProUGUI>();
+            text.text = string.IsNullOrWhiteSpace(localizationKey) ? label : GameLocalization.Text(localizationKey);
+            text.fontSize = 28f;
+            text.enableAutoSizing = true;
+            text.fontSizeMin = 16f;
+            text.fontSizeMax = 32f;
+            text.alignment = TextAlignmentOptions.Center;
+            text.color = ResolveRuntimeButtonTextColor(style);
+            text.raycastTarget = false;
+
+            if (!string.IsNullOrWhiteSpace(localizationKey))
+            {
+                LocalizedText localizedText = textObject.AddComponent<LocalizedText>();
+                localizedText.SetKey(localizationKey);
+            }
+
+            return button;
+        }
+
+        private static Color ResolveRuntimeButtonColor(RuntimeButtonStyle style)
+        {
+            return style switch
+            {
+                RuntimeButtonStyle.Language => new Color(0.13f, 0.23f, 0.2f, 0.94f),
+                RuntimeButtonStyle.Action => new Color(0.18f, 0.22f, 0.25f, 0.94f),
+                RuntimeButtonStyle.Danger => new Color(0.48f, 0.13f, 0.09f, 0.95f),
+                RuntimeButtonStyle.Close => new Color(0.68f, 0.38f, 0.13f, 0.95f),
+                _ => new Color(0.16f, 0.14f, 0.12f, 0.95f)
+            };
+        }
+
+        private static Color ResolveRuntimeButtonTextColor(RuntimeButtonStyle style)
+        {
+            return style == RuntimeButtonStyle.Close
+                ? new Color(1f, 0.92f, 0.78f, 1f)
+                : new Color(0.96f, 0.92f, 0.84f, 1f);
         }
     }
 }
