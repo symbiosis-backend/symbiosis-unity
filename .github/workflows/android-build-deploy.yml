@@ -162,12 +162,15 @@ jobs:
           SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
         run: |
           $keyPath = Join-Path $env:RUNNER_TEMP 'symbiosis-server-key'
+          $serverHost = $env:SERVER_HOST.Trim()
+          $serverUser = $env:SERVER_USER.Trim()
+          $serverDownloadsPath = $env:SERVER_DOWNLOADS_PATH.Trim()
           $env:SERVER_SSH_KEY -replace "`r`n", "`n" | Set-Content -LiteralPath $keyPath -NoNewline -Encoding ascii
-          ssh -i $keyPath -o StrictHostKeyChecking=no "$env:SERVER_USER@$env:SERVER_HOST" "mkdir -p '$env:SERVER_DOWNLOADS_PATH'"
+          ssh -i $keyPath -o StrictHostKeyChecking=no "$serverUser@$serverHost" "mkdir -p '$serverDownloadsPath'"
           scp -i $keyPath -o StrictHostKeyChecking=no `
             'Builds/Android/symbiosis-latest.apk' `
             'Builds/Android/android-update.json' `
-            "$env:SERVER_USER@$env:SERVER_HOST`:$env:SERVER_DOWNLOADS_PATH/"
+            "${serverUser}@${serverHost}:$serverDownloadsPath/"
 
       - name: Upload Addressables To VPS
         shell: powershell -NoProfile -ExecutionPolicy Bypass -Command ". '{0}'"
@@ -182,8 +185,11 @@ jobs:
           }
 
           $keyPath = Join-Path $env:RUNNER_TEMP 'symbiosis-server-key'
+          $serverHost = $env:SERVER_HOST.Trim()
+          $serverUser = $env:SERVER_USER.Trim()
+          $serverDownloadsPath = $env:SERVER_DOWNLOADS_PATH.Trim()
           $env:SERVER_SSH_KEY -replace "`r`n", "`n" | Set-Content -LiteralPath $keyPath -NoNewline -Encoding ascii
-          ssh -i $keyPath -o StrictHostKeyChecking=no "$env:SERVER_USER@$env:SERVER_HOST" "mkdir -p '$env:SERVER_DOWNLOADS_PATH/addressables/Android'"
+          ssh -i $keyPath -o StrictHostKeyChecking=no "$serverUser@$serverHost" "mkdir -p '$serverDownloadsPath/addressables/Android'"
           $files = Get-ChildItem -Path 'ServerData/Android' -Recurse -File
           if ($files.Count -eq 0) {
             Write-Error "ServerData/Android exists but contains no files."
@@ -197,10 +203,10 @@ jobs:
             } else {
               $remoteDir = $remoteDir.Replace('\', '/')
             }
-            ssh -i $keyPath -o StrictHostKeyChecking=no "$env:SERVER_USER@$env:SERVER_HOST" "mkdir -p '$env:SERVER_DOWNLOADS_PATH/addressables/Android/$remoteDir'"
+            ssh -i $keyPath -o StrictHostKeyChecking=no "$serverUser@$serverHost" "mkdir -p '$serverDownloadsPath/addressables/Android/$remoteDir'"
             scp -i $keyPath -o StrictHostKeyChecking=no `
               "$($file.FullName)" `
-              "$env:SERVER_USER@$env:SERVER_HOST`:$env:SERVER_DOWNLOADS_PATH/addressables/Android/$relative"
+              "${serverUser}@${serverHost}:$serverDownloadsPath/addressables/Android/$relative"
           }
 
       - name: Verify VPS Files
@@ -211,8 +217,11 @@ jobs:
           SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
         run: |
           $keyPath = Join-Path $env:RUNNER_TEMP 'symbiosis-server-key'
+          $serverHost = $env:SERVER_HOST.Trim()
+          $serverUser = $env:SERVER_USER.Trim()
+          $serverDownloadsPath = $env:SERVER_DOWNLOADS_PATH.Trim()
           $env:SERVER_SSH_KEY -replace "`r`n", "`n" | Set-Content -LiteralPath $keyPath -NoNewline -Encoding ascii
-          ssh -i $keyPath -o StrictHostKeyChecking=no "$env:SERVER_USER@$env:SERVER_HOST" "ls -lh '$env:SERVER_DOWNLOADS_PATH/symbiosis-latest.apk' '$env:SERVER_DOWNLOADS_PATH/android-update.json' && cat '$env:SERVER_DOWNLOADS_PATH/android-update.json' && find '$env:SERVER_DOWNLOADS_PATH/addressables/Android' -maxdepth 1 -type f 2>/dev/null | sort | tail -20"
+          ssh -i $keyPath -o StrictHostKeyChecking=no "$serverUser@$serverHost" "ls -lh '$serverDownloadsPath/symbiosis-latest.apk' '$serverDownloadsPath/android-update.json' && cat '$serverDownloadsPath/android-update.json' && find '$serverDownloadsPath/addressables/Android' -maxdepth 1 -type f 2>/dev/null | sort | tail -20"
 
       - name: Verify Public Download URLs
         shell: powershell -NoProfile -ExecutionPolicy Bypass -Command ". '{0}'"
