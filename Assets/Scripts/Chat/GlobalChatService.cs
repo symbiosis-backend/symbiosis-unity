@@ -12,7 +12,7 @@ namespace MahjongGame
     {
         public static GlobalChatService I { get; private set; }
 
-        private const string BaseUrl = "http://91.99.176.77:8080";
+        private const string BaseUrl = "https://dlsymbiosis.com";
         private const string KeySessionToken = "symbiosis_server_session_token";
 
         private readonly List<GlobalChatMessage> messages = new List<GlobalChatMessage>();

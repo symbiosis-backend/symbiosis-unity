@@ -17,7 +17,7 @@ namespace MahjongGame
         private PlayerProfile currentProfile;
         private string lastServerError = string.Empty;
 
-        private const string BaseUrl = "http://91.99.176.77:8080";
+        private const string BaseUrl = "https://dlsymbiosis.com";
         private const string KeyDeviceId = "symbiosis_server_device_id";
         private const string KeySessionToken = "symbiosis_server_session_token";
 

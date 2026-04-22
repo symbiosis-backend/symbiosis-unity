@@ -7,7 +7,7 @@ namespace MahjongGame.Content
 {
     public sealed class ServerCharacterCatalogService : MonoBehaviour
     {
-        private const string CatalogUrl = "http://91.99.176.77:8080/content/characters";
+        private const string CatalogUrl = "https://dlsymbiosis.com/content/characters";
 
         private static ServerCharacterCatalogService instance;
 

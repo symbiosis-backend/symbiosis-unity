@@ -14,7 +14,7 @@ namespace MahjongGame.Multiplayer
     [DisallowMultipleComponent]
     public sealed class RealtimeNetworkBootstrap : MonoBehaviour
     {
-        private const string ConfigUrl = "http://91.99.176.77:8080/multiplayer/config";
+        private const string ConfigUrl = "https://dlsymbiosis.com/multiplayer/config";
         private const string HeadlessArg = "-fishnet-server";
         private const string HostArg = "-fishnet-host";
         private const string ClientArg = "-fishnet-client";

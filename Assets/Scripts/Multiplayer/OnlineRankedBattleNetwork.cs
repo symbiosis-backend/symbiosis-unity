@@ -12,7 +12,7 @@ namespace MahjongGame.Multiplayer
     {
         public static OnlineRankedBattleNetwork I { get; private set; }
 
-        private const string BaseUrl = "http://91.99.176.77:8080";
+        private const string BaseUrl = "https://dlsymbiosis.com";
         private const string KeySessionToken = "symbiosis_server_session_token";
 
         [SerializeField, Min(0.5f)] private float matchmakingPollSeconds = 2f;

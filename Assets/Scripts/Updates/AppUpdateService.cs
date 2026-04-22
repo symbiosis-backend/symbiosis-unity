@@ -17,7 +17,7 @@ namespace MahjongGame
 {
     public sealed class AppUpdateService : MonoBehaviour
     {
-        private const string UpdateManifestUrl = "http://91.99.176.77:8080/updates/android";
+        private const string UpdateManifestUrl = "https://dlsymbiosis.com/updates/android";
 
         private static AppUpdateService instance;
 

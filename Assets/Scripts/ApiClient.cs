@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 
 public class ApiClient : MonoBehaviour
 {
-    private string baseUrl = "http://91.99.176.77:8080";
+    private string baseUrl = "https://dlsymbiosis.com";
 
     public void Register(string email, string password, string nickname)
     {
