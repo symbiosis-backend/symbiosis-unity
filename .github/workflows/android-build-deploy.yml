@@ -183,12 +183,12 @@ jobs:
           "Deploy target: $serverUser@$serverHost" | Add-Content -LiteralPath $deployLog -Encoding utf8
           $previousErrorActionPreference = $ErrorActionPreference
           $ErrorActionPreference = 'Continue'
-          ssh -vvv -i $keyPath -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=2 "$serverUser@$serverHost" "mkdir -p '$serverDownloadsPath'" 2>&1 | Tee-Object -FilePath $deployLog -Append
+          ssh -i $keyPath -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=2 "$serverUser@$serverHost" "mkdir -p '$serverDownloadsPath'" 2>&1 | Tee-Object -FilePath $deployLog -Append
           $sshExitCode = $LASTEXITCODE
           $ErrorActionPreference = $previousErrorActionPreference
           "Remote mkdir ssh exit code: $sshExitCode" | Add-Content -LiteralPath $deployLog -Encoding utf8
           if ($sshExitCode -ne 0) { throw "Remote mkdir failed with exit code $sshExitCode. See Builds/Logs/DeployUpload.log." }
-          scp -i $keyPath -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=20 `
+          scp -q -i $keyPath -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=20 `
             'Builds/Android/symbiosis-latest.apk' `
             'Builds/Android/android-update.json' `
             "${serverUser}@${serverHost}:$serverDownloadsPath/" *>&1 | Tee-Object -FilePath $deployLog -Append
