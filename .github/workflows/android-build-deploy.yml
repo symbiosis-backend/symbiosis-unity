@@ -267,7 +267,7 @@ jobs:
           $deployLog = Join-Path $env:GITHUB_WORKSPACE 'Builds/Logs/DeployUpload.log'
           New-Item -ItemType Directory -Force -Path (Split-Path $deployLog) | Out-Null
           "Starting APK deploy at $(Get-Date -Format o)" | Set-Content -LiteralPath $deployLog -Encoding utf8
-          $keyPath = Join-Path $env:RUNNER_TEMP 'symbiosis-server-key'
+          $keyPath = Join-Path $env:RUNNER_TEMP ("symbiosis-server-key-{0}" -f ([Guid]::NewGuid().ToString('N')))
           $apkPath = Join-Path $env:GITHUB_WORKSPACE 'Builds/Android/symbiosis-latest.apk'
           $manifestPath = Join-Path $env:GITHUB_WORKSPACE 'Builds/Android/android-update.json'
           $serverHost = $env:SERVER_HOST.Trim()
@@ -323,7 +323,7 @@ jobs:
             exit 0
           }
 
-          $keyPath = Join-Path $env:RUNNER_TEMP 'symbiosis-server-key'
+          $keyPath = Join-Path $env:RUNNER_TEMP ("symbiosis-server-key-{0}" -f ([Guid]::NewGuid().ToString('N')))
           $serverHost = $env:SERVER_HOST.Trim()
           $serverUser = $env:SERVER_USER.Trim()
           $serverDownloadsPath = $env:SERVER_DOWNLOADS_PATH.Trim()
@@ -364,7 +364,7 @@ jobs:
           SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
           SERVER_SSH_KEY_B64: ${{ secrets.SERVER_SSH_KEY_B64 }}
         run: |
-          $keyPath = Join-Path $env:RUNNER_TEMP 'symbiosis-server-key'
+          $keyPath = Join-Path $env:RUNNER_TEMP ("symbiosis-server-key-{0}" -f ([Guid]::NewGuid().ToString('N')))
           $serverHost = $env:SERVER_HOST.Trim()
           $serverUser = $env:SERVER_USER.Trim()
           $serverDownloadsPath = $env:SERVER_DOWNLOADS_PATH.Trim()
