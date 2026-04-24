@@ -6,7 +6,7 @@ on:
       releaseNotes:
         description: Update notes shown in the game
         required: false
-        default: "Хроники battle lobby: боевое лобби получило отдельный top bar, новые окна и кнопки, общий шрифт из Main и чистый экран без чата и друзей."
+        default: ""
   push:
     branches:
       - main
@@ -41,6 +41,8 @@ jobs:
 
       - name: Load App Version
         shell: powershell -NoProfile -ExecutionPolicy Bypass -Command ". '{0}'"
+        env:
+          WORKFLOW_RELEASE_NOTES: ${{ github.event.inputs.releaseNotes }}
         run: |
           $versionPath = Join-Path $env:GITHUB_WORKSPACE 'ProjectSettings/SymbiosisVersion.json'
           if (-not (Test-Path $versionPath)) {
@@ -51,11 +53,11 @@ jobs:
             throw "Invalid version file. versionName and positive versionCode are required."
           }
           $releaseNotes = $version.releaseNotes
-          if (-not [string]::IsNullOrWhiteSpace('${{ github.event.inputs.releaseNotes }}')) {
-            $releaseNotes = '${{ github.event.inputs.releaseNotes }}'
+          if (-not [string]::IsNullOrWhiteSpace($env:WORKFLOW_RELEASE_NOTES)) {
+            $releaseNotes = $env:WORKFLOW_RELEASE_NOTES
           }
           if ([string]::IsNullOrWhiteSpace($releaseNotes)) {
-            $releaseNotes = 'Хроники battle lobby: боевое лобби получило отдельный top bar, новые окна и кнопки, общий шрифт из Main и чистый экран без чата и друзей.'
+            $releaseNotes = 'Battle lobby update.'
           }
           "BUILD_VERSION_NAME=$($version.versionName)" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
           "BUILD_VERSION_CODE=$([int]$version.versionCode)" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
