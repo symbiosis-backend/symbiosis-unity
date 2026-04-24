@@ -42,6 +42,11 @@ namespace MahjongGame
         [SerializeField] private GameObject selectedRoot;
         [SerializeField] private GameObject disabledRoot;
 
+        [Header("Card Background")]
+        [SerializeField] private bool ensureVisibleCardBackground = true;
+        [SerializeField] private Color cardBackgroundColor = new Color(0.08f, 0.1f, 0.13f, 0.86f);
+        [SerializeField] private Color selectedCardBackgroundColor = new Color(0.18f, 0.13f, 0.04f, 0.92f);
+
         [Header("Scale")]
         [SerializeField] private RectTransform scaleTarget;
         [SerializeField] private Vector3 normalScale = Vector3.one;
@@ -81,6 +86,7 @@ namespace MahjongGame
         private BattleCharacterCircularCarousel ownerCarousel;
         private bool isHighlighted;
         private bool subscribed;
+        private bool isDestroying;
         private string transientStatusMessage;
         private float transientStatusUntil;
         private static GameObject purchaseToastObject;
@@ -122,10 +128,14 @@ namespace MahjongGame
 
             TryResolveLocalUI();
             TryResolvePreviewUI();
+            EnsureButtonRaycastTarget();
         }
 
         private void Start()
         {
+            if (IsInvalidForCallbacks())
+                return;
+
             Refresh();
 
             if (updatePreviewOnEnable)
@@ -134,6 +144,8 @@ namespace MahjongGame
 
         private void OnEnable()
         {
+            isDestroying = false;
+
             if (button == null)
                 button = GetComponent<Button>();
 
@@ -143,11 +155,13 @@ namespace MahjongGame
 
             if (autoBindClick && button != null)
             {
+                EnsureButtonRaycastTarget();
                 button.onClick.RemoveListener(OnClick);
                 button.onClick.AddListener(OnClick);
             }
 
             Subscribe();
+            AppSettings.OnLanguageChanged -= OnLanguageChanged;
             AppSettings.OnLanguageChanged += OnLanguageChanged;
 
             if (refreshOnEnable)
@@ -166,8 +180,25 @@ namespace MahjongGame
             AppSettings.OnLanguageChanged -= OnLanguageChanged;
         }
 
+        private void OnDestroy()
+        {
+            isDestroying = true;
+
+            if (autoBindClick && button != null)
+                button.onClick.RemoveListener(OnClick);
+
+            Unsubscribe();
+            AppSettings.OnLanguageChanged -= OnLanguageChanged;
+        }
+
         private void Update()
         {
+            if (IsInvalidForCallbacks())
+                return;
+
+            if (!subscribed)
+                Subscribe();
+
             if (!string.IsNullOrEmpty(transientStatusMessage) && Time.unscaledTime >= transientStatusUntil)
             {
                 transientStatusMessage = string.Empty;
@@ -187,14 +218,34 @@ namespace MahjongGame
                 scaleTarget = transform as RectTransform;
         }
 
+        private void EnsureButtonRaycastTarget()
+        {
+            if (button == null || button.targetGraphic != null)
+                return;
+
+            Image hitArea = GetComponent<Image>();
+            if (hitArea == null)
+                hitArea = gameObject.AddComponent<Image>();
+
+            hitArea.color = ensureVisibleCardBackground ? cardBackgroundColor : new Color(1f, 1f, 1f, 0f);
+            hitArea.raycastTarget = true;
+            button.targetGraphic = hitArea;
+        }
+
         public void SetOwnerCarousel(BattleCharacterCircularCarousel carousel)
         {
+            if (IsInvalidForCallbacks())
+                return;
+
             ownerCarousel = carousel;
             UpdateCardStatsVisibility();
         }
 
         public void SetCharacterId(string id, bool refresh = true)
         {
+            if (IsInvalidForCallbacks())
+                return;
+
             characterId = id;
 
             if (refresh)
@@ -206,6 +257,9 @@ namespace MahjongGame
 
         public void SetHighlighted(bool highlighted)
         {
+            if (IsInvalidForCallbacks())
+                return;
+
             isHighlighted = highlighted;
 
             if (scaleTarget != null)
@@ -219,6 +273,9 @@ namespace MahjongGame
 
         public void Refresh()
         {
+            if (IsInvalidForCallbacks())
+                return;
+
             BattleCharacterDatabase.BattleCharacterData data = GetCharacterData();
             if (data == null)
             {
@@ -228,6 +285,7 @@ namespace MahjongGame
 
             bool unlocked = IsCharacterUnlocked(data);
             bool selected = IsCharacterSelected();
+            ApplyCardBackground(selected);
 
             if (iconImage != null)
             {
@@ -288,6 +346,9 @@ namespace MahjongGame
 
         public void OnClick()
         {
+            if (IsInvalidForCallbacks())
+                return;
+
             if (ownerCarousel != null)
             {
                 ownerCarousel.FocusButton(this, selectCharacterOnClick);
@@ -304,6 +365,9 @@ namespace MahjongGame
 
         public bool SelectDirectly()
         {
+            if (IsInvalidForCallbacks())
+                return false;
+
             BattleCharacterDatabase.BattleCharacterData data = GetCharacterData();
             if (data == null || !data.IsEnabled)
                 return false;
@@ -353,6 +417,9 @@ namespace MahjongGame
 
         public void UpdatePreviewWindow()
         {
+            if (IsInvalidForCallbacks())
+                return;
+
             TryResolvePreviewUI();
 
             BattleCharacterDatabase.BattleCharacterData data = GetCharacterData();
@@ -776,24 +843,43 @@ namespace MahjongGame
 
         private void OnSelectedCharacterChanged(string _)
         {
+            if (IsInvalidForCallbacks())
+                return;
+
             Refresh();
         }
 
         private void OnSelectionStateChanged()
         {
+            if (IsInvalidForCallbacks())
+                return;
+
             Refresh();
         }
 
         private void OnLanguageChanged(GameLanguage language)
         {
+            if (IsInvalidForCallbacks())
+            {
+                AppSettings.OnLanguageChanged -= OnLanguageChanged;
+                return;
+            }
+
             Refresh();
 
             if (ownerCarousel == null || ownerCarousel.CenteredButton == this || IsCharacterSelected())
                 UpdatePreviewWindow();
         }
 
+        private bool IsInvalidForCallbacks()
+        {
+            return isDestroying || this == null;
+        }
+
         private void ApplyMissingState()
         {
+            ApplyCardBackground(false);
+
             if (iconImage != null)
             {
                 iconImage.sprite = null;
@@ -865,6 +951,22 @@ namespace MahjongGame
                 return "Locked";
 
             return $"<b><color=#{ColorUtility.ToHtmlStringRGB(statsPriceColor)}>{FormatPrice(data.PriceAmount)} {currencyName}</color></b>";
+        }
+
+        private void ApplyCardBackground(bool selected)
+        {
+            if (!ensureVisibleCardBackground)
+                return;
+
+            Image hitArea = GetComponent<Image>();
+            if (hitArea == null)
+                hitArea = gameObject.AddComponent<Image>();
+
+            hitArea.color = selected ? selectedCardBackgroundColor : cardBackgroundColor;
+            hitArea.raycastTarget = true;
+
+            if (button != null && button.targetGraphic == null)
+                button.targetGraphic = hitArea;
         }
 
         private void UpdateCardStatsVisibility()
@@ -1081,10 +1183,13 @@ namespace MahjongGame
 
         private void RefreshAllButtonsInScene()
         {
+            if (IsInvalidForCallbacks())
+                return;
+
             BattleCharacterButton[] allButtons = FindObjectsByType<BattleCharacterButton>(FindObjectsInactive.Exclude);
             for (int i = 0; i < allButtons.Length; i++)
             {
-                if (allButtons[i] != null)
+                if (allButtons[i] != null && !allButtons[i].IsInvalidForCallbacks())
                     allButtons[i].Refresh();
             }
         }

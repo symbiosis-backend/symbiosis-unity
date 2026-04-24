@@ -432,7 +432,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4291761151
+    rgba: 4282896895
   m_fontColor: {r: 1, g: 0.82, b: 0.28, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -450,7 +450,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
+  m_fontSize: 32
   m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -657,7 +657,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 72
+  m_fontSize: 63.95
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1037,7 +1037,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4291761151
+    rgba: 4282896895
   m_fontColor: {r: 1, g: 0.82, b: 0.28, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -1055,7 +1055,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
+  m_fontSize: 32
   m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1179,7 +1179,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4291761151
+    rgba: 4282896895
   m_fontColor: {r: 1, g: 0.82, b: 0.28, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -1197,7 +1197,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
+  m_fontSize: 32
   m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1475,12 +1475,29 @@ MonoBehaviour:
   characterId: Wolf_Male
   button: {fileID: 519423382}
   iconImage: {fileID: 1235427072}
+  iconModelView: {fileID: 0}
   nameText: {fileID: 376411823}
   priceText: {fileID: 1206531138}
+  applyStandardCardLayout: 1
+  cardSize: {x: 300, y: 450}
+  namePosition: {x: 0, y: 188}
+  nameSize: {x: 260, y: 46}
+  iconPosition: {x: 0, y: 34}
+  iconSize: {x: 245, y: 275}
+  statsPosition: {x: 0, y: -165}
+  statsSize: {x: 260, y: 116}
   showStatsOnlyWhenHighlighted: 1
+  useStatsBackdrop: 0
+  statsBackdropPadding: {x: 26, y: 18}
+  statsBackdropColor: {r: 0.06, g: 0.055, b: 0.045, a: 0.78}
+  statsTextColor: {r: 1, g: 0.92, b: 0.68, a: 1}
+  statsPriceColor: {r: 1, g: 0.78, b: 0.18, a: 1}
   lockedRoot: {fileID: 0}
   selectedRoot: {fileID: 0}
   disabledRoot: {fileID: 0}
+  ensureVisibleCardBackground: 1
+  cardBackgroundColor: {r: 0.08, g: 0.1, b: 0.13, a: 0.86}
+  selectedCardBackgroundColor: {r: 0.18, g: 0.13, b: 0.04, a: 0.92}
   scaleTarget: {fileID: 519423380}
   normalScale: {x: 1, y: 1, z: 1}
   highlightedScale: {x: 1.12, y: 1.12, z: 1}
@@ -1490,6 +1507,9 @@ MonoBehaviour:
   previewSelectSpriteImage: {fileID: 0}
   previewLobbySpriteImage: {fileID: 0}
   previewBattleSpriteImage: {fileID: 0}
+  previewSelectModelView: {fileID: 0}
+  previewLobbyModelView: {fileID: 0}
+  previewBattleModelView: {fileID: 0}
   autoFindPreviewUI: 1
   previewNameTextObjectName: PreviewNameText
   previewStatsTextObjectName: PreviewStatsText
@@ -1504,6 +1524,8 @@ MonoBehaviour:
   updatePreviewWhenHighlighted: 1
   selectCharacterOnClick: 1
   autoUseThisCharacterAsPreviewIfNothingSelected: 1
+  purchaseErrorMessageSeconds: 2
+  purchaseErrorFadeSeconds: 0.45
 --- !u!114 &519423382
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1764,7 +1786,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4291761151
+    rgba: 4282896895
   m_fontColor: {r: 1, g: 0.82, b: 0.28, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -1782,7 +1804,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
+  m_fontSize: 32
   m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1927,138 +1949,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0850759a12920b545b5a191d090d9950, type: 3}
---- !u!1 &773904741
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 773904742}
-  - component: {fileID: 773904745}
-  - component: {fileID: 773904744}
-  - component: {fileID: 773904743}
-  m_Layer: 5
-  m_Name: ButtonStart
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &773904742
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 773904741}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 8.55517, y: 24.596115, z: 8.55517}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2084086230}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -338}
-  m_SizeDelta: {x: 160, y: 30}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &773904743
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 773904741}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
-  m_Navigation:
-    m_Mode: 3
-    m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 773904744}
-  m_OnClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 861879183}
-        m_TargetAssemblyTypeName: MahjongGame.BattleLobbyUI, Assembly-CSharp
-        m_MethodName: OnClickStart
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!114 &773904744
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 773904741}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 7109375147213916927, guid: ef724f8c1f5c1b84c8a7f2f0f5601435, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &773904745
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 773904741}
-  m_CullTransparentMesh: 1
 --- !u!1 &783600891
 GameObject:
   m_ObjectHideFlags: 0
@@ -2256,23 +2146,56 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6418f6ea2f4cb174ea8cd9d6f29e5c79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MahjongGame.BattleLobbyUI
+  battleLobbySceneName: LobbyMahjongBattle
   battleGameSceneName: GameMahjongBattle
   mainLobbySceneName: LobbyMahjong
   friendLobbySceneName: 
   localWifiSceneName: 
+  randomMatchUsesOnlineRanked: 0
+  randomMatchButton: {fileID: 0}
+  autoCreateRandomMatchButton: 1
+  randomMatchButtonText: Random Match
+  randomMatchButtonPosition: {x: 0, y: -228}
+  randomMatchButtonSize: {x: 320, y: 76}
+  localWifiBattleButton: {fileID: 0}
+  autoCreateLocalWifiBattleButton: 1
+  localWifiBattleButtonText: Wi-Fi Battle
+  localWifiBattleButtonPosition: {x: 0, y: -420}
+  localWifiBattleButtonSize: {x: 320, y: 76}
+  rankedBattleButton: {fileID: 0}
+  autoCreateRankedBattleButton: 1
+  rankedBattleButtonText: Ranked Match
+  rankedBattleButtonPosition: {x: 0, y: -324}
+  rankedBattleButtonSize: {x: 320, y: 76}
+  battleLobbyButtonSprite: {fileID: -4847666954649907282, guid: dff6739ccd8ee2142b94cc7ba8e302ed, type: 3}
+  battleLobbyTopBarSprite: {fileID: -8714122752122185190, guid: 9450279e74f5671408eb826b3a9077c4, type: 3}
+  battleLobbyMainFont: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   returnToLobbyButton: {fileID: 3000000004}
   autoCreateReturnButton: 0
   returnButtonText: Lobby
   returnButtonPosition: {x: 42, y: -42}
   returnButtonSize: {x: 220, y: 72}
+  battleProgressRoot: {fileID: 0}
+  battleLevelText: {fileID: 0}
+  battleExpText: {fileID: 0}
+  battleStatsText: {fileID: 0}
+  autoCreateBattleProgressUi: 1
+  battleProgressPosition: {x: -42, y: -42}
+  battleProgressSize: {x: 440, y: 154}
+  battleLevelFormat: Level {0}
+  battleExpFormat: 'EXP {0}/{1}  Next: {2}'
+  battleStatsFormat: Wins {0}  Losses {1}  MVP {2}%
   characterCarouselRoot: {fileID: 1975512414}
   openCharacterCarouselButton: {fileID: 0}
   characterCarouselObjectName: CharasterCarousel
   openCharacterButtonObjectName: LobbyCharacterImage
-  closeCharacterCarouselOnEnter: 1
+  closeCharacterCarouselOnEnter: 0
   autoBindOpenCharacterButton: 1
   createOpenCharacterButtonIfMissing: 1
   openCharacterButtonText: Character
+  openCharacterCarouselWhenNoCharacterSelected: 1
+  autoOpenCharacterCarouselDelayFrames: 3
+  autoOpenCharacterCarouselMaxWaitSeconds: 0.5
   debugLogs: 1
 --- !u!1 &888723340
 GameObject:
@@ -2476,7 +2399,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4291761151
+    rgba: 4282896895
   m_fontColor: {r: 1, g: 0.82, b: 0.28, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -2494,7 +2417,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
+  m_fontSize: 32
   m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2744,12 +2667,29 @@ MonoBehaviour:
   characterId: Bear_Female
   button: {fileID: 973722031}
   iconImage: {fileID: 1770460307}
+  iconModelView: {fileID: 0}
   nameText: {fileID: 441939132}
   priceText: {fileID: 1269158597}
+  applyStandardCardLayout: 1
+  cardSize: {x: 300, y: 450}
+  namePosition: {x: 0, y: 188}
+  nameSize: {x: 260, y: 46}
+  iconPosition: {x: 0, y: 34}
+  iconSize: {x: 245, y: 275}
+  statsPosition: {x: 0, y: -165}
+  statsSize: {x: 260, y: 116}
   showStatsOnlyWhenHighlighted: 1
+  useStatsBackdrop: 0
+  statsBackdropPadding: {x: 26, y: 18}
+  statsBackdropColor: {r: 0.06, g: 0.055, b: 0.045, a: 0.78}
+  statsTextColor: {r: 1, g: 0.92, b: 0.68, a: 1}
+  statsPriceColor: {r: 1, g: 0.78, b: 0.18, a: 1}
   lockedRoot: {fileID: 0}
   selectedRoot: {fileID: 0}
   disabledRoot: {fileID: 0}
+  ensureVisibleCardBackground: 1
+  cardBackgroundColor: {r: 0.08, g: 0.1, b: 0.13, a: 0.86}
+  selectedCardBackgroundColor: {r: 0.18, g: 0.13, b: 0.04, a: 0.92}
   scaleTarget: {fileID: 973722029}
   normalScale: {x: 1, y: 1, z: 1}
   highlightedScale: {x: 1.12, y: 1.12, z: 1}
@@ -2759,6 +2699,9 @@ MonoBehaviour:
   previewSelectSpriteImage: {fileID: 0}
   previewLobbySpriteImage: {fileID: 0}
   previewBattleSpriteImage: {fileID: 0}
+  previewSelectModelView: {fileID: 0}
+  previewLobbyModelView: {fileID: 0}
+  previewBattleModelView: {fileID: 0}
   autoFindPreviewUI: 1
   previewNameTextObjectName: PreviewNameText
   previewStatsTextObjectName: PreviewStatsText
@@ -2773,6 +2716,8 @@ MonoBehaviour:
   updatePreviewWhenHighlighted: 1
   selectCharacterOnClick: 1
   autoUseThisCharacterAsPreviewIfNothingSelected: 1
+  purchaseErrorMessageSeconds: 2
+  purchaseErrorFadeSeconds: 0.45
 --- !u!114 &973722031
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2884,12 +2829,29 @@ MonoBehaviour:
   characterId: Tiger_Male
   button: {fileID: 1009496958}
   iconImage: {fileID: 1789731061}
+  iconModelView: {fileID: 0}
   nameText: {fileID: 103144868}
   priceText: {fileID: 29316101}
+  applyStandardCardLayout: 1
+  cardSize: {x: 300, y: 450}
+  namePosition: {x: 0, y: 188}
+  nameSize: {x: 260, y: 46}
+  iconPosition: {x: 0, y: 34}
+  iconSize: {x: 245, y: 275}
+  statsPosition: {x: 0, y: -165}
+  statsSize: {x: 260, y: 116}
   showStatsOnlyWhenHighlighted: 1
+  useStatsBackdrop: 0
+  statsBackdropPadding: {x: 26, y: 18}
+  statsBackdropColor: {r: 0.06, g: 0.055, b: 0.045, a: 0.78}
+  statsTextColor: {r: 1, g: 0.92, b: 0.68, a: 1}
+  statsPriceColor: {r: 1, g: 0.78, b: 0.18, a: 1}
   lockedRoot: {fileID: 168080295}
   selectedRoot: {fileID: 2063096567}
   disabledRoot: {fileID: 0}
+  ensureVisibleCardBackground: 1
+  cardBackgroundColor: {r: 0.08, g: 0.1, b: 0.13, a: 0.86}
+  selectedCardBackgroundColor: {r: 0.18, g: 0.13, b: 0.04, a: 0.92}
   scaleTarget: {fileID: 1009496956}
   normalScale: {x: 1, y: 1, z: 1}
   highlightedScale: {x: 1.12, y: 1.12, z: 1}
@@ -2899,6 +2861,9 @@ MonoBehaviour:
   previewSelectSpriteImage: {fileID: 0}
   previewLobbySpriteImage: {fileID: 0}
   previewBattleSpriteImage: {fileID: 0}
+  previewSelectModelView: {fileID: 0}
+  previewLobbyModelView: {fileID: 0}
+  previewBattleModelView: {fileID: 0}
   autoFindPreviewUI: 1
   previewNameTextObjectName: PreviewNameText
   previewStatsTextObjectName: PreviewStatsText
@@ -2913,6 +2878,8 @@ MonoBehaviour:
   updatePreviewWhenHighlighted: 1
   selectCharacterOnClick: 1
   autoUseThisCharacterAsPreviewIfNothingSelected: 1
+  purchaseErrorMessageSeconds: 2
+  purchaseErrorFadeSeconds: 0.45
 --- !u!114 &1009496958
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3023,12 +2990,29 @@ MonoBehaviour:
   characterId: Fox_Male
   button: {fileID: 1065328725}
   iconImage: {fileID: 90089907}
+  iconModelView: {fileID: 0}
   nameText: {fileID: 925131099}
   priceText: {fileID: 1204243251}
+  applyStandardCardLayout: 1
+  cardSize: {x: 300, y: 450}
+  namePosition: {x: 0, y: 188}
+  nameSize: {x: 260, y: 46}
+  iconPosition: {x: 0, y: 34}
+  iconSize: {x: 245, y: 275}
+  statsPosition: {x: 0, y: -165}
+  statsSize: {x: 260, y: 116}
   showStatsOnlyWhenHighlighted: 1
+  useStatsBackdrop: 0
+  statsBackdropPadding: {x: 26, y: 18}
+  statsBackdropColor: {r: 0.06, g: 0.055, b: 0.045, a: 0.78}
+  statsTextColor: {r: 1, g: 0.92, b: 0.68, a: 1}
+  statsPriceColor: {r: 1, g: 0.78, b: 0.18, a: 1}
   lockedRoot: {fileID: 0}
   selectedRoot: {fileID: 0}
   disabledRoot: {fileID: 0}
+  ensureVisibleCardBackground: 1
+  cardBackgroundColor: {r: 0.08, g: 0.1, b: 0.13, a: 0.86}
+  selectedCardBackgroundColor: {r: 0.18, g: 0.13, b: 0.04, a: 0.92}
   scaleTarget: {fileID: 1065328723}
   normalScale: {x: 1, y: 1, z: 1}
   highlightedScale: {x: 1.12, y: 1.12, z: 1}
@@ -3038,6 +3022,9 @@ MonoBehaviour:
   previewSelectSpriteImage: {fileID: 0}
   previewLobbySpriteImage: {fileID: 0}
   previewBattleSpriteImage: {fileID: 0}
+  previewSelectModelView: {fileID: 0}
+  previewLobbyModelView: {fileID: 0}
+  previewBattleModelView: {fileID: 0}
   autoFindPreviewUI: 1
   previewNameTextObjectName: PreviewNameText
   previewStatsTextObjectName: PreviewStatsText
@@ -3052,6 +3039,8 @@ MonoBehaviour:
   updatePreviewWhenHighlighted: 1
   selectCharacterOnClick: 1
   autoUseThisCharacterAsPreviewIfNothingSelected: 1
+  purchaseErrorMessageSeconds: 2
+  purchaseErrorFadeSeconds: 0.45
 --- !u!114 &1065328725
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3199,12 +3188,29 @@ MonoBehaviour:
   characterId: Tiger_Female
   button: {fileID: 1123227013}
   iconImage: {fileID: 250621516}
+  iconModelView: {fileID: 0}
   nameText: {fileID: 1558876572}
   priceText: {fileID: 210211480}
+  applyStandardCardLayout: 1
+  cardSize: {x: 300, y: 450}
+  namePosition: {x: 0, y: 188}
+  nameSize: {x: 260, y: 46}
+  iconPosition: {x: 0, y: 34}
+  iconSize: {x: 245, y: 275}
+  statsPosition: {x: 0, y: -165}
+  statsSize: {x: 260, y: 116}
   showStatsOnlyWhenHighlighted: 1
+  useStatsBackdrop: 0
+  statsBackdropPadding: {x: 26, y: 18}
+  statsBackdropColor: {r: 0.06, g: 0.055, b: 0.045, a: 0.78}
+  statsTextColor: {r: 1, g: 0.92, b: 0.68, a: 1}
+  statsPriceColor: {r: 1, g: 0.78, b: 0.18, a: 1}
   lockedRoot: {fileID: 0}
   selectedRoot: {fileID: 0}
   disabledRoot: {fileID: 0}
+  ensureVisibleCardBackground: 1
+  cardBackgroundColor: {r: 0.08, g: 0.1, b: 0.13, a: 0.86}
+  selectedCardBackgroundColor: {r: 0.18, g: 0.13, b: 0.04, a: 0.92}
   scaleTarget: {fileID: 1123227011}
   normalScale: {x: 1, y: 1, z: 1}
   highlightedScale: {x: 1.12, y: 1.12, z: 1}
@@ -3214,6 +3220,9 @@ MonoBehaviour:
   previewSelectSpriteImage: {fileID: 0}
   previewLobbySpriteImage: {fileID: 0}
   previewBattleSpriteImage: {fileID: 0}
+  previewSelectModelView: {fileID: 0}
+  previewLobbyModelView: {fileID: 0}
+  previewBattleModelView: {fileID: 0}
   autoFindPreviewUI: 1
   previewNameTextObjectName: PreviewNameText
   previewStatsTextObjectName: PreviewStatsText
@@ -3228,6 +3237,8 @@ MonoBehaviour:
   updatePreviewWhenHighlighted: 1
   selectCharacterOnClick: 1
   autoUseThisCharacterAsPreviewIfNothingSelected: 1
+  purchaseErrorMessageSeconds: 2
+  purchaseErrorFadeSeconds: 0.45
 --- !u!114 &1123227013
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3975,6 +3986,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MahjongGame.BattleLobbyChar
   target: {fileID: 1360775234}
+  modelView: {fileID: 0}
   preserveAspect: 1
   hideOnStart: 1
   useSelectSpriteIfLobbySpriteMissing: 1
@@ -4074,12 +4086,29 @@ MonoBehaviour:
   characterId: Fox_Female
   button: {fileID: 1375777422}
   iconImage: {fileID: 2065973920}
+  iconModelView: {fileID: 0}
   nameText: {fileID: 1850345631}
   priceText: {fileID: 933465159}
+  applyStandardCardLayout: 1
+  cardSize: {x: 300, y: 450}
+  namePosition: {x: 0, y: 188}
+  nameSize: {x: 260, y: 46}
+  iconPosition: {x: 0, y: 34}
+  iconSize: {x: 245, y: 275}
+  statsPosition: {x: 0, y: -165}
+  statsSize: {x: 260, y: 116}
   showStatsOnlyWhenHighlighted: 1
+  useStatsBackdrop: 0
+  statsBackdropPadding: {x: 26, y: 18}
+  statsBackdropColor: {r: 0.06, g: 0.055, b: 0.045, a: 0.78}
+  statsTextColor: {r: 1, g: 0.92, b: 0.68, a: 1}
+  statsPriceColor: {r: 1, g: 0.78, b: 0.18, a: 1}
   lockedRoot: {fileID: 0}
   selectedRoot: {fileID: 0}
   disabledRoot: {fileID: 0}
+  ensureVisibleCardBackground: 1
+  cardBackgroundColor: {r: 0.08, g: 0.1, b: 0.13, a: 0.86}
+  selectedCardBackgroundColor: {r: 0.18, g: 0.13, b: 0.04, a: 0.92}
   scaleTarget: {fileID: 1375777420}
   normalScale: {x: 1, y: 1, z: 1}
   highlightedScale: {x: 1.12, y: 1.12, z: 1}
@@ -4089,6 +4118,9 @@ MonoBehaviour:
   previewSelectSpriteImage: {fileID: 0}
   previewLobbySpriteImage: {fileID: 0}
   previewBattleSpriteImage: {fileID: 0}
+  previewSelectModelView: {fileID: 0}
+  previewLobbyModelView: {fileID: 0}
+  previewBattleModelView: {fileID: 0}
   autoFindPreviewUI: 1
   previewNameTextObjectName: PreviewNameText
   previewStatsTextObjectName: PreviewStatsText
@@ -4103,6 +4135,8 @@ MonoBehaviour:
   updatePreviewWhenHighlighted: 1
   selectCharacterOnClick: 1
   autoUseThisCharacterAsPreviewIfNothingSelected: 1
+  purchaseErrorMessageSeconds: 2
+  purchaseErrorFadeSeconds: 0.45
 --- !u!114 &1375777422
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4461,7 +4495,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4291761151
+    rgba: 4282896895
   m_fontColor: {r: 1, g: 0.82, b: 0.28, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -4479,7 +4513,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
+  m_fontSize: 32
   m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -5004,12 +5038,29 @@ MonoBehaviour:
   characterId: Wolf_Female
   button: {fileID: 1812624779}
   iconImage: {fileID: 475083787}
+  iconModelView: {fileID: 0}
   nameText: {fileID: 2072952727}
   priceText: {fileID: 1852456751}
+  applyStandardCardLayout: 1
+  cardSize: {x: 300, y: 450}
+  namePosition: {x: 0, y: 188}
+  nameSize: {x: 260, y: 46}
+  iconPosition: {x: 0, y: 34}
+  iconSize: {x: 245, y: 275}
+  statsPosition: {x: 0, y: -165}
+  statsSize: {x: 260, y: 116}
   showStatsOnlyWhenHighlighted: 1
+  useStatsBackdrop: 0
+  statsBackdropPadding: {x: 26, y: 18}
+  statsBackdropColor: {r: 0.06, g: 0.055, b: 0.045, a: 0.78}
+  statsTextColor: {r: 1, g: 0.92, b: 0.68, a: 1}
+  statsPriceColor: {r: 1, g: 0.78, b: 0.18, a: 1}
   lockedRoot: {fileID: 0}
   selectedRoot: {fileID: 0}
   disabledRoot: {fileID: 0}
+  ensureVisibleCardBackground: 1
+  cardBackgroundColor: {r: 0.08, g: 0.1, b: 0.13, a: 0.86}
+  selectedCardBackgroundColor: {r: 0.18, g: 0.13, b: 0.04, a: 0.92}
   scaleTarget: {fileID: 1812624777}
   normalScale: {x: 1, y: 1, z: 1}
   highlightedScale: {x: 1.12, y: 1.12, z: 1}
@@ -5019,6 +5070,9 @@ MonoBehaviour:
   previewSelectSpriteImage: {fileID: 0}
   previewLobbySpriteImage: {fileID: 0}
   previewBattleSpriteImage: {fileID: 0}
+  previewSelectModelView: {fileID: 0}
+  previewLobbyModelView: {fileID: 0}
+  previewBattleModelView: {fileID: 0}
   autoFindPreviewUI: 1
   previewNameTextObjectName: PreviewNameText
   previewStatsTextObjectName: PreviewStatsText
@@ -5033,6 +5087,8 @@ MonoBehaviour:
   updatePreviewWhenHighlighted: 1
   selectCharacterOnClick: 1
   autoUseThisCharacterAsPreviewIfNothingSelected: 1
+  purchaseErrorMessageSeconds: 2
+  purchaseErrorFadeSeconds: 0.45
 --- !u!114 &1812624779
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5186,7 +5242,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4291761151
+    rgba: 4282896895
   m_fontColor: {r: 1, g: 0.82, b: 0.28, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -5204,7 +5260,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
+  m_fontSize: 32
   m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -5405,22 +5461,22 @@ PrefabInstance:
     - target: {fileID: 3538981413802146906, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 9197304086652216982, guid: e3f021c322005564a8d72bed07dddc0e, type: 3}
+      objectReference: {fileID: -8714122752122185190, guid: 9450279e74f5671408eb826b3a9077c4, type: 3}
     - target: {fileID: 4014278774976142748, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 32.0422
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4014278774976142748, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0.00019836
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4014278774976142748, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0.40289307
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4014278774976142748, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.00020599365
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4225183264373869470, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_Pivot.x
@@ -5448,11 +5504,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4225183264373869470, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 600
+      value: 720
       objectReference: {fileID: 0}
     - target: {fileID: 4225183264373869470, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 100
+      value: 172
       objectReference: {fileID: 0}
     - target: {fileID: 4225183264373869470, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5605,7 +5661,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1975512415
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5855,12 +5911,29 @@ MonoBehaviour:
   characterId: Bear_Male
   button: {fileID: 1994339426}
   iconImage: {fileID: 343077340}
+  iconModelView: {fileID: 0}
   nameText: {fileID: 670606353}
   priceText: {fileID: 604466550}
+  applyStandardCardLayout: 1
+  cardSize: {x: 300, y: 450}
+  namePosition: {x: 0, y: 188}
+  nameSize: {x: 260, y: 46}
+  iconPosition: {x: 0, y: 34}
+  iconSize: {x: 245, y: 275}
+  statsPosition: {x: 0, y: -165}
+  statsSize: {x: 260, y: 116}
   showStatsOnlyWhenHighlighted: 1
+  useStatsBackdrop: 0
+  statsBackdropPadding: {x: 26, y: 18}
+  statsBackdropColor: {r: 0.06, g: 0.055, b: 0.045, a: 0.78}
+  statsTextColor: {r: 1, g: 0.92, b: 0.68, a: 1}
+  statsPriceColor: {r: 1, g: 0.78, b: 0.18, a: 1}
   lockedRoot: {fileID: 0}
   selectedRoot: {fileID: 0}
   disabledRoot: {fileID: 0}
+  ensureVisibleCardBackground: 1
+  cardBackgroundColor: {r: 0.08, g: 0.1, b: 0.13, a: 0.86}
+  selectedCardBackgroundColor: {r: 0.18, g: 0.13, b: 0.04, a: 0.92}
   scaleTarget: {fileID: 1994339424}
   normalScale: {x: 1, y: 1, z: 1}
   highlightedScale: {x: 1.12, y: 1.12, z: 1}
@@ -5870,6 +5943,9 @@ MonoBehaviour:
   previewSelectSpriteImage: {fileID: 0}
   previewLobbySpriteImage: {fileID: 0}
   previewBattleSpriteImage: {fileID: 0}
+  previewSelectModelView: {fileID: 0}
+  previewLobbyModelView: {fileID: 0}
+  previewBattleModelView: {fileID: 0}
   autoFindPreviewUI: 1
   previewNameTextObjectName: PreviewNameText
   previewStatsTextObjectName: PreviewStatsText
@@ -5884,6 +5960,8 @@ MonoBehaviour:
   updatePreviewWhenHighlighted: 1
   selectCharacterOnClick: 1
   autoUseThisCharacterAsPreviewIfNothingSelected: 1
+  purchaseErrorMessageSeconds: 2
+  purchaseErrorFadeSeconds: 0.45
 --- !u!114 &1994339426
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6182,7 +6260,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4291761151
+    rgba: 4282896895
   m_fontColor: {r: 1, g: 0.82, b: 0.28, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -6200,7 +6278,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
+  m_fontSize: 32
   m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -6330,6 +6408,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -6349,7 +6428,6 @@ RectTransform:
   m_Children:
   - {fileID: 1471388559}
   - {fileID: 861879182}
-  - {fileID: 773904742}
   - {fileID: 379622210}
   - {fileID: 1975512415}
   - {fileID: 1360775232}
@@ -6578,7 +6656,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 28
+  m_fontSize: 34
   m_fontSizeBase: 28
   m_fontWeight: 400
   m_enableAutoSizing: 1

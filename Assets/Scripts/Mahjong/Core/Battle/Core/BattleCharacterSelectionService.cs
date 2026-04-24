@@ -15,6 +15,7 @@ namespace MahjongGame
         private const string UnlockedCharactersKey = "MahjongGame.Battle.UnlockedCharacterIds";
         private const string PurchasedCharactersKey = "MahjongGame.Battle.PurchasedCharacterIds";
         private const string EconomyMigrationKey = "MahjongGame.Battle.CharacterEconomyV1";
+        private const bool ForceUnlockAllCharactersForLocalTesting = true;
 
         [Serializable]
         private sealed class UnlockedCharactersSaveData
@@ -36,6 +37,7 @@ namespace MahjongGame
         [SerializeField] private int firstPaidCharacterPrice = 10000;
         [SerializeField] private int paidCharacterPriceStep = 20000;
         [SerializeField] private bool migrateLegacyFullUnlocks = true;
+        [SerializeField] private bool unlockAllCharactersForLocalTesting = true;
 
         [Header("Auto Find")]
         [SerializeField] private bool autoFindDatabase = true;
@@ -110,16 +112,28 @@ namespace MahjongGame
             if (string.IsNullOrWhiteSpace(characterId))
                 return false;
 
+            if (IsLocalTestingUnlockEnabled() && !DatabaseReady())
+                TryResolveDatabaseAndPrepare();
+
+            if (IsLocalTestingUnlockEnabled() && IsEnabledCharacter(characterId))
+                return true;
+
             return unlockedCharacterIds.Contains(characterId);
         }
 
         public bool CanSelect(string characterId)
         {
-            if (!DatabaseReady() || string.IsNullOrWhiteSpace(characterId))
+            if (string.IsNullOrWhiteSpace(characterId))
+                return false;
+
+            if (!DatabaseReady() && !TryResolveDatabaseAndPrepare())
                 return false;
 
             BattleCharacterDatabase.BattleCharacterData data = database.GetCharacterOrNull(characterId);
-            return data != null && data.IsEnabled && IsUnlocked(characterId);
+            if (data == null || !data.IsEnabled)
+                return false;
+
+            return IsUnlocked(characterId);
         }
 
         public bool SelectCharacter(string characterId, bool applyStatsToHub = true, bool save = true)
@@ -170,7 +184,10 @@ namespace MahjongGame
 
         public bool TryPurchaseCharacter(string characterId, bool selectAfterPurchase = true, bool applyStatsToHub = true)
         {
-            if (!DatabaseReady() || string.IsNullOrWhiteSpace(characterId))
+            if (string.IsNullOrWhiteSpace(characterId))
+                return false;
+
+            if (!DatabaseReady() && !TryResolveDatabaseAndPrepare())
                 return false;
 
             BattleCharacterDatabase.BattleCharacterData data = database.GetCharacterOrNull(characterId);
@@ -365,6 +382,20 @@ namespace MahjongGame
             return database != null && database.CharacterCount > 0;
         }
 
+        private bool IsLocalTestingUnlockEnabled()
+        {
+            return ForceUnlockAllCharactersForLocalTesting || unlockAllCharactersForLocalTesting;
+        }
+
+        private bool IsEnabledCharacter(string characterId)
+        {
+            if (!DatabaseReady())
+                return false;
+
+            BattleCharacterDatabase.BattleCharacterData data = database.GetCharacterOrNull(characterId);
+            return data != null && data.IsEnabled;
+        }
+
         private void LoadFromPrefs()
         {
             selectedCharacterId = PlayerPrefs.GetString(SelectedCharacterKey, string.Empty);
@@ -415,6 +446,9 @@ namespace MahjongGame
             if (autoUnlockStarterCharacters)
                 UnlockStartersOrFallback();
 
+            if (IsLocalTestingUnlockEnabled())
+                UnlockAllEnabledCharactersForTesting();
+
             if (!string.IsNullOrWhiteSpace(selectedCharacterId) && !CanSelect(selectedCharacterId))
                 selectedCharacterId = string.Empty;
 
@@ -435,6 +469,23 @@ namespace MahjongGame
             {
                 unlockedCharacterIds.Add(selectedCharacterId);
                 return;
+            }
+        }
+
+        private void UnlockAllEnabledCharactersForTesting()
+        {
+            if (!DatabaseReady())
+                return;
+
+            List<BattleCharacterDatabase.BattleCharacterData> enabled = database.GetEnabledCharacters();
+            for (int i = 0; i < enabled.Count; i++)
+            {
+                BattleCharacterDatabase.BattleCharacterData data = enabled[i];
+                if (data == null || string.IsNullOrWhiteSpace(data.Id))
+                    continue;
+
+                if (!unlockedCharacterIds.Contains(data.Id))
+                    unlockedCharacterIds.Add(data.Id);
             }
         }
 

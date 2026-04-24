@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -74,6 +75,7 @@ namespace MahjongGame
 
         private BattleCharacterButton centeredButton;
         private string lastSelectedCenteredId = string.Empty;
+        private bool loggedEmptyButtons;
 
         public BattleCharacterButton CenteredButton => centeredButton;
 
@@ -105,6 +107,7 @@ namespace MahjongGame
 
         private void OnEnable()
         {
+            transform.SetAsLastSibling();
             CollectButtonsIfNeeded();
             BindButtons();
             EnsureCanvasGroups();
@@ -112,14 +115,23 @@ namespace MahjongGame
             if (BattleCharacterSelectionService.HasInstance)
                 BattleCharacterSelectionService.Instance.SelectedCharacterChanged += OnSelectedCharacterChanged;
 
+            BattleCharacterDatabase.CatalogChanged += OnCharacterCatalogChanged;
+
             SnapToSelectedOrFirst(true);
             RefreshButtons();
+            StartCoroutine(RefreshNextFrame());
         }
 
         private void OnDisable()
         {
             if (BattleCharacterSelectionService.HasInstance)
                 BattleCharacterSelectionService.Instance.SelectedCharacterChanged -= OnSelectedCharacterChanged;
+
+            BattleCharacterDatabase.CatalogChanged -= OnCharacterCatalogChanged;
+
+            BattleLobbyUI lobby = FindAnyObjectByType<BattleLobbyUI>(FindObjectsInactive.Include);
+            if (lobby != null && lobby.isActiveAndEnabled)
+                lobby.RestoreLobbyHudAfterCharacterCarouselClosed();
         }
 
         private void Update()
@@ -328,8 +340,20 @@ namespace MahjongGame
             buttons.Clear();
             BattleCharacterButton[] found = buttonsRoot.GetComponentsInChildren<BattleCharacterButton>(true);
 
+            if (found == null || found.Length == 0)
+                found = FindObjectsByType<BattleCharacterButton>(FindObjectsInactive.Include);
+
             for (int i = 0; i < found.Length; i++)
-                buttons.Add(found[i]);
+            {
+                if (found[i] != null && !buttons.Contains(found[i]))
+                    buttons.Add(found[i]);
+            }
+
+            if (buttons.Count == 0 && !loggedEmptyButtons)
+            {
+                loggedEmptyButtons = true;
+                Debug.LogWarning("[BattleCharacterCircularCarousel] No BattleCharacterButton objects found for carousel.", this);
+            }
         }
 
         private void BindButtons()
@@ -510,6 +534,22 @@ namespace MahjongGame
             if (isDragging)
                 return;
 
+            SnapToSelectedOrFirst(false);
+        }
+
+        private IEnumerator RefreshNextFrame()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                yield return null;
+                RefreshButtons();
+                SnapToSelectedOrFirst(i == 0);
+            }
+        }
+
+        private void OnCharacterCatalogChanged()
+        {
+            RefreshButtons();
             SnapToSelectedOrFirst(false);
         }
     }

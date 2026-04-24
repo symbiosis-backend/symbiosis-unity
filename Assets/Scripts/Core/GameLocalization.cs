@@ -98,6 +98,14 @@ namespace MahjongGame
             { "mahjong.reset_progress", new Translation("Сбросить прогресс", "Reset Progress", "Ilerlemeyi Sifirla") },
             { "mahjong.back", new Translation("Назад", "Back", "Geri") },
             { "mahjong.title.novice", new Translation("Новичок", "Novice", "Caylak") },
+            { "mahjong.title.story_seeker", new Translation("Искатель истории", "Story Seeker", "Hikaye Arayicisi") },
+            { "mahjong.title.story_walker", new Translation("Путник истории", "Story Walker", "Hikaye Yolcusu") },
+            { "mahjong.title.story_keeper", new Translation("Хранитель истории", "Story Keeper", "Hikaye Muhafizi") },
+            { "mahjong.title.battle_first", new Translation("Первый бой", "First Duel", "Ilk Duello") },
+            { "mahjong.title.battle_veteran", new Translation("Ветеран битв", "Battle Veteran", "Savas Ustasi") },
+            { "mahjong.title.battle_centurion", new Translation("Центурион", "Centurion", "Yuzbasi") },
+            { "profile.titles", new Translation("Титулы", "Titles", "Unvanlar") },
+            { "profile.title_selected", new Translation("Выбран", "Selected", "Secildi") },
 
             { "void.title", new Translation("AVOYDER", "AVOYDER", "AVOYDER") },
             { "void.start", new Translation("НАЧАТЬ", "START", "BASLA") },
@@ -122,6 +130,8 @@ namespace MahjongGame
             { "chat.placeholder", new Translation("Сообщение", "Message", "Mesaj") },
             { "chat.send", new Translation("Отправить", "Send", "Gonder") },
             { "chat.empty", new Translation("Сообщений пока нет.", "No messages yet.", "Henuz mesaj yok.") },
+            { "chat.channel.global", new Translation("Общий", "Global", "Genel") },
+            { "chat.channel.mahjong", new Translation("Маджонг", "Mahjong", "Mahjong") },
             { "chat.error_empty", new Translation("Сообщение пустое.", "Message is empty.", "Mesaj bos.") },
 
             { "friends.title", new Translation("Друзья", "Friends", "Arkadaslar") },
@@ -138,11 +148,128 @@ namespace MahjongGame
             if (string.IsNullOrWhiteSpace(key))
                 return string.Empty;
 
+            if (TryGetRuntimeTranslation(key, out string runtimeTranslation))
+                return runtimeTranslation;
+
             if (!Translations.TryGetValue(key, out Translation translation))
                 return key;
 
             GameLanguage language = AppSettings.I != null ? AppSettings.I.Language : GameLanguage.Russian;
             return translation.Get(language);
+        }
+
+        private static bool TryGetRuntimeTranslation(string key, out string value)
+        {
+            GameLanguage language = AppSettings.I != null ? AppSettings.I.Language : GameLanguage.Russian;
+            switch (key)
+            {
+                case "common.oz_ametist":
+                    value = Pick(language, "Оз Аметист", "Oz Amethyst", "Oz Ametist");
+                    return true;
+                case "menu.profile":
+                    value = Pick(language, "ПРОФИЛЬ", "PROFILE", "PROFIL");
+                    return true;
+                case "menu.shop":
+                    value = Pick(language, "МАГАЗИН", "SHOP", "MAGAZA");
+                    return true;
+                case "menu.shop_short":
+                    value = Pick(language, "МАЗ", "SHOP", "MAGAZA");
+                    return true;
+                case "menu.online":
+                    value = Pick(language, "Онлайн", "Online", "Cevrimici");
+                    return true;
+                case "menu.offline":
+                    value = Pick(language, "Офлайн", "Offline", "Cevrimdisi");
+                    return true;
+                case "profile.dynasty_empty":
+                    value = Pick(language, "Династия: -", "Dynasty: -", "Hanedan: -");
+                    return true;
+                case "profile.dynasty":
+                    value = Pick(language, "Династия: {0}", "Dynasty: {0}", "Hanedan: {0}");
+                    return true;
+                case "profile.slot":
+                    value = Pick(language, "Слот {0}", "Slot {0}", "Yuva {0}");
+                    return true;
+                case "profile.age_gender":
+                    value = Pick(language, "Возраст: {0}  Пол: {1}", "Age: {0}  Gender: {1}", "Yas: {0}  Cinsiyet: {1}");
+                    return true;
+                case "profile.gender.male":
+                    value = Pick(language, "Мужчина", "Male", "Erkek");
+                    return true;
+                case "profile.gender.female":
+                    value = Pick(language, "Женщина", "Female", "Kadin");
+                    return true;
+                case "profile.gender.other":
+                    value = Pick(language, "Другое", "Other", "Diger");
+                    return true;
+                case "friends.nickname":
+                    value = Pick(language, "Никнейм", "Nickname", "Takma ad");
+                    return true;
+                case "friends.add":
+                    value = Pick(language, "Добавить", "Add", "Ekle");
+                    return true;
+                case "friends.refresh":
+                    value = Pick(language, "Обновить", "Refresh", "Yenile");
+                    return true;
+                case "friends.accept":
+                    value = Pick(language, "Принять", "Accept", "Kabul");
+                    return true;
+                case "friends.decline":
+                    value = Pick(language, "Отклонить", "Decline", "Reddet");
+                    return true;
+                case "shop.title":
+                    value = Pick(language, "МАГАЗИН", "SHOP", "MAGAZA");
+                    return true;
+                case "shop.tab.mahjong":
+                    value = Pick(language, "Маджонг", "Mahjong", "Mahjong");
+                    return true;
+                case "shop.tab.ametist":
+                    value = Pick(language, "Аметист", "Amethyst", "Ametist");
+                    return true;
+                case "shop.tab.subscription":
+                    value = Pick(language, "Подписка", "Subscription", "Abonelik");
+                    return true;
+                case "shop.placeholder.mahjong":
+                    value = Pick(language, "Пакеты скоро появятся.", "Packs are coming soon.", "Paketler yakinda.");
+                    return true;
+                case "shop.placeholder.subscription":
+                    value = Pick(language, "Подписка пока в разработке.", "Subscription is in development.", "Abonelik gelistiriliyor.");
+                    return true;
+                case "shop.free":
+                    value = Pick(language, "БЕСПЛАТНО", "FREE", "UCRETSIZ");
+                    return true;
+                case "shop.claimed":
+                    value = Pick(language, "ПОЛУЧЕНО", "CLAIMED", "ALINDI");
+                    return true;
+                case "shop.ad":
+                    value = Pick(language, "РЕКЛАМА", "AD", "REKLAM");
+                    return true;
+                case "shop.package_stub":
+                    value = Pick(language, "Пакет пока заглушка: {0}", "Package placeholder: {0}", "Paket simdilik hazir degil: {0}");
+                    return true;
+                case "shop.free_claimed":
+                    value = Pick(language, "Бесплатный бонус уже получен.", "Free bonus already claimed.", "Ucretsiz bonus zaten alindi.");
+                    return true;
+                case "shop.ad_limit":
+                    value = Pick(language, "Лимит рекламы на сегодня исчерпан.", "Daily ad limit reached.", "Bugunku reklam limiti doldu.");
+                    return true;
+                case "shop.balance_ametist":
+                    value = Pick(language, "Аметист: {0}", "Amethyst: {0}", "Ametist: {0}");
+                    return true;
+                default:
+                    value = string.Empty;
+                    return false;
+            }
+        }
+
+        private static string Pick(GameLanguage language, string russian, string english, string turkish)
+        {
+            return language switch
+            {
+                GameLanguage.English => english,
+                GameLanguage.Turkish => turkish,
+                _ => russian
+            };
         }
 
         public static string Format(string key, params object[] args)

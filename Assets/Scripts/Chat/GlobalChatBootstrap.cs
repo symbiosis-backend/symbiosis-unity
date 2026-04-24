@@ -8,8 +8,7 @@ namespace MahjongGame
         private static readonly string[] ChatSceneNames =
         {
             "Main",
-            "LobbyMahjong",
-            "LobbyMahjongBattle"
+            "LobbyMahjong"
         };
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -45,12 +44,28 @@ namespace MahjongGame
         private static void EnsureForScene(Scene scene)
         {
             if (!ShouldShowChatInScene(scene.name))
+            {
+                DestroySceneChatUi();
                 return;
+            }
 
-            if (Object.FindAnyObjectByType<GlobalChatUI>(FindObjectsInactive.Include) != null)
+            GlobalChatUI existing = Object.FindAnyObjectByType<GlobalChatUI>(FindObjectsInactive.Include);
+            if (existing != null)
+            {
+                existing.gameObject.SetActive(true);
+                existing.transform.SetAsLastSibling();
+                existing.LayoutToggleButton();
                 return;
+            }
 
             GlobalChatUI.CreateInScene();
+        }
+
+        private static void DestroySceneChatUi()
+        {
+            GlobalChatUI ui = Object.FindAnyObjectByType<GlobalChatUI>(FindObjectsInactive.Include);
+            if (ui != null)
+                Object.Destroy(ui.gameObject);
         }
 
         private static bool ShouldShowChatInScene(string sceneName)

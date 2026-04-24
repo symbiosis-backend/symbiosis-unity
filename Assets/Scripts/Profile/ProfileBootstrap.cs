@@ -36,7 +36,7 @@ namespace MahjongGame
 
         [Header("Entry Intro")]
         [SerializeField] private bool playEntryIntro = true;
-        [SerializeField] private bool playEntryIntroOnMobile = false;
+        [SerializeField] private bool playEntryIntroOnMobile = true;
         [SerializeField] private EntryCinematicIntro entryIntro;
 
         [Header("Generated UI")]
@@ -138,6 +138,24 @@ namespace MahjongGame
 
             SetLoadingVisible(true);
 
+            if (ProfileService.I.HasRememberedAccount)
+            {
+                LogRuntime("Remembered account found; showing slot picker");
+                SetLoadingVisible(false);
+                SetProfileSetupVisible(true);
+                resolvingServerProfile = false;
+                yield break;
+            }
+
+            if (!ProfileService.I.CanAutoLoadProfile)
+            {
+                LogRuntime("No remembered profile; showing registration/login setup");
+                SetLoadingVisible(false);
+                SetProfileSetupVisible(true);
+                resolvingServerProfile = false;
+                yield break;
+            }
+
             GameLanguage language = AppSettings.I != null ? AppSettings.I.Language : GameLanguage.Turkish;
             yield return ProfileService.I.LoadOrCreateServerProfile(language);
 
@@ -151,7 +169,7 @@ namespace MahjongGame
 
             if (ProfileService.I.Current == null)
             {
-                Debug.LogError("[ProfileBootstrap] Server profile could not be loaded: " + ProfileService.I.LastServerError);
+                Debug.LogWarning("[ProfileBootstrap] Server profile was not loaded; showing registration/login setup. " + ProfileService.I.LastServerError);
                 SetProfileSetupVisible(true);
                 resolvingServerProfile = false;
                 yield break;
@@ -411,12 +429,12 @@ namespace MahjongGame
             ContentSizeFitter fitter = window.GetComponent<ContentSizeFitter>();
             fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
-            CreateText(window.transform, "Title", "Choose Language", 42f, FontStyles.Bold, Color.white, 72f);
-            CreateText(window.transform, "Subtitle", "Select the language before creating your profile.", 22f, FontStyles.Normal, new Color(0.78f, 0.84f, 0.94f, 1f), 58f);
+            CreateText(window.transform, "Title", GameLocalization.Text("language.title"), 42f, FontStyles.Bold, Color.white, 72f);
+            CreateText(window.transform, "Subtitle", GameLocalization.Text("language.subtitle"), 22f, FontStyles.Normal, new Color(0.78f, 0.84f, 0.94f, 1f), 58f);
 
-            russianLanguageButton = CreateLanguageButton(window.transform, "RU", "Russian");
-            englishLanguageButton = CreateLanguageButton(window.transform, "EN", "English");
-            turkishLanguageButton = CreateLanguageButton(window.transform, "TR", "Turkish");
+            russianLanguageButton = CreateLanguageButton(window.transform, "RU", "RU  Русский");
+            englishLanguageButton = CreateLanguageButton(window.transform, "EN", "EN  English");
+            turkishLanguageButton = CreateLanguageButton(window.transform, "TR", "TR  Turkce");
 
             languageSelectionPanel = overlay;
             languageSelectionPanel.SetActive(false);

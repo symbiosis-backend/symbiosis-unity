@@ -43,7 +43,7 @@ namespace FishNet.Component.Prediction
 
             public void Update(Rigidbody rb)
             {
-                Velocity = rb.velocity;
+                Velocity = rb.linearVelocity;
                 AngularVelocity = rb.angularVelocity;
                 SimulatedScene = rb.gameObject.scene;
             }
@@ -81,7 +81,7 @@ namespace FishNet.Component.Prediction
 
             public void Update(Rigidbody2D rb)
             {
-                Velocity = rb.velocity;
+                Velocity = rb.linearVelocity;
                 AngularVelocity = rb.angularVelocity;
                 SimulatedScene = rb.gameObject.scene;
             }
@@ -207,7 +207,7 @@ namespace FishNet.Component.Prediction
                     if (rb == null)
                         return false;
 
-                    rb.velocity = rbData.Velocity;
+                    rb.linearVelocity = rbData.Velocity;
                     rb.angularVelocity = rbData.AngularVelocity;
                     SceneManager.MoveGameObjectToScene(rb.transform.root.gameObject, rbData.SimulatedScene);
                     return true;
@@ -233,7 +233,7 @@ namespace FishNet.Component.Prediction
                     if (rb == null)
                         return false;
 
-                    rb.velocity = rbData.Velocity;
+                    rb.linearVelocity = rbData.Velocity;
                     rb.angularVelocity = rbData.AngularVelocity;
                     SceneManager.MoveGameObjectToScene(rb.transform.root.gameObject, rbData.SimulatedScene);
                     return true;

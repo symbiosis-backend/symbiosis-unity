@@ -3071,6 +3071,8 @@ MonoBehaviour:
   lobbyCharacterImage: {fileID: 733623715}
   selectCharacterButton: {fileID: 1086178485}
   changeCharacterButton: {fileID: 1778401695}
+  hideExplicitCharacterButtons: 1
+  openSelectionByLobbyCharacterClick: 1
   selectCharacterButtonText: {fileID: 0}
   changeCharacterButtonText: {fileID: 0}
   selectedCharacterNameText: {fileID: 0}
@@ -3089,8 +3091,8 @@ MonoBehaviour:
   maxWidth: 420
   maxHeight: 420
   anchorToBottomLeft: 1
-  imageOffsetX: 0
-  imageOffsetY: 100
+  imageOffsetX: 12
+  imageOffsetY: 0
 --- !u!222 &821187476
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4343,7 +4345,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1086178484
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7630,7 +7632,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -9028,10 +9030,10 @@ PrefabInstance:
     - target: {fileID: 3538981413802146906, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -5476292459312460740, guid: 01375c64e9df30049857a14674f66f92, type: 3}
+      objectReference: {fileID: 4916514817523440012, guid: ce4e12cc1ab6d7d498f8b604816a763a, type: 3}
     - target: {fileID: 4014278774976142748, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4225183264373869470, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_Pivot.x
@@ -9059,11 +9061,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4225183264373869470, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 600
+      value: 720
       objectReference: {fileID: 0}
     - target: {fileID: 4225183264373869470, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 100
+      value: 172
       objectReference: {fileID: 0}
     - target: {fileID: 4225183264373869470, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_LocalPosition.x

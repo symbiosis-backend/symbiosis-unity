@@ -197,13 +197,13 @@ MonoBehaviour:
   sceneVisualStyles:
   - SceneName: GameMahjongBattle
     ApplyOpenButtonRect: 1
-    OpenButtonAnchorMin: {x: 0.5, y: 1}
-    OpenButtonAnchorMax: {x: 0.5, y: 1}
-    OpenButtonPivot: {x: 0.5, y: 1}
-    OpenButtonPosition: {x: 0, y: -28}
-    OpenButtonSize: {x: 90, y: 90}
+    OpenButtonAnchorMin: {x: 1, y: 1}
+    OpenButtonAnchorMax: {x: 1, y: 1}
+    OpenButtonPivot: {x: 1, y: 1}
+    OpenButtonPosition: {x: -58, y: -42}
+    OpenButtonSize: {x: 82, y: 82}
     ApplyOpenButtonGraphic: 1
-    OpenButtonSprite: {fileID: 21300000, guid: 32471f95a98c87343bb8dc1c41a65e57, type: 3}
+    OpenButtonSprite: {fileID: -6497583048917448097, guid: b1c2cc0e3711a514e97107ca9a78b04e, type: 3}
     OpenButtonColor: {r: 1, g: 1, b: 1, a: 1}
     ApplyPanelRect: 0
     PanelAnchorMin: {x: 0, y: 0}
@@ -241,9 +241,9 @@ MonoBehaviour:
     ApplyLanguageButtonSize: 1
     LanguageButtonSize: {x: 120, y: 80}
     ApplyLanguageButtonGraphics: 1
-    RussianLanguageSprite: {fileID: 0}
-    EnglishLanguageSprite: {fileID: 0}
-    TurkishLanguageSprite: {fileID: 0}
+    RussianLanguageSprite: {fileID: -1522780376786418692, guid: d14a7b9792b87a64986ab618cf2e531d, type: 3}
+    EnglishLanguageSprite: {fileID: -3491290003237752611, guid: ca9c375de2d077d4e8251c6767b578b4, type: 3}
+    TurkishLanguageSprite: {fileID: 7292626163499866783, guid: b78fd1da2b8301a4c8e58b7d86171eab, type: 3}
     LanguageButtonColor: {r: 1, g: 1, b: 1, a: 1}
   - SceneName: LobbyMahjongBattle
     ApplyOpenButtonRect: 1
@@ -253,7 +253,7 @@ MonoBehaviour:
     OpenButtonPosition: {x: -58, y: -42}
     OpenButtonSize: {x: 90, y: 90}
     ApplyOpenButtonGraphic: 1
-    OpenButtonSprite: {fileID: 21300000, guid: 32471f95a98c87343bb8dc1c41a65e57, type: 3}
+    OpenButtonSprite: {fileID: -6497583048917448097, guid: b1c2cc0e3711a514e97107ca9a78b04e, type: 3}
     OpenButtonColor: {r: 1, g: 1, b: 1, a: 1}
     ApplyPanelRect: 0
     PanelAnchorMin: {x: 0, y: 0}
@@ -273,7 +273,7 @@ MonoBehaviour:
     WindowPosition: {x: 0, y: 0}
     WindowSize: {x: 1100, y: 800}
     ApplyWindowGraphic: 1
-    WindowSprite: {fileID: 21300000, guid: 63dbba0116fd4e54fb53e4608664a06c, type: 3}
+    WindowSprite: {fileID: 2390157446665113950, guid: f3d33c4059ca8334fa7c629cc1712604, type: 3}
     WindowColor: {r: 1, g: 1, b: 1, a: 1}
     ApplySettingButtonSize: 0
     SettingButtonSize: {x: 120, y: 120}
@@ -291,9 +291,9 @@ MonoBehaviour:
     ApplyLanguageButtonSize: 1
     LanguageButtonSize: {x: 120, y: 80}
     ApplyLanguageButtonGraphics: 1
-    RussianLanguageSprite: {fileID: 0}
-    EnglishLanguageSprite: {fileID: 0}
-    TurkishLanguageSprite: {fileID: 0}
+    RussianLanguageSprite: {fileID: -1522780376786418692, guid: d14a7b9792b87a64986ab618cf2e531d, type: 3}
+    EnglishLanguageSprite: {fileID: -3491290003237752611, guid: ca9c375de2d077d4e8251c6767b578b4, type: 3}
+    TurkishLanguageSprite: {fileID: 7292626163499866783, guid: b78fd1da2b8301a4c8e58b7d86171eab, type: 3}
     LanguageButtonColor: {r: 1, g: 1, b: 1, a: 1}
   - SceneName: LobbyMahjong
     ApplyOpenButtonRect: 1
@@ -341,9 +341,9 @@ MonoBehaviour:
     ApplyLanguageButtonSize: 1
     LanguageButtonSize: {x: 120, y: 80}
     ApplyLanguageButtonGraphics: 1
-    RussianLanguageSprite: {fileID: 0}
-    EnglishLanguageSprite: {fileID: 0}
-    TurkishLanguageSprite: {fileID: 0}
+    RussianLanguageSprite: {fileID: -1522780376786418692, guid: d14a7b9792b87a64986ab618cf2e531d, type: 3}
+    EnglishLanguageSprite: {fileID: -3491290003237752611, guid: ca9c375de2d077d4e8251c6767b578b4, type: 3}
+    TurkishLanguageSprite: {fileID: 7292626163499866783, guid: b78fd1da2b8301a4c8e58b7d86171eab, type: 3}
     LanguageButtonColor: {r: 1, g: 1, b: 1, a: 1}
   - SceneName: Main
     ApplyOpenButtonRect: 1
@@ -391,9 +391,9 @@ MonoBehaviour:
     ApplyLanguageButtonSize: 1
     LanguageButtonSize: {x: 120, y: 80}
     ApplyLanguageButtonGraphics: 1
-    RussianLanguageSprite: {fileID: 0}
-    EnglishLanguageSprite: {fileID: 0}
-    TurkishLanguageSprite: {fileID: 0}
+    RussianLanguageSprite: {fileID: -1522780376786418692, guid: d14a7b9792b87a64986ab618cf2e531d, type: 3}
+    EnglishLanguageSprite: {fileID: -3491290003237752611, guid: ca9c375de2d077d4e8251c6767b578b4, type: 3}
+    TurkishLanguageSprite: {fileID: 7292626163499866783, guid: b78fd1da2b8301a4c8e58b7d86171eab, type: 3}
     LanguageButtonColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &2154034507651557854
 GameObject:
@@ -1105,9 +1105,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 6233046844213103299, guid: 1be96b499dda38947b951a8e626562c2, type: 3}
+  m_Sprite: {fileID: -8845919951442575272, guid: 66cdc8d64180a0e418cc5ceb2914182d, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1

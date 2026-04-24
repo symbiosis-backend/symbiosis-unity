@@ -63,6 +63,7 @@ namespace MahjongGame
         [SerializeField] private BattleCharacterModelView opponentBattleModelView;
         [SerializeField] private TMP_Text opponentNameText;
         [SerializeField] private TMP_Text opponentRankText;
+        [SerializeField] private TMP_Text opponentStatsText;
         [SerializeField] private string opponentRankFormat = "{0} {1} RP";
         [SerializeField] private bool createOpponentProfileUiIfMissing = true;
         [SerializeField] private Vector2 opponentProfileUiSize = new Vector2(420f, 172f);
@@ -70,6 +71,13 @@ namespace MahjongGame
         [SerializeField] private Vector2 opponentBattleSpriteSize = new Vector2(156f, 156f);
         [SerializeField] private Vector2 opponentBattleSpriteOffset = new Vector2(12f, -8f);
         [SerializeField] private bool flipOpponentBattleSpriteX = true;
+
+        [Header("Battle Profile Panel")]
+        [SerializeField] private Sprite battleProfilePanelSprite;
+        [SerializeField] private string battleProfilePanelSpriteResourcePath = "Mahjong/Sprites/FlagPanelBattleProfileCard";
+        [SerializeField] private Color battleProfilePanelColor = Color.white;
+        [SerializeField] private Image.Type battleProfilePanelImageType = Image.Type.Simple;
+        [SerializeField] private bool battleProfilePanelRaycastTarget = false;
 
         [Header("Character Action Feedback")]
         [SerializeField, Min(0.01f)] private float characterActionPulseDuration = 0.18f;
@@ -216,6 +224,7 @@ namespace MahjongGame
 
         private void Start()
         {
+            HideLobbyRuntimeUi();
             EnsureBattleBoardsLayout();
             EnsureBattleOpponentSession();
             EnsureOpponentBattleCharacter();
@@ -235,6 +244,38 @@ namespace MahjongGame
             ApplyBattleProfileLayout();
             RefreshHud();
             StartMatch();
+        }
+
+        private void HideLobbyRuntimeUi()
+        {
+            SetObjectActiveByName("ButtonRandomMatch", false);
+            SetObjectActiveByName("ButtonRankedBattle", false);
+            SetObjectActiveByName("ButtonLocalWifiBattle", false);
+            SetObjectActiveByName("ButtonBattleShop", false);
+            SetObjectActiveByName("ButtonReturnToLobby", false);
+            SetObjectActiveByName("BattleProgressPanel", false);
+            SetObjectActiveByName("BattleShopOverlay", false);
+            SetObjectActiveByName("BattleEnergyAdButton", false);
+            SetObjectActiveByName("OpenCharacterCarouselButton", false);
+            SetObjectActiveByName("LobbyCharacterImage", false);
+            SetObjectActiveByName("CharasterCarousel", false);
+        }
+
+        private static void SetObjectActiveByName(string objectName, bool active)
+        {
+            if (string.IsNullOrWhiteSpace(objectName))
+                return;
+
+            Transform[] transforms = FindObjectsByType<Transform>(FindObjectsInactive.Include);
+            for (int i = 0; i < transforms.Length; i++)
+            {
+                Transform item = transforms[i];
+                if (item == null || !string.Equals(item.name, objectName, StringComparison.Ordinal))
+                    continue;
+
+                if (item.gameObject.activeSelf != active)
+                    item.gameObject.SetActive(active);
+            }
         }
 
         private void Update()
@@ -1085,6 +1126,13 @@ namespace MahjongGame
                     opponentRankText = FindTextByObjectName("OpponentRankTier");
             }
 
+            if (opponentStatsText == null)
+            {
+                opponentStatsText = FindTextByObjectName("OpponentStats");
+                if (opponentStatsText == null)
+                    opponentStatsText = FindTextByObjectName("OpponentStatsText");
+            }
+
             if (opponentHpBarFill == null)
             {
                 opponentHpBarFill = FindImageByObjectName("OpponentHpBarFill");
@@ -1109,7 +1157,8 @@ namespace MahjongGame
             if (createOpponentProfileUiIfMissing &&
                 (opponentBattleSpriteImage == null ||
                  opponentNameText == null ||
-                 opponentRankText == null))
+                 opponentRankText == null ||
+                 opponentStatsText == null))
             {
                 CreateOpponentProfileUi();
             }
@@ -1310,13 +1359,22 @@ namespace MahjongGame
                 : MahjongSession.BattleOpponentRankTier;
 
             int rankPoints = Mathf.Max(0, MahjongSession.BattleOpponentRankPoints);
-            string rankText = string.Format(opponentRankFormat, rankTier, rankPoints);
+            int level = Mathf.Max(1, MahjongSession.BattleOpponentLevel);
+            int wins = Mathf.Max(0, MahjongSession.BattleOpponentWins);
+            int losses = Mathf.Max(0, MahjongSession.BattleOpponentLosses);
+            int total = Mathf.Max(wins + losses, 0);
+            int mvpPercent = total > 0 ? Mathf.RoundToInt((float)Mathf.Clamp(MahjongSession.BattleOpponentMvpCount, 0, total) / total * 100f) : 0;
+            string rankText = $"{string.Format(opponentRankFormat, rankTier, rankPoints)} | {LocalizedLevelLabel()} {level}";
+            string statsText = FormatBattleProfileStats(wins, losses, mvpPercent);
 
             if (opponentNameText != null)
                 opponentNameText.text = opponentRankText == null ? $"{opponentName} [{rankText}]" : opponentName;
 
             if (opponentRankText != null)
                 opponentRankText.text = rankText;
+
+            if (opponentStatsText != null)
+                opponentStatsText.text = statsText;
 
             BattleHudUI hud = FindAnyObjectByType<BattleHudUI>(FindObjectsInactive.Include);
             if (hud != null)
@@ -1353,9 +1411,12 @@ namespace MahjongGame
         {
             PlayerProfile profile = ProfileService.I != null ? ProfileService.I.Current : null;
             string playerName = fallbackPlayerName;
-            string title = string.Empty;
             string rankTier = fallbackPlayerRankTier;
             int rankPoints = 0;
+            int level = 1;
+            int wins = 0;
+            int losses = 0;
+            int mvpPercent = 0;
 
             if (profile != null)
             {
@@ -1364,12 +1425,13 @@ namespace MahjongGame
                 if (!string.IsNullOrWhiteSpace(profile.DisplayName))
                     playerName = profile.DisplayName.Trim();
 
-                title = MahjongTitleService.I != null
-                    ? MahjongTitleService.I.GetProfileDisplayTitle(profile)
-                    : ResolveSelectedMahjongTitleFallback(profile);
-
                 if (profile.Mahjong != null && profile.Mahjong.Battle != null)
                 {
+                    level = Mathf.Max(1, profile.Mahjong.Battle.Level);
+                    wins = Mathf.Max(0, profile.Mahjong.Battle.Wins);
+                    losses = Mathf.Max(0, profile.Mahjong.Battle.Losses);
+                    mvpPercent = Mathf.Clamp(profile.Mahjong.Battle.MvpRatePercent, 0, 100);
+
                     if (!string.IsNullOrWhiteSpace(profile.Mahjong.Battle.RankTier))
                         rankTier = profile.Mahjong.Battle.RankTier.Trim();
 
@@ -1383,24 +1445,15 @@ namespace MahjongGame
                     : playerName;
 
             if (playerTitleText != null)
-            {
-                playerTitleText.text = string.IsNullOrWhiteSpace(title)
-                    ? GameLocalization.Text("common.title_empty")
-                    : GameLocalization.Format("profile.title", title);
-            }
+                playerTitleText.text = FormatBattleProfileStats(wins, losses, mvpPercent);
 
             if (playerRankText != null)
-                playerRankText.text = string.Format(playerRankFormat, rankTier, rankPoints);
+                playerRankText.text = $"{string.Format(playerRankFormat, rankTier, rankPoints)} | {LocalizedLevelLabel()} {level}";
         }
 
-        private static string ResolveSelectedMahjongTitleFallback(PlayerProfile profile)
+        private string FormatBattleProfileStats(int wins, int losses, int mvpPercent)
         {
-            if (profile == null || profile.Mahjong == null)
-                return string.Empty;
-
-            return string.IsNullOrWhiteSpace(profile.Mahjong.SelectedTitleId)
-                ? string.Empty
-                : profile.Mahjong.SelectedTitleId.Trim();
+            return $"{LocalizedWinsLabel()} {Mathf.Max(0, wins)}  {LocalizedLossesLabel()} {Mathf.Max(0, losses)}  MVP {Mathf.Clamp(mvpPercent, 0, 100)}%";
         }
 
         private void RefreshPlayerHpBar()
@@ -1693,7 +1746,7 @@ namespace MahjongGame
             Image background = root.GetComponent<Image>();
             if (background != null)
             {
-                background.color = new Color(0f, 0f, 0f, 0.42f);
+                background.enabled = false;
                 background.raycastTarget = false;
             }
 
@@ -1739,8 +1792,11 @@ namespace MahjongGame
             rect.sizeDelta = opponentProfileUiSize;
 
             Image background = root.GetComponent<Image>();
-            background.color = new Color(0f, 0f, 0f, 0.42f);
-            background.raycastTarget = false;
+            if (background != null)
+            {
+                background.enabled = false;
+                background.raycastTarget = false;
+            }
 
             if (opponentBattleSpriteImage == null)
             {
@@ -1759,8 +1815,86 @@ namespace MahjongGame
             if (opponentRankText == null)
                 opponentRankText = CreateProfileText(root.transform, "OpponentRank", 22f, new Vector2(20f, -58f), 2);
 
+            if (opponentStatsText == null)
+                opponentStatsText = CreateProfileText(root.transform, "OpponentStats", 18f, new Vector2(20f, -90f), 3);
+
             if (opponentHpBarFill == null || opponentHpBarText == null)
                 CreateOpponentHpBar(root.transform);
+        }
+
+        private void ApplyBattleProfilePanelBackground(Transform root, bool flipX)
+        {
+            if (root == null)
+                return;
+
+            Image rootImage = root.GetComponent<Image>();
+            if (rootImage != null)
+            {
+                rootImage.enabled = false;
+                rootImage.raycastTarget = false;
+            }
+
+            Transform backgroundTransform = root.Find("BattleProfilePanelBackground");
+            Image background = backgroundTransform != null ? backgroundTransform.GetComponent<Image>() : null;
+            if (background == null)
+            {
+                GameObject backgroundObject = new GameObject(
+                    "BattleProfilePanelBackground",
+                    typeof(RectTransform),
+                    typeof(CanvasRenderer),
+                    typeof(Image));
+                backgroundObject.layer = root.gameObject.layer;
+                backgroundObject.transform.SetParent(root, false);
+                background = backgroundObject.GetComponent<Image>();
+            }
+
+            RectTransform rect = background.rectTransform;
+            if (rect != null)
+            {
+                rect.anchorMin = Vector2.zero;
+                rect.anchorMax = Vector2.one;
+                rect.pivot = new Vector2(0.5f, 0.5f);
+                rect.offsetMin = Vector2.zero;
+                rect.offsetMax = Vector2.zero;
+                rect.localScale = new Vector3(flipX ? -1f : 1f, 1f, 1f);
+            }
+
+            background.transform.SetSiblingIndex(0);
+
+            ApplyBattleProfilePanelBackground(background);
+        }
+
+        private void ApplyBattleProfilePanelBackground(Image background)
+        {
+            if (background == null)
+                return;
+
+            Sprite sprite = ResolveBattleProfilePanelSprite();
+            background.sprite = sprite;
+            background.color = sprite != null ? battleProfilePanelColor : new Color(0f, 0f, 0f, 0.42f);
+            background.type = sprite != null ? battleProfilePanelImageType : Image.Type.Simple;
+            background.raycastTarget = battleProfilePanelRaycastTarget;
+            background.preserveAspect = false;
+            background.enabled = true;
+        }
+
+        private Sprite ResolveBattleProfilePanelSprite()
+        {
+            if (battleProfilePanelSprite != null)
+                return battleProfilePanelSprite;
+
+            if (string.IsNullOrWhiteSpace(battleProfilePanelSpriteResourcePath))
+                return null;
+
+            Sprite[] sprites = Resources.LoadAll<Sprite>(battleProfilePanelSpriteResourcePath);
+            if (sprites != null && sprites.Length > 0)
+            {
+                battleProfilePanelSprite = sprites[0];
+                return battleProfilePanelSprite;
+            }
+
+            battleProfilePanelSprite = Resources.Load<Sprite>(battleProfilePanelSpriteResourcePath);
+            return battleProfilePanelSprite;
         }
 
         private Image CreateProfileImage(
@@ -1906,7 +2040,12 @@ namespace MahjongGame
         private void ApplyBattleProfileLayout()
         {
             Transform playerRoot = ResolveProfileRoot(playerBattleSpriteImage, playerNameText, playerTitleText, playerRankText, playerHpBarFill, playerHpBarText);
-            Transform opponentRoot = ResolveProfileRoot(opponentBattleSpriteImage, opponentNameText, opponentRankText);
+            Transform opponentRoot = ResolveProfileRoot(opponentBattleSpriteImage, opponentNameText, opponentRankText, opponentStatsText, opponentHpBarFill, opponentHpBarText);
+            EnsureProfileContentParented(playerRoot, playerBattleSpriteImage, playerNameText, playerTitleText, playerRankText);
+            EnsureProfileContentParented(opponentRoot, opponentBattleSpriteImage, opponentNameText, opponentStatsText, opponentRankText);
+            ApplyBattleProfilePanelBackground(playerRoot, true);
+            ApplyBattleProfilePanelBackground(opponentRoot, false);
+
             Vector2 canvasSize = ResolveBattleHudCanvasSize();
             lastBattleHudCanvasSize = canvasSize;
 
@@ -1916,50 +2055,114 @@ namespace MahjongGame
             bool narrow = width < 640f;
 
             float topSpaceHeight = ResolveFreeHeightAboveBoards(canvasSize);
-            float panelGap = compact ? 22f : 30f;
-            float horizontalMargin = compact ? 12f : 28f;
-            float portraitMaxByWidth = Mathf.Clamp(width * (narrow ? 0.24f : 0.16f), compact ? 150f : 178f, compact ? 210f : 250f);
-            float portraitSize = Mathf.Clamp(topSpaceHeight * 0.68f, compact ? 122f : 148f, portraitMaxByWidth);
-            float fighterGap = Mathf.Clamp(portraitSize * 0.82f, compact ? 92f : 112f, compact ? 150f : 178f);
-            float availablePanelWidth = (width - fighterGap - portraitSize - panelGap * 2f) * 0.5f - horizontalMargin;
-            float profileWidth = Mathf.Clamp(availablePanelWidth, narrow ? 150f : 220f, compact ? 300f : 360f);
+            float panelGap = compact ? 18f : 24f;
+            float portraitMaxByWidth = Mathf.Clamp(width * (narrow ? 0.22f : 0.13f), compact ? 112f : 132f, compact ? 170f : 210f);
+            float portraitSize = Mathf.Clamp(topSpaceHeight * 0.58f, compact ? 88f : 110f, portraitMaxByWidth);
+            float fighterGap = Mathf.Clamp(portraitSize * 0.95f, compact ? 92f : 112f, compact ? 150f : 178f);
+            float rootTop = -Mathf.Clamp(topSpaceHeight * 0.08f, compact ? 10f : 14f, compact ? 24f : 32f);
+            float profileWidth = Mathf.Clamp(width * (narrow ? 0.32f : 0.22f), narrow ? 150f : 220f, compact ? 320f : 420f);
             float profileHeight = Mathf.Max(portraitSize + 18f, compact ? 132f : 158f);
-            float rootTop = -Mathf.Clamp(topSpaceHeight * 0.12f, compact ? 18f : 22f, compact ? 34f : 42f);
             float rootWidth = profileWidth + panelGap + portraitSize * 0.5f;
             Vector2 profileSize = new Vector2(rootWidth, profileHeight);
             Vector2 portraitSizeDelta = new Vector2(portraitSize, portraitSize);
             Vector2 playerRootOffset = new Vector2(-fighterGap * 0.5f, rootTop);
             Vector2 opponentRootOffset = new Vector2(fighterGap * 0.5f, rootTop);
-            Vector2 playerPortraitOffset = Vector2.zero;
-            Vector2 opponentPortraitOffset = Vector2.zero;
-            float textTop = compact ? -12f : -16f;
-            float rankTop = compact ? -42f : -50f;
-            float textReservedWidth = portraitSize * 0.5f + panelGap + 32f;
-            Vector2 profileTextSize = new Vector2(-textReservedWidth, compact ? 28f : 32f);
-            Vector2 rankTextSize = new Vector2(-textReservedWidth, compact ? 24f : 28f);
+            Vector2 playerPortraitOffset = new Vector2(portraitSize * 0.22f, compact ? -8f : -12f);
+            Vector2 opponentPortraitOffset = new Vector2(-portraitSize * 0.22f, compact ? -8f : -12f);
+            Vector2 playerPortraitAnchor = new Vector2(1f, 1f);
+            Vector2 opponentPortraitAnchor = new Vector2(0f, 1f);
+            Vector2 portraitPivot = new Vector2(0.5f, 1f);
+            float textTop = compact ? -34f : -42f;
+            float rankTop = compact ? -68f : -82f;
+            Vector2 profileTextSize = new Vector2(Mathf.Max(120f, profileWidth - 28f), compact ? 26f : 30f);
+            Vector2 rankTextSize = new Vector2(Mathf.Max(120f, profileWidth - 28f), compact ? 24f : 28f);
+            Vector2 profileTextAnchor = new Vector2(0.5f, 0.62f);
+            float profileTextSpacing = compact ? 22f : 26f;
 
-            ApplyProfileRootLayout(
-                playerRoot,
-                new Vector2(0.5f, 1f),
-                new Vector2(1f, 1f),
-                playerRootOffset,
-                profileSize);
+            Canvas canvas = ResolveBattleHudCanvas();
+            RectTransform canvasRect = canvas != null ? canvas.transform as RectTransform : null;
+            if (canvasRect != null &&
+                TryResolveBoardBoundsInCanvas(playerBoard, canvas, canvasRect, out Rect playerBoardBounds) &&
+                TryResolveBoardBoundsInCanvas(opponentBoard, canvas, canvasRect, out Rect opponentBoardBounds))
+            {
+                float canvasTop = canvasRect.rect.yMax;
+                float boardTop = Mathf.Min(playerBoardBounds.yMax, opponentBoardBounds.yMax);
+                float dynamicHeight = Mathf.Max(compact ? 118f : 142f, canvasTop - boardTop);
+                float playerBoardWidth = Mathf.Max(1f, playerBoardBounds.width);
+                float opponentBoardWidth = Mathf.Max(1f, opponentBoardBounds.width);
+                float aspect = width / height;
+                float flagWidthFactor = aspect > 1.75f ? 0.72f : 0.96f;
+                float dynamicPlayerWidth = Mathf.Clamp(playerBoardWidth * flagWidthFactor, compact ? 230f : 280f, playerBoardWidth);
+                float dynamicOpponentWidth = Mathf.Clamp(opponentBoardWidth * flagWidthFactor, compact ? 230f : 280f, opponentBoardWidth);
+                float playerFlagSideOffset = dynamicPlayerWidth * 0.2f;
+                float opponentFlagSideOffset = dynamicOpponentWidth * 0.2f;
 
-            ApplyProfileRootLayout(
-                opponentRoot,
-                new Vector2(0.5f, 1f),
-                new Vector2(0f, 1f),
-                opponentRootOffset,
-                profileSize);
+                profileSize = new Vector2(dynamicPlayerWidth, dynamicHeight);
+                playerRootOffset = new Vector2(playerBoardBounds.xMax - dynamicPlayerWidth - playerFlagSideOffset, canvasTop);
+                opponentRootOffset = new Vector2(opponentBoardBounds.xMin + opponentFlagSideOffset, canvasTop);
+                float portraitMaxByFlag = Mathf.Min(dynamicPlayerWidth, dynamicOpponentWidth) * (aspect > 1.75f ? 0.42f : 0.36f);
+                float portraitMaxByHeight = dynamicHeight * 0.9f;
+                float portraitMin = Mathf.Clamp(dynamicHeight * 0.42f, compact ? 72f : 90f, compact ? 120f : 150f);
+                portraitSize = Mathf.Clamp(dynamicHeight * 0.74f, portraitMin, Mathf.Min(portraitMaxByHeight, portraitMaxByFlag));
+                portraitSizeDelta = new Vector2(portraitSize, portraitSize);
+                float standOnBoardOffset = -Mathf.Clamp(dynamicHeight * 0.2f, 20f, 52f);
+                playerPortraitOffset = new Vector2(portraitSize * 0.42f, standOnBoardOffset);
+                opponentPortraitOffset = new Vector2(-portraitSize * 0.42f, standOnBoardOffset);
+                playerPortraitAnchor = new Vector2(1f, 0f);
+                opponentPortraitAnchor = new Vector2(0f, 0f);
+                portraitPivot = new Vector2(0.5f, 0f);
+                textTop = -dynamicHeight * 0.38f;
+                rankTop = -dynamicHeight * 0.5f;
+                float textWidth = Mathf.Clamp(Mathf.Min(dynamicPlayerWidth, dynamicOpponentWidth) * 0.72f, compact ? 170f : 220f, Mathf.Min(dynamicPlayerWidth, dynamicOpponentWidth) - 22f);
+                profileTextSize = new Vector2(textWidth, compact ? 26f : 30f);
+                rankTextSize = new Vector2(textWidth, compact ? 24f : 28f);
+                profileTextAnchor = new Vector2(0.5f, 0.66f);
+                profileTextSpacing = Mathf.Clamp(dynamicHeight * 0.15f, compact ? 20f : 24f, compact ? 28f : 34f);
+                rootTop = canvasTop;
+                fighterGap = Mathf.Abs(opponentRootOffset.x - playerRootOffset.x);
 
-            ApplyImageLayout(playerBattleSpriteImage, playerPortraitOffset, portraitSizeDelta, new Vector2(1f, 1f), new Vector2(0.5f, 1f));
-            ApplyImageLayout(opponentBattleSpriteImage, opponentPortraitOffset, portraitSizeDelta, new Vector2(0f, 1f), new Vector2(0.5f, 1f));
+                ApplyProfileRootLayout(
+                    playerRoot,
+                    new Vector2(0.5f, 0.5f),
+                    new Vector2(0f, 1f),
+                    playerRootOffset,
+                    profileSize);
 
-            ApplyProfileTextLayout(playerNameText, new Vector2(16f, textTop), profileTextSize, TextAlignmentOptions.Left);
-            ApplyProfileTextLayout(playerTitleText, new Vector2(16f, textTop - 32f), rankTextSize, TextAlignmentOptions.Left);
-            ApplyProfileTextLayout(playerRankText, new Vector2(16f, rankTop - 14f), rankTextSize, TextAlignmentOptions.Left);
-            ApplyProfileTextLayout(opponentNameText, new Vector2(portraitSize * 0.5f + panelGap, textTop), profileTextSize, TextAlignmentOptions.Left);
-            ApplyProfileTextLayout(opponentRankText, new Vector2(portraitSize * 0.5f + panelGap, rankTop), rankTextSize, TextAlignmentOptions.Left);
+                ApplyProfileRootLayout(
+                    opponentRoot,
+                    new Vector2(0.5f, 0.5f),
+                    new Vector2(0f, 1f),
+                    opponentRootOffset,
+                    new Vector2(dynamicOpponentWidth, dynamicHeight));
+            }
+            else
+            {
+                ApplyProfileRootLayout(
+                    playerRoot,
+                    new Vector2(0.5f, 1f),
+                    new Vector2(1f, 1f),
+                    playerRootOffset,
+                    profileSize);
+
+                ApplyProfileRootLayout(
+                    opponentRoot,
+                    new Vector2(0.5f, 1f),
+                    new Vector2(0f, 1f),
+                    opponentRootOffset,
+                    profileSize);
+            }
+
+            ApplyImageLayout(playerBattleSpriteImage, playerPortraitOffset, portraitSizeDelta, playerPortraitAnchor, portraitPivot);
+            ApplyImageLayout(opponentBattleSpriteImage, opponentPortraitOffset, portraitSizeDelta, opponentPortraitAnchor, portraitPivot);
+
+            ApplyFlagProfileTextLayout(playerNameText, profileTextAnchor, new Vector2(0f, profileTextSpacing), profileTextSize, compact ? 18f : 21f);
+            ApplyFlagProfileTextLayout(playerTitleText, profileTextAnchor, Vector2.zero, rankTextSize, compact ? 15f : 18f);
+            ApplyFlagProfileTextLayout(playerRankText, profileTextAnchor, new Vector2(0f, -profileTextSpacing), rankTextSize, compact ? 15f : 18f);
+            ApplyFlagProfileTextLayout(opponentNameText, profileTextAnchor, new Vector2(0f, profileTextSpacing), profileTextSize, compact ? 18f : 21f);
+            ApplyFlagProfileTextLayout(opponentStatsText, profileTextAnchor, Vector2.zero, rankTextSize, compact ? 15f : 18f);
+            ApplyFlagProfileTextLayout(opponentRankText, profileTextAnchor, new Vector2(0f, -profileTextSpacing), rankTextSize, compact ? 15f : 18f);
+            BringBattleProfileContentToFront(playerRoot);
+            BringBattleProfileContentToFront(opponentRoot);
 
             ApplyBoardHpBarLayouts(canvasSize, compact);
             ApplyRoundHudLayout(canvasSize, compact, fighterGap, rootTop, portraitSize);
@@ -2014,6 +2217,44 @@ namespace MahjongGame
             return true;
         }
 
+        private bool TryResolveBoardBoundsInCanvas(BattleBoard board, Canvas canvas, RectTransform canvasRect, out Rect bounds)
+        {
+            bounds = default;
+
+            RectTransform boardArea = board != null ? board.BoardArea : null;
+            if (boardArea == null || canvas == null || canvasRect == null)
+                return false;
+
+            Vector3[] corners = new Vector3[4];
+            boardArea.GetWorldCorners(corners);
+
+            Camera camera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
+            bool resolvedAny = false;
+            float minX = float.PositiveInfinity;
+            float maxX = float.NegativeInfinity;
+            float minY = float.PositiveInfinity;
+            float maxY = float.NegativeInfinity;
+
+            for (int i = 0; i < corners.Length; i++)
+            {
+                Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(camera, corners[i]);
+                if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPoint, camera, out Vector2 localPoint))
+                    continue;
+
+                resolvedAny = true;
+                minX = Mathf.Min(minX, localPoint.x);
+                maxX = Mathf.Max(maxX, localPoint.x);
+                minY = Mathf.Min(minY, localPoint.y);
+                maxY = Mathf.Max(maxY, localPoint.y);
+            }
+
+            if (!resolvedAny)
+                return false;
+
+            bounds = Rect.MinMaxRect(minX, minY, maxX, maxY);
+            return true;
+        }
+
         private Transform ResolveProfileRoot(params Component[] components)
         {
             for (int i = 0; i < components.Length; i++)
@@ -2027,6 +2268,24 @@ namespace MahjongGame
             }
 
             return null;
+        }
+
+        private void EnsureProfileContentParented(Transform root, params Component[] components)
+        {
+            if (root == null || components == null)
+                return;
+
+            for (int i = 0; i < components.Length; i++)
+            {
+                Component component = components[i];
+                if (component == null || component.transform == null || component.transform == root)
+                    continue;
+
+                if (component.transform.parent != root)
+                    component.transform.SetParent(root, false);
+
+                component.gameObject.layer = root.gameObject.layer;
+            }
         }
 
         private void ApplyProfileRootLayout(
@@ -2059,6 +2318,16 @@ namespace MahjongGame
             Vector2 sizeDelta,
             TextAlignmentOptions alignment)
         {
+            ApplyProfileTextLayout(text, anchoredPosition, sizeDelta, alignment, null);
+        }
+
+        private void ApplyProfileTextLayout(
+            TMP_Text text,
+            Vector2 anchoredPosition,
+            Vector2 sizeDelta,
+            TextAlignmentOptions alignment,
+            float? fontSize)
+        {
             if (text == null || text.rectTransform == null)
                 return;
 
@@ -2071,6 +2340,52 @@ namespace MahjongGame
             text.alignment = alignment;
             text.textWrappingMode = TextWrappingModes.NoWrap;
             text.overflowMode = TextOverflowModes.Ellipsis;
+            if (fontSize.HasValue)
+                text.fontSize = fontSize.Value;
+        }
+
+        private void ApplyCenteredProfileTextLayout(
+            TMP_Text text,
+            Vector2 offsetFromCenter,
+            Vector2 sizeDelta,
+            float fontSize)
+        {
+            if (text == null || text.rectTransform == null)
+                return;
+
+            RectTransform rect = text.rectTransform;
+            rect.anchorMin = new Vector2(0.5f, 0.5f);
+            rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.anchoredPosition = offsetFromCenter;
+            rect.sizeDelta = new Vector2(Mathf.Abs(sizeDelta.x), Mathf.Abs(sizeDelta.y));
+            text.alignment = TextAlignmentOptions.Center;
+            text.textWrappingMode = TextWrappingModes.NoWrap;
+            text.overflowMode = TextOverflowModes.Ellipsis;
+            text.fontSize = fontSize;
+        }
+
+        private void ApplyFlagProfileTextLayout(
+            TMP_Text text,
+            Vector2 anchor,
+            Vector2 anchoredPosition,
+            Vector2 sizeDelta,
+            float fontSize)
+        {
+            if (text == null || text.rectTransform == null)
+                return;
+
+            RectTransform rect = text.rectTransform;
+            rect.anchorMin = anchor;
+            rect.anchorMax = anchor;
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.anchoredPosition = anchoredPosition;
+            rect.sizeDelta = new Vector2(Mathf.Abs(sizeDelta.x), Mathf.Abs(sizeDelta.y));
+            text.alignment = TextAlignmentOptions.Center;
+            text.textWrappingMode = TextWrappingModes.NoWrap;
+            text.overflowMode = TextOverflowModes.Ellipsis;
+            text.fontSize = fontSize;
+            text.raycastTarget = false;
         }
 
         private void ApplyPlayerHpBarLayout()
@@ -2307,6 +2622,47 @@ namespace MahjongGame
             text.fontSize = fontSize;
         }
 
+        private void BringBattleProfileContentToFront(Transform root)
+        {
+            if (root == null)
+                return;
+
+            Transform background = root.Find("BattleProfilePanelBackground");
+            if (background != null)
+                background.SetSiblingIndex(0);
+
+            Image[] images = root.GetComponentsInChildren<Image>(true);
+            for (int i = 0; i < images.Length; i++)
+            {
+                Image image = images[i];
+                if (image == null || image.transform.parent != root)
+                    continue;
+
+                if (background != null && image.transform == background)
+                    continue;
+
+                if (battleProfilePanelSprite != null && image.sprite == battleProfilePanelSprite)
+                {
+                    image.enabled = false;
+                    image.raycastTarget = false;
+                    continue;
+                }
+            }
+
+            TMP_Text[] texts = root.GetComponentsInChildren<TMP_Text>(true);
+            for (int i = 0; i < texts.Length; i++)
+            {
+                if (texts[i] != null && texts[i].transform.parent == root)
+                    texts[i].transform.SetAsLastSibling();
+            }
+
+            if (playerBattleSpriteImage != null && playerBattleSpriteImage.transform.parent == root)
+                playerBattleSpriteImage.transform.SetAsLastSibling();
+
+            if (opponentBattleSpriteImage != null && opponentBattleSpriteImage.transform.parent == root)
+                opponentBattleSpriteImage.transform.SetAsLastSibling();
+        }
+
         private Vector2 ResolveBattleHudCanvasSize()
         {
             Canvas canvas = ResolveBattleHudCanvas();
@@ -2389,8 +2745,8 @@ namespace MahjongGame
             ApplyResultTextLayout(resultTitleText, new Vector2(0f, 108f), new Vector2(resultPanelSize.x - 88f, 74f), 56f);
             ApplyResultTextLayout(resultRewardText, new Vector2(0f, 34f), new Vector2(resultPanelSize.x - 108f, 40f), 30f);
             ApplyResultTextLayout(resultExperienceText, new Vector2(0f, -8f), new Vector2(resultPanelSize.x - 108f, 34f), 23f);
-            ApplyResultButtonLayout(resultBattleLobbyButton, new Vector2(-142f, -126f), new Vector2(252f, 58f), returnToBattleLobbyText);
-            ApplyResultButtonLayout(resultNewMatchButton, new Vector2(142f, -126f), new Vector2(252f, 58f), newMatchText);
+            ApplyResultButtonLayout(resultBattleLobbyButton, new Vector2(-142f, -126f), new Vector2(252f, 58f), LocalizedBattleLobbyButtonText());
+            ApplyResultButtonLayout(resultNewMatchButton, new Vector2(142f, -126f), new Vector2(252f, 58f), LocalizedNewMatchButtonText());
 
             root.transform.SetAsLastSibling();
             window.SetAsLastSibling();
@@ -2814,14 +3170,16 @@ namespace MahjongGame
 
             if (resultRewardText != null)
                 resultRewardText.text = lastResultGoldReward > 0
-                    ? string.Format(resultGoldFormat, lastResultGoldReward)
-                    : resultNoGoldText;
+                    ? ResolveResultGoldText(lastResultGoldReward)
+                    : ResolveResultNoGoldText();
 
             if (resultExperienceText != null)
-                resultExperienceText.text = string.Format(
-                    resultExperienceFormat,
+                resultExperienceText.text = ResolveResultExperienceText(
                     Mathf.Max(0, lastResultExperienceReward),
                     Mathf.Max(1, lastResultAccountLevel));
+
+            ApplyResultButtonLabel(resultBattleLobbyButton, LocalizedBattleLobbyButtonText());
+            ApplyResultButtonLabel(resultNewMatchButton, LocalizedNewMatchButtonText());
         }
 
         private void HideResultPanel()
@@ -2834,15 +3192,82 @@ namespace MahjongGame
         {
             string value = playerWon ? winResultText : failedResultText;
             if (string.IsNullOrWhiteSpace(value))
-                return playerWon ? "VICTORY" : "DEFEAT";
+                return playerWon ? LocalizedVictoryText() : LocalizedDefeatText();
 
             value = value.Trim();
             if (playerWon && string.Equals(value, "WIN", StringComparison.OrdinalIgnoreCase))
-                return "VICTORY";
+                return LocalizedVictoryText();
             if (!playerWon && string.Equals(value, "FAILED", StringComparison.OrdinalIgnoreCase))
-                return "DEFEAT";
+                return LocalizedDefeatText();
+            if (playerWon && string.Equals(value, "VICTORY", StringComparison.OrdinalIgnoreCase))
+                return LocalizedVictoryText();
+            if (!playerWon && string.Equals(value, "DEFEAT", StringComparison.OrdinalIgnoreCase))
+                return LocalizedDefeatText();
 
             return value;
+        }
+
+        private string ResolveResultGoldText(int amount)
+        {
+            if (!string.IsNullOrWhiteSpace(resultGoldFormat) &&
+                resultGoldFormat.IndexOf("Gold", StringComparison.OrdinalIgnoreCase) < 0)
+            {
+                return string.Format(resultGoldFormat, amount);
+            }
+
+            return $"+{Mathf.Max(0, amount)} {LocalizedGoldLabel()}";
+        }
+
+        private string ResolveResultNoGoldText()
+        {
+            if (!string.IsNullOrWhiteSpace(resultNoGoldText) &&
+                resultNoGoldText.IndexOf("Gold", StringComparison.OrdinalIgnoreCase) < 0)
+            {
+                return resultNoGoldText;
+            }
+
+            return $"+0 {LocalizedGoldLabel()}";
+        }
+
+        private string ResolveResultExperienceText(int experience, int level)
+        {
+            if (!string.IsNullOrWhiteSpace(resultExperienceFormat) &&
+                resultExperienceFormat.IndexOf("Level", StringComparison.OrdinalIgnoreCase) < 0)
+            {
+                return string.Format(resultExperienceFormat, experience, level);
+            }
+
+            return $"+{Mathf.Max(0, experience)} XP  {LocalizedLevelLabel()} {Mathf.Max(1, level)}";
+        }
+
+        private static void ApplyResultButtonLabel(Button button, string labelText)
+        {
+            if (button == null)
+                return;
+
+            TMP_Text label = button.GetComponentInChildren<TMP_Text>(true);
+            if (label != null)
+                label.text = labelText;
+        }
+
+        private string LocalizedVictoryText() => BattleUiText("ПОБЕДА", "VICTORY", "ZAFER");
+        private string LocalizedDefeatText() => BattleUiText("ПОРАЖЕНИЕ", "DEFEAT", "YENILGI");
+        private string LocalizedGoldLabel() => BattleUiText("золото", "Gold", "Altin");
+        private string LocalizedLevelLabel() => BattleUiText("Уровень", "Level", "Seviye");
+        private string LocalizedWinsLabel() => BattleUiText("Победы", "Wins", "Galibiyet");
+        private string LocalizedLossesLabel() => BattleUiText("Поражения", "Losses", "Maglubiyet");
+        private string LocalizedBattleLobbyButtonText() => BattleUiText("Лобби боя", "Battle Lobby", "Savas Lobisi");
+        private string LocalizedNewMatchButtonText() => BattleUiText("Новый матч", "New Match", "Yeni Mac");
+
+        private string BattleUiText(string russian, string english, string turkish)
+        {
+            GameLanguage language = AppSettings.I != null ? AppSettings.I.Language : GameLanguage.Russian;
+            return language switch
+            {
+                GameLanguage.English => english,
+                GameLanguage.Turkish => turkish,
+                _ => russian
+            };
         }
 
         private void BindResultPanelButton()
@@ -3042,7 +3467,8 @@ namespace MahjongGame
 
         private void EnsureOnlineRankedMatchSync()
         {
-            if (MahjongBattleLobbySession.SelectedMode != MahjongBattleLobbyMode.RankedMatch)
+            if (MahjongBattleLobbySession.SelectedMode != MahjongBattleLobbyMode.RankedMatch &&
+                MahjongBattleLobbySession.SelectedMode != MahjongBattleLobbyMode.RandomMatch)
                 return;
 
             OnlineRankedBattleNetwork network = OnlineRankedBattleNetwork.I;
@@ -3071,7 +3497,11 @@ namespace MahjongGame
 
         private static bool IsOnlineRankedBattleActive()
         {
-            return MahjongBattleLobbySession.SelectedMode == MahjongBattleLobbyMode.RankedMatch &&
+            bool onlineBattleMode =
+                MahjongBattleLobbySession.SelectedMode == MahjongBattleLobbyMode.RankedMatch ||
+                MahjongBattleLobbySession.SelectedMode == MahjongBattleLobbyMode.RandomMatch;
+
+            return onlineBattleMode &&
                    OnlineRankedBattleNetwork.I != null &&
                    OnlineRankedBattleNetwork.I.IsInMatch;
         }

@@ -6,7 +6,7 @@ on:
       releaseNotes:
         description: Update notes shown in the game
         required: false
-        default: "New Symbiosis build is available."
+        default: "Хроники battle lobby: боевое лобби получило отдельный top bar, новые окна и кнопки, общий шрифт из Main и чистый экран без чата и друзей."
   push:
     branches:
       - main
@@ -46,7 +46,7 @@ jobs:
           if (-not (Test-Path $versionPath)) {
             throw "Missing version file at ProjectSettings/SymbiosisVersion.json."
           }
-          $version = Get-Content -LiteralPath $versionPath -Raw | ConvertFrom-Json
+          $version = [System.IO.File]::ReadAllText($versionPath, [System.Text.Encoding]::UTF8) | ConvertFrom-Json
           if ([string]::IsNullOrWhiteSpace($version.versionName) -or [int]$version.versionCode -le 0) {
             throw "Invalid version file. versionName and positive versionCode are required."
           }
@@ -55,7 +55,7 @@ jobs:
             $releaseNotes = '${{ github.event.inputs.releaseNotes }}'
           }
           if ([string]::IsNullOrWhiteSpace($releaseNotes)) {
-            $releaseNotes = 'New Symbiosis build is available.'
+            $releaseNotes = 'Хроники battle lobby: боевое лобби получило отдельный top bar, новые окна и кнопки, общий шрифт из Main и чистый экран без чата и друзей.'
           }
           "BUILD_VERSION_NAME=$($version.versionName)" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
           "BUILD_VERSION_CODE=$([int]$version.versionCode)" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8

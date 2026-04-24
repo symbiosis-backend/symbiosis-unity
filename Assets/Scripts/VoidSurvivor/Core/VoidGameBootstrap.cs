@@ -306,6 +306,7 @@ namespace VoidSurvivor
 
             if (FindAnyObjectByType<EventSystem>() == null)
                 new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
+            EventSystemInputModeGuard.EnsureCompatibleEventSystems();
 
             Transform root = canvas.transform;
             GameObject legacyRestart = root.Find("Restart Button") != null ? root.Find("Restart Button").gameObject : null;

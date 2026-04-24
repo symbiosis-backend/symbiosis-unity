@@ -9,6 +9,7 @@ namespace MahjongGame
         public static CurrencyService I { get; private set; }
 
         public static event Action CurrencyChanged;
+        private bool loggedMissingProfileService;
 
         private void Awake()
         {
@@ -161,18 +162,32 @@ namespace MahjongGame
         private PlayerProfile GetProfile()
         {
             if (ProfileService.I == null)
+                ProfileRuntimeBootstrap.EnsureServices();
+
+            if (ProfileService.I == null)
             {
-                Debug.LogError("[CurrencyService] ProfileService not found.");
+                if (!loggedMissingProfileService)
+                {
+                    Debug.LogWarning("[CurrencyService] ProfileService not found.");
+                    loggedMissingProfileService = true;
+                }
+
                 return null;
             }
 
             PlayerProfile profile = ProfileService.I.Current;
             if (profile == null)
             {
-                Debug.LogWarning("[CurrencyService] Current profile is null.");
+                ProfileRuntimeBootstrap.TryLoadCachedProfile();
+                profile = ProfileService.I.Current;
+            }
+
+            if (profile == null)
+            {
                 return null;
             }
 
+            loggedMissingProfileService = false;
             return profile;
         }
 

@@ -20,6 +20,10 @@ namespace MahjongGame
         public static int BattleOpponentAvatarId { get; private set; } = 0;
         public static string BattleOpponentRankTier { get; private set; } = "Unranked";
         public static int BattleOpponentRankPoints { get; private set; } = 0;
+        public static int BattleOpponentLevel { get; private set; } = 1;
+        public static int BattleOpponentWins { get; private set; } = 0;
+        public static int BattleOpponentLosses { get; private set; } = 0;
+        public static int BattleOpponentMvpCount { get; private set; } = 0;
         public static bool BattleOpponentIsBot { get; private set; } = true;
         public static int BattleStakePot { get; private set; } = 0;
         public static int BattleMatchSeed { get; private set; } = 0;
@@ -48,6 +52,10 @@ namespace MahjongGame
                 BattleOpponentAvatarId = 0;
                 BattleOpponentRankTier = "Unranked";
                 BattleOpponentRankPoints = 0;
+                BattleOpponentLevel = 1;
+                BattleOpponentWins = 0;
+                BattleOpponentLosses = 0;
+                BattleOpponentMvpCount = 0;
                 BattleOpponentIsBot = true;
             }
             else
@@ -57,6 +65,10 @@ namespace MahjongGame
                 BattleOpponentAvatarId = opponent.AvatarId < 0 ? 0 : opponent.AvatarId;
                 BattleOpponentRankTier = string.IsNullOrWhiteSpace(opponent.RankTier) ? "Unranked" : opponent.RankTier;
                 BattleOpponentRankPoints = opponent.RankPoints < 0 ? 0 : opponent.RankPoints;
+                BattleOpponentLevel = opponent.Level < 1 ? 1 : opponent.Level;
+                BattleOpponentWins = opponent.Wins < 0 ? 0 : opponent.Wins;
+                BattleOpponentLosses = opponent.Losses < 0 ? 0 : opponent.Losses;
+                BattleOpponentMvpCount = opponent.MvpCount < 0 ? 0 : opponent.MvpCount;
                 BattleOpponentIsBot = opponent.IsBot;
             }
 
@@ -96,6 +108,10 @@ namespace MahjongGame
             BattleOpponentAvatarId = 0;
             BattleOpponentRankTier = "Unranked";
             BattleOpponentRankPoints = 0;
+            BattleOpponentLevel = 1;
+            BattleOpponentWins = 0;
+            BattleOpponentLosses = 0;
+            BattleOpponentMvpCount = 0;
             BattleOpponentIsBot = true;
             BattleStakePot = 0;
             BattleMatchSeed = 0;

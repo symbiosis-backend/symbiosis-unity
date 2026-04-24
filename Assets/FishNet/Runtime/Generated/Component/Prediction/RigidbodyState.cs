@@ -18,7 +18,7 @@ namespace FishNet.Component.Prediction
             Position = rb.transform.position;
             Rotation = rb.transform.rotation;
             IsKinematic = rb.isKinematic;
-            Velocity = rb.velocity;
+            Velocity = rb.linearVelocity;
             AngularVelocity = rb.angularVelocity;
             LastReplicateTick = tick;
         }
@@ -38,7 +38,7 @@ namespace FishNet.Component.Prediction
             Position = rb.transform.position;
             Rotation = rb.transform.rotation;
             Simulated = rb.simulated;
-            Velocity = rb.velocity;
+            Velocity = rb.linearVelocity;
             AngularVelocity = rb.angularVelocity;
             LastReplicateTick = tick;
         }

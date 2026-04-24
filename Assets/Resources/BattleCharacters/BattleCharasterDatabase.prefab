@@ -57,8 +57,47 @@ MonoBehaviour:
     ProfileSprite: {fileID: 5922086282754563003, guid: 4beddebd96b380348bea41bfb9932ab1, type: 3}
     LobbySprite: {fileID: -7331025856235524042, guid: fdafa24eaf318484a858ea7f7791b951, type: 3}
     BattleSprite: {fileID: -1114355159972045852, guid: 6681c6fbf85a3ff42aaaf7ff70cb1597, type: 3}
+    ProfileModelPrefab: {fileID: 919132149155446097, guid: f4421df7854211f4b9232c8f374422d0, type: 3}
+    LobbyModelPrefab: {fileID: 919132149155446097, guid: 30df81f9795ee0f4b85b1f0f3c26cd8d, type: 3}
+    BattleModelPrefab: {fileID: 919132149155446097, guid: 020600579e78cc849b240c4c063368a0, type: 3}
+    ModelTexture: {fileID: 2800000, guid: 1cb4f6865831ab8469903f081778d070, type: 3}
+    ModelTextureScale: {x: 1, y: 1}
+    ModelTextureOffset: {x: 0, y: 0}
+    UseSolidModelColor: 0
+    SolidModelColor: {r: 0.45, g: 0.34, b: 0.23, a: 1}
+    ProfileModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    LobbyModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    BattleModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    ProfileModelAddressKey: 
+    LobbyModelAddressKey: 
+    BattleModelAddressKey: 
+    ProfileAnimatorController: {fileID: 0}
+    LobbyAnimatorController: {fileID: 0}
+    BattleAnimatorController: {fileID: 0}
+    ProfileIdleAnimation: {fileID: -203655887218126122, guid: f4421df7854211f4b9232c8f374422d0, type: 3}
+    LobbyIdleAnimation: {fileID: -203655887218126122, guid: 30df81f9795ee0f4b85b1f0f3c26cd8d, type: 3}
+    BattleIdleAnimation: {fileID: -203655887218126122, guid: 020600579e78cc849b240c4c063368a0, type: 3}
+    AttackAnimation: {fileID: 0}
+    HitAnimation: {fileID: 0}
+    VictoryAnimation: {fileID: 0}
+    DefeatAnimation: {fileID: 0}
     Stats:
-      MaxHp: 1000
+      MaxHp: 100
       Attack: 16
       Armor: 0.05
       ParryChance: 0.05
@@ -78,8 +117,47 @@ MonoBehaviour:
     ProfileSprite: {fileID: -2092013373732166123, guid: efeebb115566c5f478baaf9346f0d4b0, type: 3}
     LobbySprite: {fileID: -6548253190619179607, guid: daeca1ee79144cd43b2f3620d38770a2, type: 3}
     BattleSprite: {fileID: 6881283377525404965, guid: 4380fc0f8eb5f4a40b324964c884f9b1, type: 3}
+    ProfileModelPrefab: {fileID: 919132149155446097, guid: a67c9e01002188a43b0a868f8ba345f7, type: 3}
+    LobbyModelPrefab: {fileID: 919132149155446097, guid: 8605c024991276f4785b0b70bcd74912, type: 3}
+    BattleModelPrefab: {fileID: 919132149155446097, guid: 0427655c952a9404e8289e589d531b3f, type: 3}
+    ModelTexture: {fileID: 2800000, guid: 64ebb0d76dc8a21499dacb3f1ff2efbc, type: 3}
+    ModelTextureScale: {x: 1, y: 1}
+    ModelTextureOffset: {x: 0, y: 0}
+    UseSolidModelColor: 0
+    SolidModelColor: {r: 0.45, g: 0.34, b: 0.23, a: 1}
+    ProfileModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    LobbyModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    BattleModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    ProfileModelAddressKey: 
+    LobbyModelAddressKey: 
+    BattleModelAddressKey: 
+    ProfileAnimatorController: {fileID: 0}
+    LobbyAnimatorController: {fileID: 0}
+    BattleAnimatorController: {fileID: 0}
+    ProfileIdleAnimation: {fileID: -203655887218126122, guid: a67c9e01002188a43b0a868f8ba345f7, type: 3}
+    LobbyIdleAnimation: {fileID: -203655887218126122, guid: 8605c024991276f4785b0b70bcd74912, type: 3}
+    BattleIdleAnimation: {fileID: -203655887218126122, guid: 0427655c952a9404e8289e589d531b3f, type: 3}
+    AttackAnimation: {fileID: 0}
+    HitAnimation: {fileID: 0}
+    VictoryAnimation: {fileID: 0}
+    DefeatAnimation: {fileID: 0}
     Stats:
-      MaxHp: 1000
+      MaxHp: 100
       Attack: 16
       Armor: 0.05
       ParryChance: 0.05
@@ -99,8 +177,47 @@ MonoBehaviour:
     ProfileSprite: {fileID: 4136927331722710171, guid: bed3f18d432c16644a93a01ed113e5be, type: 3}
     LobbySprite: {fileID: 8780525085496321212, guid: 8a09cd700c143d34aa7f8a0d955ccf1c, type: 3}
     BattleSprite: {fileID: 5653441568391001000, guid: 9c413690306e8fc40a6faf2f46343b14, type: 3}
+    ProfileModelPrefab: {fileID: 919132149155446097, guid: 98e4a4dcc9a864d44bc1a978e2aabafc, type: 3}
+    LobbyModelPrefab: {fileID: 919132149155446097, guid: 49079895e1b4a2349915e00b457eac4e, type: 3}
+    BattleModelPrefab: {fileID: 919132149155446097, guid: 9775d68b80fe97147942be35fcce7d7f, type: 3}
+    ModelTexture: {fileID: 2800000, guid: 601043eb386088b45aecf5175dcfe833, type: 3}
+    ModelTextureScale: {x: 1, y: 1}
+    ModelTextureOffset: {x: 0, y: 0}
+    UseSolidModelColor: 0
+    SolidModelColor: {r: 0.45, g: 0.34, b: 0.23, a: 1}
+    ProfileModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    LobbyModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    BattleModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    ProfileModelAddressKey: 
+    LobbyModelAddressKey: 
+    BattleModelAddressKey: 
+    ProfileAnimatorController: {fileID: 0}
+    LobbyAnimatorController: {fileID: 0}
+    BattleAnimatorController: {fileID: 0}
+    ProfileIdleAnimation: {fileID: -203655887218126122, guid: 98e4a4dcc9a864d44bc1a978e2aabafc, type: 3}
+    LobbyIdleAnimation: {fileID: -203655887218126122, guid: 49079895e1b4a2349915e00b457eac4e, type: 3}
+    BattleIdleAnimation: {fileID: -203655887218126122, guid: 9775d68b80fe97147942be35fcce7d7f, type: 3}
+    AttackAnimation: {fileID: 0}
+    HitAnimation: {fileID: 0}
+    VictoryAnimation: {fileID: 0}
+    DefeatAnimation: {fileID: 0}
     Stats:
-      MaxHp: 900
+      MaxHp: 90
       Attack: 14
       Armor: 0.03
       ParryChance: 0.12
@@ -120,8 +237,47 @@ MonoBehaviour:
     ProfileSprite: {fileID: -1823834011136338262, guid: bf48f2aad84ab6747846b5fcbe491e0b, type: 3}
     LobbySprite: {fileID: 5664021045868730111, guid: fde6ea1b39db3734da352ff0b07a35bb, type: 3}
     BattleSprite: {fileID: -1804185198696560210, guid: a6849f5af0e38b54f86de21df6c8d479, type: 3}
+    ProfileModelPrefab: {fileID: 919132149155446097, guid: 94059623b2d83984b9de29f24f5f90b9, type: 3}
+    LobbyModelPrefab: {fileID: 919132149155446097, guid: 9b95bd006e83f6043ad136b3eb3b707f, type: 3}
+    BattleModelPrefab: {fileID: 919132149155446097, guid: fff8762acc7123f4eb5f0fac02cd5671, type: 3}
+    ModelTexture: {fileID: 2800000, guid: bc03d67b50bc7cd47a8500b8aacc313a, type: 3}
+    ModelTextureScale: {x: 1, y: 1}
+    ModelTextureOffset: {x: 0, y: 0}
+    UseSolidModelColor: 0
+    SolidModelColor: {r: 0.45, g: 0.34, b: 0.23, a: 1}
+    ProfileModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    LobbyModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    BattleModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    ProfileModelAddressKey: 
+    LobbyModelAddressKey: 
+    BattleModelAddressKey: 
+    ProfileAnimatorController: {fileID: 0}
+    LobbyAnimatorController: {fileID: 0}
+    BattleAnimatorController: {fileID: 0}
+    ProfileIdleAnimation: {fileID: -203655887218126122, guid: 94059623b2d83984b9de29f24f5f90b9, type: 3}
+    LobbyIdleAnimation: {fileID: -203655887218126122, guid: 9b95bd006e83f6043ad136b3eb3b707f, type: 3}
+    BattleIdleAnimation: {fileID: -203655887218126122, guid: fff8762acc7123f4eb5f0fac02cd5671, type: 3}
+    AttackAnimation: {fileID: 0}
+    HitAnimation: {fileID: 0}
+    VictoryAnimation: {fileID: 0}
+    DefeatAnimation: {fileID: 0}
     Stats:
-      MaxHp: 900
+      MaxHp: 90
       Attack: 14
       Armor: 0.03
       ParryChance: 0.12
@@ -141,8 +297,47 @@ MonoBehaviour:
     ProfileSprite: {fileID: 3131535292473191252, guid: 53756277cce42c94ca47a3084e06d9ee, type: 3}
     LobbySprite: {fileID: 545131134261710223, guid: b010109bb45cbc840892d0c5411e0ed0, type: 3}
     BattleSprite: {fileID: -3691030334517025286, guid: fd832e7d2dafac643b411f42e5b8e166, type: 3}
+    ProfileModelPrefab: {fileID: 919132149155446097, guid: 88c817d590d376e44b005c29ff5ad894, type: 3}
+    LobbyModelPrefab: {fileID: 919132149155446097, guid: 1c2cf82e892223041ac732326316de9c, type: 3}
+    BattleModelPrefab: {fileID: 919132149155446097, guid: 9be4f32c940ce6a489d9832c1377a120, type: 3}
+    ModelTexture: {fileID: 2800000, guid: 48d815de053089844a261a6e120e2da7, type: 3}
+    ModelTextureScale: {x: 1, y: 1}
+    ModelTextureOffset: {x: 0, y: 0}
+    UseSolidModelColor: 0
+    SolidModelColor: {r: 0.45, g: 0.34, b: 0.23, a: 1}
+    ProfileModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    LobbyModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    BattleModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    ProfileModelAddressKey: 
+    LobbyModelAddressKey: 
+    BattleModelAddressKey: 
+    ProfileAnimatorController: {fileID: 0}
+    LobbyAnimatorController: {fileID: 0}
+    BattleAnimatorController: {fileID: 0}
+    ProfileIdleAnimation: {fileID: -203655887218126122, guid: 88c817d590d376e44b005c29ff5ad894, type: 3}
+    LobbyIdleAnimation: {fileID: -203655887218126122, guid: 1c2cf82e892223041ac732326316de9c, type: 3}
+    BattleIdleAnimation: {fileID: -203655887218126122, guid: 9be4f32c940ce6a489d9832c1377a120, type: 3}
+    AttackAnimation: {fileID: 0}
+    HitAnimation: {fileID: 0}
+    VictoryAnimation: {fileID: 0}
+    DefeatAnimation: {fileID: 0}
     Stats:
-      MaxHp: 1100
+      MaxHp: 110
       Attack: 15
       Armor: 0.08
       ParryChance: 0.1
@@ -162,8 +357,47 @@ MonoBehaviour:
     ProfileSprite: {fileID: -9168346944554896092, guid: 115e160ccbf888641975694f16b178fd, type: 3}
     LobbySprite: {fileID: 5659714355461499569, guid: 6cfe2c2240dd2464a88f916f16143c61, type: 3}
     BattleSprite: {fileID: 6363640529827648534, guid: 0f1af8796aa34b54997d34a392e832d5, type: 3}
+    ProfileModelPrefab: {fileID: 919132149155446097, guid: 1926fe71a1d77b841999a04418b8d39f, type: 3}
+    LobbyModelPrefab: {fileID: 919132149155446097, guid: 34d52c882792cac439d5130f32d44318, type: 3}
+    BattleModelPrefab: {fileID: 919132149155446097, guid: aa5f8c6b4ed8612459ea1a5bff1e01ef, type: 3}
+    ModelTexture: {fileID: 2800000, guid: d2ba30b05e44e644eba9d4cbb56814c8, type: 3}
+    ModelTextureScale: {x: 1, y: 1}
+    ModelTextureOffset: {x: 0, y: 0}
+    UseSolidModelColor: 0
+    SolidModelColor: {r: 0.45, g: 0.34, b: 0.23, a: 1}
+    ProfileModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    LobbyModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    BattleModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    ProfileModelAddressKey: 
+    LobbyModelAddressKey: 
+    BattleModelAddressKey: 
+    ProfileAnimatorController: {fileID: 0}
+    LobbyAnimatorController: {fileID: 0}
+    BattleAnimatorController: {fileID: 0}
+    ProfileIdleAnimation: {fileID: -203655887218126122, guid: 1926fe71a1d77b841999a04418b8d39f, type: 3}
+    LobbyIdleAnimation: {fileID: -203655887218126122, guid: 34d52c882792cac439d5130f32d44318, type: 3}
+    BattleIdleAnimation: {fileID: -203655887218126122, guid: aa5f8c6b4ed8612459ea1a5bff1e01ef, type: 3}
+    AttackAnimation: {fileID: 0}
+    HitAnimation: {fileID: 0}
+    VictoryAnimation: {fileID: 0}
+    DefeatAnimation: {fileID: 0}
     Stats:
-      MaxHp: 1100
+      MaxHp: 110
       Attack: 15
       Armor: 0.08
       ParryChance: 0.1
@@ -183,8 +417,47 @@ MonoBehaviour:
     ProfileSprite: {fileID: -7723284180558215798, guid: 8bb570009401e4c4099bc0026b23e1e6, type: 3}
     LobbySprite: {fileID: -5691024563735804951, guid: 14398b74b8e47ed4a93be22385e7243e, type: 3}
     BattleSprite: {fileID: -6053548776758094169, guid: 8f89f3559eecb8f4c9e19d2652c16532, type: 3}
+    ProfileModelPrefab: {fileID: 919132149155446097, guid: 8d0f2f0f7070d9642becfda0a2805d2e, type: 3}
+    LobbyModelPrefab: {fileID: 919132149155446097, guid: 120cb76fc1810764e80dd7f7ff6ed196, type: 3}
+    BattleModelPrefab: {fileID: 919132149155446097, guid: a18fdc38204cd5b4a8bff973bc71343d, type: 3}
+    ModelTexture: {fileID: 2800000, guid: 2ee10596510245e4dbf62dd7471494ef, type: 3}
+    ModelTextureScale: {x: 1, y: 1}
+    ModelTextureOffset: {x: 0, y: 0}
+    UseSolidModelColor: 0
+    SolidModelColor: {r: 0.45, g: 0.34, b: 0.23, a: 1}
+    ProfileModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    LobbyModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    BattleModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    ProfileModelAddressKey: 
+    LobbyModelAddressKey: 
+    BattleModelAddressKey: 
+    ProfileAnimatorController: {fileID: 0}
+    LobbyAnimatorController: {fileID: 0}
+    BattleAnimatorController: {fileID: 0}
+    ProfileIdleAnimation: {fileID: -203655887218126122, guid: 8d0f2f0f7070d9642becfda0a2805d2e, type: 3}
+    LobbyIdleAnimation: {fileID: -203655887218126122, guid: 120cb76fc1810764e80dd7f7ff6ed196, type: 3}
+    BattleIdleAnimation: {fileID: -203655887218126122, guid: a18fdc38204cd5b4a8bff973bc71343d, type: 3}
+    AttackAnimation: {fileID: 0}
+    HitAnimation: {fileID: 0}
+    VictoryAnimation: {fileID: 0}
+    DefeatAnimation: {fileID: 0}
     Stats:
-      MaxHp: 1300
+      MaxHp: 130
       Attack: 12
       Armor: 0.15
       ParryChance: 0.08
@@ -204,8 +477,47 @@ MonoBehaviour:
     ProfileSprite: {fileID: 7720101571090157658, guid: 31bbed2b7b1f09248af08df842f26dc8, type: 3}
     LobbySprite: {fileID: 7380176090309922993, guid: 2c0bbe7650df64642bd8ef72673d2dad, type: 3}
     BattleSprite: {fileID: -7933112123717573220, guid: 590c63c062b956246ae85586bb25e686, type: 3}
+    ProfileModelPrefab: {fileID: 919132149155446097, guid: 6498d9b94ed8a1c49b061883573336d7, type: 3}
+    LobbyModelPrefab: {fileID: 919132149155446097, guid: efe78762c1edd4d4280762f4f5bafc28, type: 3}
+    BattleModelPrefab: {fileID: 919132149155446097, guid: 1c3d0b3911e0c9f46ab0db36fcc27b0e, type: 3}
+    ModelTexture: {fileID: 2800000, guid: 04ba775bb7adc8b4d82c2e8d59090ff3, type: 3}
+    ModelTextureScale: {x: 1, y: 1}
+    ModelTextureOffset: {x: 0, y: 0}
+    UseSolidModelColor: 0
+    SolidModelColor: {r: 0.45, g: 0.34, b: 0.23, a: 1}
+    ProfileModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    LobbyModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    BattleModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    ProfileModelAddressKey: 
+    LobbyModelAddressKey: 
+    BattleModelAddressKey: 
+    ProfileAnimatorController: {fileID: 0}
+    LobbyAnimatorController: {fileID: 0}
+    BattleAnimatorController: {fileID: 0}
+    ProfileIdleAnimation: {fileID: -203655887218126122, guid: 6498d9b94ed8a1c49b061883573336d7, type: 3}
+    LobbyIdleAnimation: {fileID: -203655887218126122, guid: efe78762c1edd4d4280762f4f5bafc28, type: 3}
+    BattleIdleAnimation: {fileID: -203655887218126122, guid: 1c3d0b3911e0c9f46ab0db36fcc27b0e, type: 3}
+    AttackAnimation: {fileID: 0}
+    HitAnimation: {fileID: 0}
+    VictoryAnimation: {fileID: 0}
+    DefeatAnimation: {fileID: 0}
     Stats:
-      MaxHp: 1300
+      MaxHp: 130
       Attack: 12
       Armor: 0.15
       ParryChance: 0.08

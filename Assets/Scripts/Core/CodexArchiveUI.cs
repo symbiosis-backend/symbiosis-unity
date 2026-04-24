@@ -377,6 +377,7 @@ public sealed class CodexArchiveUI : MonoBehaviour
         GameObject go = new GameObject("EventSystem");
         go.AddComponent<EventSystem>();
         go.AddComponent<StandaloneInputModule>();
+        MahjongGame.EventSystemInputModeGuard.EnsureCompatibleEventSystems();
     }
 
     private void RemoveGeneratedLayout()

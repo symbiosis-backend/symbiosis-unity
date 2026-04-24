@@ -744,7 +744,7 @@ namespace FishNet.Managing.Scened
                 {
                     requestedLoadSceneNames.Add(s.name);
                     if (byHandle)
-                        requestedLoadSceneHandles.Add(s.handle);
+                        requestedLoadSceneHandles.Add((int)s.handle.GetRawData());
                 }
 
                 if (CanLoadScene(data, sld))
@@ -797,7 +797,7 @@ namespace FishNet.Managing.Scened
 
                 Scene[] sceneConnectionsKeys = SceneConnections.Keys.ToArray();
                 for (int i = 0; i < sceneConnectionsKeys.Length; i++)
-                    connectionScenesHandlesCached.Add(sceneConnectionsKeys[i].handle);
+                    connectionScenesHandlesCached.Add((int)sceneConnectionsKeys[i].handle.GetRawData());
 
                 //If global then remove all connections from all scenes.
                 if (data.ScopeType == SceneScopeType.Global)
@@ -834,7 +834,7 @@ namespace FishNet.Managing.Scened
                     if (requestedLoadSceneNames.Contains(s.name))
                         continue;
                     //Same as above but using handles.
-                    if (requestedLoadSceneHandles.Contains(s.handle))
+                    if (requestedLoadSceneHandles.Contains((int)s.handle.GetRawData()))
                         continue;
                     /* Cannot unload global scenes. If
                      * replace scenes was used for a global
@@ -846,7 +846,7 @@ namespace FishNet.Managing.Scened
                     if (_manualUnloadScenes.Contains(s))
                         continue;
 
-                    bool inScenesCache = connectionScenesHandlesCached.Contains(s.handle);
+                    bool inScenesCache = connectionScenesHandlesCached.Contains((int)s.handle.GetRawData());
                     HashSet<NetworkConnection> conns;
                     bool inScenesCurrent = SceneConnections.TryGetValueIL2CPP(s, out conns);
                     //If was in scenes previously but isnt now then no connections reside in the scene.
@@ -1778,7 +1778,7 @@ namespace FishNet.Managing.Scened
             for (int i = 0; i < count; i++)
             {
                 Scene s = UnitySceneManager.GetSceneAt(i);
-                if (s.handle == sceneHandle)
+                if (s.handle.GetRawData() == (ulong)sceneHandle)
                     return s;
             }
 

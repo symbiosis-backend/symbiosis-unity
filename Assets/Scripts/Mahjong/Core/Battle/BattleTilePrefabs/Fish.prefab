@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -8741003940421270804, guid: 90736e9723ebee546be7c4764957614f, type: 3}
+  m_Sprite: {fileID: 467798687684906199, guid: 2de3f086e1953fc469b740130c2803c2, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -286,7 +286,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MahjongGame.BattleTile
   id: fish
-  backSprite: {fileID: -8741003940421270804, guid: 90736e9723ebee546be7c4764957614f, type: 3}
+  backSprite: {fileID: 467798687684906199, guid: 2de3f086e1953fc469b740130c2803c2, type: 3}
   faceSprite: {fileID: -3625849272418685802, guid: ce1a28ac54173d04cae8672bd725bd6a, type: 3}
   startClosed: 1
   revealState: 0

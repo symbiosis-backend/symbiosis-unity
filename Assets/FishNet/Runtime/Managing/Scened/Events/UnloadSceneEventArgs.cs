@@ -41,7 +41,7 @@ namespace FishNet.Managing.Scened
                 {
                     _unloadedSceneHandlesCache = new int[UnloadedScenes.Count];
                     for (int i = 0; i < _unloadedSceneHandlesCache.Length; i++)
-                        _unloadedSceneHandlesCache[i] = UnloadedScenes[i].handle;
+                        _unloadedSceneHandlesCache[i] = (int)UnloadedScenes[i].handle.GetRawData();
                 }
 
                 return _unloadedSceneHandlesCache;

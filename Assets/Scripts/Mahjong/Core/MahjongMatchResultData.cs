@@ -22,6 +22,7 @@ namespace MahjongGame
         [Header("Battle")]
         public MahjongBattleResult BattleResult;
         public int BattleStakePot;
+        public bool BattleMvp;
 
         [Header("Endless")]
         public int EndlessReachedLevel;
@@ -40,6 +41,7 @@ namespace MahjongGame
 
             BattleResult = MahjongBattleResult.None;
             BattleStakePot = 0;
+            BattleMvp = false;
 
             EndlessReachedLevel = 0;
         }
@@ -59,6 +61,16 @@ namespace MahjongGame
 
         public static MahjongMatchResultData CreateBattleResult(MahjongBattleResult battleResult, int score, int maxCombo, int stakePot)
         {
+            return CreateBattleResult(battleResult, score, maxCombo, stakePot, battleResult == MahjongBattleResult.Win);
+        }
+
+        public static MahjongMatchResultData CreateBattleResult(
+            MahjongBattleResult battleResult,
+            int score,
+            int maxCombo,
+            int stakePot,
+            bool battleMvp)
+        {
             return new MahjongMatchResultData
             {
                 Mode = MahjongGameMode.Battle,
@@ -66,7 +78,8 @@ namespace MahjongGame
                 Score = Mathf.Max(0, score),
                 MaxCombo = Mathf.Max(0, maxCombo),
                 BattleResult = battleResult,
-                BattleStakePot = Mathf.Max(0, stakePot)
+                BattleStakePot = Mathf.Max(0, stakePot),
+                BattleMvp = battleMvp
             };
         }
 

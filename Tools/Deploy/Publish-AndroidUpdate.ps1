@@ -25,6 +25,20 @@ function Require-Directory {
     }
 }
 
+function Get-RelativeUnixPath {
+    param(
+        [string]$RootPath,
+        [string]$FilePath
+    )
+
+    $root = (Resolve-Path -LiteralPath $RootPath).Path.TrimEnd('\') + '\'
+    $file = (Resolve-Path -LiteralPath $FilePath).Path
+    $rootUri = New-Object System.Uri($root)
+    $fileUri = New-Object System.Uri($file)
+    $relative = $rootUri.MakeRelativeUri($fileUri).ToString()
+    return [System.Uri]::UnescapeDataString($relative).Replace('\', '/')
+}
+
 Require-File $SshKeyPath
 Require-File $ApkPath
 Require-File $ManifestPath
@@ -42,7 +56,7 @@ if (Test-Path -LiteralPath $AddressablesPath -PathType Container) {
     $root = (Resolve-Path -LiteralPath $AddressablesPath).Path
     $files = Get-ChildItem -LiteralPath $root -Recurse -File
     foreach ($file in $files) {
-        $relative = [IO.Path]::GetRelativePath($root, $file.FullName).Replace("\", "/")
+        $relative = Get-RelativeUnixPath -RootPath $root -FilePath $file.FullName
         $remoteDir = [IO.Path]::GetDirectoryName($relative)
         if ([string]::IsNullOrWhiteSpace($remoteDir)) {
             $remoteDir = "."

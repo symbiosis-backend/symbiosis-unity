@@ -176,6 +176,13 @@ namespace MahjongGame
             SetLanguage(GameLanguage.Turkish);
         }
 
+        public void ClearLanguagePreference()
+        {
+            HasLanguagePreference = false;
+            PlayerPrefs.DeleteKey(KEY_LANGUAGE_SELECTED);
+            PlayerPrefs.Save();
+        }
+
         public void RefreshAudioSources()
         {
             cachedSources.Clear();

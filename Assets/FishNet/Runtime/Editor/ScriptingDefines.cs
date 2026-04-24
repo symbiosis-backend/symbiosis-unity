@@ -1,6 +1,7 @@
 ﻿#if UNITY_EDITOR
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.Build;
 using UnityEngine;
 
 namespace FishNet
@@ -10,7 +11,8 @@ namespace FishNet
         [InitializeOnLoadMethod]
         public static void AddDefineSymbols()
         {
-            string currentDefines = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+            NamedBuildTarget namedBuildTarget = NamedBuildTarget.FromBuildTargetGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+            string currentDefines = PlayerSettings.GetScriptingDefineSymbols(namedBuildTarget);
             /* Convert current defines into a hashset. This is so we can
              * determine if any of our defines were added. Only save playersettings
              * when a define is added. */
@@ -42,7 +44,7 @@ namespace FishNet
             {
                 Debug.Log("Added Fish-Networking defines to player settings.");
                 string changedDefines = string.Join(";", definesHs);
-                PlayerSettings.SetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup, changedDefines);
+                PlayerSettings.SetScriptingDefineSymbols(namedBuildTarget, changedDefines);
             }
         }
     }

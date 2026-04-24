@@ -41,7 +41,7 @@ namespace MahjongGame
         [SerializeField] private int rewardPerComboStep = 1;
 
         [Header("Battle Reward")]
-        [SerializeField] private int battleWinReward = 20;
+        [SerializeField] private int battleWinReward = 100;
         [SerializeField] private bool allowStakeReward = true;
 
         [Header("Endless Reward")]

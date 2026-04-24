@@ -14,8 +14,16 @@ namespace MahjongGame
     [DisallowMultipleComponent]
     public sealed class GlobalChatUI : MonoBehaviour
     {
+        private const int RootCanvasSortingOrder = 10020;
+
         [SerializeField] private Button toggleButton;
         [SerializeField] private GameObject panelRoot;
+        [SerializeField] private RectTransform panelRootRect;
+        [SerializeField] private Image panelImage;
+        [SerializeField] private RectTransform panelBackgroundRect;
+        [SerializeField] private Image panelBackgroundImage;
+        [SerializeField] private RectTransform panelFrameRect;
+        [SerializeField] private Image panelFrameImage;
         [SerializeField] private TMP_Text titleText;
         [SerializeField] private Button globalChannelButton;
         [SerializeField] private Button mahjongChannelButton;
@@ -27,6 +35,8 @@ namespace MahjongGame
         [SerializeField] private ScrollRect scrollRect;
         [SerializeField] private float refreshSeconds = 2.5f;
 
+        private RectTransform messagesViewportRect;
+        private RectTransform messagesContentRect;
         private Coroutine refreshRoutine;
         private bool sending;
 
@@ -36,21 +46,13 @@ namespace MahjongGame
                 Build(transform);
         }
 
+        private void OnRectTransformDimensionsChange()
+        {
+            LayoutChatPanel();
+        }
+
         public static GlobalChatUI CreateInScene()
         {
-            Canvas canvas = FindAnyObjectByType<Canvas>(FindObjectsInactive.Exclude);
-            if (canvas == null)
-            {
-                GameObject canvasObject = new GameObject("Canvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
-                canvas = canvasObject.GetComponent<Canvas>();
-                canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-
-                CanvasScaler scaler = canvasObject.GetComponent<CanvasScaler>();
-                scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-                scaler.referenceResolution = new Vector2(2400f, 1080f);
-                scaler.matchWidthOrHeight = 0.65f;
-            }
-
             if (FindAnyObjectByType<EventSystem>(FindObjectsInactive.Exclude) == null)
             {
                 GameObject eventSystem = new GameObject("EventSystem", typeof(EventSystem));
@@ -60,9 +62,10 @@ namespace MahjongGame
                 eventSystem.AddComponent<StandaloneInputModule>();
 #endif
             }
+            EventSystemInputModeGuard.EnsureCompatibleEventSystems();
 
-            GameObject root = new GameObject("GlobalChatUI", typeof(RectTransform));
-            root.transform.SetParent(canvas.transform, false);
+            GameObject root = new GameObject("GlobalChatUI", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+            ConfigureRootCanvas(root);
 
             GlobalChatUI ui = root.AddComponent<GlobalChatUI>();
             if (ui.toggleButton == null || ui.panelRoot == null)
@@ -73,7 +76,12 @@ namespace MahjongGame
 
         private void OnEnable()
         {
+            EnsureRootCanvas();
             Bind();
+            EnsurePanelReferences();
+            LayoutToggleButton();
+            LayoutChatPanel();
+            AppSettings.OnLanguageChanged += OnLanguageChanged;
 
             if (GlobalChatService.I != null)
             {
@@ -81,12 +89,15 @@ namespace MahjongGame
                 GlobalChatService.I.ErrorChanged += RefreshStatus;
             }
 
+            RefreshLocalization();
             RefreshMessages();
             RefreshStatus(GlobalChatService.I != null ? GlobalChatService.I.LastError : string.Empty);
         }
 
         private void OnDisable()
         {
+            AppSettings.OnLanguageChanged -= OnLanguageChanged;
+
             if (GlobalChatService.I != null)
             {
                 GlobalChatService.I.MessagesChanged -= RefreshMessages;
@@ -97,27 +108,118 @@ namespace MahjongGame
             Unbind();
         }
 
+        private void OnLanguageChanged(GameLanguage language)
+        {
+            RefreshLocalization();
+            RefreshMessages();
+        }
+
+        private void EnsureRootCanvas()
+        {
+            ConfigureRootCanvas(gameObject);
+        }
+
+        private static void ConfigureRootCanvas(GameObject rootObject)
+        {
+            if (rootObject == null)
+                return;
+
+            RectTransform rect = rootObject.GetComponent<RectTransform>();
+            if (rect == null)
+                rect = rootObject.AddComponent<RectTransform>();
+
+            if (rect.parent != null)
+                rect.SetParent(null, false);
+
+            int uiLayer = LayerMask.NameToLayer("UI");
+            if (uiLayer >= 0)
+                rootObject.layer = uiLayer;
+
+            Canvas canvas = rootObject.GetComponent<Canvas>();
+            if (canvas == null)
+                canvas = rootObject.AddComponent<Canvas>();
+
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.worldCamera = null;
+            canvas.planeDistance = 100f;
+            canvas.overrideSorting = true;
+            canvas.sortingLayerName = "UI";
+            canvas.sortingOrder = RootCanvasSortingOrder;
+
+            CanvasScaler scaler = rootObject.GetComponent<CanvasScaler>();
+            if (scaler == null)
+                scaler = rootObject.AddComponent<CanvasScaler>();
+
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(2400f, 1080f);
+            scaler.matchWidthOrHeight = 0.65f;
+
+            if (rootObject.GetComponent<GraphicRaycaster>() == null)
+                rootObject.AddComponent<GraphicRaycaster>();
+
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.anchoredPosition = Vector2.zero;
+            rect.sizeDelta = Vector2.zero;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+            rect.localScale = Vector3.one;
+        }
+
+        private void EnsurePanelReferences()
+        {
+            if (panelRoot == null)
+                return;
+
+            if (panelRootRect == null)
+                panelRootRect = panelRoot.transform as RectTransform;
+
+            if (panelImage == null)
+                panelImage = panelRoot.GetComponent<Image>();
+
+            ConfigurePanelRootImage();
+
+            EnsurePanelBackground();
+            EnsurePanelFrame();
+
+            Transform viewport = panelRoot.transform.Find("MessagesViewport");
+            if (messagesViewportRect == null && viewport != null)
+                messagesViewportRect = viewport as RectTransform;
+
+            if (scrollRect == null && viewport != null)
+                scrollRect = viewport.GetComponent<ScrollRect>();
+
+            if (messagesContentRect == null && scrollRect != null)
+                messagesContentRect = scrollRect.content;
+
+            if (messagesContentRect == null && viewport != null)
+            {
+                Transform content = viewport.Find("MessagesContent");
+                if (content != null)
+                    messagesContentRect = content as RectTransform;
+            }
+        }
+
         private void Build(Transform parent)
         {
             RectTransform rootRect = parent as RectTransform;
+            parent.SetAsLastSibling();
             rootRect.anchorMin = Vector2.zero;
             rootRect.anchorMax = Vector2.one;
             rootRect.offsetMin = Vector2.zero;
             rootRect.offsetMax = Vector2.zero;
 
-            toggleButton = CreateButton(parent, "ChatButton", GameLocalization.Text("chat.title"), new Vector2(1f, 0f), new Vector2(-138f, 72f), new Vector2(180f, 56f));
+            toggleButton = CreateButton(parent, "ChatButton", GameLocalization.Text("chat.title"), new Vector2(1f, 0f), new Vector2(-210f, 76f), new Vector2(330f, 93f));
 
             panelRoot = new GameObject("ChatPanel", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
             panelRoot.transform.SetParent(parent, false);
-            RectTransform panelRect = panelRoot.transform as RectTransform;
-            panelRect.anchorMin = new Vector2(1f, 0f);
-            panelRect.anchorMax = new Vector2(1f, 0f);
-            panelRect.pivot = new Vector2(1f, 0f);
-            panelRect.anchoredPosition = new Vector2(-32f, 140f);
-            panelRect.sizeDelta = new Vector2(520f, 570f);
+            panelRootRect = panelRoot.transform as RectTransform;
 
-            Image panelImage = panelRoot.GetComponent<Image>();
-            panelImage.color = new Color(0.045f, 0.05f, 0.065f, 0.94f);
+            panelImage = panelRoot.GetComponent<Image>();
+            ConfigurePanelRootImage();
+
+            EnsurePanelBackground();
+            EnsurePanelFrame();
 
             titleText = CreateText(panelRoot.transform, "Title", GameLocalization.Text("chat.title"), 28f, TextAlignmentOptions.Left);
             RectTransform titleRect = titleText.rectTransform;
@@ -133,21 +235,21 @@ namespace MahjongGame
 
             GameObject viewport = new GameObject("MessagesViewport", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Mask));
             viewport.transform.SetParent(panelRoot.transform, false);
-            RectTransform viewportRect = viewport.transform as RectTransform;
-            viewportRect.anchorMin = new Vector2(0f, 0f);
-            viewportRect.anchorMax = new Vector2(1f, 1f);
-            viewportRect.offsetMin = new Vector2(18f, 104f);
-            viewportRect.offsetMax = new Vector2(-18f, -122f);
-            viewport.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.18f);
+            messagesViewportRect = viewport.transform as RectTransform;
+            messagesViewportRect.anchorMin = new Vector2(0f, 0f);
+            messagesViewportRect.anchorMax = new Vector2(1f, 1f);
+            messagesViewportRect.offsetMin = new Vector2(18f, 104f);
+            messagesViewportRect.offsetMax = new Vector2(-18f, -122f);
+            viewport.GetComponent<Image>().color = new Color(0.01f, 0.018f, 0.032f, 0.78f);
             viewport.GetComponent<Mask>().showMaskGraphic = true;
 
             GameObject content = new GameObject("MessagesContent", typeof(RectTransform));
             content.transform.SetParent(viewport.transform, false);
-            RectTransform contentRect = content.transform as RectTransform;
-            contentRect.anchorMin = new Vector2(0f, 0f);
-            contentRect.anchorMax = new Vector2(1f, 1f);
-            contentRect.offsetMin = new Vector2(12f, 12f);
-            contentRect.offsetMax = new Vector2(-12f, -12f);
+            messagesContentRect = content.transform as RectTransform;
+            messagesContentRect.anchorMin = new Vector2(0f, 0f);
+            messagesContentRect.anchorMax = new Vector2(1f, 1f);
+            messagesContentRect.offsetMin = new Vector2(12f, 12f);
+            messagesContentRect.offsetMax = new Vector2(-12f, -12f);
 
             messagesText = CreateText(content.transform, "MessagesText", "", 19f, TextAlignmentOptions.BottomLeft);
             RectTransform messagesRect = messagesText.rectTransform;
@@ -162,8 +264,8 @@ namespace MahjongGame
             messagesText.overflowMode = TextOverflowModes.Truncate;
 
             scrollRect = viewport.AddComponent<ScrollRect>();
-            scrollRect.viewport = viewportRect;
-            scrollRect.content = contentRect;
+            scrollRect.viewport = messagesViewportRect;
+            scrollRect.content = messagesContentRect;
             scrollRect.horizontal = false;
             scrollRect.vertical = true;
 
@@ -178,9 +280,190 @@ namespace MahjongGame
             statusRect.offsetMax = new Vector2(-22f, 32f);
             statusText.color = new Color(1f, 0.68f, 0.34f, 1f);
 
+            LayoutChatPanel();
             panelRoot.SetActive(false);
             Bind();
-            RefreshChannelChrome();
+            RefreshLocalization();
+        }
+
+        private void EnsurePanelBackground()
+        {
+            if (panelRoot == null)
+                return;
+
+            if (panelBackgroundRect == null)
+            {
+                Transform existing = panelRoot.transform.Find("PanelBackground");
+                if (existing != null)
+                {
+                    panelBackgroundRect = existing as RectTransform;
+                    panelBackgroundImage = existing.GetComponent<Image>();
+                }
+            }
+
+            if (panelBackgroundRect == null)
+            {
+                GameObject background = new GameObject("PanelBackground", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+                background.transform.SetParent(panelRoot.transform, false);
+                background.transform.SetAsFirstSibling();
+                panelBackgroundRect = background.transform as RectTransform;
+                panelBackgroundImage = background.GetComponent<Image>();
+            }
+
+            if (panelBackgroundImage == null && panelBackgroundRect != null)
+                panelBackgroundImage = panelBackgroundRect.GetComponent<Image>();
+
+            if (panelBackgroundImage != null)
+            {
+                panelBackgroundImage.color = new Color(0.015f, 0.022f, 0.035f, 0.94f);
+                panelBackgroundImage.raycastTarget = false;
+            }
+
+            if (panelBackgroundRect != null)
+                panelBackgroundRect.SetAsFirstSibling();
+        }
+
+        private void EnsurePanelFrame()
+        {
+            if (panelRoot == null)
+                return;
+
+            if (panelFrameRect == null)
+            {
+                Transform existing = panelRoot.transform.Find("PanelFrame");
+                if (existing != null)
+                {
+                    panelFrameRect = existing as RectTransform;
+                    panelFrameImage = existing.GetComponent<Image>();
+                }
+            }
+
+            if (panelFrameRect == null)
+            {
+                GameObject frame = new GameObject("PanelFrame", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+                frame.transform.SetParent(panelRoot.transform, false);
+                panelFrameRect = frame.transform as RectTransform;
+                panelFrameImage = frame.GetComponent<Image>();
+            }
+
+            if (panelFrameImage == null && panelFrameRect != null)
+                panelFrameImage = panelFrameRect.GetComponent<Image>();
+
+            if (panelFrameImage != null)
+            {
+                MainLobbyButtonStyle.ApplyMainFrame(panelFrameImage);
+                panelFrameImage.raycastTarget = false;
+            }
+
+            if (panelFrameRect != null)
+                panelFrameRect.SetAsLastSibling();
+        }
+
+        private void ConfigurePanelRootImage()
+        {
+            if (panelImage == null)
+                return;
+
+            panelImage.sprite = null;
+            panelImage.color = new Color(0f, 0f, 0f, 0f);
+            panelImage.raycastTarget = true;
+        }
+
+        private void LayoutChatPanel()
+        {
+            if (panelRoot == null)
+                return;
+
+            if (panelRootRect == null)
+                panelRootRect = panelRoot.transform as RectTransform;
+
+            if (panelRootRect == null)
+                return;
+
+            RectTransform rootRect = transform as RectTransform;
+            if (rootRect == null)
+                rootRect = panelRootRect.parent as RectTransform;
+            if (rootRect == null)
+                return;
+
+            float rootWidth = Mathf.Max(480f, rootRect.rect.width);
+            float rootHeight = Mathf.Max(360f, rootRect.rect.height);
+            const float frameAspect = 1494f / 1024f;
+            float maxWidth = Mathf.Max(360f, rootWidth * 0.8f);
+            float maxHeight = Mathf.Max(300f, rootHeight * 0.8f);
+            float panelWidth = Mathf.Min(maxWidth, maxHeight * frameAspect);
+            float panelHeight = panelWidth / frameAspect;
+            panelWidth = Mathf.Clamp(panelWidth, Mathf.Min(720f, maxWidth), maxWidth);
+            panelHeight = Mathf.Clamp(panelHeight, Mathf.Min(500f, maxHeight), maxHeight);
+
+            panelRootRect.anchorMin = new Vector2(0.5f, 0.5f);
+            panelRootRect.anchorMax = new Vector2(0.5f, 0.5f);
+            panelRootRect.pivot = new Vector2(0.5f, 0.5f);
+            panelRootRect.anchoredPosition = Vector2.zero;
+            panelRootRect.sizeDelta = new Vector2(panelWidth, panelHeight);
+
+            EnsurePanelBackground();
+            EnsurePanelFrame();
+
+            float insetX = Mathf.Max(72f, panelWidth * 0.095f);
+            float insetTop = Mathf.Max(58f, panelHeight * 0.09f);
+            float insetBottom = Mathf.Max(64f, panelHeight * 0.085f);
+            float inputHeight = Mathf.Clamp(panelHeight * 0.08f, 58f, 72f);
+            float channelY = -insetTop - 70f;
+            float messageTop = insetTop + 140f;
+            float messageBottom = insetBottom + inputHeight + 42f;
+
+            SetStretchRect(panelFrameRect, 0f, 0f, 0f, 0f);
+            SetStretchRect(panelBackgroundRect, insetX + 12f, insetBottom + 12f, -insetX - 12f, -insetTop - 12f);
+
+            if (titleText != null)
+            {
+                titleText.text = string.Empty;
+                titleText.gameObject.SetActive(false);
+            }
+
+            SetAnchoredRect(closeButton != null ? closeButton.transform as RectTransform : null, new Vector2(1f, 1f), new Vector2(-insetX - 54f, -insetTop - 34f), new Vector2(112f, 82f));
+            ConfigureButtonLabel(closeButton, 42f, 26f);
+            SetAnchoredRect(globalChannelButton != null ? globalChannelButton.transform as RectTransform : null, new Vector2(0f, 1f), new Vector2(insetX + 96f, channelY), new Vector2(172f, 54f));
+            SetAnchoredRect(mahjongChannelButton != null ? mahjongChannelButton.transform as RectTransform : null, new Vector2(0f, 1f), new Vector2(insetX + 292f, channelY), new Vector2(184f, 54f));
+            ConfigureButtonLabel(globalChannelButton, 21f, 12f);
+            ConfigureButtonLabel(mahjongChannelButton, 21f, 12f);
+
+            SetStretchRect(messagesViewportRect, insetX + 24f, messageBottom, -insetX - 24f, -messageTop);
+            Image viewportImage = messagesViewportRect != null ? messagesViewportRect.GetComponent<Image>() : null;
+            if (viewportImage != null)
+                viewportImage.color = new Color(0.01f, 0.018f, 0.032f, 0.78f);
+            SetStretchRect(messagesContentRect, 22f, 18f, -22f, -18f);
+            ConfigureTextSize(messagesText, 36f, 22f);
+            if (messagesText != null)
+                messagesText.alignment = TextAlignmentOptions.TopLeft;
+
+            RectTransform inputRect = inputField != null ? inputField.transform as RectTransform : null;
+            SetBottomStretchRect(inputRect, insetX + 24f, insetBottom + 18f, -insetX - 228f, inputHeight);
+            Image inputImage = inputField != null ? inputField.GetComponent<Image>() : null;
+            if (inputImage != null)
+                inputImage.color = new Color(0.015f, 0.024f, 0.04f, 0.92f);
+            ConfigureInputText(inputField, 26f, 17f);
+
+            SetAnchoredRect(sendButton != null ? sendButton.transform as RectTransform : null, new Vector2(1f, 0f), new Vector2(-insetX - 102f, insetBottom + 18f + inputHeight * 0.5f), new Vector2(184f, inputHeight));
+            ConfigureButtonLabel(sendButton, 22f, 13f);
+            SetBottomStretchRect(statusText != null ? statusText.rectTransform : null, insetX + 24f, insetBottom - 20f, -insetX - 24f, 28f);
+            ConfigureTextSize(statusText, 18f, 12f);
+
+            if (closeButton != null)
+                closeButton.transform.SetAsLastSibling();
+        }
+
+        public void LayoutToggleButton()
+        {
+            if (toggleButton != null)
+            {
+                toggleButton.gameObject.SetActive(true);
+                toggleButton.transform.SetAsLastSibling();
+            }
+
+            SetAnchoredRect(toggleButton != null ? toggleButton.transform as RectTransform : null, new Vector2(1f, 0f), new Vector2(-210f, 76f), new Vector2(330f, 93f));
+            ConfigureButtonLabel(toggleButton, 30f, 18f);
         }
 
         private void Bind()
@@ -272,6 +555,7 @@ namespace MahjongGame
                 return;
 
             bool show = !panelRoot.activeSelf;
+            transform.SetAsLastSibling();
             panelRoot.SetActive(show);
 
             if (show)
@@ -390,14 +674,28 @@ namespace MahjongGame
 
         private void RefreshChannelChrome()
         {
-            if (GlobalChatService.I == null)
-                return;
-
             if (titleText != null)
-                titleText.text = GlobalChatService.I.CurrentChannelLabel + " Chat";
+            {
+                titleText.text = string.Empty;
+                titleText.gameObject.SetActive(false);
+            }
 
-            ApplyChannelButton(globalChannelButton, GlobalChatService.I.CurrentChannel == GlobalChatService.ChannelGlobal);
-            ApplyChannelButton(mahjongChannelButton, GlobalChatService.I.CurrentChannel == GlobalChatService.ChannelMahjong);
+            SetButtonText(globalChannelButton, GameLocalization.Text("chat.channel.global"));
+            SetButtonText(mahjongChannelButton, GameLocalization.Text("chat.channel.mahjong"));
+
+            string currentChannel = GlobalChatService.I != null ? GlobalChatService.I.CurrentChannel : GlobalChatService.ChannelGlobal;
+            ApplyChannelButton(globalChannelButton, currentChannel == GlobalChatService.ChannelGlobal);
+            ApplyChannelButton(mahjongChannelButton, currentChannel == GlobalChatService.ChannelMahjong);
+        }
+
+        private void RefreshLocalization()
+        {
+            SetButtonText(toggleButton, GameLocalization.Text("chat.title"));
+            SetButtonText(sendButton, GameLocalization.Text("chat.send"));
+            RefreshChannelChrome();
+
+            if (inputField != null && inputField.placeholder is TMP_Text placeholder)
+                placeholder.text = GameLocalization.Text("chat.placeholder");
         }
 
         private void RefreshStatus(string value)
@@ -418,7 +716,7 @@ namespace MahjongGame
             rect.offsetMax = new Vector2(-128f, 92f);
 
             Image background = root.GetComponent<Image>();
-            background.color = new Color(1f, 1f, 1f, 0.12f);
+            background.color = new Color(0.015f, 0.024f, 0.04f, 0.92f);
 
             TMP_Text text = CreateText(root.transform, "Text", "", 20f, TextAlignmentOptions.Left);
             text.color = Color.white;
@@ -463,10 +761,18 @@ namespace MahjongGame
             RectTransform textRect = text.rectTransform;
             textRect.anchorMin = Vector2.zero;
             textRect.anchorMax = Vector2.one;
-            textRect.offsetMin = Vector2.zero;
-            textRect.offsetMax = Vector2.zero;
+            textRect.offsetMin = new Vector2(10f, 3f);
+            textRect.offsetMax = new Vector2(-10f, -4f);
+            text.enableAutoSizing = true;
+            text.fontSizeMin = 11f;
+            text.fontSizeMax = 20f;
+            text.textWrappingMode = TextWrappingModes.NoWrap;
+            text.overflowMode = TextOverflowModes.Ellipsis;
+            text.margin = Vector4.zero;
 
-            return root.GetComponent<Button>();
+            Button button = root.GetComponent<Button>();
+            MainLobbyButtonStyle.Apply(button);
+            return button;
         }
 
         private static void ApplyChannelButton(Button button, bool active)
@@ -476,7 +782,102 @@ namespace MahjongGame
 
             Image image = button.GetComponent<Image>();
             if (image != null)
-                image.color = active ? new Color(0.22f, 0.58f, 0.62f, 0.98f) : new Color(0.11f, 0.22f, 0.28f, 0.92f);
+                image.color = Color.white;
+        }
+
+        private static void SetButtonText(Button button, string value)
+        {
+            if (button == null)
+                return;
+
+            TMP_Text label = button.GetComponentInChildren<TMP_Text>(true);
+            if (label != null)
+                label.text = value;
+        }
+
+        private static void SetAnchoredRect(RectTransform rect, Vector2 anchor, Vector2 anchoredPosition, Vector2 size)
+        {
+            if (rect == null)
+                return;
+
+            rect.anchorMin = anchor;
+            rect.anchorMax = anchor;
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.anchoredPosition = anchoredPosition;
+            rect.sizeDelta = size;
+        }
+
+        private static void SetStretchRect(RectTransform rect, float left, float bottom, float right, float top)
+        {
+            if (rect == null)
+                return;
+
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.offsetMin = new Vector2(left, bottom);
+            rect.offsetMax = new Vector2(right, top);
+        }
+
+        private static void SetTopStretchRect(RectTransform rect, float left, float top, float right, float height)
+        {
+            if (rect == null)
+                return;
+
+            rect.anchorMin = new Vector2(0f, 1f);
+            rect.anchorMax = new Vector2(1f, 1f);
+            rect.offsetMin = new Vector2(left, -top - height);
+            rect.offsetMax = new Vector2(right, -top);
+        }
+
+        private static void SetBottomStretchRect(RectTransform rect, float left, float bottom, float right, float height)
+        {
+            if (rect == null)
+                return;
+
+            rect.anchorMin = new Vector2(0f, 0f);
+            rect.anchorMax = new Vector2(1f, 0f);
+            rect.offsetMin = new Vector2(left, bottom);
+            rect.offsetMax = new Vector2(right, bottom + height);
+        }
+
+        private static void ConfigureTextSize(TMP_Text text, float maxSize, float minSize)
+        {
+            if (text == null)
+                return;
+
+            text.fontSize = maxSize;
+            text.fontSizeMax = maxSize;
+            text.fontSizeMin = minSize;
+            text.enableAutoSizing = true;
+        }
+
+        private static void ConfigureInputText(TMP_InputField input, float maxSize, float minSize)
+        {
+            if (input == null)
+                return;
+
+            ConfigureTextSize(input.textComponent, maxSize, minSize);
+            if (input.placeholder is TMP_Text placeholder)
+                ConfigureTextSize(placeholder, maxSize, minSize);
+        }
+
+        private static void ConfigureButtonLabel(Button button, float maxSize, float minSize)
+        {
+            if (button == null)
+                return;
+
+            TMP_Text label = button.GetComponentInChildren<TMP_Text>(true);
+            if (label == null)
+                return;
+
+            label.fontSize = maxSize;
+            label.fontSizeMax = maxSize;
+            label.fontSizeMin = minSize;
+            label.enableAutoSizing = true;
+            label.alignment = TextAlignmentOptions.Center;
+            label.textWrappingMode = TextWrappingModes.NoWrap;
+            label.overflowMode = TextOverflowModes.Ellipsis;
+            label.margin = new Vector4(10f, 2f, 10f, 4f);
         }
 
         private static TMP_Text CreateText(Transform parent, string name, string value, float fontSize, TextAlignmentOptions alignment)
@@ -486,7 +887,11 @@ namespace MahjongGame
 
             TMP_Text text = root.GetComponent<TMP_Text>();
             text.text = value;
+            MainLobbyButtonStyle.ApplyFont(text);
             text.fontSize = fontSize;
+            text.fontSizeMax = fontSize;
+            text.fontSizeMin = Mathf.Max(10f, fontSize * 0.6f);
+            text.enableAutoSizing = true;
             text.alignment = alignment;
             text.color = Color.white;
             text.raycastTarget = false;

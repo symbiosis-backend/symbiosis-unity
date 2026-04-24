@@ -838,7 +838,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 20, y: -58}
+  m_AnchoredPosition: {x: 120, y: -58}
   m_SizeDelta: {x: -140, y: 30}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &237783124
@@ -1114,7 +1114,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 20, y: -18}
+  m_AnchoredPosition: {x: 120, y: -18}
   m_SizeDelta: {x: -140, y: 34}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &504796635
@@ -1338,14 +1338,14 @@ MonoBehaviour:
   fallbackPlayerName: Player
   fallbackPlayerRankTier: Unranked
   createPlayerProfileUiIfMissing: 1
-  playerProfileUiSize: {x: 440, y: 112}
-  playerProfileUiOffset: {x: 72, y: -54}
+  playerProfileUiSize: {x: 360, y: 112}
+  playerProfileUiOffset: {x: -14, y: -54}
   playerBattleSpriteSize: {x: 86, y: 86}
-  playerBattleSpriteOffset: {x: 18, y: -13}
+  playerBattleSpriteOffset: {x: -18, y: -13}
   playerHpBarFill: {fileID: 70472209}
   playerHpBarText: {fileID: 773960273}
-  playerHpBarOffset: {x: 120, y: -92}
-  playerHpBarSize: {x: 280, y: 16}
+  playerHpBarOffset: {x: 20, y: -92}
+  playerHpBarSize: {x: 230, y: 16}
   playerHpBarBackgroundColor: {r: 0, g: 0, b: 0, a: 0.45}
   playerHpBarFillColor: {r: 0.3, g: 0.9, b: 0.35, a: 1}
   hideLegacyPlayerHpText: 1
@@ -1354,10 +1354,10 @@ MonoBehaviour:
   opponentRankText: {fileID: 237783124}
   opponentRankFormat: '{0} {1} RP'
   createOpponentProfileUiIfMissing: 1
-  opponentProfileUiSize: {x: 440, y: 112}
-  opponentProfileUiOffset: {x: -72, y: -54}
+  opponentProfileUiSize: {x: 360, y: 112}
+  opponentProfileUiOffset: {x: 14, y: -54}
   opponentBattleSpriteSize: {x: 86, y: 86}
-  opponentBattleSpriteOffset: {x: -104, y: -13}
+  opponentBattleSpriteOffset: {x: 18, y: -13}
   flipOpponentBattleSpriteX: 1
   resultPanelRoot: {fileID: 1667464530}
   resultTitleText: {fileID: 2108369256}
@@ -1410,8 +1410,8 @@ MonoBehaviour:
   playerBoard: {fileID: 861931675}
   opponentBoard: {fileID: 1860237493}
   statsHub: {fileID: 0}
-  maxPlayerHp: 1000
-  maxOpponentHp: 1000
+  maxPlayerHp: 100
+  maxOpponentHp: 100
   damagePerPair: 1
   useSelectedCharacterStats: 1
   createStatsHubIfMissing: 1
@@ -1422,7 +1422,7 @@ MonoBehaviour:
   opponentCritChance: 0.08
   opponentCritDamageMultiplier: 1.5
   opponentRankHpStep: 100
-  opponentHpPerStep: 35
+  opponentHpPerStep: 4
   opponentRankAttackStep: 150
   opponentAttackPerStep: 1
   playerHpText: {fileID: 46366227}
@@ -1655,8 +1655,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 120, y: -92}
-  m_SizeDelta: {x: 280, y: 16}
+  m_AnchoredPosition: {x: 20, y: -92}
+  m_SizeDelta: {x: 230, y: 16}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &758326436
 MonoBehaviour:
@@ -1730,8 +1730,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 120, y: -74}
-  m_SizeDelta: {x: 280, y: 18}
+  m_AnchoredPosition: {x: 20, y: -74}
+  m_SizeDelta: {x: 230, y: 18}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &773960273
 MonoBehaviour:
@@ -1753,7 +1753,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 1000/1000
+  m_text: 100/100
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2160,11 +2160,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1117985938}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -104, y: -13}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 18, y: -13}
   m_SizeDelta: {x: 86, y: 86}
-  m_Pivot: {x: 1, y: 1}
+  m_Pivot: {x: 0, y: 1}
 --- !u!114 &978480998
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2392,11 +2392,11 @@ RectTransform:
   - {fileID: 237783123}
   m_Father: {fileID: 1184929265}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -72, y: -54}
-  m_SizeDelta: {x: 440, y: 112}
-  m_Pivot: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 14, y: -54}
+  m_SizeDelta: {x: 360, y: 112}
+  m_Pivot: {x: 0, y: 1}
 --- !u!114 &1117985939
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2758,11 +2758,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2124496150}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 18, y: -13}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -18, y: -13}
   m_SizeDelta: {x: 86, y: 86}
-  m_Pivot: {x: 0, y: 1}
+  m_Pivot: {x: 1, y: 1}
 --- !u!114 &1250105045
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2972,7 +2972,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 120, y: -18}
+  m_AnchoredPosition: {x: 20, y: -18}
   m_SizeDelta: {x: -140, y: 34}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1413387635
@@ -3661,7 +3661,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 120, y: -58}
+  m_AnchoredPosition: {x: 20, y: -58}
   m_SizeDelta: {x: -140, y: 30}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &2007949827
@@ -4030,11 +4030,11 @@ RectTransform:
   - {fileID: 773960272}
   m_Father: {fileID: 1184929265}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 72, y: -54}
-  m_SizeDelta: {x: 440, y: 112}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: -14, y: -54}
+  m_SizeDelta: {x: 360, y: 112}
+  m_Pivot: {x: 1, y: 1}
 --- !u!114 &2124496151
 MonoBehaviour:
   m_ObjectHideFlags: 0

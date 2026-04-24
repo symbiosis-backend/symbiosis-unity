@@ -15,6 +15,7 @@ namespace MahjongGame.EditorTools
     public static class CleanEntrySceneBuilder
     {
         private const string ScenePath = "Assets/Scenes/Entry.unity";
+        private const string IntroSpritePath = "Assets/Sprites/IntroSprites/";
 
         public static void Build()
         {
@@ -24,7 +25,7 @@ namespace MahjongGame.EditorTools
             GameObject cameraObject = new GameObject("Main Camera", typeof(Camera), typeof(AudioListener));
             Camera camera = cameraObject.GetComponent<Camera>();
             camera.clearFlags = CameraClearFlags.SolidColor;
-            camera.backgroundColor = new Color(0.025f, 0.035f, 0.055f, 1f);
+            camera.backgroundColor = Color.black;
             camera.orthographic = true;
             camera.orthographicSize = 5f;
             cameraObject.tag = "MainCamera";
@@ -46,12 +47,9 @@ namespace MahjongGame.EditorTools
             scaler.referenceResolution = new Vector2(1920f, 1080f);
             scaler.matchWidthOrHeight = 0.5f;
 
-            GameObject backdrop = CreatePanel(canvasObject.transform, "Backdrop", new Color(0.025f, 0.035f, 0.055f, 1f));
-            CreateCenteredText(backdrop.transform, "Title", "Symbiosis", 56f, new Vector2(0.5f, 0.58f), new Vector2(900f, 90f));
-            CreateCenteredText(backdrop.transform, "Subtitle", "Loading", 24f, new Vector2(0.5f, 0.49f), new Vector2(520f, 52f));
+            CreatePanel(canvasObject.transform, "Backdrop", Color.black);
 
-            GameObject loadingPanel = CreatePanel(canvasObject.transform, "LoadingPanel", new Color(0.025f, 0.035f, 0.055f, 0.86f));
-            CreateCenteredText(loadingPanel.transform, "LoadingText", "Loading", 34f, new Vector2(0.5f, 0.5f), new Vector2(520f, 72f));
+            GameObject loadingPanel = CreatePanel(canvasObject.transform, "LoadingPanel", Color.black);
             loadingPanel.SetActive(false);
 
             GameObject profilePanel = CreatePanel(canvasObject.transform, "ProfileSetupPanel", new Color(0f, 0f, 0f, 0f));
@@ -151,17 +149,53 @@ namespace MahjongGame.EditorTools
         private static void ConfigureIntro(EntryCinematicIntro intro)
         {
             SerializedObject serialized = new SerializedObject(intro);
-            serialized.FindProperty("duration").floatValue = 5f;
-            serialized.FindProperty("fadeOutDuration").floatValue = 0.35f;
+            serialized.FindProperty("duration").floatValue = 18f;
+            serialized.FindProperty("fadeOutDuration").floatValue = 0.75f;
             serialized.FindProperty("playSound").boolValue = false;
             serialized.FindProperty("playGeneratedSoundOnMobile").boolValue = false;
             serialized.FindProperty("showSkipButton").boolValue = true;
             serialized.FindProperty("showIntroText").boolValue = true;
             serialized.FindProperty("enableStarTwinkle").boolValue = false;
-            serialized.FindProperty("enableMotionParallax").boolValue = false;
-            serialized.FindProperty("backgroundSprite").objectReferenceValue = null;
-            serialized.FindProperty("backgroundScrollLoop").boolValue = false;
+            serialized.FindProperty("enableMotionParallax").boolValue = true;
+            serialized.FindProperty("skipInputDelay").floatValue = 1.25f;
+            serialized.FindProperty("ozkullarCompanySprite").objectReferenceValue = LoadIntroSprite("OzkullarCompany");
+            serialized.FindProperty("productionCreditsSprite").objectReferenceValue = LoadIntroSprite("Constructors");
+            serialized.FindProperty("presentsSprite").objectReferenceValue = LoadIntroSprite("Presents");
+            serialized.FindProperty("symbiyozSprite").objectReferenceValue = LoadIntroSprite("SymbiosisLogo");
+            serialized.FindProperty("gatewayTaglineSprite").objectReferenceValue = LoadIntroSprite("Slogan");
+            serialized.FindProperty("madeForDynastySprite").objectReferenceValue = LoadIntroSprite("MadeForDynasty");
+            serialized.FindProperty("backgroundSprite").objectReferenceValue = LoadIntroSprite("BGINTRO");
+            serialized.FindProperty("backgroundTint").colorValue = Color.white;
+            serialized.FindProperty("backgroundMaxAlpha").floatValue = 1f;
+            serialized.FindProperty("backgroundScrollLoop").boolValue = true;
+            serialized.FindProperty("backgroundScrollSpeed").floatValue = 22f;
+            serialized.FindProperty("backgroundLoopHeight").floatValue = 2400f;
+            serialized.FindProperty("backgroundStartOffsetY").floatValue = 0f;
+            serialized.FindProperty("parallaxMaxOffset").floatValue = 24f;
+            serialized.FindProperty("parallaxSmooth").floatValue = 3.4f;
+            serialized.FindProperty("backgroundGlowPulse").floatValue = 0.16f;
+            serialized.FindProperty("backgroundGlowSpeed").floatValue = 0.72f;
             serialized.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static Sprite LoadIntroSprite(string baseName)
+        {
+            Object[] assets = AssetDatabase.LoadAllAssetsAtPath(IntroSpritePath + baseName + ".png");
+            string primaryName = baseName + "_0";
+
+            for (int i = 0; i < assets.Length; i++)
+            {
+                if (assets[i] is Sprite sprite && sprite.name == primaryName)
+                    return sprite;
+            }
+
+            for (int i = 0; i < assets.Length; i++)
+            {
+                if (assets[i] is Sprite sprite)
+                    return sprite;
+            }
+
+            return null;
         }
     }
 }

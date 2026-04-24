@@ -8,6 +8,8 @@ using FishNet.Transporting.Tugboat;
 using MahjongGame.Clusters;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
+using UnitySceneManager = UnityEngine.SceneManagement.SceneManager;
 
 namespace MahjongGame.Multiplayer
 {
@@ -21,6 +23,8 @@ namespace MahjongGame.Multiplayer
         private const string AddressArg = "-fishnet-address";
         private const string PortArg = "-fishnet-port";
         private const string MatrixPlayerResourcePath = "Network/MatrixNetworkPlayer";
+        private const string ClusterElysiumScene = "ClusterElysium";
+        private const string ClusterSlumsScene = "ClusterSlums";
 
         public static RealtimeNetworkBootstrap I { get; private set; }
 
@@ -45,6 +49,40 @@ namespace MahjongGame.Multiplayer
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Bootstrap()
         {
+            UnitySceneManager.sceneLoaded -= HandleSceneLoaded;
+            UnitySceneManager.sceneLoaded += HandleSceneLoaded;
+            TryBootstrapForScene(UnitySceneManager.GetActiveScene().name);
+        }
+
+        private static void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            if (ShouldRunNetworkForScene(scene.name))
+            {
+                TryBootstrapForScene(scene.name);
+                return;
+            }
+
+            if (HasNetworkCommandLineArgs(Environment.GetCommandLineArgs()))
+                return;
+
+            if (I != null)
+            {
+                I.StopAll();
+                Destroy(I.gameObject);
+                I = null;
+            }
+        }
+
+        private static void TryBootstrapForScene(string sceneName)
+        {
+            if (!ShouldRunNetworkForScene(sceneName) && !HasNetworkCommandLineArgs(Environment.GetCommandLineArgs()))
+                return;
+
+            CreateBootstrapIfMissing();
+        }
+
+        private static void CreateBootstrapIfMissing()
+        {
             if (I != null)
                 return;
 
@@ -62,6 +100,20 @@ namespace MahjongGame.Multiplayer
             root.AddComponent<RealtimeNetworkBootstrap>();
             PersistentObjectUtility.DontDestroyOnLoad(root);
             root.SetActive(true);
+        }
+
+        private static bool ShouldRunNetworkForScene(string sceneName)
+        {
+            return string.Equals(sceneName, ClusterElysiumScene, StringComparison.Ordinal) ||
+                   string.Equals(sceneName, ClusterSlumsScene, StringComparison.Ordinal);
+        }
+
+        private static bool HasNetworkCommandLineArgs(string[] args)
+        {
+            return HasArg(args, HeadlessArg) ||
+                   HasArg(args, HostArg) ||
+                   HasArg(args, ClientArg) ||
+                   Application.isBatchMode;
         }
 
         private static DefaultPrefabObjects CreateSpawnablePrefabs(NetworkObject matrixPlayerPrefab)

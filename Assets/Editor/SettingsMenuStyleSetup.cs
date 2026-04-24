@@ -33,11 +33,11 @@ public static class SettingsMenuStyleSetup
         ConfigureStyle(
             styles.GetArrayElementAtIndex(0),
             "GameMahjongBattle",
-            new Vector2(0.5f, 1f),
-            new Vector2(0.5f, 1f),
-            new Vector2(0.5f, 1f),
-            new Vector2(0f, -28f),
-            new Vector2(90f, 90f));
+            new Vector2(1f, 1f),
+            new Vector2(1f, 1f),
+            new Vector2(1f, 1f),
+            new Vector2(-58f, -42f),
+            new Vector2(82f, 82f));
 
         ConfigureStyle(
             styles.GetArrayElementAtIndex(1),

@@ -170,7 +170,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.025, g: 0.035, b: 0.055, a: 0.86}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -279,7 +279,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &288895232
 RectTransform:
   m_ObjectHideFlags: 0
@@ -319,7 +319,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Loading
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -530,7 +530,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.025, g: 0.035, b: 0.055, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -572,7 +572,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1212549788
 RectTransform:
   m_ObjectHideFlags: 0
@@ -612,7 +612,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Loading
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -810,8 +810,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2c64b92af15591408630a5fbf3dedf1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MahjongGame.EntryCinematicIntro
-  duration: 5
-  fadeOutDuration: 0.35
+  duration: 18
+  fadeOutDuration: 0.75
   gold: {r: 1, g: 0.72, b: 0.26, a: 1}
   silver: {r: 0.86, g: 0.9, b: 0.94, a: 1}
   redPulse: {r: 1, g: 0.08, b: 0.055, a: 1}
@@ -820,26 +820,26 @@ MonoBehaviour:
   showSkipButton: 1
   showIntroText: 1
   enableStarTwinkle: 0
-  enableMotionParallax: 0
-  ozkullarCompanySprite: {fileID: 0}
-  withSprite: {fileID: 0}
-  ozkullarCreativeAgencySprite: {fileID: 0}
-  productionCreditsSprite: {fileID: 0}
-  presentsSprite: {fileID: 0}
-  symbiyozSprite: {fileID: 0}
-  gatewayTaglineSprite: {fileID: 0}
-  madeForDynastySprite: {fileID: 0}
-  backgroundSprite: {fileID: 0}
+  enableMotionParallax: 1
+  skipInputDelay: 1.25
+  ozkullarCompanySprite: {fileID: 2450417356118012990, guid: 949140e3a7debc5498a96cb4c4fc5882, type: 3}
+  productionCreditsSprite: {fileID: 7707036240235558804, guid: c766f74cf48370448aaf1f45352f36ac, type: 3}
+  presentsSprite: {fileID: -7560065502156792871, guid: 5d40af699e656574fadf74af7672d61e, type: 3}
+  symbiyozSprite: {fileID: 1116152796275145647, guid: fa574ab97a954cd4082d7722676881bd, type: 3}
+  gatewayTaglineSprite: {fileID: -1564139490757509926, guid: 8c0e72384f17f144bbc4f70e22cf70d9, type: 3}
+  madeForDynastySprite: {fileID: -8257255681222925122, guid: cb626c157e6b74f43ad2e3a030243a48, type: 3}
+  backgroundSprite: {fileID: 4526663365379248727, guid: 542e9715f10e0ff48949d8bb50948154, type: 3}
   backgroundTint: {r: 1, g: 1, b: 1, a: 1}
   backgroundMaxAlpha: 1
   backgroundFadeInDuration: 1.35
-  backgroundScrollLoop: 0
-  backgroundScrollSpeed: 24
-  backgroundLoopHeight: 1080
+  backgroundScrollLoop: 1
+  backgroundScrollSpeed: 22
+  backgroundLoopHeight: 2400
   backgroundStartOffsetY: 0
-  parallaxMaxOffset: 18
-  parallaxSmooth: 3.25
-  starTwinkleAlpha: 0.42
+  parallaxMaxOffset: 24
+  parallaxSmooth: 3.4
+  backgroundGlowPulse: 0.16
+  backgroundGlowSpeed: 0.72
 --- !u!114 &1323974433
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1008,7 +1008,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1464587852
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1048,7 +1048,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Symbiosis
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1265,7 +1265,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.025, g: 0.035, b: 0.055, a: 1}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0

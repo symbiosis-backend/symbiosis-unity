@@ -183,7 +183,7 @@ namespace FishNet.Object
         private bool IsDuplicateSceneId(ulong id)
         {
             //Find all nobs in scene.
-            _sceneNetworkObjects = GameObject.FindObjectsOfType<NetworkObject>().ToList();
+            _sceneNetworkObjects = FindObjectsByType<NetworkObject>(FindObjectsInactive.Exclude).ToList();
             foreach (NetworkObject nob in _sceneNetworkObjects)
             {
                 if (nob != null && nob != this && nob.SceneId == id)

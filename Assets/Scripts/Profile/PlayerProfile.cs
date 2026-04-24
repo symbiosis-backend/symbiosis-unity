@@ -126,6 +126,108 @@ namespace MahjongGame
     }
 
     [Serializable]
+    public sealed class PlayerEnergyData
+    {
+        public const int DefaultMaxEnergy = 100;
+        public const int DefaultRefillIntervalSeconds = 300;
+
+        [Header("Energy")]
+        public int CurrentEnergy;
+        public int MaxEnergy;
+        public int RefillIntervalSeconds;
+        public long LastUpdatedUtcTicks;
+
+        public event Action EnergyChanged;
+
+        public PlayerEnergyData()
+        {
+            MaxEnergy = DefaultMaxEnergy;
+            CurrentEnergy = DefaultMaxEnergy;
+            RefillIntervalSeconds = DefaultRefillIntervalSeconds;
+            LastUpdatedUtcTicks = DateTime.UtcNow.Ticks;
+        }
+
+        public bool Refill(long nowUtcTicks)
+        {
+            EnsureValid();
+
+            if (nowUtcTicks <= LastUpdatedUtcTicks)
+                return false;
+
+            if (CurrentEnergy >= MaxEnergy)
+                return false;
+
+            long ticksPerEnergy = TimeSpan.FromSeconds(RefillIntervalSeconds).Ticks;
+            if (ticksPerEnergy <= 0)
+                return false;
+
+            long elapsedTicks = nowUtcTicks - LastUpdatedUtcTicks;
+            int restored = (int)(elapsedTicks / ticksPerEnergy);
+            if (restored <= 0)
+                return false;
+
+            int previous = CurrentEnergy;
+            CurrentEnergy = Mathf.Min(MaxEnergy, CurrentEnergy + restored);
+            LastUpdatedUtcTicks = CurrentEnergy >= MaxEnergy
+                ? nowUtcTicks
+                : LastUpdatedUtcTicks + restored * ticksPerEnergy;
+
+            if (CurrentEnergy == previous)
+                return false;
+
+            EnergyChanged?.Invoke();
+            return true;
+        }
+
+        public bool CanSpend(int amount)
+        {
+            return amount >= 0 && CurrentEnergy >= amount;
+        }
+
+        public bool Spend(int amount, long nowUtcTicks)
+        {
+            if (amount < 0)
+                return false;
+
+            Refill(nowUtcTicks);
+
+            if (!CanSpend(amount))
+                return false;
+
+            bool wasFull = CurrentEnergy >= MaxEnergy;
+            CurrentEnergy -= amount;
+            if (wasFull && CurrentEnergy < MaxEnergy)
+                LastUpdatedUtcTicks = nowUtcTicks;
+
+            EnergyChanged?.Invoke();
+            return true;
+        }
+
+        public int GetSecondsUntilNextEnergy(long nowUtcTicks)
+        {
+            EnsureValid();
+
+            if (CurrentEnergy >= MaxEnergy)
+                return 0;
+
+            long ticksPerEnergy = TimeSpan.FromSeconds(RefillIntervalSeconds).Ticks;
+            long nextTicks = LastUpdatedUtcTicks + ticksPerEnergy;
+            long remainingTicks = Math.Max(0L, nextTicks - nowUtcTicks);
+            return Mathf.CeilToInt((float)TimeSpan.FromTicks(remainingTicks).TotalSeconds);
+        }
+
+        public void EnsureValid()
+        {
+            MaxEnergy = Mathf.Max(1, MaxEnergy <= 0 ? DefaultMaxEnergy : MaxEnergy);
+            RefillIntervalSeconds = Mathf.Max(1, RefillIntervalSeconds <= 0 ? DefaultRefillIntervalSeconds : RefillIntervalSeconds);
+            CurrentEnergy = Mathf.Clamp(CurrentEnergy, 0, MaxEnergy);
+
+            if (LastUpdatedUtcTicks <= 0)
+                LastUpdatedUtcTicks = DateTime.UtcNow.Ticks;
+        }
+    }
+
+    [Serializable]
     public sealed class MahjongStoryData
     {
         [Header("Story Progress")]
@@ -255,6 +357,11 @@ namespace MahjongGame
         public int Wins;
         public int Losses;
         public int TotalMatches;
+        public int MvpCount;
+
+        [Header("Battle Level")]
+        public int Level;
+        public int Experience;
 
         [Header("Battle Streak")]
         public int WinStreak;
@@ -270,6 +377,9 @@ namespace MahjongGame
 
         public int TotalGames => TotalMatches;
         public bool HasMatches => TotalMatches > 0;
+        public int WinRatePercent => TotalMatches > 0 ? Mathf.RoundToInt((float)Wins / TotalMatches * 100f) : 0;
+        public int MvpRatePercent => TotalMatches > 0 ? Mathf.RoundToInt((float)MvpCount / TotalMatches * 100f) : 0;
+        public int ExpToNextLevel => Mathf.Max(0, GetExperienceRequiredForNextLevel() - Experience);
 
         public event Action StatsChanged;
         public event Action<int> RankPointsChanged;
@@ -280,6 +390,9 @@ namespace MahjongGame
             Wins = 0;
             Losses = 0;
             TotalMatches = 0;
+            MvpCount = 0;
+            Level = 1;
+            Experience = 0;
             WinStreak = 0;
             BestWinStreak = 0;
             RankTier = "Unranked";
@@ -288,10 +401,13 @@ namespace MahjongGame
             TotalBattleRewardEarned = 0;
         }
 
-        public void AddWin()
+        public void AddWin(bool mvp = true)
         {
             Wins++;
             TotalMatches++;
+            if (mvp)
+                MvpCount++;
+
             WinStreak++;
             if (WinStreak > BestWinStreak)
                 BestWinStreak = WinStreak;
@@ -299,12 +415,45 @@ namespace MahjongGame
             StatsChanged?.Invoke();
         }
 
-        public void AddLoss()
+        public void AddLoss(bool mvp = false)
         {
             Losses++;
             TotalMatches++;
+            if (mvp)
+                MvpCount++;
+
             WinStreak = 0;
             StatsChanged?.Invoke();
+        }
+
+        public void AddMvp()
+        {
+            MvpCount++;
+            StatsChanged?.Invoke();
+        }
+
+        public void AddExperience(int amount)
+        {
+            if (amount <= 0)
+                return;
+
+            Level = Mathf.Max(1, Level);
+            Experience = Mathf.Max(0, Experience) + amount;
+
+            int expToNextLevel = GetExperienceRequiredForNextLevel();
+            while (Experience >= expToNextLevel)
+            {
+                Experience -= expToNextLevel;
+                Level++;
+                expToNextLevel = GetExperienceRequiredForNextLevel();
+            }
+
+            StatsChanged?.Invoke();
+        }
+
+        public int GetExperienceRequiredForNextLevel()
+        {
+            return 100 + Mathf.Max(0, Level - 1) * 50;
         }
 
         public void SetRank(string rankTier, int rankPoints)
@@ -350,7 +499,10 @@ namespace MahjongGame
         {
             Wins = Mathf.Max(0, Wins);
             Losses = Mathf.Max(0, Losses);
-            TotalMatches = Mathf.Max(0, TotalMatches);
+            TotalMatches = Mathf.Max(Mathf.Max(0, TotalMatches), Wins + Losses);
+            MvpCount = Mathf.Clamp(MvpCount, 0, TotalMatches);
+            Level = Mathf.Max(1, Level);
+            Experience = Mathf.Max(0, Experience);
             WinStreak = Mathf.Max(0, WinStreak);
             BestWinStreak = Mathf.Max(0, BestWinStreak);
             RankTier = string.IsNullOrWhiteSpace(RankTier) ? "Unranked" : RankTier.Trim();
@@ -572,10 +724,15 @@ namespace MahjongGame
     [Serializable]
     public sealed class PlayerProfile
     {
+        public const int CurrentDataVersion = 8;
+
         [Header("Identity")]
         public string LocalProfileId;
         public string PublicPlayerId;
         public string OnlinePlayerId;
+        public string DynastyName;
+        public string DynastyId;
+        public int ProfileSlotIndex;
         public string DisplayName;
         public int Age;
         public PlayerGender Gender;
@@ -598,6 +755,9 @@ namespace MahjongGame
 
         [Header("Currencies")]
         public GlobalCurrencyData Currencies;
+
+        [Header("Energy")]
+        public PlayerEnergyData Energy;
 
         [Header("Mahjong")]
         public MahjongProfileData Mahjong;
@@ -623,6 +783,7 @@ namespace MahjongGame
         public int Exp => AccountExp;
         public bool HasMahjongData => Mahjong != null;
         public bool HasCurrencies => Currencies != null;
+        public bool HasEnergy => Energy != null;
 
         public event Action ProfileChanged;
         public event Action<string> DisplayNameChanged;
@@ -637,6 +798,9 @@ namespace MahjongGame
             LocalProfileId = Guid.NewGuid().ToString("N");
             PublicPlayerId = GeneratePublicPlayerId();
             OnlinePlayerId = string.Empty;
+            DynastyName = string.Empty;
+            DynastyId = string.Empty;
+            ProfileSlotIndex = 1;
             DisplayName = string.Empty;
             Age = 0;
             Gender = PlayerGender.NotSpecified;
@@ -653,6 +817,7 @@ namespace MahjongGame
             AccountExp = 0;
 
             Currencies = new GlobalCurrencyData();
+            Energy = new PlayerEnergyData();
             Mahjong = new MahjongProfileData();
             WeeklyReward = new WeeklyRewardData();
 
@@ -662,7 +827,7 @@ namespace MahjongGame
 
             IsGuest = true;
             IsProfileCompleted = false;
-            DataVersion = 6;
+            DataVersion = CurrentDataVersion;
 
             HookNestedSignals();
         }
@@ -828,8 +993,26 @@ namespace MahjongGame
         {
             if (exp <= 0) return;
             AccountExp += exp;
+            bool levelChanged = false;
+            int expToNextLevel = GetAccountExpRequiredForNextLevel();
+            while (AccountExp >= expToNextLevel)
+            {
+                AccountExp -= expToNextLevel;
+                AccountLevel++;
+                levelChanged = true;
+                expToNextLevel = GetAccountExpRequiredForNextLevel();
+            }
+
+            if (levelChanged)
+                AccountLevelChanged?.Invoke(AccountLevel);
+
             AccountExpChanged?.Invoke(AccountExp);
             ProfileChanged?.Invoke();
+        }
+
+        public int GetAccountExpRequiredForNextLevel()
+        {
+            return 100 + Mathf.Max(0, AccountLevel - 1) * 50;
         }
 
         public void SetAccountExp(int exp)
@@ -917,6 +1100,9 @@ namespace MahjongGame
             if (Currencies == null)
                 Currencies = new GlobalCurrencyData();
 
+            if (Energy == null)
+                Energy = new PlayerEnergyData();
+
             if (FriendPublicIds == null)
                 FriendPublicIds = new List<string>();
 
@@ -935,6 +1121,9 @@ namespace MahjongGame
             DisplayName = DisplayName ?? string.Empty;
             PublicPlayerId = PublicPlayerId ?? string.Empty;
             OnlinePlayerId = OnlinePlayerId ?? string.Empty;
+            DynastyName = DynastyName ?? string.Empty;
+            DynastyId = DynastyId ?? string.Empty;
+            ProfileSlotIndex = Mathf.Clamp(ProfileSlotIndex <= 0 ? 1 : ProfileSlotIndex, 1, 3);
             FrameId = FrameId ?? string.Empty;
             GlobalTitleId = GlobalTitleId ?? string.Empty;
             GlobalRankTier = string.IsNullOrWhiteSpace(GlobalRankTier) ? "Unranked" : GlobalRankTier.Trim();
@@ -946,9 +1135,10 @@ namespace MahjongGame
                 Gender = PlayerGender.NotSpecified;
             AvatarId = Mathf.Max(0, AvatarId);
             GlobalRankPoints = Mathf.Max(0, GlobalRankPoints);
-            DataVersion = Mathf.Max(1, DataVersion);
+            DataVersion = Mathf.Max(CurrentDataVersion, DataVersion);
 
             Currencies.EnsureValid();
+            Energy.EnsureValid();
             Mahjong.EnsureData();
             WeeklyReward.EnsureValid();
             SanitizeFriendIds();
@@ -1022,6 +1212,12 @@ namespace MahjongGame
             {
                 Currencies.CurrencyChanged -= OnNestedDataChanged;
                 Currencies.CurrencyChanged += OnNestedDataChanged;
+            }
+
+            if (Energy != null)
+            {
+                Energy.EnergyChanged -= OnNestedDataChanged;
+                Energy.EnergyChanged += OnNestedDataChanged;
             }
 
             if (Mahjong != null)

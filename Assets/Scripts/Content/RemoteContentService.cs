@@ -117,7 +117,11 @@ namespace MahjongGame.Content
             if (!HandleSucceeded(initHandle))
             {
                 LastError = "Addressables initialization failed.";
+#if UNITY_EDITOR
+                Debug.Log("[RemoteContentService] Addressables initialization skipped in Editor. Remote content checks will run in builds.");
+#else
                 Debug.LogWarning("[RemoteContentService] " + LastError);
+#endif
                 ReleaseIfValid(initHandle);
                 IsChecking = false;
                 yield break;

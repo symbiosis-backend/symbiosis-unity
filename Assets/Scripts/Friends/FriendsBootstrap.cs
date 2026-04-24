@@ -8,8 +8,7 @@ namespace MahjongGame
         private static readonly string[] FriendsSceneNames =
         {
             "Main",
-            "LobbyMahjong",
-            "LobbyMahjongBattle"
+            "LobbyMahjong"
         };
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -45,12 +44,28 @@ namespace MahjongGame
         private static void EnsureForScene(Scene scene)
         {
             if (!ShouldShowFriendsInScene(scene.name))
+            {
+                DestroySceneFriendsUi();
                 return;
+            }
 
-            if (Object.FindAnyObjectByType<FriendsUI>(FindObjectsInactive.Include) != null)
+            FriendsUI existing = Object.FindAnyObjectByType<FriendsUI>(FindObjectsInactive.Include);
+            if (existing != null)
+            {
+                existing.gameObject.SetActive(true);
+                existing.transform.SetAsLastSibling();
+                existing.LayoutToggleButton();
                 return;
+            }
 
             FriendsUI.CreateInScene();
+        }
+
+        private static void DestroySceneFriendsUi()
+        {
+            FriendsUI ui = Object.FindAnyObjectByType<FriendsUI>(FindObjectsInactive.Include);
+            if (ui != null)
+                Object.Destroy(ui.gameObject);
         }
 
         private static bool ShouldShowFriendsInScene(string sceneName)

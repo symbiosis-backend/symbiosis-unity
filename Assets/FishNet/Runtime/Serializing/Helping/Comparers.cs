@@ -33,8 +33,10 @@ namespace FishNet.Serializing.Helping
             if (!a.IsValid() || !b.IsValid())
                 return false;
 
-            if (a.handle != 0 || b.handle != 0)
-                return (a.handle == b.handle);
+            ulong aHandle = a.handle.GetRawData();
+            ulong bHandle = b.handle.GetRawData();
+            if (aHandle != 0 || bHandle != 0)
+                return (aHandle == bHandle);
 
             return (a.name == b.name);
         }

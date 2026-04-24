@@ -334,6 +334,7 @@ public sealed class TetrisGame : MonoBehaviour
 
         GameObject eventSystem = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
         eventSystem.transform.SetParent(transform, false);
+        MahjongGame.EventSystemInputModeGuard.EnsureCompatibleEventSystems();
     }
 
     private void HandleKeyboard()

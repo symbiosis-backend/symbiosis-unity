@@ -1,5 +1,8 @@
 using FishNet.Object;
 using UnityEngine;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 
 namespace MahjongGame.Clusters
 {
@@ -22,6 +25,8 @@ namespace MahjongGame.Clusters
         private float nextSendTime;
         private int archetype;
         private bool hasMoveTarget;
+
+        private const float AvatarZ = -1f;
 
         private string ActiveClusterId => ClusterService.TryGetSceneClusterId(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
         private bool IsInActiveCluster => currentClusterId == ActiveClusterId;
@@ -134,27 +139,32 @@ namespace MahjongGame.Clusters
             if (avatarCamera == null)
                 return;
 
-            if (Input.GetMouseButtonDown(0))
+#if ENABLE_INPUT_SYSTEM
+            if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
             {
-                moveTarget = ScreenToWorld(Input.mousePosition);
+                moveTarget = ScreenToWorld(Mouse.current.position.ReadValue());
                 hasMoveTarget = true;
             }
 
-            if (Input.touchCount > 0)
+            if (Touchscreen.current != null)
             {
-                Touch touch = Input.GetTouch(0);
-                if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary)
+                foreach (UnityEngine.InputSystem.Controls.TouchControl touch in Touchscreen.current.touches)
                 {
-                    moveTarget = ScreenToWorld(touch.position);
+                    if (!touch.press.isPressed)
+                        continue;
+
+                    moveTarget = ScreenToWorld(touch.position.ReadValue());
                     hasMoveTarget = true;
+                    break;
                 }
             }
+#endif
         }
 
         private Vector3 ScreenToWorld(Vector2 screenPosition)
         {
-            Vector3 world = avatarCamera.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, 10f));
-            world.z = 0f;
+            Vector3 world = avatarCamera.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, 9f));
+            world.z = AvatarZ;
             return ClampToClusterBounds(world);
         }
 
@@ -163,14 +173,20 @@ namespace MahjongGame.Clusters
             float x = 0f;
             float y = 0f;
 
-            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
-                x -= 1f;
-            if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
-                x += 1f;
-            if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
-                y -= 1f;
-            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
-                y += 1f;
+#if ENABLE_INPUT_SYSTEM
+            Keyboard keyboard = Keyboard.current;
+            if (keyboard != null)
+            {
+                if (keyboard.aKey.isPressed || keyboard.leftArrowKey.isPressed)
+                    x -= 1f;
+                if (keyboard.dKey.isPressed || keyboard.rightArrowKey.isPressed)
+                    x += 1f;
+                if (keyboard.sKey.isPressed || keyboard.downArrowKey.isPressed)
+                    y -= 1f;
+                if (keyboard.wKey.isPressed || keyboard.upArrowKey.isPressed)
+                    y += 1f;
+            }
+#endif
 
             return new Vector2(x, y);
         }
@@ -194,8 +210,8 @@ namespace MahjongGame.Clusters
             if (cachedRenderer == null)
                 return;
 
-            Color color = IsOwner ? new Color(0.16f, 1f, 0.72f, 1f) : new Color(0.25f, 0.56f, 1f, 1f);
-            cachedRenderer.material.color = color;
+            Color color = IsOwner ? new Color(0.02f, 1f, 0.70f, 1f) : new Color(0.18f, 0.58f, 1f, 1f);
+            cachedRenderer.material = ClusterVisuals.CreateBrightMaterial(color);
             ApplyArchetype(archetype);
         }
 
@@ -232,9 +248,9 @@ namespace MahjongGame.Clusters
             if (value == 1 || value == 2)
             {
                 cachedMeshFilter.mesh = CreateTriangleMesh();
-                transform.localScale = new Vector3(0.72f, 0.72f, 0.72f);
+                transform.localScale = new Vector3(0.92f, 0.92f, 0.12f);
                 if (cachedRenderer != null)
-                    cachedRenderer.material.color = value == 1 ? new Color(0.35f, 0.68f, 1f, 1f) : new Color(1f, 0.45f, 0.72f, 1f);
+                    cachedRenderer.material = ClusterVisuals.CreateBrightMaterial(value == 1 ? new Color(0.05f, 0.55f, 1f, 1f) : new Color(1f, 0.18f, 0.62f, 1f));
             }
         }
 
@@ -251,13 +267,13 @@ namespace MahjongGame.Clusters
         {
             position.x = Mathf.Clamp(position.x, -9f, 9f);
             position.y = Mathf.Clamp(position.y, -4.8f, 4.8f);
-            position.z = 0f;
+            position.z = AvatarZ;
             return position;
         }
 
         private static Vector3 GetClusterSpawn(string clusterId)
         {
-            return clusterId == ClusterService.SlumsId ? new Vector3(-7.4f, -3.5f, 0f) : new Vector3(-7.4f, 3.4f, 0f);
+            return clusterId == ClusterService.SlumsId ? new Vector3(-7.4f, -3.5f, AvatarZ) : new Vector3(-7.4f, 3.4f, AvatarZ);
         }
     }
 }

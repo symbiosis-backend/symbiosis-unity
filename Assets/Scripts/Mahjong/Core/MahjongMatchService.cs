@@ -89,6 +89,11 @@ namespace MahjongGame
                     if (MahjongTitleService.I != null)
                         MahjongTitleService.I.EvaluateStoryTitles(profile);
                     break;
+
+                case MahjongGameMode.Battle:
+                    if (MahjongTitleService.I != null)
+                        MahjongTitleService.I.EvaluateBattleTitles(profile);
+                    break;
             }
         }
 
@@ -165,12 +170,12 @@ namespace MahjongGame
             switch (matchResult.BattleResult)
             {
                 case MahjongBattleResult.Win:
-                    battle.AddWin();
+                    battle.AddWin(matchResult.BattleMvp);
                     profile.Mahjong.TotalWins++;
                     break;
 
                 case MahjongBattleResult.Lose:
-                    battle.AddLoss();
+                    battle.AddLoss(matchResult.BattleMvp);
                     profile.Mahjong.TotalLosses++;
                     break;
 

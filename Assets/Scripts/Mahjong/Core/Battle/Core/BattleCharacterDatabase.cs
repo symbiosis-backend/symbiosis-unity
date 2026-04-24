@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Serialization;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace MahjongGame
 {
@@ -63,7 +66,7 @@ namespace MahjongGame
                 float critChance,
                 float critDamageMultiplier)
             {
-                MaxHp = Mathf.Max(1, maxHp);
+                MaxHp = NormalizeLegacyMaxHp(maxHp);
                 Attack = Mathf.Max(0, attack);
                 Armor = Mathf.Clamp01(armor);
                 ParryChance = Mathf.Clamp01(parryChance);
@@ -73,12 +76,18 @@ namespace MahjongGame
 
             public void Sanitize()
             {
-                MaxHp = Mathf.Max(1, MaxHp);
+                MaxHp = NormalizeLegacyMaxHp(MaxHp);
                 Attack = Mathf.Max(0, Attack);
                 Armor = Mathf.Clamp01(Armor);
                 ParryChance = Mathf.Clamp01(ParryChance);
                 CritChance = Mathf.Clamp01(CritChance);
                 CritDamageMultiplier = Mathf.Max(1f, CritDamageMultiplier);
+            }
+
+            private static int NormalizeLegacyMaxHp(int hp)
+            {
+                int safeHp = Mathf.Max(1, hp);
+                return safeHp >= 300 ? Mathf.Max(1, Mathf.RoundToInt(safeHp / 10f)) : safeHp;
             }
         }
 
@@ -102,6 +111,11 @@ namespace MahjongGame
             public GameObject ProfileModelPrefab;
             public GameObject LobbyModelPrefab;
             public GameObject BattleModelPrefab;
+            public Texture2D ModelTexture;
+            public Vector2 ModelTextureScale = Vector2.one;
+            public Vector2 ModelTextureOffset = Vector2.zero;
+            public bool UseSolidModelColor;
+            public Color SolidModelColor = new Color(0.45f, 0.34f, 0.23f, 1f);
 
             [Header("Remote 3D Models / Addressables")]
             public AssetReferenceGameObject ProfileModelAddress;
@@ -253,6 +267,13 @@ namespace MahjongGame
 
         [Header("Characters")]
         [SerializeField] private List<BattleCharacterData> characters = new List<BattleCharacterData>();
+
+#if UNITY_EDITOR
+        private const string CharacterFbxFolder = "Assets/Scripts/Mahjong/Sprites/FBX";
+        private const string ProfileFbxPath = "Assets/Scripts/Mahjong/Sprites/FBX/Profile.fbx";
+        private const string LobbyFbxPath = "Assets/Scripts/Mahjong/Sprites/FBX/Lobby.fbx";
+        private const string BattleFbxPath = "Assets/Scripts/Mahjong/Sprites/FBX/Battle.fbx";
+#endif
 
         private readonly Dictionary<string, BattleCharacterData> byId =
             new Dictionary<string, BattleCharacterData>(StringComparer.Ordinal);
@@ -604,9 +625,211 @@ namespace MahjongGame
                 characters[i].Sanitize();
             }
 
+#if UNITY_EDITOR
+            EditorAutoAssignSharedFbxAssets();
+#endif
+
             if (autoMarkFirstCharactersAsStarterFree)
                 ApplyStarterFreeRule();
         }
+
+#if UNITY_EDITOR
+        public void EditorAutoAssignSharedFbxAssets()
+        {
+            GameObject profileModel = AssetDatabase.LoadAssetAtPath<GameObject>(ProfileFbxPath);
+            GameObject lobbyModel = AssetDatabase.LoadAssetAtPath<GameObject>(LobbyFbxPath);
+            GameObject battleModel = AssetDatabase.LoadAssetAtPath<GameObject>(BattleFbxPath);
+            AnimationClip profileClip = LoadFirstAnimationClip(ProfileFbxPath);
+            AnimationClip lobbyClip = LoadFirstAnimationClip(LobbyFbxPath);
+            AnimationClip battleClip = LoadFirstAnimationClip(BattleFbxPath);
+
+            bool changed = false;
+            for (int i = 0; i < characters.Count; i++)
+            {
+                BattleCharacterData data = characters[i];
+                if (data == null)
+                    continue;
+
+                GameObject resolvedProfileModel = LoadCharacterModel(data, "Profile") ?? profileModel;
+                GameObject resolvedLobbyModel = LoadCharacterModel(data, "Lobby") ?? lobbyModel;
+                GameObject resolvedBattleModel = LoadCharacterModel(data, "Battle") ?? battleModel;
+                Texture2D resolvedTexture = LoadCharacterBaseColor(data);
+
+                AnimationClip resolvedProfileClip = LoadFirstAnimationClip(resolvedProfileModel) ?? data.ProfileIdleAnimation ?? profileClip;
+                AnimationClip resolvedLobbyClip = LoadFirstAnimationClip(resolvedLobbyModel) ?? data.LobbyIdleAnimation ?? lobbyClip;
+                AnimationClip resolvedBattleClip = LoadFirstAnimationClip(resolvedBattleModel) ?? data.BattleIdleAnimation ?? battleClip;
+
+                changed |= AssignIfDifferent(ref data.ProfileModelPrefab, resolvedProfileModel);
+                changed |= AssignIfDifferent(ref data.LobbyModelPrefab, resolvedLobbyModel);
+                changed |= AssignIfDifferent(ref data.BattleModelPrefab, resolvedBattleModel);
+
+                changed |= AssignIfDifferent(ref data.ProfileIdleAnimation, resolvedProfileClip);
+                changed |= AssignIfDifferent(ref data.LobbyIdleAnimation, resolvedLobbyClip);
+                changed |= AssignIfDifferent(ref data.BattleIdleAnimation, resolvedBattleClip);
+
+                if (resolvedTexture != null)
+                    changed |= AssignIfDifferent(ref data.ModelTexture, resolvedTexture);
+
+                if (data.UseSolidModelColor)
+                {
+                    data.UseSolidModelColor = false;
+                    changed = true;
+                }
+
+                if (data.ModelTextureScale != Vector2.one)
+                {
+                    data.ModelTextureScale = Vector2.one;
+                    changed = true;
+                }
+
+                if (data.ModelTextureOffset != Vector2.zero)
+                {
+                    data.ModelTextureOffset = Vector2.zero;
+                    changed = true;
+                }
+            }
+
+            if (changed)
+                MarkDirtyInEditor();
+        }
+
+        private static GameObject LoadCharacterModel(BattleCharacterData data, string context)
+        {
+            if (data == null || string.IsNullOrWhiteSpace(data.Id))
+                return null;
+
+            string id = data.Id.Trim();
+            string compactId = id.Replace("_", string.Empty);
+            string animal = data.AnimalType.ToString();
+            string gender = data.Gender.ToString();
+            string compactAnimalGender = animal + gender;
+            string[] contextNames = string.Equals(context, "Profile", StringComparison.Ordinal)
+                ? new[] { "Salute", "Profile", "Profil" }
+                : new[] { context };
+
+            for (int i = 0; i < contextNames.Length; i++)
+            {
+                string contextName = contextNames[i];
+                GameObject model =
+                    LoadModelAtPath($"{CharacterFbxFolder}/{id}_{contextName}.fbx") ??
+                    LoadModelAtPath($"{CharacterFbxFolder}/{id}{contextName}.fbx") ??
+                    LoadModelAtPath($"{CharacterFbxFolder}/{compactId}_{contextName}.fbx") ??
+                    LoadModelAtPath($"{CharacterFbxFolder}/{compactId}{contextName}.fbx") ??
+                    LoadModelAtPath($"{CharacterFbxFolder}/{animal}_{gender}_{contextName}.fbx") ??
+                    LoadModelAtPath($"{CharacterFbxFolder}/{animal}{gender}{contextName}.fbx") ??
+                    LoadModelAtPath($"{CharacterFbxFolder}/{compactAnimalGender}_{contextName}.fbx") ??
+                    LoadModelAtPath($"{CharacterFbxFolder}/{compactAnimalGender}{contextName}.fbx");
+
+                if (model != null)
+                    return model;
+            }
+
+            return null;
+        }
+
+        private static Texture2D LoadCharacterBaseColor(BattleCharacterData data)
+        {
+            if (data == null || string.IsNullOrWhiteSpace(data.Id))
+                return null;
+
+            string id = data.Id.Trim();
+            string compactId = id.Replace("_", string.Empty);
+            string compactIdWithExtraE = compactId.Replace("Female", "Femalee");
+            string[] names =
+            {
+                $"{id}_basecolor",
+                $"{id}_BaseColor",
+                $"{id}_albedo",
+                $"{id}_Albedo",
+                $"{compactId}_basecolor",
+                $"{compactId}_BaseColor",
+                $"{compactId}_albedo",
+                $"{compactId}_Albedo",
+                $"{compactIdWithExtraE}_basecolor",
+                $"{compactIdWithExtraE}_BaseColor",
+                $"{compactIdWithExtraE}_albedo",
+                $"{compactIdWithExtraE}_Albedo"
+            };
+
+            string[] extensions = { "JPEG", "JPG", "PNG", "jpeg", "jpg", "png" };
+            for (int i = 0; i < names.Length; i++)
+            {
+                for (int e = 0; e < extensions.Length; e++)
+                {
+                    Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>(
+                        $"{CharacterFbxFolder}/{names[i]}.{extensions[e]}");
+                    if (texture != null)
+                        return texture;
+                }
+            }
+
+            return null;
+        }
+
+        private static GameObject LoadModelAtPath(string path)
+        {
+            return AssetDatabase.LoadAssetAtPath<GameObject>(path);
+        }
+
+        private static bool AssignIfMissing<T>(ref T target, T value) where T : UnityEngine.Object
+        {
+            if (target != null || value == null)
+                return false;
+
+            target = value;
+            return true;
+        }
+
+        private static bool AssignIfDifferent<T>(ref T target, T value) where T : UnityEngine.Object
+        {
+            if (target == value || value == null)
+                return false;
+
+            target = value;
+            return true;
+        }
+
+        private static AnimationClip LoadFirstAnimationClip(string path)
+        {
+            UnityEngine.Object[] assets = AssetDatabase.LoadAllAssetsAtPath(path);
+            return LoadFirstAnimationClip(assets);
+        }
+
+        private static AnimationClip LoadFirstAnimationClip(GameObject model)
+        {
+            if (model == null)
+                return null;
+
+            string path = AssetDatabase.GetAssetPath(model);
+            if (string.IsNullOrWhiteSpace(path))
+                return null;
+
+            UnityEngine.Object[] assets = AssetDatabase.LoadAllAssetsAtPath(path);
+            return LoadFirstAnimationClip(assets);
+        }
+
+        private static AnimationClip LoadFirstAnimationClip(UnityEngine.Object[] assets)
+        {
+            for (int i = 0; i < assets.Length; i++)
+            {
+                AnimationClip clip = assets[i] as AnimationClip;
+                if (clip == null || clip.name.StartsWith("__preview__", StringComparison.Ordinal))
+                    continue;
+
+                return clip;
+            }
+
+            return null;
+        }
+
+        [ContextMenu("Bind Shared FBX Models And Animations")]
+        private void BindSharedFbxModelsAndAnimationsFromContext()
+        {
+            EditorAutoAssignSharedFbxAssets();
+            InitializeRuntimeData();
+            MarkDirtyInEditor();
+        }
+#endif
 
         private void ApplyStarterFreeRule()
         {
@@ -687,7 +910,7 @@ namespace MahjongGame
                 "Kaplan",
                 CharacterAnimalType.Tiger,
                 CharacterGender.Male,
-                new BattleCharacterStats(1000, 16, 0.05f, 0.05f, 0.12f, 1.7f),
+                new BattleCharacterStats(100, 16, 0.05f, 0.05f, 0.12f, 1.7f),
                 0);
 
             AddDefaultCharacter(
@@ -696,7 +919,7 @@ namespace MahjongGame
                 "Di\u015Fi Kaplan",
                 CharacterAnimalType.Tiger,
                 CharacterGender.Female,
-                new BattleCharacterStats(1000, 16, 0.05f, 0.05f, 0.12f, 1.7f),
+                new BattleCharacterStats(100, 16, 0.05f, 0.05f, 0.12f, 1.7f),
                 1);
 
             AddDefaultCharacter(
@@ -705,7 +928,7 @@ namespace MahjongGame
                 "Tilki",
                 CharacterAnimalType.Fox,
                 CharacterGender.Male,
-                new BattleCharacterStats(900, 14, 0.03f, 0.12f, 0.18f, 1.8f),
+                new BattleCharacterStats(90, 14, 0.03f, 0.12f, 0.18f, 1.8f),
                 2);
 
             AddDefaultCharacter(
@@ -714,7 +937,7 @@ namespace MahjongGame
                 "Di\u015Fi Tilki",
                 CharacterAnimalType.Fox,
                 CharacterGender.Female,
-                new BattleCharacterStats(900, 14, 0.03f, 0.12f, 0.18f, 1.8f),
+                new BattleCharacterStats(90, 14, 0.03f, 0.12f, 0.18f, 1.8f),
                 3);
 
             AddDefaultCharacter(
@@ -723,7 +946,7 @@ namespace MahjongGame
                 "Kurt",
                 CharacterAnimalType.Wolf,
                 CharacterGender.Male,
-                new BattleCharacterStats(1100, 15, 0.08f, 0.1f, 0.1f, 1.65f),
+                new BattleCharacterStats(110, 15, 0.08f, 0.1f, 0.1f, 1.65f),
                 4);
 
             AddDefaultCharacter(
@@ -732,7 +955,7 @@ namespace MahjongGame
                 "Di\u015Fi Kurt",
                 CharacterAnimalType.Wolf,
                 CharacterGender.Female,
-                new BattleCharacterStats(1100, 15, 0.08f, 0.1f, 0.1f, 1.65f),
+                new BattleCharacterStats(110, 15, 0.08f, 0.1f, 0.1f, 1.65f),
                 5);
 
             AddDefaultCharacter(
@@ -741,7 +964,7 @@ namespace MahjongGame
                 "Ay\u0131",
                 CharacterAnimalType.Bear,
                 CharacterGender.Male,
-                new BattleCharacterStats(1300, 12, 0.15f, 0.08f, 0.06f, 1.5f),
+                new BattleCharacterStats(130, 12, 0.15f, 0.08f, 0.06f, 1.5f),
                 6);
 
             AddDefaultCharacter(
@@ -750,7 +973,7 @@ namespace MahjongGame
                 "Di\u015Fi Ay\u0131",
                 CharacterAnimalType.Bear,
                 CharacterGender.Female,
-                new BattleCharacterStats(1300, 12, 0.15f, 0.08f, 0.06f, 1.5f),
+                new BattleCharacterStats(130, 12, 0.15f, 0.08f, 0.06f, 1.5f),
                 7);
 
             InitializeRuntimeData();

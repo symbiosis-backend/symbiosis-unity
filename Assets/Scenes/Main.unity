@@ -1248,7 +1248,7 @@ RectTransform:
   m_GameObject: {fileID: 1518639850}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.2341964, y: 5.377435, z: 2.517404}
+  m_LocalScale: {x: 3.8537655, y: 7.8497667, z: 4.3422704}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 641697187}
@@ -1334,7 +1334,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 3918107348397701716, guid: 3a8fd3d11f442f041bd910fd4b59fb24, type: 3}
+  m_Sprite: {fileID: -8283896902950328010, guid: 0b81cf77d2fdba642812c7b9f9848053, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1808,11 +1808,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4225183264373869470, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 600
+      value: 720
       objectReference: {fileID: 0}
     - target: {fileID: 4225183264373869470, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 100
+      value: 172
       objectReference: {fileID: 0}
     - target: {fileID: 4225183264373869470, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_LocalPosition.x

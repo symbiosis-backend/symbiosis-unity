@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 #if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 #endif
 #if UNITY_EDITOR
@@ -30,12 +31,11 @@ namespace MahjongGame
         [SerializeField] private bool showSkipButton = true;
         [SerializeField] private bool showIntroText = true;
         [SerializeField] private bool enableStarTwinkle = false;
-        [SerializeField] private bool enableMotionParallax = false;
+        [SerializeField] private bool enableMotionParallax = true;
+        [SerializeField, Min(0f)] private float skipInputDelay = 1.25f;
 
         [Header("Canva Sprite Replacements")]
         [SerializeField] private Sprite ozkullarCompanySprite;
-        [SerializeField] private Sprite withSprite;
-        [SerializeField] private Sprite ozkullarCreativeAgencySprite;
         [SerializeField] private Sprite productionCreditsSprite;
         [SerializeField] private Sprite presentsSprite;
         [SerializeField] private Sprite symbiyozSprite;
@@ -48,15 +48,17 @@ namespace MahjongGame
         [SerializeField, Range(0f, 1f)] private float backgroundMaxAlpha = 1f;
         [SerializeField, Min(0f)] private float backgroundFadeInDuration = 1.35f;
         [SerializeField] private bool backgroundScrollLoop = true;
-        [SerializeField] private float backgroundScrollSpeed = 24f;
-        [SerializeField, Min(1f)] private float backgroundLoopHeight = 1080f;
+        [SerializeField] private float backgroundScrollSpeed = 22f;
+        [SerializeField, Min(1f)] private float backgroundLoopHeight = 2400f;
         [SerializeField] private float backgroundStartOffsetY = 0f;
-        [SerializeField, Min(0f)] private float parallaxMaxOffset = 18f;
-        [SerializeField, Min(0.01f)] private float parallaxSmooth = 3.25f;
-        [SerializeField, Range(0f, 1f)] private float starTwinkleAlpha = 0.42f;
+        [SerializeField, Min(0f)] private float parallaxMaxOffset = 24f;
+        [SerializeField, Min(0.01f)] private float parallaxSmooth = 3.4f;
+        [SerializeField, Range(0f, 1f)] private float backgroundGlowPulse = 0.16f;
+        [SerializeField, Min(0f)] private float backgroundGlowSpeed = 0.72f;
 
         private CanvasGroup rootGroup;
         private RectTransform rootRect;
+        private SolidRuntimeGraphic introBackdrop;
         private CinematicIntroGraphic visual;
         private RawImage backgroundGraphic;
         private RawImage backgroundLoopGraphic;
@@ -77,11 +79,34 @@ namespace MahjongGame
         private AudioClip generatedIntroClip;
         private Coroutine playRoutine;
         private Vector2 parallaxOffset;
+        private float playStartRealtime;
         private bool finished;
         private bool fadeComplete;
         private bool built;
 
         public bool IsFinished => finished;
+
+        private void Update()
+        {
+            if (!built || finished || Time.unscaledTime - playStartRealtime < skipInputDelay)
+                return;
+
+            if (ShouldSkipFromLegacyInput())
+            {
+                Skip();
+                return;
+            }
+
+#if ENABLE_INPUT_SYSTEM
+            Keyboard keyboard = Keyboard.current;
+            if (keyboard != null && (keyboard.escapeKey.wasPressedThisFrame || keyboard.sKey.wasPressedThisFrame || keyboard.spaceKey.wasPressedThisFrame))
+                Skip();
+
+            Pointer pointer = Pointer.current;
+            if (pointer != null && pointer.press.wasPressedThisFrame)
+                Skip();
+#endif
+        }
 
         private void OnDisable()
         {
@@ -98,6 +123,7 @@ namespace MahjongGame
 
         public IEnumerator Play()
         {
+            EnsureDefaultIntroSprites();
             Build();
 
             if (!built || rootGroup == null || rootRect == null)
@@ -109,13 +135,21 @@ namespace MahjongGame
 
             finished = false;
             fadeComplete = false;
+            playStartRealtime = Time.unscaledTime;
             rootGroup.alpha = 1f;
             rootGroup.blocksRaycasts = true;
             rootGroup.interactable = true;
             rootGroup.gameObject.SetActive(true);
             rootRect.SetAsLastSibling();
             UpdateVisuals(0f);
-            Debug.Log("[EntryCinematicIntro] Started. Background=" + (backgroundSprite != null ? backgroundSprite.name : "none") + ", Top overlay canvas enabled.");
+            Debug.Log("[EntryCinematicIntro] Started. Company=" + SpriteName(ozkullarCompanySprite)
+                + ", Constructors=" + SpriteName(productionCreditsSprite)
+                + ", Presents=" + SpriteName(presentsSprite)
+                + ", Logo=" + SpriteName(symbiyozSprite)
+                + ", Slogan=" + SpriteName(gatewayTaglineSprite)
+                + ", Dynasty=" + SpriteName(madeForDynastySprite)
+                + ", Background=" + SpriteName(backgroundSprite)
+                + ", Top overlay canvas enabled.");
 
             if (playRoutine != null)
                 StopCoroutine(playRoutine);
@@ -141,8 +175,6 @@ namespace MahjongGame
         {
             ReleaseGeneratedAudioClip();
             ozkullarCompanySprite = null;
-            withSprite = null;
-            ozkullarCreativeAgencySprite = null;
             productionCreditsSprite = null;
             presentsSprite = null;
             symbiyozSprite = null;
@@ -168,6 +200,50 @@ namespace MahjongGame
                 Finish(immediate: false);
         }
 
+        private void EnsureDefaultIntroSprites()
+        {
+            if (ozkullarCompanySprite == null)
+                ozkullarCompanySprite = LoadIntroSprite("OzkullarCompany");
+
+            if (productionCreditsSprite == null)
+                productionCreditsSprite = LoadIntroSprite("Constructors");
+
+            if (presentsSprite == null)
+                presentsSprite = LoadIntroSprite("Presents");
+
+            if (symbiyozSprite == null)
+                symbiyozSprite = LoadIntroSprite("SymbiosisLogo");
+
+            if (gatewayTaglineSprite == null)
+                gatewayTaglineSprite = LoadIntroSprite("Slogan");
+
+            if (madeForDynastySprite == null)
+                madeForDynastySprite = LoadIntroSprite("MadeForDynasty");
+
+            if (backgroundSprite == null)
+                backgroundSprite = LoadIntroSprite("BGINTRO");
+        }
+
+        private static Sprite LoadIntroSprite(string baseName)
+        {
+            Sprite[] sprites = Resources.LoadAll<Sprite>("IntroSprites/" + baseName);
+            string primaryName = baseName + "_0";
+
+            for (int i = 0; i < sprites.Length; i++)
+            {
+                Sprite sprite = sprites[i];
+                if (sprite != null && sprite.name == primaryName)
+                    return sprite;
+            }
+
+            return sprites.Length > 0 ? sprites[0] : Resources.Load<Sprite>("IntroSprites/" + baseName);
+        }
+
+        private static string SpriteName(Sprite sprite)
+        {
+            return sprite != null ? sprite.name : "none";
+        }
+
         private void Build()
         {
             if (built)
@@ -176,7 +252,7 @@ namespace MahjongGame
             EnsureEventSystem();
             DestroyStaleIntroCanvases();
 
-            GameObject root = new GameObject("EntryCinematicIntroCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(CanvasGroup));
+            GameObject root = new GameObject("EntryCinematicIntroCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster), typeof(CanvasGroup));
             introRoot = root;
             int uiLayer = LayerMask.NameToLayer("UI");
             root.layer = uiLayer >= 0 ? uiLayer : 0;
@@ -205,6 +281,7 @@ namespace MahjongGame
             rootGroup.interactable = true;
             rootGroup.ignoreParentGroups = true;
 
+            introBackdrop = CreateIntroBackdrop(root.transform);
             backgroundGraphic = CreateBackgroundGraphic(root.transform, "CanvaBackground");
             backgroundLoopGraphic = CreateBackgroundGraphic(root.transform, "CanvaBackgroundLoop");
             starTwinkleGraphic = CreateStarTwinkle(root.transform);
@@ -221,19 +298,20 @@ namespace MahjongGame
             microSprite = CreateSpriteGraphic(root.transform, "MicroSprite");
             presentsSpriteGraphic = CreateSpriteGraphic(root.transform, "PresentsSprite");
 
-            SetTextRect(backgroundGraphic.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(2400f, 1080f));
-            SetTextRect(backgroundLoopGraphic.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(2400f, 1080f));
+            SetTextRect(introBackdrop.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(2400f, 1080f));
+            SetTextRect(backgroundGraphic.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(2400f, 2400f));
+            SetTextRect(backgroundLoopGraphic.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(2400f, 2400f));
             SetTextRect(starTwinkleGraphic.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(2400f, 1080f));
             SetTextRect(primaryText.rectTransform, new Vector2(0.5f, 0.73f), new Vector2(1700f, 160f));
             SetTextRect(secondaryText.rectTransform, new Vector2(0.5f, 0.62f), new Vector2(1500f, 80f));
             SetTextRect(creditText.rectTransform, new Vector2(0.5f, 0.55f), new Vector2(1500f, 86f));
             SetTextRect(microText.rectTransform, new Vector2(0.5f, 0.465f), new Vector2(1500f, 82f));
-            SetTextRect(presentsText.rectTransform, new Vector2(0.5f, 0.39f), new Vector2(1000f, 54f));
-            SetTextRect(primarySprite.rectTransform, new Vector2(0.5f, 0.73f), new Vector2(1700f, 160f));
-            SetTextRect(secondarySprite.rectTransform, new Vector2(0.5f, 0.62f), new Vector2(1500f, 80f));
+            SetTextRect(presentsText.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(1050f, 240f));
+            SetTextRect(primarySprite.rectTransform, new Vector2(0.5f, 0.59f), new Vector2(1760f, 620f));
+            SetTextRect(secondarySprite.rectTransform, new Vector2(0.5f, 0.31f), new Vector2(1180f, 210f));
             SetTextRect(creditSprite.rectTransform, new Vector2(0.5f, 0.55f), new Vector2(1500f, 86f));
             SetTextRect(microSprite.rectTransform, new Vector2(0.5f, 0.465f), new Vector2(1500f, 82f));
-            SetTextRect(presentsSpriteGraphic.rectTransform, new Vector2(0.5f, 0.39f), new Vector2(1000f, 54f));
+            SetTextRect(presentsSpriteGraphic.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(1050f, 240f));
 
             if (showSkipButton)
                 skipButton = CreateSkipButton(root.transform);
@@ -301,6 +379,20 @@ namespace MahjongGame
             return graphic;
         }
 
+        private SolidRuntimeGraphic CreateIntroBackdrop(Transform parent)
+        {
+            GameObject backdropObject = new GameObject("IntroBackdrop", typeof(RectTransform), typeof(CanvasRenderer), typeof(SolidRuntimeGraphic));
+            backdropObject.transform.SetParent(parent, false);
+            backdropObject.layer = parent.gameObject.layer;
+            backdropObject.hideFlags = HideFlags.DontSave;
+
+            SolidRuntimeGraphic graphic = backdropObject.GetComponent<SolidRuntimeGraphic>();
+            graphic.raycastTarget = false;
+            graphic.color = Color.black;
+            return graphic;
+        }
+
+
         private StarTwinkleGraphic CreateStarTwinkle(Transform parent)
         {
             GameObject starObject = new GameObject("StarTwinkleOverlay", typeof(RectTransform), typeof(CanvasRenderer), typeof(StarTwinkleGraphic));
@@ -316,7 +408,7 @@ namespace MahjongGame
 
         private Button CreateSkipButton(Transform parent)
         {
-            GameObject buttonObject = new GameObject("SkipButton", typeof(RectTransform), typeof(CanvasRenderer), typeof(IntroSkipRaycastGraphic), typeof(Button), typeof(CanvasGroup));
+            GameObject buttonObject = new GameObject("SkipButton", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button), typeof(CanvasGroup));
             buttonObject.transform.SetParent(parent, false);
             buttonObject.layer = parent.gameObject.layer;
             buttonObject.hideFlags = HideFlags.DontSave;
@@ -328,20 +420,21 @@ namespace MahjongGame
             rect.anchoredPosition = new Vector2(0f, 42f);
             rect.sizeDelta = new Vector2(220f, 58f);
 
-            IntroSkipRaycastGraphic hitGraphic = buttonObject.GetComponent<IntroSkipRaycastGraphic>();
-            hitGraphic.color = new Color(0f, 0f, 0f, 0f);
+            Image hitGraphic = buttonObject.GetComponent<Image>();
+            hitGraphic.color = new Color(0f, 0f, 0f, 0.18f);
+            hitGraphic.raycastTarget = true;
 
             Button button = buttonObject.GetComponent<Button>();
             button.targetGraphic = hitGraphic;
             button.onClick.AddListener(Skip);
 
             CanvasGroup buttonGroup = buttonObject.GetComponent<CanvasGroup>();
-            buttonGroup.alpha = 0f;
+            buttonGroup.alpha = 1f;
             buttonGroup.blocksRaycasts = true;
             buttonGroup.interactable = true;
 
             TextMeshProUGUI label = CreateText(buttonObject.transform, "Label", 24f, FontStyles.Bold, TextAlignmentOptions.Center, new Color(1f, 1f, 1f, 0.78f));
-            label.text = "SKIP";
+            label.text = GameLocalization.Text("intro.skip");
             label.characterSpacing = 5f;
             SetTextRect(label.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(220f, 58f));
 
@@ -355,6 +448,33 @@ namespace MahjongGame
             rect.pivot = new Vector2(0.5f, 0.5f);
             rect.anchoredPosition = Vector2.zero;
             rect.sizeDelta = size;
+        }
+
+        private static bool ShouldSkipFromLegacyInput()
+        {
+            try
+            {
+                return Input.GetMouseButtonDown(0)
+                    || HasNewTouch()
+                    || Input.GetKeyDown(KeyCode.Escape)
+                    || Input.GetKeyDown(KeyCode.Space)
+                    || Input.GetKeyDown(KeyCode.S);
+            }
+            catch (System.InvalidOperationException)
+            {
+                return false;
+            }
+        }
+
+        private static bool HasNewTouch()
+        {
+            for (int i = 0; i < Input.touchCount; i++)
+            {
+                if (Input.GetTouch(i).phase == UnityEngine.TouchPhase.Began)
+                    return true;
+            }
+
+            return false;
         }
 
         private void UpdateVisuals(float time)
@@ -384,17 +504,20 @@ namespace MahjongGame
 
             if (skipButton != null)
             {
-                float alpha = Mathf.Clamp01((time - 1.1f) / 0.8f) * Mathf.Clamp01((duration - time) / 1.2f);
+                float alpha = Mathf.Clamp01((time - skipInputDelay) / 0.25f) * Mathf.Clamp01((duration - time) / 1.2f);
                 CanvasGroup buttonGroup = skipButton.GetComponent<CanvasGroup>();
                 if (buttonGroup != null)
                 {
                     buttonGroup.alpha = alpha;
-                    buttonGroup.blocksRaycasts = alpha > 0.05f;
-                    buttonGroup.interactable = alpha > 0.05f;
+                    buttonGroup.blocksRaycasts = true;
+                    buttonGroup.interactable = true;
                 }
                 TextMeshProUGUI label = skipButton.GetComponentInChildren<TextMeshProUGUI>();
                 if (label != null)
+                {
+                    label.text = GameLocalization.Text("intro.skip");
                     label.color = new Color(1f, 1f, 1f, 0.35f + alpha * 0.45f);
+                }
             }
         }
 
@@ -435,7 +558,7 @@ namespace MahjongGame
 
             spriteGraphic.gameObject.SetActive(useSprite);
             spriteGraphic.Sprite = sprite;
-            spriteGraphic.color = new Color(color.r, color.g, color.b, alpha);
+            spriteGraphic.color = new Color(1f, 1f, 1f, alpha);
             spriteGraphic.rectTransform.localScale = Vector3.one * scale;
         }
 
@@ -443,6 +566,12 @@ namespace MahjongGame
         {
             if (backgroundGraphic == null || backgroundLoopGraphic == null)
                 return;
+
+            if (introBackdrop != null)
+            {
+                introBackdrop.gameObject.SetActive(true);
+                introBackdrop.rectTransform.SetAsFirstSibling();
+            }
 
             bool hasBackground = backgroundSprite != null;
             if (visual != null)
@@ -456,7 +585,8 @@ namespace MahjongGame
 
             float fadeDuration = Mathf.Max(0.01f, backgroundFadeInDuration);
             float fade = Mathf.Clamp01(time / fadeDuration);
-            float alpha = Mathf.Lerp(0.88f, 1f, fade) * Mathf.Clamp01(backgroundMaxAlpha);
+            float glow = 1f + Mathf.Sin(time * Mathf.PI * 2f * backgroundGlowSpeed) * backgroundGlowPulse;
+            float alpha = Mathf.Lerp(0.88f, 1f, fade) * Mathf.Clamp01(backgroundMaxAlpha) * Mathf.Clamp(glow, 0.72f, 1.22f);
 
             backgroundGraphic.texture = backgroundSprite.texture;
             backgroundLoopGraphic.texture = backgroundSprite.texture;
@@ -470,8 +600,8 @@ namespace MahjongGame
 
             backgroundGraphic.rectTransform.anchoredPosition = new Vector2(parallaxOffset.x, baseY);
             backgroundLoopGraphic.rectTransform.anchoredPosition = new Vector2(parallaxOffset.x, baseY - direction * loopHeight);
-            backgroundGraphic.rectTransform.SetAsFirstSibling();
-            backgroundLoopGraphic.rectTransform.SetSiblingIndex(1);
+            backgroundGraphic.rectTransform.SetSiblingIndex(1);
+            backgroundLoopGraphic.rectTransform.SetSiblingIndex(2);
         }
 
         private void ApplyStarTwinkle(float time)
@@ -479,14 +609,7 @@ namespace MahjongGame
             if (starTwinkleGraphic == null)
                 return;
 
-            bool visible = enableStarTwinkle && backgroundSprite != null;
-            starTwinkleGraphic.gameObject.SetActive(visible);
-            if (!visible)
-                return;
-
-            starTwinkleGraphic.rectTransform.anchoredPosition = parallaxOffset * 1.35f;
-            starTwinkleGraphic.SetTwinkle(time, starTwinkleAlpha);
-            starTwinkleGraphic.rectTransform.SetSiblingIndex(2);
+            starTwinkleGraphic.gameObject.SetActive(false);
         }
 
         private void UpdateParallax(float time)
@@ -563,62 +686,81 @@ namespace MahjongGame
                 return cue;
             }
 
-            if (time < 10.6f)
+            if (duration < 10.85f)
             {
-                float outAlpha = Mathf.Clamp01((10.45f - time) / 0.85f);
-                float companyAlpha = Mathf.Clamp01((time - 0.45f) / 0.75f) * outAlpha;
-                float withAlpha = Mathf.Clamp01((time - 1.1f) / 0.75f) * outAlpha;
-                float agencyAlpha = Mathf.Clamp01((time - 1.75f) / 0.85f) * outAlpha;
-                float creditsAlpha = Mathf.Clamp01((time - 2.55f) / 0.9f) * Mathf.Clamp01((10.45f - time) / 0.85f);
+                float titleEnd = Mathf.Max(1.5f, duration - 0.35f);
+                float titleAlpha = PulseInOut(time, 0.45f, titleEnd);
+
+                cue.Primary = "SYMBIOSIS";
+                cue.PrimaryAlpha = titleAlpha;
+                cue.PrimaryScale = 1f + Mathf.Sin(time * 5.4f) * 0.012f;
+                cue.PrimaryColor = Color.Lerp(gold, Color.white, Mathf.Clamp01((time - 0.9f) / 1.4f) * 0.28f);
+
+                cue.Secondary = "Gateway to the Universe";
+                cue.SecondaryAlpha = Mathf.Clamp01((time - 0.95f) / 0.7f) * Mathf.Clamp01((titleEnd - time) / 0.45f);
+                cue.SecondaryColor = new Color(0.95f, 0.96f, 1f, 1f);
+                return cue;
+            }
+
+            if (time < 4.25f)
+            {
+                float companyAlpha = PulseInOut(time, 0.45f, 3.9f);
 
                 cue.Primary = "\u00D6ZKULLAR COMPANY";
                 cue.PrimarySprite = ozkullarCompanySprite;
                 cue.PrimaryAlpha = companyAlpha;
-                cue.PrimaryScale = Mathf.Lerp(0.975f, 1.01f, Mathf.Clamp01((time - 0.45f) / 4.8f));
+                cue.PrimaryScale = Mathf.Lerp(0.985f, 1.015f, Mathf.Clamp01((time - 0.45f) / 3.7f));
                 cue.PrimaryColor = gold;
+                return cue;
+            }
 
-                cue.Secondary = "WITH";
-                cue.SecondarySprite = withSprite;
-                cue.SecondaryAlpha = withAlpha * 0.72f;
-                cue.SecondaryColor = silver;
-
-                cue.Credit = "\u00D6ZKULLAR CREATIVE AGENCY";
-                cue.CreditSprite = ozkullarCreativeAgencySprite;
-                cue.CreditAlpha = agencyAlpha;
-                cue.CreditColor = new Color(0.9f, 0.93f, 0.98f, 1f);
-
-                cue.Micro = "Development and construction: BlackYang.\nArt and design: WhiteYin.";
-                cue.MicroSprite = productionCreditsSprite;
-                cue.MicroAlpha = creditsAlpha * 0.86f;
-                cue.MicroColor = new Color(0.95f, 0.92f, 0.82f, 1f);
+            if (time < 6.55f)
+            {
                 cue.Presents = "PRESENTS";
                 cue.PresentsSprite = presentsSprite;
-                cue.PresentsAlpha = creditsAlpha * 0.8f;
-                cue.PresentsColor = gold;
+                cue.PresentsAlpha = PulseInOut(time, 4.55f, 6.25f);
+                cue.PresentsColor = Color.white;
+                return cue;
+            }
+
+            if (time < 9.8f)
+            {
+                float creditsAlpha = PulseInOut(time, 6.85f, 9.5f);
+
+                cue.Primary = "CONSTRUCTORS";
+                cue.PrimarySprite = productionCreditsSprite;
+                cue.PrimaryAlpha = creditsAlpha;
+                cue.PrimaryScale = Mathf.Lerp(0.98f, 1.01f, Mathf.Clamp01((time - 6.85f) / 2.6f));
+                cue.PrimaryColor = new Color(0.95f, 0.92f, 0.82f, 1f);
+
+                cue.Secondary = "BlackYang  x  WhiteYin";
+                cue.SecondaryAlpha = productionCreditsSprite == null ? creditsAlpha * 0.78f : 0f;
+                cue.SecondaryColor = silver;
                 return cue;
             }
 
             if (time < 14.1f)
             {
-                float a = PulseInOut(time, 10.85f, 13.95f);
+                float a = PulseInOut(time, 10.05f, 13.95f);
                 float pulse = 1f + Mathf.Sin(time * 5.4f) * 0.012f;
                 cue.Primary = "SYMBIYOZ";
                 cue.PrimarySprite = symbiyozSprite;
                 cue.PrimaryAlpha = a;
                 cue.PrimaryScale = pulse;
-                cue.PrimaryColor = Color.Lerp(gold, Color.white, Mathf.Clamp01((time - 11.5f) / 1.4f) * 0.28f);
+                cue.PrimaryColor = Color.Lerp(gold, Color.white, Mathf.Clamp01((time - 10.6f) / 1.4f) * 0.28f);
 
                 cue.Secondary = "Gateway to the Universe";
                 cue.SecondarySprite = gatewayTaglineSprite;
-                cue.SecondaryAlpha = Mathf.Clamp01((time - 11.65f) / 0.9f) * Mathf.Clamp01((14f - time) / 0.65f);
+                cue.SecondaryAlpha = Mathf.Clamp01((time - 11.1f) / 0.85f) * Mathf.Clamp01((14f - time) / 0.65f);
                 cue.SecondaryColor = new Color(0.95f, 0.96f, 1f, 1f);
                 return cue;
             }
 
-            cue.Micro = "MADE FOR DYNASTY: LEGACY";
-            cue.MicroSprite = madeForDynastySprite;
-            cue.MicroAlpha = PulseInOut(time, 14.35f, 17.8f) * 0.9f;
-            cue.MicroColor = gold;
+            cue.Primary = "MADE FOR DYNASTY: LEGACY";
+            cue.PrimarySprite = madeForDynastySprite;
+            cue.PrimaryAlpha = PulseInOut(time, 14.35f, 17.8f) * 0.9f;
+            cue.PrimaryScale = 1f;
+            cue.PrimaryColor = gold;
             return cue;
         }
 
@@ -728,6 +870,7 @@ namespace MahjongGame
             skipButton = null;
             rootGroup = null;
             rootRect = null;
+            introBackdrop = null;
             visual = null;
             backgroundGraphic = null;
             backgroundLoopGraphic = null;
@@ -844,6 +987,7 @@ namespace MahjongGame
             eventSystem.AddComponent<StandaloneInputModule>();
 #endif
             eventSystem.transform.SetParent(null);
+            EventSystemInputModeGuard.EnsureCompatibleEventSystems();
         }
 
         private static void ClearEditorSelection()

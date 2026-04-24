@@ -63,10 +63,12 @@ namespace MahjongGame
             bot.AvatarId = avatarId;
             bot.RankPoints = rankPoints;
             bot.RankTier = rankTier;
+            bot.Level = Mathf.Max(1, 1 + rankPoints / 100);
             bot.IsBot = true;
             bot.TotalMatches = totalMatches;
             bot.Wins = wins;
             bot.Losses = Mathf.Max(0, totalMatches - wins);
+            bot.MvpCount = Mathf.Clamp(Mathf.RoundToInt(wins * Random.Range(0.18f, 0.48f)), 0, totalMatches);
             bot.DifficultyFactor = CalculateDifficulty(rankPoints, playerRankPoints);
 
             return bot;

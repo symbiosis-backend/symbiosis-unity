@@ -35,6 +35,7 @@ namespace MahjongGame
 
         private void OnEnable()
         {
+            ProfileRuntimeBootstrap.EnsureServices();
             EnsureGeneratedProfileInfo();
             ProfileService.ProfileChanged += Refresh;
             CurrencyService.CurrencyChanged += Refresh;
@@ -57,12 +58,11 @@ namespace MahjongGame
 
         public void Refresh()
         {
-            PlayerProfile profile = ProfileService.I != null ? ProfileService.I.Current : null;
+            PlayerProfile profile = ProfileRuntimeBootstrap.TryGetProfile();
 
             if (profile == null)
             {
                 ApplyFallback();
-                Debug.LogWarning("[ProfileLobbyView] Profile not found. Fallback applied.");
                 return;
             }
 
@@ -92,8 +92,14 @@ namespace MahjongGame
                 return;
 
             Sprite spriteToUse = fallbackAvatar;
+            Sprite resourceSprite = ProfileAvatarResources.GetSprite(profile.Gender, profile.AvatarId);
+            if (resourceSprite != null)
+            {
+                spriteToUse = resourceSprite;
+            }
 
-            if (avatarSprites != null &&
+            if (resourceSprite == null &&
+                avatarSprites != null &&
                 avatarSprites.Length > 0 &&
                 profile.AvatarId >= 0 &&
                 profile.AvatarId < avatarSprites.Length)

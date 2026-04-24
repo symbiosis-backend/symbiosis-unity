@@ -6,10 +6,14 @@ namespace MahjongGame.Clusters
     public static class ClusterMainMenuBootstrap
     {
         private const string MainSceneName = "Main";
+        private static readonly bool FeatureEnabled = false;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Initialize()
         {
+            if (!FeatureEnabled)
+                return;
+
             SceneManager.sceneLoaded -= OnSceneLoaded;
             SceneManager.sceneLoaded += OnSceneLoaded;
             EnsureForScene(SceneManager.GetActiveScene());

@@ -15,6 +15,8 @@ namespace MahjongGame
         [Header("Buttons")]
         [SerializeField] private Button selectCharacterButton;
         [SerializeField] private Button changeCharacterButton;
+        [SerializeField] private bool hideExplicitCharacterButtons = true;
+        [SerializeField] private bool openSelectionByLobbyCharacterClick = true;
 
         [Header("Optional Button Texts")]
         [SerializeField] private TMP_Text selectCharacterButtonText;
@@ -47,13 +49,15 @@ namespace MahjongGame
 
         [Header("Image Alignment")]
         [SerializeField] private bool anchorToBottomLeft = true;
-        [SerializeField] private float imageOffsetX = 0f;
+        [SerializeField] private float imageOffsetX = 12f;
         [SerializeField] private float imageOffsetY = 0f;
 
         private bool subscribed;
+        private Button lobbyCharacterClickButton;
 
         private void Awake()
         {
+            ApplyLobbyAnchor();
             BindButtons();
         }
 
@@ -83,6 +87,8 @@ namespace MahjongGame
 
             bool showingModel = ApplyLobbyModel(data);
             ApplyLobbyImage(showingModel ? null : targetSprite);
+            ApplyLobbyAnchor();
+            ConfigureLobbyCharacterClickTarget();
 
             if (selectedCharacterNameText != null)
                 selectedCharacterNameText.text = hasCharacter ? GetSafeName(data) : emptyNameText;
@@ -93,11 +99,7 @@ namespace MahjongGame
             if (changeCharacterButtonText != null)
                 changeCharacterButtonText.text = GetLocalizedText("battle.character.change_character", changeButtonTextValue);
 
-            if (selectCharacterButton != null)
-                selectCharacterButton.gameObject.SetActive(!hasCharacter);
-
-            if (changeCharacterButton != null)
-                changeCharacterButton.gameObject.SetActive(hasCharacter);
+            ApplyCharacterButtonVisibility(hasCharacter);
 
             if (emptyStateRoot != null)
                 emptyStateRoot.SetActive(!hasCharacter);
@@ -133,6 +135,14 @@ namespace MahjongGame
             if (sprite == null)
                 return;
 
+            ApplyLobbyAnchor();
+        }
+
+        private void ApplyLobbyAnchor()
+        {
+            if (lobbyCharacterImage == null)
+                return;
+
             RectTransform rt = lobbyCharacterImage.rectTransform;
 
             if (anchorToBottomLeft)
@@ -146,7 +156,11 @@ namespace MahjongGame
                 lobbyCharacterImage.SetNativeSize();
 
             if (limitSize)
-                FitInside(rt, sprite.rect.width, sprite.rect.height, maxWidth, maxHeight);
+            {
+                float width = Mathf.Max(1f, rt.rect.width);
+                float height = Mathf.Max(1f, rt.rect.height);
+                FitInside(rt, width, height, maxWidth, maxHeight);
+            }
 
             rt.anchoredPosition = new Vector2(imageOffsetX, imageOffsetY);
         }
@@ -194,6 +208,68 @@ namespace MahjongGame
             {
                 changeCharacterButton.onClick.RemoveListener(OpenBattleLobby);
                 changeCharacterButton.onClick.AddListener(OpenBattleLobby);
+            }
+
+            ConfigureLobbyCharacterClickTarget();
+        }
+
+        private void ConfigureLobbyCharacterClickTarget()
+        {
+            if (!openSelectionByLobbyCharacterClick || lobbyCharacterImage == null)
+                return;
+
+            if (lobbyCharacterClickButton == null)
+                lobbyCharacterClickButton = lobbyCharacterImage.GetComponent<Button>();
+
+            if (lobbyCharacterClickButton == null)
+                lobbyCharacterClickButton = lobbyCharacterImage.gameObject.AddComponent<Button>();
+
+            lobbyCharacterClickButton.transition = Selectable.Transition.None;
+            lobbyCharacterClickButton.targetGraphic = lobbyCharacterImage;
+            lobbyCharacterClickButton.interactable = true;
+            lobbyCharacterClickButton.onClick.RemoveListener(OpenBattleLobby);
+            lobbyCharacterClickButton.onClick.AddListener(OpenBattleLobby);
+
+            lobbyCharacterImage.raycastTarget = true;
+        }
+
+        private void ApplyCharacterButtonVisibility(bool hasCharacter)
+        {
+            if (selectCharacterButton != null)
+                selectCharacterButton.gameObject.SetActive(!hasCharacter);
+
+            if (changeCharacterButton == null)
+                return;
+
+            bool buttonOwnsLobbyImage = lobbyCharacterImage != null && lobbyCharacterImage.transform.IsChildOf(changeCharacterButton.transform);
+            if (!buttonOwnsLobbyImage)
+            {
+                changeCharacterButton.gameObject.SetActive(!hideExplicitCharacterButtons && hasCharacter);
+                return;
+            }
+
+            changeCharacterButton.gameObject.SetActive(true);
+            changeCharacterButton.interactable = hasCharacter;
+            changeCharacterButton.transition = Selectable.Transition.None;
+            changeCharacterButton.onClick.RemoveListener(OpenBattleLobby);
+            changeCharacterButton.onClick.AddListener(OpenBattleLobby);
+
+            Graphic targetGraphic = changeCharacterButton.targetGraphic;
+            if (targetGraphic != null)
+            {
+                Color color = targetGraphic.color;
+                color.a = hideExplicitCharacterButtons ? 0f : 1f;
+                targetGraphic.color = color;
+                targetGraphic.raycastTarget = true;
+            }
+
+            TMP_Text[] labels = changeCharacterButton.GetComponentsInChildren<TMP_Text>(true);
+            for (int i = 0; i < labels.Length; i++)
+            {
+                if (selectedCharacterNameText != null && labels[i] == selectedCharacterNameText)
+                    continue;
+
+                labels[i].gameObject.SetActive(!hideExplicitCharacterButtons);
             }
         }
 

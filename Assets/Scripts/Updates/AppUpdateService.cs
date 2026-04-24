@@ -204,6 +204,7 @@ namespace MahjongGame
                     eventSystem.AddComponent<StandaloneInputModule>();
 #endif
                 }
+                EventSystemInputModeGuard.EnsureCompatibleEventSystems();
 
                 GameObject root = new GameObject("AppUpdateUI", typeof(RectTransform));
                 root.transform.SetParent(canvas.transform, false);

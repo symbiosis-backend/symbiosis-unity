@@ -14,6 +14,8 @@ namespace MahjongGame.Multiplayer
 
         private const string BaseUrl = "https://dlsymbiosis.com";
         private const string KeySessionToken = "symbiosis_server_session_token";
+        private const string RankedPathPrefix = "/battle/ranked";
+        private const string RandomPathPrefix = "/battle/random";
 
         [SerializeField, Min(0.5f)] private float matchmakingPollSeconds = 2f;
         [SerializeField, Min(0.15f)] private float eventPollSeconds = 0.35f;
@@ -23,6 +25,7 @@ namespace MahjongGame.Multiplayer
         private Coroutine eventPollRoutine;
         private bool matchmakingCancelRequested;
         private int lastEventSeq;
+        private string activePathPrefix = RankedPathPrefix;
 
         public event Action<string> StatusChanged;
         public event Action<string> ErrorChanged;
@@ -39,6 +42,7 @@ namespace MahjongGame.Multiplayer
         public RankedOpponentInfo Opponent { get; private set; }
         public bool IsSearching => matchmakingRoutine != null;
         public bool IsInMatch => !string.IsNullOrWhiteSpace(MatchId);
+        public bool IsRandomMatchPath => string.Equals(activePathPrefix, RandomPathPrefix, StringComparison.Ordinal);
 
         public static OnlineRankedBattleNetwork EnsureInstance()
         {
@@ -72,9 +76,28 @@ namespace MahjongGame.Multiplayer
             if (matchmakingRoutine != null)
                 StopCoroutine(matchmakingRoutine);
 
+            activePathPrefix = RankedPathPrefix;
             ClearMatch();
             matchmakingCancelRequested = false;
-            matchmakingRoutine = StartCoroutine(RankedSearchRoutine());
+            matchmakingRoutine = StartCoroutine(SearchRoutine(
+                RankedPathPrefix,
+                "Searching ranked match...",
+                "Waiting for another player...",
+                failOnError: true));
+        }
+
+        public void StartRandomSearch()
+        {
+            if (matchmakingRoutine != null)
+                StopCoroutine(matchmakingRoutine);
+
+            activePathPrefix = RandomPathPrefix;
+            ClearMatch();
+            matchmakingCancelRequested = false;
+            matchmakingRoutine = StartCoroutine(SearchRoutine(
+                RandomPathPrefix,
+                "Searching random match...",
+                "Looking for a player..."));
         }
 
         public void CancelRankedSearch()
@@ -87,8 +110,13 @@ namespace MahjongGame.Multiplayer
                 matchmakingRoutine = null;
             }
 
-            StartCoroutine(CancelRankedSearchRoutine());
+            StartCoroutine(CancelSearchRoutine(activePathPrefix));
             SetStatus("Search cancelled");
+        }
+
+        public void CancelRandomSearch()
+        {
+            CancelRankedSearch();
         }
 
         public void StartMatchEventPolling()
@@ -168,10 +196,10 @@ namespace MahjongGame.Multiplayer
             MatchId = string.Empty;
         }
 
-        private IEnumerator RankedSearchRoutine()
+        private IEnumerator SearchRoutine(string pathPrefix, string searchingStatus, string waitingStatus, bool failOnError = false)
         {
             SetError(string.Empty);
-            SetStatus("Searching ranked match...");
+            SetStatus(searchingStatus);
 
             while (!matchmakingCancelRequested)
             {
@@ -180,7 +208,7 @@ namespace MahjongGame.Multiplayer
                 string error = string.Empty;
 
                 yield return PostJson(
-                    BaseUrl + "/battle/ranked/queue",
+                    BaseUrl + pathPrefix + "/queue",
                     CreateQueueRequest(),
                     text =>
                     {
@@ -199,7 +227,7 @@ namespace MahjongGame.Multiplayer
                 if (!string.IsNullOrWhiteSpace(error))
                 {
                     SetError(error);
-                    SetStatus("Ranked search failed");
+                    SetStatus(failOnError ? "Ranked search failed" : "Random online search unavailable");
                     matchmakingRoutine = null;
                     yield break;
                 }
@@ -210,17 +238,17 @@ namespace MahjongGame.Multiplayer
                     yield break;
                 }
 
-                SetStatus("Waiting for another player...");
+                SetStatus(waitingStatus);
                 yield return new WaitForSecondsRealtime(matchmakingPollSeconds);
             }
 
             matchmakingRoutine = null;
         }
 
-        private IEnumerator CancelRankedSearchRoutine()
+        private IEnumerator CancelSearchRoutine(string pathPrefix)
         {
             yield return PostJson(
-                BaseUrl + "/battle/ranked/cancel",
+                BaseUrl + pathPrefix + "/cancel",
                 new TokenRequest { token = GetSessionToken() },
                 _ => { },
                 error => SetError(error));
@@ -231,7 +259,8 @@ namespace MahjongGame.Multiplayer
             while (IsInMatch)
             {
                 string token = GetSessionToken();
-                string url = BaseUrl + "/battle/ranked/events" +
+                string pathPrefix = string.IsNullOrWhiteSpace(activePathPrefix) ? RankedPathPrefix : activePathPrefix;
+                string url = BaseUrl + pathPrefix + "/events" +
                              "?token=" + UnityWebRequest.EscapeURL(token) +
                              "&matchId=" + UnityWebRequest.EscapeURL(MatchId) +
                              "&afterSeq=" + lastEventSeq;
@@ -251,7 +280,8 @@ namespace MahjongGame.Multiplayer
 
         private IEnumerator PostEvent(RankedEventRequest payload)
         {
-            yield return PostJson(BaseUrl + "/battle/ranked/event", payload, _ => { }, error => SetError(error));
+            string pathPrefix = string.IsNullOrWhiteSpace(activePathPrefix) ? RankedPathPrefix : activePathPrefix;
+            yield return PostJson(BaseUrl + pathPrefix + "/event", payload, _ => { }, error => SetError(error));
         }
 
         private bool TryApplyMatchResponse(RankedMatchResponse response)

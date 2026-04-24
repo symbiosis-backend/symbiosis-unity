@@ -558,7 +558,11 @@ namespace FishNet.Managing.Timing
         /// </summary>
         private void UnsetSimulationSettings()
         {
+#if UNITY_2022_2_OR_NEWER
+            Physics.simulationMode = SimulationMode.FixedUpdate;
+#else
             Physics.autoSimulation = true;
+#endif
 #if !UNITY_2020_2_OR_NEWER
             Physics2D.autoSimulation = true;
 #else
@@ -634,7 +638,11 @@ namespace FishNet.Managing.Timing
             //Disable.
             if (mode == PhysicsMode.Disabled || mode == PhysicsMode.TimeManager)
             {
+#if UNITY_2022_2_OR_NEWER
+                Physics.simulationMode = SimulationMode.Script;
+#else
                 Physics.autoSimulation = false;
+#endif
 #if !UNITY_2020_2_OR_NEWER
                 Physics2D.autoSimulation = false;
 #else
@@ -644,7 +652,11 @@ namespace FishNet.Managing.Timing
             //Automatically simulate.
             else
             {
+#if UNITY_2022_2_OR_NEWER
+                Physics.simulationMode = SimulationMode.FixedUpdate;
+#else
                 Physics.autoSimulation = true;
+#endif
 #if !UNITY_2020_2_OR_NEWER
                 Physics2D.autoSimulation = true;
 #else

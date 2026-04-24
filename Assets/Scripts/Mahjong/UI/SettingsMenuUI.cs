@@ -9,8 +9,19 @@ namespace MahjongGame
     [DisallowMultipleComponent]
     public sealed class SettingsMenuUI : MonoBehaviour
     {
+        private static readonly Vector4 BattleLobbyWindowBorder = new Vector4(84f, 76f, 84f, 76f);
+
         private static SettingsMenuUI instance;
         private static GameObject persistentRoot;
+        private const string BattleSettingsButtonResourcePath = "Mahjong/Sprites/BattleSettingsButton";
+        private const string BattleLobbySettingsWindowResourcePath = "Mahjong/Sprites/BattleLobbyUI/SettingsBattleWindow";
+        private const string MainButtonStandardResourcePath = "Mahjong/Sprites/MainSettings/BtnMainStandart";
+        private const string MainSettingsButtonResourcePath = "Mahjong/Sprites/MainSettings/SettingsButtonMain";
+        private const string MainSettingsWindowResourcePath = "Mahjong/Sprites/MainSettings/MainSettingsWindow";
+        private const string MainSettingsTextButtonResourcePath = MainButtonStandardResourcePath;
+        private const string RussianLanguageButtonResourcePath = "Mahjong/Sprites/RuButton";
+        private const string EnglishLanguageButtonResourcePath = "Mahjong/Sprites/EngButton";
+        private const string TurkishLanguageButtonResourcePath = "Mahjong/Sprites/TrButton";
 
         [Header("Root")]
         [SerializeField] private GameObject panelRoot;
@@ -23,6 +34,7 @@ namespace MahjongGame
         [SerializeField] private RectTransform windowRect;
         [SerializeField] private Image panelBackgroundImage;
         [SerializeField] private Image windowImage;
+        [SerializeField] private Image mainSettingsWindowGraphicImage;
 
         [Header("Setting Buttons")]
         [SerializeField] private Button soundButton;
@@ -70,6 +82,15 @@ namespace MahjongGame
         [SerializeField] private SettingsSceneVisualStyle[] sceneVisualStyles;
 
         private float cachedTimeScale = 1f;
+        private Sprite cachedBattleSettingsButtonSprite;
+        private Sprite cachedMainSettingsButtonSprite;
+        private Sprite cachedMainSettingsWindowSprite;
+        private Sprite cachedMainSettingsTextButtonSprite;
+        private Sprite cachedRussianLanguageButtonSprite;
+        private Sprite cachedEnglishLanguageButtonSprite;
+        private Sprite cachedTurkishLanguageButtonSprite;
+        private Sprite cachedBattleLobbyWindowSourceSprite;
+        private Sprite cachedBattleLobbyWindowSprite;
 
         [Serializable]
         public sealed class SettingsSceneVisualStyle
@@ -255,7 +276,13 @@ namespace MahjongGame
                 AppSettings.I.RefreshAndApplyAudio();
 
             if (panelRoot != null)
+            {
                 panelRoot.SetActive(true);
+                string activeSceneName = SceneManager.GetActiveScene().name;
+                ApplyMainSettingsVisuals(activeSceneName);
+                ApplyBattleSettingsVisuals(activeSceneName);
+                RefreshButtons();
+            }
 
             if (IsGameScene && pauseGameWhenOpened)
             {
@@ -490,9 +517,9 @@ namespace MahjongGame
             ApplyButtonColor(soundButton, AppSettings.I.SoundEnabled);
             ApplyButtonColor(musicButton, AppSettings.I.MusicEnabled);
             ApplyButtonColor(vibrationButton, AppSettings.I.VibrationEnabled);
-            ApplyButtonColor(russianLanguageButton, AppSettings.I.Language == GameLanguage.Russian);
-            ApplyButtonColor(englishLanguageButton, AppSettings.I.Language == GameLanguage.English);
-            ApplyButtonColor(turkishLanguageButton, AppSettings.I.Language == GameLanguage.Turkish);
+            ApplyLanguageButtonColor(russianLanguageButton, AppSettings.I.Language == GameLanguage.Russian);
+            ApplyLanguageButtonColor(englishLanguageButton, AppSettings.I.Language == GameLanguage.English);
+            ApplyLanguageButtonColor(turkishLanguageButton, AppSettings.I.Language == GameLanguage.Turkish);
         }
 
         private void ApplyButtonColor(Button button, bool isEnabled)
@@ -501,6 +528,37 @@ namespace MahjongGame
                 return;
 
             button.image.color = isEnabled ? enabledColor : disabledColor;
+        }
+
+        private void ApplyLanguageButtonColor(Button button, bool isEnabled)
+        {
+            if (button == null || button.image == null)
+                return;
+
+            if (IsLanguageFlagSprite(button.image.sprite))
+            {
+                button.image.color = Color.white;
+                return;
+            }
+
+            button.image.color = isEnabled ? enabledColor : disabledColor;
+        }
+
+        private bool IsLanguageFlagSprite(Sprite sprite)
+        {
+            if (sprite == null)
+                return false;
+
+            if (sprite == cachedRussianLanguageButtonSprite
+                || sprite == cachedEnglishLanguageButtonSprite
+                || sprite == cachedTurkishLanguageButtonSprite)
+            {
+                return true;
+            }
+
+            return string.Equals(sprite.name, "RuButton_0", StringComparison.Ordinal)
+                || string.Equals(sprite.name, "EngButton_0", StringComparison.Ordinal)
+                || string.Equals(sprite.name, "TrButton_0", StringComparison.Ordinal);
         }
 
         private void AutoResolveVisualTargets()
@@ -668,7 +726,7 @@ namespace MahjongGame
                     OpenButtonAnchorMin = new Vector2(1f, 1f),
                     OpenButtonAnchorMax = new Vector2(1f, 1f),
                     OpenButtonPivot = new Vector2(1f, 1f),
-                    OpenButtonPosition = new Vector2(-58f, -42f),
+                    OpenButtonPosition = new Vector2(-390f, -42f),
                     OpenButtonSize = new Vector2(90f, 90f)
                 },
                 new SettingsSceneVisualStyle
@@ -679,7 +737,9 @@ namespace MahjongGame
                     OpenButtonAnchorMax = new Vector2(1f, 1f),
                     OpenButtonPivot = new Vector2(1f, 1f),
                     OpenButtonPosition = new Vector2(-58f, -42f),
-                    OpenButtonSize = new Vector2(82f, 82f)
+                    OpenButtonSize = new Vector2(82f, 82f),
+                    ApplyOpenButtonGraphic = true,
+                    OpenButtonColor = Color.white
                 },
                 new SettingsSceneVisualStyle
                 {
@@ -689,7 +749,12 @@ namespace MahjongGame
                     OpenButtonAnchorMax = new Vector2(1f, 1f),
                     OpenButtonPivot = new Vector2(1f, 1f),
                     OpenButtonPosition = new Vector2(-58f, -42f),
-                    OpenButtonSize = new Vector2(90f, 90f)
+                    OpenButtonSize = new Vector2(90f, 90f),
+                    ApplyOpenButtonGraphic = true,
+                    OpenButtonColor = Color.white,
+                    ApplyWindowGraphic = true,
+                    WindowSprite = LoadBattleLobbySettingsWindowSprite(),
+                    WindowColor = Color.white
                 },
                 new SettingsSceneVisualStyle
                 {
@@ -716,26 +781,39 @@ namespace MahjongGame
 
         private void ApplySceneVisualStyle()
         {
+            string activeSceneName = SceneManager.GetActiveScene().name;
+
             if (!applyVisualOverrides)
             {
                 ApplyBattleOpenButtonPlacement();
+                ApplyMainOpenButtonPlacement();
+                ApplyMainSettingsVisuals(activeSceneName);
+                ApplyBattleSettingsWindowLayout();
+                ApplyBattleSettingsVisuals(activeSceneName);
+                ApplyBattleOpenButtonSprite(activeSceneName, null);
+                ApplyLanguageButtonSprites(null);
                 return;
             }
 
             AutoResolveVisualTargets();
 
-            SettingsSceneVisualStyle style = ResolveSceneVisualStyle(SceneManager.GetActiveScene().name);
+            SettingsSceneVisualStyle style = ResolveSceneVisualStyle(activeSceneName);
             if (style == null)
             {
                 ApplyBattleOpenButtonPlacement();
+                ApplyMainOpenButtonPlacement();
+                ApplyMainSettingsVisuals(activeSceneName);
+                ApplyBattleSettingsWindowLayout();
+                ApplyBattleSettingsVisuals(activeSceneName);
+                ApplyBattleOpenButtonSprite(activeSceneName, null);
+                ApplyLanguageButtonSprites(null);
                 return;
             }
 
             if (style.ApplyOpenButtonRect)
                 ApplyRect(openButtonRect, style.OpenButtonAnchorMin, style.OpenButtonAnchorMax, style.OpenButtonPivot, style.OpenButtonPosition, style.OpenButtonSize);
 
-            if ((style.ApplyOpenButtonGraphic || style.OpenButtonSprite != null) && openButton != null && openButton.image != null)
-                ApplyGraphic(openButton.image, style.OpenButtonSprite, style.OpenButtonColor);
+            ApplyOpenButtonGraphic(style, activeSceneName);
 
             if (style.ApplyPanelRect)
                 ApplyRect(panelRootRect, style.PanelAnchorMin, style.PanelAnchorMax, style.PanelPivot, style.PanelPosition, style.PanelSize);
@@ -749,8 +827,9 @@ namespace MahjongGame
             if (style.ApplyWindowRect)
                 ApplyRect(windowRect, style.WindowAnchorMin, style.WindowAnchorMax, style.WindowPivot, style.WindowPosition, style.WindowSize);
 
-            if ((style.ApplyWindowGraphic || style.WindowSprite != null) && windowImage != null)
-                ApplyGraphic(windowImage, style.WindowSprite, style.WindowColor);
+            Sprite sceneWindowSprite = ResolveSceneWindowSprite(activeSceneName, style.WindowSprite);
+            if ((style.ApplyWindowGraphic || sceneWindowSprite != null) && windowImage != null)
+                ApplyGraphic(windowImage, sceneWindowSprite, style.WindowColor);
 
             if (style.ApplySettingButtonSize)
             {
@@ -787,7 +866,484 @@ namespace MahjongGame
                 RefreshButtons();
             }
 
+            ApplyLanguageButtonSprites(style);
+
             ApplyBattleOpenButtonPlacement();
+            ApplyMainOpenButtonPlacement();
+            ApplyMainSettingsVisuals(activeSceneName);
+            ApplyBattleSettingsWindowLayout();
+            ApplyBattleSettingsVisuals(activeSceneName);
+        }
+
+        private void ApplyOpenButtonGraphic(SettingsSceneVisualStyle style, string sceneName)
+        {
+            if (style == null)
+                return;
+
+            Sprite sprite = style.OpenButtonSprite;
+            if (IsBattleSettingsSceneName(sceneName))
+                sprite = LoadBattleSettingsButtonSprite() ?? sprite;
+            else if (IsMainSettingsSceneName(sceneName))
+                sprite = LoadMainSettingsButtonSprite() ?? sprite;
+
+            if ((style.ApplyOpenButtonGraphic || sprite != null) && openButton != null && openButton.image != null)
+                ApplyGraphic(openButton.image, sprite, style.OpenButtonColor);
+
+            SetOpenButtonLabelVisible(sprite == null);
+        }
+
+        private void ApplyBattleOpenButtonSprite(string sceneName, Sprite fallbackSprite)
+        {
+            if (!IsBattleSettingsSceneName(sceneName) || openButton == null || openButton.image == null)
+                return;
+
+            Sprite sprite = LoadBattleSettingsButtonSprite() ?? fallbackSprite;
+            if (sprite == null)
+                return;
+
+            ApplyGraphic(openButton.image, sprite, Color.white);
+            SetOpenButtonLabelVisible(false);
+        }
+
+        private void ApplyMainSettingsVisuals(string sceneName)
+        {
+            if (!IsMainSettingsSceneName(sceneName))
+            {
+                SetMainSettingsWindowGraphicVisible(false);
+                return;
+            }
+
+            Sprite openSprite = LoadMainSettingsButtonSprite();
+            if (openSprite != null && openButton != null && openButton.image != null)
+            {
+                ApplyGraphic(openButton.image, openSprite, Color.white);
+                openButton.image.type = Image.Type.Simple;
+                openButton.image.preserveAspect = true;
+                SetOpenButtonLabelVisible(false);
+            }
+
+            ApplyMainSettingsWindowGraphic();
+
+            ApplyRect(
+                windowRect,
+                new Vector2(0.5f, 0.5f),
+                new Vector2(0.5f, 0.5f),
+                new Vector2(0.5f, 0.5f),
+                Vector2.zero,
+                new Vector2(1100f, 740f));
+
+            SetDecorativeLineVisible("TopAmberLine", false);
+            SetDecorativeLineVisible("BottomJadeLine", false);
+            ApplyMainTextButtonVisuals();
+            ApplyMainSettingsWindowLayout(sceneName);
+            RefreshButtons();
+        }
+
+        private void SetDecorativeLineVisible(string objectName, bool visible)
+        {
+            if (windowRect == null || string.IsNullOrWhiteSpace(objectName))
+                return;
+
+            Transform line = FindChildByName(windowRect, objectName);
+            if (line != null && line.gameObject.activeSelf != visible)
+                line.gameObject.SetActive(visible);
+        }
+
+        private void ApplyMainTextButtonVisuals()
+        {
+            Sprite textButtonSprite = LoadMainSettingsTextButtonSprite();
+            if (textButtonSprite == null)
+                return;
+
+            ApplyTextButtonGraphic(soundButton, textButtonSprite);
+            ApplyTextButtonGraphic(musicButton, textButtonSprite);
+            ApplyTextButtonGraphic(vibrationButton, textButtonSprite);
+            ApplyTextButtonGraphic(changeProfileButton, textButtonSprite);
+            ApplyTextButtonGraphic(logoutButton, textButtonSprite);
+            ApplyTextButtonGraphic(closeButton, textButtonSprite);
+        }
+
+        private void ApplyMainSettingsWindowLayout(string sceneName)
+        {
+            Vector2 openButtonPosition = string.Equals(sceneName, "Main", StringComparison.Ordinal)
+                ? new Vector2(-58f, -42f)
+                : new Vector2(-78f, -42f);
+
+            ApplyRect(
+                openButtonRect,
+                new Vector2(1f, 1f),
+                new Vector2(1f, 1f),
+                new Vector2(1f, 1f),
+                openButtonPosition,
+                string.Equals(sceneName, "Main", StringComparison.Ordinal) ? new Vector2(82.5f, 82.5f) : new Vector2(110f, 110f));
+
+            ApplyButtonRect(soundButton, new Vector2(-320f, 160f), new Vector2(260f, 90f));
+            ApplyButtonRect(musicButton, new Vector2(0f, 160f), new Vector2(260f, 90f));
+            ApplyButtonRect(vibrationButton, new Vector2(320f, 160f), new Vector2(260f, 90f));
+
+            ApplyButtonRect(russianLanguageButton, new Vector2(-260f, 36f), new Vector2(150f, 90f));
+            ApplyButtonRect(englishLanguageButton, new Vector2(0f, 36f), new Vector2(150f, 90f));
+            ApplyButtonRect(turkishLanguageButton, new Vector2(260f, 36f), new Vector2(150f, 90f));
+
+            ApplyButtonRect(changeProfileButton, new Vector2(-205f, -126f), new Vector2(340f, 118f));
+            ApplyButtonRect(logoutButton, new Vector2(205f, -126f), new Vector2(340f, 118f));
+            ApplyButtonRect(closeButton, new Vector2(0f, -300f), new Vector2(270f, 94f));
+        }
+
+        private static void ApplyTextButtonGraphic(Button button, Sprite sprite)
+        {
+            if (button == null || button.image == null || sprite == null)
+                return;
+
+            button.image.sprite = sprite;
+            button.image.type = Image.Type.Simple;
+            button.image.preserveAspect = true;
+            button.image.color = Color.white;
+            SetButtonLabelVisible(button, true);
+            MainLobbyButtonStyle.Apply(button);
+        }
+
+        private Sprite LoadBattleSettingsButtonSprite()
+        {
+            if (cachedBattleSettingsButtonSprite != null)
+                return cachedBattleSettingsButtonSprite;
+
+            cachedBattleSettingsButtonSprite = LoadFirstSprite(BattleSettingsButtonResourcePath, null);
+            return cachedBattleSettingsButtonSprite;
+        }
+
+        private Sprite LoadMainSettingsButtonSprite()
+        {
+            if (cachedMainSettingsButtonSprite != null)
+                return cachedMainSettingsButtonSprite;
+
+            cachedMainSettingsButtonSprite = LoadFirstSprite(MainSettingsButtonResourcePath, "SettingsButtonMain_0");
+            return cachedMainSettingsButtonSprite;
+        }
+
+        private Sprite LoadMainSettingsWindowSprite()
+        {
+            if (cachedMainSettingsWindowSprite != null && IsUsableSettingsWindowSprite(cachedMainSettingsWindowSprite))
+                return cachedMainSettingsWindowSprite;
+
+            cachedMainSettingsWindowSprite = LoadLargestSprite(MainSettingsWindowResourcePath, "Window_1");
+            return cachedMainSettingsWindowSprite;
+        }
+
+        private Sprite LoadBattleLobbySettingsWindowSprite()
+        {
+            if (cachedBattleLobbyWindowSourceSprite != null && IsUsableSettingsWindowSprite(cachedBattleLobbyWindowSourceSprite))
+                return cachedBattleLobbyWindowSourceSprite;
+
+            cachedBattleLobbyWindowSourceSprite = LoadLargestSprite(BattleLobbySettingsWindowResourcePath, "SettingsBattleWindow");
+            return cachedBattleLobbyWindowSourceSprite;
+        }
+
+        private static bool IsUsableSettingsWindowSprite(Sprite sprite)
+        {
+            if (sprite == null)
+                return false;
+
+            return sprite.rect.width >= 500f && sprite.rect.height >= 300f;
+        }
+
+        private void ApplyMainSettingsWindowGraphic()
+        {
+            if (windowImage == null && windowRect != null)
+                windowImage = windowRect.GetComponent<Image>();
+
+            if (windowRect == null)
+                return;
+
+            Sprite windowSprite = LoadMainSettingsWindowSprite();
+            if (windowSprite == null)
+                return;
+
+            Image targetImage = EnsureMainSettingsWindowGraphicImage();
+            if (targetImage == null)
+                return;
+
+            ApplyMainSettingsWindowImage(windowImage, windowSprite, true);
+            ApplyMainSettingsWindowImage(targetImage, windowSprite, false);
+            SetMainSettingsWindowGraphicVisible(true);
+
+            targetImage.transform.SetAsFirstSibling();
+        }
+
+        private void SetMainSettingsWindowGraphicVisible(bool visible)
+        {
+            if (mainSettingsWindowGraphicImage != null)
+            {
+                mainSettingsWindowGraphicImage.enabled = visible;
+                mainSettingsWindowGraphicImage.raycastTarget = false;
+            }
+
+            if (!visible)
+            {
+                SetDecorativeLineVisible("TopAmberLine", false);
+                SetDecorativeLineVisible("BottomJadeLine", false);
+            }
+        }
+
+        private static void ApplyMainSettingsWindowImage(Image image, Sprite sprite, bool receiveRaycasts)
+        {
+            if (image == null || sprite == null)
+                return;
+
+            image.enabled = true;
+            image.sprite = sprite;
+            image.type = Image.Type.Simple;
+            image.preserveAspect = true;
+            image.color = Color.white;
+            image.raycastTarget = receiveRaycasts;
+        }
+
+        private Image EnsureMainSettingsWindowGraphicImage()
+        {
+            if (mainSettingsWindowGraphicImage != null)
+                return mainSettingsWindowGraphicImage;
+
+            if (windowRect == null)
+                return null;
+
+            Transform existing = FindChildByName(windowRect, "MainSettingsWindowGraphic");
+            if (existing != null)
+            {
+                mainSettingsWindowGraphicImage = existing.GetComponent<Image>();
+                if (mainSettingsWindowGraphicImage != null)
+                    return mainSettingsWindowGraphicImage;
+            }
+
+            GameObject graphicObject = new GameObject("MainSettingsWindowGraphic", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            graphicObject.transform.SetParent(windowRect, false);
+            graphicObject.transform.SetAsFirstSibling();
+
+            RectTransform graphicRect = graphicObject.GetComponent<RectTransform>();
+            graphicRect.anchorMin = Vector2.zero;
+            graphicRect.anchorMax = Vector2.one;
+            graphicRect.pivot = new Vector2(0.5f, 0.5f);
+            graphicRect.anchoredPosition = Vector2.zero;
+            graphicRect.offsetMin = Vector2.zero;
+            graphicRect.offsetMax = Vector2.zero;
+
+            mainSettingsWindowGraphicImage = graphicObject.GetComponent<Image>();
+            return mainSettingsWindowGraphicImage;
+        }
+
+        private Sprite ResolveSceneWindowSprite(string sceneName, Sprite sourceSprite)
+        {
+            if (!IsBattleSettingsSceneName(sceneName))
+                return sourceSprite;
+
+            Sprite popupWindowSprite = BattlePopupStyle.WindowSprite;
+            if (popupWindowSprite != null)
+                return popupWindowSprite;
+
+            sourceSprite ??= LoadBattleLobbySettingsWindowSprite();
+            if (sourceSprite == null)
+                return null;
+
+            if (cachedBattleLobbyWindowSprite != null && cachedBattleLobbyWindowSprite.texture == sourceSprite.texture)
+                return cachedBattleLobbyWindowSprite;
+
+            cachedBattleLobbyWindowSprite = Sprite.Create(
+                sourceSprite.texture,
+                sourceSprite.rect,
+                new Vector2(0.5f, 0.5f),
+                sourceSprite.pixelsPerUnit,
+                0,
+                SpriteMeshType.FullRect,
+                BattleLobbyWindowBorder);
+
+            return cachedBattleLobbyWindowSprite;
+        }
+
+        private void ApplyBattleSettingsVisuals(string sceneName)
+        {
+            if (!IsBattleSettingsSceneName(sceneName))
+                return;
+
+            SetMainSettingsWindowGraphicVisible(false);
+
+            Sprite sprite = ResolveSceneWindowSprite(sceneName, null);
+            if (sprite != null && windowImage != null)
+                ApplyGraphic(windowImage, sprite, Color.white);
+
+            ApplyBattleSettingsButtonVisuals();
+        }
+
+        private void ApplyBattleSettingsButtonVisuals()
+        {
+            ApplyBattleSettingToggleButtonVisual(soundButton);
+            ApplyBattleSettingToggleButtonVisual(musicButton);
+            ApplyBattleSettingToggleButtonVisual(vibrationButton);
+
+            ApplyBattleActionButtonVisual(changeProfileButton);
+            ApplyBattleActionButtonVisual(logoutButton);
+            ApplyBattleActionButtonVisual(closeButton);
+            ApplyBattleActionButtonVisual(returnToMenuButton);
+            ApplyBattleActionButtonVisual(restartButton);
+            ApplyBattleActionButtonVisual(surrenderButton);
+        }
+
+        private static void ApplyBattleSettingToggleButtonVisual(Button button)
+        {
+            BattlePopupStyle.ApplyButton(button, true);
+        }
+
+        private static void ApplyBattleActionButtonVisual(Button button)
+        {
+            BattlePopupStyle.ApplyButton(button);
+        }
+
+        private Sprite LoadMainSettingsTextButtonSprite()
+        {
+            if (cachedMainSettingsTextButtonSprite != null)
+                return cachedMainSettingsTextButtonSprite;
+
+            cachedMainSettingsTextButtonSprite = LoadFirstSprite(MainSettingsTextButtonResourcePath, "BtnMainStandart_0");
+            return cachedMainSettingsTextButtonSprite;
+        }
+
+        private void ApplyLanguageButtonSprites(SettingsSceneVisualStyle style)
+        {
+            Sprite russianSprite = LoadRussianLanguageButtonSprite() ?? style?.RussianLanguageSprite;
+            Sprite englishSprite = LoadEnglishLanguageButtonSprite() ?? style?.EnglishLanguageSprite;
+            Sprite turkishSprite = LoadTurkishLanguageButtonSprite() ?? style?.TurkishLanguageSprite;
+
+            ApplyLanguageButtonSprite(russianLanguageButton, russianSprite);
+            ApplyLanguageButtonSprite(englishLanguageButton, englishSprite);
+            ApplyLanguageButtonSprite(turkishLanguageButton, turkishSprite);
+            RefreshButtons();
+        }
+
+        private Sprite LoadRussianLanguageButtonSprite()
+        {
+            if (cachedRussianLanguageButtonSprite != null)
+                return cachedRussianLanguageButtonSprite;
+
+            cachedRussianLanguageButtonSprite = LoadFirstSprite(RussianLanguageButtonResourcePath, null);
+            return cachedRussianLanguageButtonSprite;
+        }
+
+        private Sprite LoadEnglishLanguageButtonSprite()
+        {
+            if (cachedEnglishLanguageButtonSprite != null)
+                return cachedEnglishLanguageButtonSprite;
+
+            cachedEnglishLanguageButtonSprite = LoadFirstSprite(EnglishLanguageButtonResourcePath, null);
+            return cachedEnglishLanguageButtonSprite;
+        }
+
+        private Sprite LoadTurkishLanguageButtonSprite()
+        {
+            if (cachedTurkishLanguageButtonSprite != null)
+                return cachedTurkishLanguageButtonSprite;
+
+            cachedTurkishLanguageButtonSprite = LoadFirstSprite(TurkishLanguageButtonResourcePath, null);
+            return cachedTurkishLanguageButtonSprite;
+        }
+
+        private static Sprite LoadFirstSprite(string resourcePath, string preferredSpriteName)
+        {
+            Sprite sprite = Resources.Load<Sprite>(resourcePath);
+            if (sprite != null)
+                return sprite;
+
+            Sprite[] sprites = Resources.LoadAll<Sprite>(resourcePath);
+            if (sprites == null || sprites.Length == 0)
+                return null;
+
+            if (!string.IsNullOrWhiteSpace(preferredSpriteName))
+            {
+                for (int i = 0; i < sprites.Length; i++)
+                {
+                    if (sprites[i] != null && string.Equals(sprites[i].name, preferredSpriteName, StringComparison.Ordinal))
+                        return sprites[i];
+                }
+            }
+
+            return sprites[0];
+        }
+
+        private static Sprite LoadLargestSprite(string resourcePath, string preferredSpriteName)
+        {
+            Sprite[] sprites = Resources.LoadAll<Sprite>(resourcePath);
+            if (sprites != null && sprites.Length > 0)
+            {
+                if (!string.IsNullOrWhiteSpace(preferredSpriteName))
+                {
+                    for (int i = 0; i < sprites.Length; i++)
+                    {
+                        if (sprites[i] != null && string.Equals(sprites[i].name, preferredSpriteName, StringComparison.Ordinal))
+                            return sprites[i];
+                    }
+                }
+
+                Sprite largest = null;
+                float largestArea = 0f;
+                for (int i = 0; i < sprites.Length; i++)
+                {
+                    Sprite candidate = sprites[i];
+                    if (candidate == null)
+                        continue;
+
+                    float area = candidate.rect.width * candidate.rect.height;
+                    if (largest == null || area > largestArea)
+                    {
+                        largest = candidate;
+                        largestArea = area;
+                    }
+                }
+
+                if (largest != null)
+                    return largest;
+            }
+
+            return Resources.Load<Sprite>(resourcePath);
+        }
+
+        private void ApplyLanguageButtonSprite(Button button, Sprite sprite)
+        {
+            if (button == null || button.image == null)
+                return;
+
+            if (sprite != null)
+            {
+                button.image.sprite = sprite;
+                button.image.type = Image.Type.Simple;
+                button.image.preserveAspect = true;
+                button.image.color = Color.white;
+            }
+
+            SetButtonLabelVisible(button, sprite == null);
+        }
+
+        private bool IsBattleSettingsSceneName(string sceneName)
+        {
+            return string.Equals(sceneName, battleGameplaySceneName, StringComparison.Ordinal)
+                || string.Equals(sceneName, battleLobbySceneName, StringComparison.Ordinal);
+        }
+
+        private bool IsMainSettingsSceneName(string sceneName)
+        {
+            return string.Equals(sceneName, "Main", StringComparison.Ordinal)
+                || string.Equals(sceneName, mahjongLobbySceneName, StringComparison.Ordinal);
+        }
+
+        private void SetOpenButtonLabelVisible(bool visible)
+        {
+            SetButtonLabelVisible(openButton, visible);
+        }
+
+        private static void SetButtonLabelVisible(Button button, bool visible)
+        {
+            if (button == null)
+                return;
+
+            TMP_Text label = button.GetComponentInChildren<TMP_Text>(true);
+            if (label != null)
+                label.gameObject.SetActive(visible);
         }
 
         private static bool HasSettingButtonSprites(SettingsSceneVisualStyle style)
@@ -848,7 +1404,12 @@ namespace MahjongGame
                 return;
 
             if (sprite != null)
+            {
                 image.sprite = sprite;
+                bool useSliced = sprite.border.sqrMagnitude > 0.01f;
+                image.type = useSliced ? Image.Type.Sliced : Image.Type.Simple;
+                image.preserveAspect = !useSliced;
+            }
 
             image.color = color;
         }
@@ -883,6 +1444,63 @@ namespace MahjongGame
                 new Vector2(1f, 1f),
                 new Vector2(-58f, -42f),
                 new Vector2(82f, 82f));
+        }
+
+        private void ApplyMainOpenButtonPlacement()
+        {
+            if (!string.Equals(SceneManager.GetActiveScene().name, "Main", StringComparison.Ordinal))
+                return;
+
+            ApplyRect(
+                openButtonRect,
+                new Vector2(1f, 1f),
+                new Vector2(1f, 1f),
+                new Vector2(1f, 1f),
+                new Vector2(-58f, -42f),
+                new Vector2(82.5f, 82.5f));
+        }
+
+        private void ApplyBattleSettingsWindowLayout()
+        {
+            if (!IsBattleSettingsSceneName(SceneManager.GetActiveScene().name))
+                return;
+
+            ApplyRect(
+                windowRect,
+                new Vector2(0.5f, 0.5f),
+                new Vector2(0.5f, 0.5f),
+                new Vector2(0.5f, 0.5f),
+                Vector2.zero,
+                new Vector2(760f, 620f));
+
+            ApplyButtonRect(soundButton, new Vector2(-230f, 160f), new Vector2(180f, 74f));
+            ApplyButtonRect(musicButton, new Vector2(0f, 160f), new Vector2(180f, 74f));
+            ApplyButtonRect(vibrationButton, new Vector2(230f, 160f), new Vector2(180f, 74f));
+
+            ApplyButtonRect(russianLanguageButton, new Vector2(-230f, 58f), new Vector2(180f, 70f));
+            ApplyButtonRect(englishLanguageButton, new Vector2(0f, 58f), new Vector2(180f, 70f));
+            ApplyButtonRect(turkishLanguageButton, new Vector2(230f, 58f), new Vector2(180f, 70f));
+
+            ApplyButtonRect(returnToMenuButton, new Vector2(-190f, -78f), new Vector2(230f, 74f));
+            ApplyButtonRect(restartButton, new Vector2(190f, -78f), new Vector2(230f, 74f));
+            ApplyButtonRect(surrenderButton, new Vector2(0f, -180f), new Vector2(260f, 76f));
+            ApplyButtonRect(closeButton, new Vector2(0f, -272f), new Vector2(210f, 68f));
+        }
+
+        private static void ApplyButtonRect(Button button, Vector2 position, Vector2 size)
+        {
+            if (button == null)
+                return;
+
+            RectTransform rect = button.GetComponent<RectTransform>();
+            if (rect == null)
+                return;
+
+            rect.anchorMin = new Vector2(0.5f, 0.5f);
+            rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.anchoredPosition = position;
+            rect.sizeDelta = size;
         }
 
         private Button FindButtonByName(string buttonName)
@@ -954,9 +1572,16 @@ namespace MahjongGame
         {
             bool showGameButtons = IsGameScene;
             bool showSurrender = IsBattleGameScene;
+            bool showProfileActions = !IsGameScene;
 
             if (gameButtonsRoot != null)
                 gameButtonsRoot.SetActive(showGameButtons);
+
+            if (changeProfileButton != null)
+                changeProfileButton.gameObject.SetActive(showProfileActions);
+
+            if (logoutButton != null)
+                logoutButton.gameObject.SetActive(showProfileActions);
 
             if (returnToMenuButton != null)
                 returnToMenuButton.gameObject.SetActive(showGameButtons);
@@ -966,6 +1591,9 @@ namespace MahjongGame
 
             if (surrenderButton != null)
                 surrenderButton.gameObject.SetActive(showSurrender);
+
+            ApplyBattleSettingsWindowLayout();
+            ApplyBattleSettingsVisuals(SceneManager.GetActiveScene().name);
         }
 
         private void RefreshOpenButtonVisibility()
@@ -1081,12 +1709,6 @@ namespace MahjongGame
             enabledColor = new Color(0.95f, 0.58f, 0.22f, 0.98f);
             disabledColor = new Color(0.16f, 0.14f, 0.12f, 0.92f);
 
-            GameObject topLine = CreateRuntimePanel(window.transform, "TopAmberLine", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -28f), new Vector2(760f, 5f), new Color(1f, 0.53f, 0.16f, 0.72f));
-            topLine.GetComponent<Image>().raycastTarget = false;
-
-            GameObject bottomLine = CreateRuntimePanel(window.transform, "BottomJadeLine", new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(0f, 28f), new Vector2(760f, 4f), new Color(0.31f, 0.8f, 0.55f, 0.42f));
-            bottomLine.GetComponent<Image>().raycastTarget = false;
-
             soundButton = CreateRuntimeTextButton(window.transform, "BtnSound", new Vector2(0.5f, 0.5f), new Vector2(-260f, 120f), new Vector2(190f, 76f), "Sound", "settings.sound", RuntimeButtonStyle.Setting);
             musicButton = CreateRuntimeTextButton(window.transform, "BtnMusic", new Vector2(0.5f, 0.5f), new Vector2(0f, 120f), new Vector2(190f, 76f), "Music", "settings.music", RuntimeButtonStyle.Setting);
             vibrationButton = CreateRuntimeTextButton(window.transform, "BtnVibration", new Vector2(0.5f, 0.5f), new Vector2(260f, 120f), new Vector2(190f, 76f), "Vibration", "settings.vibration", RuntimeButtonStyle.Setting);
@@ -1187,12 +1809,14 @@ namespace MahjongGame
 
             TextMeshProUGUI text = textObject.GetComponent<TextMeshProUGUI>();
             text.text = string.IsNullOrWhiteSpace(localizationKey) ? label : GameLocalization.Text(localizationKey);
+            MainLobbyButtonStyle.ApplyFont(text);
             text.fontSize = 28f;
             text.enableAutoSizing = true;
             text.fontSizeMin = 16f;
             text.fontSizeMax = 32f;
             text.alignment = TextAlignmentOptions.Center;
             text.color = ResolveRuntimeButtonTextColor(style);
+            MainLobbyButtonStyle.ApplySilverTextEffect(text);
             text.raycastTarget = false;
 
             if (!string.IsNullOrWhiteSpace(localizationKey))
