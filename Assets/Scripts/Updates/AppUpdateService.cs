@@ -1,6 +1,6 @@
 using System;
 using System.Collections;
-using System.Text;
+using MahjongGame.Networking;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -17,7 +17,8 @@ namespace MahjongGame
 {
     public sealed class AppUpdateService : MonoBehaviour
     {
-        private const string UpdateManifestUrl = "https://dlsymbiosis.com/updates/android";
+        private const string UpdateManifestPath = "/updates/android";
+        private const string DesktopUpdateManifestPath = "/updates/desktop";
 
         private static AppUpdateService instance;
 
@@ -30,6 +31,11 @@ namespace MahjongGame
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Bootstrap()
         {
+#if UNITY_IOS
+            // The current backend manifest points to an Android APK. iOS updates are delivered by the App Store.
+            Debug.Log("[AppUpdateService] Native iOS update prompts are disabled; updates are managed by the App Store.");
+            return;
+#endif
             if (instance != null)
                 return;
 
@@ -68,25 +74,36 @@ namespace MahjongGame
 
             checking = true;
 
-            using UnityWebRequest request = UnityWebRequest.Get(UpdateManifestUrl);
-            request.timeout = 10;
+            string responseText = string.Empty;
+            string requestError = string.Empty;
+            bool failed = true;
 
-            yield return request.SendWebRequest();
+            for (int i = 0; i < BackendEndpoints.BaseUrls.Length; i++)
+            {
+                using UnityWebRequest request = UnityWebRequest.Get(BackendEndpoints.BuildUrl(BackendEndpoints.BaseUrls[i], GetUpdateManifestPath()));
+                request.timeout = 10;
+
+                yield return request.SendWebRequest();
+
+                responseText = request.downloadHandler != null ? request.downloadHandler.text : string.Empty;
+                requestError = request.error;
+                failed = BackendEndpoints.RequestFailed(request);
+                if (!failed || !BackendEndpoints.CanRetryWithFallback(request) || i == BackendEndpoints.BaseUrls.Length - 1)
+                    break;
+            }
 
             checking = false;
 
-            if (request.result == UnityWebRequest.Result.ConnectionError ||
-                request.result == UnityWebRequest.Result.ProtocolError ||
-                request.result == UnityWebRequest.Result.DataProcessingError)
+            if (failed)
             {
-                Debug.LogWarning("[AppUpdateService] Update check failed: " + request.error);
+                Debug.LogWarning("[AppUpdateService] Update check failed: " + requestError);
                 yield break;
             }
 
             AppUpdateManifest manifest = null;
             try
             {
-                manifest = JsonUtility.FromJson<AppUpdateManifest>(request.downloadHandler.text);
+                manifest = JsonUtility.FromJson<AppUpdateManifest>(responseText);
             }
             catch (Exception ex)
             {
@@ -99,21 +116,33 @@ namespace MahjongGame
             lastManifest = manifest;
 
             if (ShouldShowUpdate(manifest))
+            {
+                manifest.forceUpdate = IsUpdateRequired(manifest);
                 AppUpdateUI.Show(manifest);
+            }
         }
 
         private bool ShouldShowUpdate(AppUpdateManifest manifest)
         {
+            if (manifest == null)
+                return false;
+
+            if (IsStandaloneDesktopClient() && !manifest.updateAvailable)
+            {
+                Debug.Log("[AppUpdateService] Desktop patch channel checked. No desktop package is available yet.");
+                return false;
+            }
+
             if (manifest == null || manifest.latestVersionCode <= 0)
             {
                 Debug.LogWarning("[AppUpdateService] Update manifest has no valid latestVersionCode.");
                 return false;
             }
 
-            int currentCode = GetCurrentAndroidVersionCode();
+            int currentCode = GetCurrentClientVersionCode();
             if (currentCode <= 0)
             {
-                Debug.LogWarning("[AppUpdateService] Current Android versionCode is unknown. Update prompt will be skipped.");
+                Debug.LogWarning("[AppUpdateService] Current client version code is unknown. Update prompt will be skipped.");
                 return false;
             }
 
@@ -128,34 +157,38 @@ namespace MahjongGame
             return manifest.latestVersionCode > currentCode;
         }
 
-        private int GetCurrentAndroidVersionCode()
+        private bool IsUpdateRequired(AppUpdateManifest manifest)
         {
-#if UNITY_EDITOR
-            int editorVersionCode = PlayerSettings.Android.bundleVersionCode;
-            return editorVersionCode > 0 ? editorVersionCode : ResolveFallbackAndroidVersionCode();
-#elif UNITY_ANDROID
-            try
-            {
-                using AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-                using AndroidJavaObject activity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-                using AndroidJavaObject packageManager = activity.Call<AndroidJavaObject>("getPackageManager");
-                string packageName = activity.Call<string>("getPackageName");
-                using AndroidJavaObject packageInfo = packageManager.Call<AndroidJavaObject>("getPackageInfo", packageName, 0);
-                return packageInfo.Get<int>("versionCode");
-            }
-            catch (Exception ex)
-            {
-                Debug.LogWarning("[AppUpdateService] Could not read Android versionCode: " + ex.Message);
-            }
-            return ResolveFallbackAndroidVersionCode();
-#else
-            return ResolveFallbackAndroidVersionCode();
-#endif
+            int currentCode = GetCurrentClientVersionCode();
+            return manifest != null &&
+                   currentCode > 0 &&
+                   (manifest.minimumVersionCode > currentCode ||
+                    (manifest.forceUpdate && manifest.latestVersionCode > currentCode));
+        }
+
+        private int GetCurrentClientVersionCode()
+        {
+            int versionCode = BackendEndpoints.GetClientVersionCode();
+            return versionCode > 0 ? versionCode : ResolveFallbackAndroidVersionCode();
         }
 
         private int ResolveFallbackAndroidVersionCode()
         {
             return fallbackAndroidVersionCode > 0 ? fallbackAndroidVersionCode : -1;
+        }
+
+        private static string GetUpdateManifestPath()
+        {
+            return IsStandaloneDesktopClient() ? DesktopUpdateManifestPath : UpdateManifestPath;
+        }
+
+        private static bool IsStandaloneDesktopClient()
+        {
+#if UNITY_STANDALONE
+            return !Application.isEditor;
+#else
+            return false;
+#endif
         }
 
         [Serializable]
@@ -167,7 +200,9 @@ namespace MahjongGame
             public int latestVersionCode;
             public int minimumVersionCode;
             public bool forceUpdate;
+            public bool updateAvailable;
             public string updateUrl;
+            public string packageUrl;
             public string releaseNotes;
             public string checkedAt;
         }
@@ -175,7 +210,6 @@ namespace MahjongGame
         private sealed class AppUpdateUI : MonoBehaviour
         {
             private AppUpdateManifest manifest;
-            private GameObject panelRoot;
 
             public static void Show(AppUpdateManifest manifest)
             {
@@ -229,53 +263,70 @@ namespace MahjongGame
                 overlayRect.anchorMax = Vector2.one;
                 overlayRect.offsetMin = Vector2.zero;
                 overlayRect.offsetMax = Vector2.zero;
-                overlay.GetComponent<Image>().color = new Color(0f, 0f, 0f, 0.78f);
+                overlay.GetComponent<Image>().color = new Color(0.015f, 0.018f, 0.025f, 0.96f);
 
-                panelRoot = new GameObject("UpdatePanel", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-                panelRoot.transform.SetParent(overlay.transform, false);
-                RectTransform panelRect = panelRoot.transform as RectTransform;
-                panelRect.anchorMin = new Vector2(0.5f, 0.5f);
-                panelRect.anchorMax = new Vector2(0.5f, 0.5f);
-                panelRect.pivot = new Vector2(0.5f, 0.5f);
-                panelRect.anchoredPosition = Vector2.zero;
-                panelRect.sizeDelta = new Vector2(620f, 430f);
-                panelRoot.GetComponent<Image>().color = new Color(0.06f, 0.075f, 0.1f, 0.98f);
+                TMP_Text title = CreateText(overlay.transform, "Title", GameLocalization.Text("update.title"), 58f, FontStyles.Bold, TextAlignmentOptions.Center);
+                title.enableAutoSizing = true;
+                title.fontSizeMin = 36f;
+                title.fontSizeMax = 58f;
+                SetRect(title.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(80f, -164f), new Vector2(-80f, -62f));
 
-                TMP_Text title = CreateText(panelRoot.transform, "Title", GameLocalization.Text("update.title"), 38f, FontStyles.Bold, TextAlignmentOptions.Center);
-                SetRect(title.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(32f, -86f), new Vector2(-32f, -24f));
+                TMP_Text subtitle = CreateText(overlay.transform, "Subtitle", GameLocalization.Text("update.subtitle"), 28f, FontStyles.Normal, TextAlignmentOptions.Center);
+                subtitle.enableAutoSizing = true;
+                subtitle.fontSizeMin = 20f;
+                subtitle.fontSizeMax = 28f;
+                SetRect(subtitle.rectTransform, new Vector2(0.08f, 1f), new Vector2(0.92f, 1f), new Vector2(0f, -272f), new Vector2(0f, -172f));
 
-                string body = BuildMessage(updateManifest);
-                TMP_Text message = CreateText(panelRoot.transform, "Message", body, 22f, FontStyles.Normal, TextAlignmentOptions.Center);
-                message.enableAutoSizing = true;
-                message.fontSizeMin = 15f;
-                message.fontSizeMax = 22f;
-                SetRect(message.rectTransform, Vector2.zero, Vector2.one, new Vector2(42f, 118f), new Vector2(-42f, -104f));
+                TMP_Text version = CreateText(overlay.transform, "Version", BuildVersionLine(updateManifest), 26f, FontStyles.Bold, TextAlignmentOptions.Center);
+                version.enableAutoSizing = true;
+                version.fontSizeMin = 19f;
+                version.fontSizeMax = 26f;
+                SetRect(version.rectTransform, new Vector2(0.1f, 1f), new Vector2(0.9f, 1f), new Vector2(0f, -340f), new Vector2(0f, -284f));
 
-                Button updateButton = CreateButton(panelRoot.transform, "UpdateButton", GameLocalization.Text("update.button"), new Vector2(0.5f, 0f), new Vector2(0f, 54f), new Vector2(220f, 58f));
+                TMP_Text required = CreateText(overlay.transform, "Required", updateManifest.forceUpdate ? GameLocalization.Text("update.required") : GameLocalization.Text("update.body_older"), 24f, FontStyles.Bold, TextAlignmentOptions.Center);
+                required.color = updateManifest.forceUpdate ? new Color(1f, 0.78f, 0.28f, 1f) : new Color(0.78f, 0.9f, 1f, 1f);
+                required.enableAutoSizing = true;
+                required.fontSizeMin = 18f;
+                required.fontSizeMax = 24f;
+                SetRect(required.rectTransform, new Vector2(0.1f, 1f), new Vector2(0.9f, 1f), new Vector2(0f, -402f), new Vector2(0f, -348f));
+
+                TMP_Text notesTitle = CreateText(overlay.transform, "NotesTitle", GameLocalization.Text("update.notes_title"), 30f, FontStyles.Bold, TextAlignmentOptions.Center);
+                SetRect(notesTitle.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(80f, -478f), new Vector2(-80f, -424f));
+
+                ScrollRect notesScroll = CreateNotesScroll(overlay.transform, BuildReleaseNotes(updateManifest));
+                SetRect(notesScroll.GetComponent<RectTransform>(), new Vector2(0.08f, 0f), new Vector2(0.92f, 1f), new Vector2(0f, 176f), new Vector2(0f, -488f));
+
+                Button updateButton = CreateButton(overlay.transform, "UpdateButton", GameLocalization.Text("update.button"), new Vector2(0.5f, 0f), new Vector2(0f, 92f), new Vector2(420f, 76f), new Color(0.11f, 0.56f, 0.72f, 1f));
                 updateButton.onClick.AddListener(OpenUpdate);
 
                 if (!updateManifest.forceUpdate)
                 {
-                    Button laterButton = CreateButton(panelRoot.transform, "LaterButton", GameLocalization.Text("update.later"), new Vector2(0.5f, 0f), new Vector2(0f, -18f), new Vector2(160f, 48f));
+                    Button laterButton = CreateButton(overlay.transform, "LaterButton", GameLocalization.Text("update.later"), new Vector2(0.5f, 0f), new Vector2(0f, 24f), new Vector2(260f, 54f), new Color(0.18f, 0.2f, 0.25f, 1f));
                     laterButton.onClick.AddListener(Close);
                 }
             }
 
-            private static string BuildMessage(AppUpdateManifest manifest)
+            private static string BuildVersionLine(AppUpdateManifest manifest)
             {
-                StringBuilder builder = new StringBuilder();
-                builder.Append(GameLocalization.Text("update.body_older"));
+                string currentVersion = Application.version;
+                int currentCode = BackendEndpoints.GetClientVersionCode();
+                if (currentCode > 0)
+                    currentVersion += " (" + currentCode + ")";
 
-                if (!string.IsNullOrWhiteSpace(manifest.latestVersion))
-                    builder.AppendLine().Append(GameLocalization.Format("update.latest_version", manifest.latestVersion));
+                string latestVersion = string.IsNullOrWhiteSpace(manifest.latestVersion) ? manifest.latestVersionCode.ToString() : manifest.latestVersion;
+                if (manifest.latestVersionCode > 0)
+                    latestVersion += " (" + manifest.latestVersionCode + ")";
 
+                return GameLocalization.Format("update.current_version", currentVersion) + "\n" +
+                       GameLocalization.Format("update.latest_version", latestVersion);
+            }
+
+            private static string BuildReleaseNotes(AppUpdateManifest manifest)
+            {
                 if (!string.IsNullOrWhiteSpace(manifest.releaseNotes))
-                    builder.AppendLine().AppendLine().Append(manifest.releaseNotes);
+                    return manifest.releaseNotes.Trim();
 
-                if (manifest.forceUpdate)
-                    builder.AppendLine().AppendLine().Append(GameLocalization.Text("update.required"));
-
-                return builder.ToString();
+                return GameLocalization.Text("update.body_older");
             }
 
             private void OpenUpdate()
@@ -307,7 +358,58 @@ namespace MahjongGame
                 return text;
             }
 
-            private static Button CreateButton(Transform parent, string name, string label, Vector2 anchor, Vector2 position, Vector2 size)
+            private static ScrollRect CreateNotesScroll(Transform parent, string notes)
+            {
+                GameObject scrollObject = new GameObject("NotesScroll", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(ScrollRect));
+                scrollObject.transform.SetParent(parent, false);
+                Image background = scrollObject.GetComponent<Image>();
+                background.color = new Color(0.05f, 0.06f, 0.08f, 0.82f);
+
+                GameObject viewport = new GameObject("Viewport", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Mask));
+                viewport.transform.SetParent(scrollObject.transform, false);
+                RectTransform viewportRect = viewport.transform as RectTransform;
+                SetRect(viewportRect, Vector2.zero, Vector2.one, new Vector2(28f, 22f), new Vector2(-28f, -22f));
+                Image viewportImage = viewport.GetComponent<Image>();
+                viewportImage.color = new Color(1f, 1f, 1f, 0.02f);
+                viewport.GetComponent<Mask>().showMaskGraphic = false;
+
+                GameObject content = new GameObject("Content", typeof(RectTransform), typeof(ContentSizeFitter), typeof(VerticalLayoutGroup));
+                content.transform.SetParent(viewport.transform, false);
+                RectTransform contentRect = content.transform as RectTransform;
+                contentRect.anchorMin = new Vector2(0f, 1f);
+                contentRect.anchorMax = new Vector2(1f, 1f);
+                contentRect.pivot = new Vector2(0.5f, 1f);
+                contentRect.anchoredPosition = Vector2.zero;
+                contentRect.sizeDelta = Vector2.zero;
+
+                ContentSizeFitter fitter = content.GetComponent<ContentSizeFitter>();
+                fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+                VerticalLayoutGroup layout = content.GetComponent<VerticalLayoutGroup>();
+                layout.childAlignment = TextAnchor.UpperLeft;
+                layout.childControlWidth = true;
+                layout.childControlHeight = true;
+                layout.childForceExpandWidth = true;
+                layout.childForceExpandHeight = false;
+
+                TMP_Text notesText = CreateText(content.transform, "Notes", notes, 24f, FontStyles.Normal, TextAlignmentOptions.TopLeft);
+                notesText.color = new Color(0.92f, 0.94f, 0.98f, 1f);
+                notesText.lineSpacing = 12f;
+                notesText.enableAutoSizing = true;
+                notesText.fontSizeMin = 18f;
+                notesText.fontSizeMax = 24f;
+
+                ScrollRect scroll = scrollObject.GetComponent<ScrollRect>();
+                scroll.viewport = viewportRect;
+                scroll.content = contentRect;
+                scroll.horizontal = false;
+                scroll.vertical = true;
+                scroll.movementType = ScrollRect.MovementType.Clamped;
+                scroll.scrollSensitivity = 32f;
+                return scroll;
+            }
+
+            private static Button CreateButton(Transform parent, string name, string label, Vector2 anchor, Vector2 position, Vector2 size, Color color)
             {
                 GameObject buttonObject = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
                 buttonObject.transform.SetParent(parent, false);
@@ -320,10 +422,13 @@ namespace MahjongGame
                 rect.sizeDelta = size;
 
                 Image image = buttonObject.GetComponent<Image>();
-                image.color = new Color(0.12f, 0.48f, 0.62f, 1f);
+                image.color = color;
 
-                TMP_Text text = CreateText(buttonObject.transform, "Label", label, 24f, FontStyles.Bold, TextAlignmentOptions.Center);
-                SetRect(text.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+                TMP_Text text = CreateText(buttonObject.transform, "Label", label, 30f, FontStyles.Bold, TextAlignmentOptions.Center);
+                text.enableAutoSizing = true;
+                text.fontSizeMin = 20f;
+                text.fontSizeMax = 30f;
+                SetRect(text.rectTransform, Vector2.zero, Vector2.one, new Vector2(18f, 0f), new Vector2(-18f, 0f));
 
                 return buttonObject.GetComponent<Button>();
             }

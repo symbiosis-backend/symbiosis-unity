@@ -15,7 +15,7 @@ namespace MahjongGame.EditorTools
     public static class CleanEntrySceneBuilder
     {
         private const string ScenePath = "Assets/Scenes/Entry.unity";
-        private const string IntroSpritePath = "Assets/Sprites/IntroSprites/";
+        private const string IntroSpritePath = "Assets/Sprites/Entry/IntroSequence/";
 
         public static void Build()
         {

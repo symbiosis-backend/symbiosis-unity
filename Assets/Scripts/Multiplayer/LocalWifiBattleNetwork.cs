@@ -606,7 +606,8 @@ namespace MahjongGame.Multiplayer
                 Encode(player.DisplayName),
                 Encode(player.RankTier),
                 player.RankPoints.ToString(),
-                Encode(player.CharacterId)));
+                Encode(player.CharacterId),
+                Encode(JsonUtility.ToJson(player.Loadout))));
         }
 
         public void SendProfileUpdate()
@@ -836,6 +837,7 @@ namespace MahjongGame.Multiplayer
             public string RankTier;
             public int RankPoints;
             public string CharacterId;
+            public BattleLoadoutSnapshot Loadout;
 
             public static LocalPlayerInfo CreateFallback()
             {
@@ -855,6 +857,7 @@ namespace MahjongGame.Multiplayer
             public string RankTier;
             public int RankPoints;
             public string CharacterId;
+            public BattleLoadoutSnapshot Loadout;
 
             public static RemotePlayerInfo FromParts(string[] parts)
             {
@@ -863,7 +866,10 @@ namespace MahjongGame.Multiplayer
                     DisplayName = parts.Length > 1 ? Decode(parts[1]) : "Opponent",
                     RankTier = parts.Length > 2 ? Decode(parts[2]) : "Unranked",
                     RankPoints = 0,
-                    CharacterId = parts.Length > 4 ? Decode(parts[4]) : string.Empty
+                    CharacterId = parts.Length > 4 ? Decode(parts[4]) : string.Empty,
+                    Loadout = parts.Length > 5
+                        ? JsonUtility.FromJson<BattleLoadoutSnapshot>(Decode(parts[5]))
+                        : null
                 };
 
                 if (parts.Length > 3 && int.TryParse(parts[3], out int points))

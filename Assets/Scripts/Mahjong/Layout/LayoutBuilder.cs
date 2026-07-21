@@ -15,12 +15,12 @@ namespace MahjongGame
         [SerializeField] private LayoutData layout;
 
         [Header("Base Spacing")]
-        [SerializeField] private float gapX = -10f;
-        [SerializeField] private float gapY = -6f;
+        [SerializeField] private float gapX = -14f;
+        [SerializeField] private float gapY = -30f;
 
         [Header("Layer Visual Shift")]
-        [SerializeField] private float layerShiftX = 6f;
-        [SerializeField] private float layerShiftY = 1.5f;
+        [SerializeField] private float layerShiftX = 48f;
+        [SerializeField] private float layerShiftY = 66f;
 
         private readonly List<LayoutSlot> runtimeSlots = new();
         private Vector2 tileSize = new(56f, 76f);

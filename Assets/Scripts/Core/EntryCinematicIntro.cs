@@ -609,7 +609,9 @@ namespace MahjongGame
             if (starTwinkleGraphic == null)
                 return;
 
-            starTwinkleGraphic.gameObject.SetActive(false);
+            starTwinkleGraphic.gameObject.SetActive(enableStarTwinkle);
+            if (enableStarTwinkle)
+                starTwinkleGraphic.SetTwinkle(time, 0.75f);
         }
 
         private void UpdateParallax(float time)

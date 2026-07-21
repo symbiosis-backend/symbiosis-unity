@@ -18,6 +18,9 @@ namespace MahjongGame
         private bool applyingRemoteDamage;
         private bool boardManifestSent;
         private bool playerServerBoardApplied;
+        private bool matchFinished;
+        private OnlineRankedBattleNetwork.RankedServerEvent pendingPlayerBoardManifest;
+        private OnlineRankedBattleNetwork.RankedServerEvent pendingOpponentBoardManifest;
         private readonly Queue<PendingTilePick> pendingTilePicks = new Queue<PendingTilePick>();
         private readonly Queue<PendingDamage> pendingDamage = new Queue<PendingDamage>();
 
@@ -35,6 +38,9 @@ namespace MahjongGame
 
         private void OnDisable()
         {
+            if (IsOnlineRankedBattle() && !matchFinished)
+                OnlineRankedBattleNetwork.I?.SendForfeitMatch();
+
             Unbind();
         }
 
@@ -56,8 +62,12 @@ namespace MahjongGame
             {
                 playerBoard.TileSelectionRequested -= HandleLocalTileSelectionRequested;
                 playerBoard.BuildCompleted -= HandlePlayerBoardBuildCompleted;
+                playerBoard.Cleared -= HandlePlayerBoardFinished;
+                playerBoard.Failed -= HandlePlayerBoardFinished;
                 playerBoard.TileSelectionRequested += HandleLocalTileSelectionRequested;
                 playerBoard.BuildCompleted += HandlePlayerBoardBuildCompleted;
+                playerBoard.Cleared += HandlePlayerBoardFinished;
+                playerBoard.Failed += HandlePlayerBoardFinished;
             }
 
             if (opponentBoard != null)
@@ -94,6 +104,8 @@ namespace MahjongGame
             {
                 playerBoard.TileSelectionRequested -= HandleLocalTileSelectionRequested;
                 playerBoard.BuildCompleted -= HandlePlayerBoardBuildCompleted;
+                playerBoard.Cleared -= HandlePlayerBoardFinished;
+                playerBoard.Failed -= HandlePlayerBoardFinished;
                 playerBoard.SetRequireExternalSelectionApproval(false);
             }
 
@@ -189,13 +201,40 @@ namespace MahjongGame
         private void HandleOpponentBoardBuildCompleted(BattleBoard board)
         {
             if (board == opponentBoard)
+            {
+                if (pendingOpponentBoardManifest != null)
+                {
+                    OnlineRankedBattleNetwork.RankedServerEvent manifest = pendingOpponentBoardManifest;
+                    pendingOpponentBoardManifest = null;
+                    ApplyServerBoardManifest(manifest);
+                }
                 DrainPendingEvents();
+            }
         }
 
         private void HandlePlayerBoardBuildCompleted(BattleBoard board)
         {
             if (board == playerBoard)
+            {
+                if (pendingPlayerBoardManifest != null)
+                {
+                    OnlineRankedBattleNetwork.RankedServerEvent manifest = pendingPlayerBoardManifest;
+                    pendingPlayerBoardManifest = null;
+                    ApplyServerBoardManifest(manifest);
+                }
                 TrySendBoardManifest();
+            }
+        }
+
+        private void HandlePlayerBoardFinished(BattleBoard board)
+        {
+            if (!IsOnlineRankedBattle() || board != playerBoard)
+                return;
+
+            boardManifestSent = false;
+            playerServerBoardApplied = false;
+            playerBoard.SetInteractionLocked(true);
+            Log("Player board finished; waiting for next authoritative board.");
         }
 
         private void HandleLocalDamageApplied(BattleCombatSystem _, BattleBoardSide targetSide, int damage, int hpAfter)
@@ -242,6 +281,7 @@ namespace MahjongGame
 
             if (string.Equals(item.type, "finish", System.StringComparison.OrdinalIgnoreCase))
             {
+                matchFinished = true;
                 bool playerWon = item.winnerIndex == OnlineRankedBattleNetwork.I.PlayerIndex;
                 matchController?.ForceFinishMatch(playerWon);
                 return;
@@ -303,8 +343,8 @@ namespace MahjongGame
                 slots,
                 tilePool,
                 combatSystem.MaxPlayerHp,
-                combatSystem.DamagePerPair);
-            Log($"Requested authoritative board | Slots={slots.Length} TilePool={tilePool.Length}");
+                combatSystem.NetworkDamagePerPair);
+            Log($"Requested authoritative board | Slots={slots.Length} TilePool={tilePool.Length} Damage={combatSystem.NetworkDamagePerPair}");
         }
 
         private void ApplyServerBoardManifest(OnlineRankedBattleNetwork.RankedServerEvent item)
@@ -317,13 +357,31 @@ namespace MahjongGame
                 : opponentBoard;
 
             if (targetBoard == null || !targetBoard.IsBuilt)
+            {
+                if (targetBoard == playerBoard)
+                    pendingPlayerBoardManifest = item;
+                else
+                {
+                    pendingOpponentBoardManifest = item;
+                    EnsureOpponentLoadoutFromManifest(item);
+                    matchController?.BuildCurrentBoardFromFrozenLoadout(BattleBoardSide.Opponent);
+                }
                 return;
+            }
 
             string[] ids = new string[item.tiles.Length];
             for (int i = 0; i < item.tiles.Length; i++)
                 ids[i] = item.tiles[i] != null ? item.tiles[i].id : string.Empty;
 
             targetBoard.ApplyServerTileIds(ids);
+
+            if (combatSystem != null && item.maxHp > 0)
+            {
+                if (item.actorIndex == OnlineRankedBattleNetwork.I.PlayerIndex)
+                    combatSystem.SetMaxHp(item.maxHp, combatSystem.MaxOpponentHp);
+                else
+                    combatSystem.SetMaxHp(combatSystem.MaxPlayerHp, item.maxHp);
+            }
 
             if (targetBoard == playerBoard)
             {
@@ -362,18 +420,59 @@ namespace MahjongGame
         private static string[] BuildTilePool()
         {
             BattleTileStore store = BattleTileStore.I != null ? BattleTileStore.I : FindAnyObjectByType<BattleTileStore>();
-            if (store == null || store.BattleTiles == null)
+            BattleLoadoutSnapshot loadout = MahjongSession.LocalBattleLoadout;
+            if (store == null || loadout == null || !loadout.IsCompleteForStore(store))
                 return null;
 
-            List<string> ids = new List<string>();
-            for (int i = 0; i < store.BattleTiles.Count; i++)
+            return (string[])loadout.ActiveTileIds.Clone();
+        }
+
+        private static void EnsureOpponentLoadoutFromManifest(OnlineRankedBattleNetwork.RankedServerEvent item)
+        {
+            BattleTileStore store = BattleTileStore.I != null ? BattleTileStore.I : FindAnyObjectByType<BattleTileStore>();
+            if (store == null || item?.tiles == null)
+                return;
+
+            BattleLoadoutSnapshot current = MahjongSession.OpponentBattleLoadout;
+            if (current != null && current.IsCompleteForStore(store))
+                return;
+
+            if (item.loadout != null && item.loadout.IsCompleteForStore(store))
             {
-                BattleTileData data = store.BattleTiles[i];
-                if (data != null && data.Prefab != null && !string.IsNullOrWhiteSpace(data.Id))
-                    ids.Add(data.Id);
+                MahjongSession.SetOpponentBattleLoadout(item.loadout);
+                BattleCombatSystem combat = FindAnyObjectByType<BattleCombatSystem>();
+                combat?.RefreshOpponentLoadoutStats();
+                return;
             }
 
-            return ids.ToArray();
+            List<string> uniqueIds = new List<string>(BattleTileInventoryService.RequiredActiveTiles);
+            HashSet<string> used = new HashSet<string>(System.StringComparer.Ordinal);
+            for (int i = 0; i < item.tiles.Length; i++)
+            {
+                string id = item.tiles[i]?.id;
+                if (string.IsNullOrWhiteSpace(id) || !used.Add(id) ||
+                    !store.TryGetTileDataById(id, out BattleTileData data) || data?.Prefab == null)
+                {
+                    continue;
+                }
+
+                uniqueIds.Add(id);
+                if (uniqueIds.Count == BattleTileInventoryService.RequiredActiveTiles)
+                    break;
+            }
+
+            if (uniqueIds.Count != BattleTileInventoryService.RequiredActiveTiles)
+                return;
+
+            MahjongSession.SetOpponentBattleLoadout(new BattleLoadoutSnapshot
+            {
+                ActiveTileIds = uniqueIds.ToArray(),
+                ActiveUpgradeLevels = new int[uniqueIds.Count],
+                TotemTileId = uniqueIds[0],
+                TotemUpgradeLevel = 0
+            });
+            BattleCombatSystem fallbackCombat = FindAnyObjectByType<BattleCombatSystem>();
+            fallbackCombat?.RefreshOpponentLoadoutStats();
         }
 
         private void DrainPendingEvents()
@@ -422,7 +521,8 @@ namespace MahjongGame
 
         private static bool IsOnlineRankedBattle()
         {
-            return MahjongBattleLobbySession.SelectedMode == MahjongBattleLobbyMode.RankedMatch &&
+            return (MahjongBattleLobbySession.SelectedMode == MahjongBattleLobbyMode.RankedMatch ||
+                    MahjongBattleLobbySession.SelectedMode == MahjongBattleLobbyMode.RandomMatch) &&
                    OnlineRankedBattleNetwork.I != null &&
                    OnlineRankedBattleNetwork.I.IsInMatch;
         }

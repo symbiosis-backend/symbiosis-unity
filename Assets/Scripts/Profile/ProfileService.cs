@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Text;
+using MahjongGame.Networking;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -16,8 +17,19 @@ namespace MahjongGame
         private LocalProfileStorage storage;
         private PlayerProfile currentProfile;
         private string lastServerError = string.Empty;
+        private string runtimeSessionToken = string.Empty;
+        private bool sessionRecoveryInProgress;
+        private bool lastSessionRecoverySucceeded;
+        private string lastSessionRecoveryError = string.Empty;
+        private float sessionRecoveryBlockedUntilRealtime;
+        private int authenticationGeneration;
+        private int sessionRecoveryGeneration = -1;
+        private bool automaticSessionRecoveryDisabled;
+        private int sessionRecoveryFailureCount;
+        private bool explicitAuthenticationInProgress;
 
-        private const string BaseUrl = "https://dlsymbiosis.com";
+        private const int MaxAutomaticSessionRecoveryFailures = 3;
+
         private const string ProfileResetId = "profiles_reset_20260422_onboarding_v1";
         private const string KeyAppliedProfileResetId = "symbiosis_applied_profile_reset_id";
         private const string KeyDeviceId = "symbiosis_server_device_id";
@@ -28,11 +40,27 @@ namespace MahjongGame
 
         public PlayerProfile Current => currentProfile;
         public string LastServerError => lastServerError;
+        public string CurrentSessionToken => GetSessionToken();
         public bool RememberProfile => ShouldRememberProfile();
         public bool HasRememberedAccount => ShouldRememberProfile() && HasRememberedAccountCredentials();
+        public string CurrentAccountEmail
+        {
+            get
+            {
+                if (currentProfile != null && !string.IsNullOrWhiteSpace(currentProfile.AccountEmail))
+                    return currentProfile.AccountEmail.Trim().ToLowerInvariant();
+
+                return GetRememberedAccountEmail();
+            }
+        }
         public bool CanAutoLoadProfile => ShouldRememberProfile() && (!string.IsNullOrWhiteSpace(GetSessionToken()) || HasProfile());
         public AccountSlotInfo[] LastAccountSlots { get; private set; } = Array.Empty<AccountSlotInfo>();
         public string LastAccountDynastyName { get; private set; } = string.Empty;
+
+        private static string ScopedKey(string key)
+        {
+            return ClientProfileScope.AppendToKey(key);
+        }
 
         private void Awake()
         {
@@ -51,6 +79,7 @@ namespace MahjongGame
 
             storage = new LocalProfileStorage();
             RuntimeFileLogger.Write("[Startup] ProfileService storage ready");
+            ClearLegacyDeveloperCredentials();
             ApplyProfileResetIfNeeded();
 
             // Автоматическая инициализация профиля при старте.
@@ -74,6 +103,8 @@ namespace MahjongGame
             if (currentProfile != null)
             {
                 currentProfile.EnsureData();
+                if (currentProfile.Energy != null)
+                    currentProfile.Energy.Refill(DateTime.UtcNow.Ticks);
                 currentProfile.TouchLoginTime();
                 Save();
                 NotifyProfileChanged();
@@ -120,6 +151,7 @@ namespace MahjongGame
 
         public IEnumerator LoadOrCreateServerProfile(GameLanguage language)
         {
+            int requestAuthenticationGeneration = authenticationGeneration;
             lastServerError = string.Empty;
 
             ServerBootstrapRequest payload = new ServerBootstrapRequest
@@ -137,6 +169,9 @@ namespace MahjongGame
                 JsonUtility.ToJson(payload),
                 response =>
                 {
+                    if (authenticationGeneration != requestAuthenticationGeneration)
+                        return;
+
                     ApplyServerUser(response.user);
                     StoreSessionToken(response.token);
                     loaded = true;
@@ -148,6 +183,9 @@ namespace MahjongGame
                 },
                 logErrors: false
             );
+
+            if (authenticationGeneration != requestAuthenticationGeneration)
+                yield break;
 
             if (loaded || !IsProfileNotFoundError(error))
                 yield break;
@@ -167,6 +205,9 @@ namespace MahjongGame
                 JsonUtility.ToJson(freshPayload),
                 response =>
                 {
+                    if (authenticationGeneration != requestAuthenticationGeneration)
+                        return;
+
                     ApplyServerUser(response.user);
                     StoreSessionToken(response.token);
                     Debug.Log("[ProfileService] Server profile recreated after stale session");
@@ -188,8 +229,11 @@ namespace MahjongGame
             Action<bool, string> completed
         )
         {
-            lastServerError = string.Empty;
-            SetRememberProfile(rememberProfile);
+            int registrationAuthenticationGeneration = BeginExplicitAuthentication(clearSessionToken: false);
+            try
+            {
+                lastServerError = string.Empty;
+                SetRememberProfile(rememberProfile);
 
             ServerCompleteProfileRequest payload = new ServerCompleteProfileRequest
             {
@@ -197,12 +241,14 @@ namespace MahjongGame
                 token = GetSessionToken(),
                 dynastyName = string.IsNullOrWhiteSpace(dynastyName) ? string.Empty : dynastyName.Trim(),
                 slotIndex = Mathf.Clamp(slotIndex, 1, 3),
+                autoAssignSlot = true,
                 email = string.IsNullOrWhiteSpace(email) ? string.Empty : email.Trim().ToLowerInvariant(),
                 password = password ?? string.Empty,
                 nickname = string.IsNullOrWhiteSpace(name) ? "Player" : name.Trim(),
                 age = Mathf.Clamp(age, 0, 120),
                 gender = ToServerGender(gender),
                 avatarId = Mathf.Max(0, avatarId),
+                isProfilePublic = currentProfile == null || currentProfile.IsProfilePublic,
                 language = ToServerLanguage(language)
             };
 
@@ -215,6 +261,9 @@ namespace MahjongGame
                 JsonUtility.ToJson(payload),
                 response =>
                 {
+                    if (authenticationGeneration != registrationAuthenticationGeneration)
+                        return;
+
                     ApplyServerUser(response.user);
                     StoreSessionToken(response.token);
                     ok = true;
@@ -225,6 +274,12 @@ namespace MahjongGame
                 },
                 logErrors: false
             );
+
+            if (authenticationGeneration != registrationAuthenticationGeneration)
+            {
+                completed?.Invoke(false, GameLocalization.Text("network.session_expired"));
+                yield break;
+            }
 
             if (!ok && IsEndpointNotFoundError(error))
             {
@@ -237,6 +292,9 @@ namespace MahjongGame
                     JsonUtility.ToJson(payload),
                     response =>
                     {
+                        if (authenticationGeneration != registrationAuthenticationGeneration)
+                            return;
+
                         ApplyServerUser(response.user);
                         StoreSessionToken(response.token);
                         ok = true;
@@ -247,6 +305,12 @@ namespace MahjongGame
                     },
                     logErrors: false
                 );
+
+                if (authenticationGeneration != registrationAuthenticationGeneration)
+                {
+                    completed?.Invoke(false, GameLocalization.Text("network.session_expired"));
+                    yield break;
+                }
             }
 
             if (!ok && IsProfileNotFoundError(error))
@@ -255,6 +319,12 @@ namespace MahjongGame
                 lastServerError = string.Empty;
 
                 yield return LoadOrCreateServerProfile(language);
+
+                if (authenticationGeneration != registrationAuthenticationGeneration)
+                {
+                    completed?.Invoke(false, GameLocalization.Text("network.session_expired"));
+                    yield break;
+                }
 
                 if (currentProfile != null)
                 {
@@ -267,6 +337,9 @@ namespace MahjongGame
                         JsonUtility.ToJson(payload),
                         response =>
                         {
+                            if (authenticationGeneration != registrationAuthenticationGeneration)
+                                return;
+
                             ApplyServerUser(response.user);
                             StoreSessionToken(response.token);
                             ok = true;
@@ -276,13 +349,24 @@ namespace MahjongGame
                             error = requestError;
                         }
                     );
+
+                    if (authenticationGeneration != registrationAuthenticationGeneration)
+                    {
+                        completed?.Invoke(false, GameLocalization.Text("network.session_expired"));
+                        yield break;
+                    }
                 }
             }
 
             if (ok)
                 StoreRememberedAccount(payload.email, payload.password);
 
-            completed?.Invoke(ok, string.IsNullOrWhiteSpace(error) ? lastServerError : error);
+                completed?.Invoke(ok, string.IsNullOrWhiteSpace(error) ? lastServerError : error);
+            }
+            finally
+            {
+                EndExplicitAuthentication(registrationAuthenticationGeneration);
+            }
         }
 
         public IEnumerator LoginOnServer(
@@ -290,6 +374,33 @@ namespace MahjongGame
             string password,
             int slotIndex,
             bool rememberProfile,
+            Action<bool, string> completed
+        )
+        {
+            int loginGeneration = BeginExplicitAuthentication();
+            try
+            {
+                yield return LoginOnServerInternal(
+                    email,
+                    password,
+                    slotIndex,
+                    rememberProfile,
+                    loginGeneration,
+                    completed
+                );
+            }
+            finally
+            {
+                EndExplicitAuthentication(loginGeneration);
+            }
+        }
+
+        private IEnumerator LoginOnServerInternal(
+            string email,
+            string password,
+            int slotIndex,
+            bool rememberProfile,
+            int expectedAuthenticationGeneration,
             Action<bool, string> completed
         )
         {
@@ -312,6 +423,9 @@ namespace MahjongGame
                 JsonUtility.ToJson(payload),
                 response =>
                 {
+                    if (authenticationGeneration != expectedAuthenticationGeneration)
+                        return;
+
                     ApplyServerUser(response.user);
                     StoreSessionToken(response.token);
                     ok = true;
@@ -322,10 +436,175 @@ namespace MahjongGame
                 }
             );
 
+            if (authenticationGeneration != expectedAuthenticationGeneration)
+            {
+                completed?.Invoke(false, GameLocalization.Text("network.session_expired"));
+                yield break;
+            }
+
+            if (!ok && IsInvalidCredentialsError(error))
+                ClearRememberedLogin();
+
             if (ok)
                 StoreRememberedAccount(payload.email, payload.password);
 
             completed?.Invoke(ok, string.IsNullOrWhiteSpace(error) ? lastServerError : error);
+        }
+
+        public IEnumerator RecoverServerSession(string failedToken, Action<bool, string> completed = null)
+        {
+            string currentToken = GetSessionToken();
+            if (!string.IsNullOrWhiteSpace(currentToken) &&
+                (string.IsNullOrWhiteSpace(failedToken) ||
+                 !string.Equals(currentToken, failedToken, StringComparison.Ordinal)))
+            {
+                completed?.Invoke(true, string.Empty);
+                yield break;
+            }
+
+            if (automaticSessionRecoveryDisabled)
+            {
+                completed?.Invoke(false, string.IsNullOrWhiteSpace(lastSessionRecoveryError)
+                    ? GameLocalization.Text("network.session_expired")
+                    : lastSessionRecoveryError);
+                yield break;
+            }
+
+            if (explicitAuthenticationInProgress)
+            {
+                completed?.Invoke(false, GameLocalization.Text("network.session_recovery_wait"));
+                yield break;
+            }
+
+            if (sessionRecoveryInProgress)
+            {
+                int awaitedGeneration = sessionRecoveryGeneration;
+                while (sessionRecoveryInProgress && sessionRecoveryGeneration == awaitedGeneration)
+                    yield return null;
+
+                currentToken = GetSessionToken();
+                bool tokenWasRenewed = !string.IsNullOrWhiteSpace(currentToken) &&
+                                       !string.Equals(currentToken, failedToken, StringComparison.Ordinal);
+                completed?.Invoke(tokenWasRenewed || lastSessionRecoverySucceeded, tokenWasRenewed ? string.Empty : lastSessionRecoveryError);
+                yield break;
+            }
+
+            if (Time.unscaledTime < sessionRecoveryBlockedUntilRealtime)
+            {
+                completed?.Invoke(false, string.IsNullOrWhiteSpace(lastSessionRecoveryError)
+                    ? GameLocalization.Text("network.session_recovery_wait")
+                    : lastSessionRecoveryError);
+                yield break;
+            }
+
+            sessionRecoveryInProgress = true;
+            sessionRecoveryGeneration = authenticationGeneration;
+            lastSessionRecoverySucceeded = false;
+            lastSessionRecoveryError = string.Empty;
+
+            if (!TryGetRememberedAccountCredentials(out string email, out string password))
+            {
+                lastSessionRecoveryError = GameLocalization.Text("network.session_expired");
+                sessionRecoveryBlockedUntilRealtime = Time.unscaledTime + 15f;
+                automaticSessionRecoveryDisabled = true;
+                sessionRecoveryFailureCount = MaxAutomaticSessionRecoveryFailures;
+                sessionRecoveryInProgress = false;
+                sessionRecoveryGeneration = -1;
+                completed?.Invoke(false, lastSessionRecoveryError);
+                yield break;
+            }
+
+            if (currentProfile == null)
+            {
+                lastSessionRecoveryError = GameLocalization.Text("network.session_expired");
+                sessionRecoveryBlockedUntilRealtime = Time.unscaledTime + 15f;
+                automaticSessionRecoveryDisabled = true;
+                sessionRecoveryFailureCount = MaxAutomaticSessionRecoveryFailures;
+                sessionRecoveryInProgress = false;
+                sessionRecoveryGeneration = -1;
+                completed?.Invoke(false, lastSessionRecoveryError);
+                yield break;
+            }
+
+            int recoveryGeneration = authenticationGeneration;
+            int slotIndex = Mathf.Clamp(currentProfile.ProfileSlotIndex <= 0 ? 1 : currentProfile.ProfileSlotIndex, 1, 3);
+
+            bool recovered = false;
+            string recoveryError = string.Empty;
+            try
+            {
+                yield return LoginOnServerInternal(
+                    email,
+                    password,
+                    slotIndex,
+                    true,
+                    recoveryGeneration,
+                    (success, error) =>
+                    {
+                        recovered = success;
+                        recoveryError = error ?? string.Empty;
+                    }
+                );
+            }
+            finally
+            {
+                if (sessionRecoveryGeneration == recoveryGeneration)
+                {
+                    sessionRecoveryInProgress = false;
+                    sessionRecoveryGeneration = -1;
+                }
+            }
+
+            if (authenticationGeneration != recoveryGeneration)
+            {
+                bool anotherAuthenticationSucceeded = !string.IsNullOrWhiteSpace(GetSessionToken());
+                completed?.Invoke(
+                    anotherAuthenticationSucceeded,
+                    anotherAuthenticationSucceeded ? string.Empty : GameLocalization.Text("network.session_expired")
+                );
+                if (!anotherAuthenticationSucceeded)
+                {
+                    automaticSessionRecoveryDisabled = true;
+                    sessionRecoveryFailureCount = MaxAutomaticSessionRecoveryFailures;
+                }
+                yield break;
+            }
+
+            lastSessionRecoverySucceeded = recovered;
+            lastSessionRecoveryError = recovered
+                ? string.Empty
+                : GameLocalization.Text("network.session_expired");
+            if (recovered)
+            {
+                sessionRecoveryFailureCount = 0;
+                sessionRecoveryBlockedUntilRealtime = 0f;
+                automaticSessionRecoveryDisabled = false;
+            }
+            else if (IsInvalidCredentialsError(recoveryError))
+            {
+                sessionRecoveryFailureCount = MaxAutomaticSessionRecoveryFailures;
+                sessionRecoveryBlockedUntilRealtime = Time.unscaledTime + 15f;
+                automaticSessionRecoveryDisabled = true;
+            }
+            else
+            {
+                sessionRecoveryFailureCount++;
+                float retryDelay = 15f * Mathf.Pow(2f, Mathf.Clamp(sessionRecoveryFailureCount - 1, 0, 4));
+                sessionRecoveryBlockedUntilRealtime = Time.unscaledTime + retryDelay;
+                automaticSessionRecoveryDisabled = sessionRecoveryFailureCount >= MaxAutomaticSessionRecoveryFailures;
+            }
+            completed?.Invoke(lastSessionRecoverySucceeded, lastSessionRecoveryError);
+        }
+
+        public static bool IsSessionAuthenticationError(string error)
+        {
+            if (string.IsNullOrWhiteSpace(error))
+                return false;
+
+            return error.IndexOf("invalid session", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   error.IndexOf("session expired", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   error.IndexOf("unauthorized", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   error.IndexOf("401", StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         public IEnumerator RequestPasswordRecovery(
@@ -413,6 +692,9 @@ namespace MahjongGame
                 requireUser: false
             );
 
+            if (!ok && IsInvalidCredentialsError(error))
+                ClearRememberedLogin();
+
             if (ok && slotResponse != null)
             {
                 LastAccountDynastyName = slotResponse.account != null ? slotResponse.account.dynastyName ?? string.Empty : string.Empty;
@@ -465,11 +747,13 @@ namespace MahjongGame
 
                 if (currentProfile != null && currentProfile.ProfileSlotIndex == payload.slotIndex)
                 {
+                    CancelPendingAuthentication();
+
                     if (storage == null)
                         storage = new LocalProfileStorage();
 
                     storage.Delete();
-                    PlayerPrefs.DeleteKey(KeySessionToken);
+                    ClearSessionToken();
                     ResetProfileScopedCharacterSelection();
                     currentProfile = null;
                     PlayerPrefs.Save();
@@ -550,6 +834,41 @@ namespace MahjongGame
             NotifyProfileChanged();
         }
 
+        public void SetProfilePublic(bool isPublic)
+        {
+            if (currentProfile == null)
+                return;
+
+            currentProfile.EnsureData();
+            if (currentProfile.IsProfilePublic == isPublic)
+                return;
+
+            currentProfile.IsProfilePublic = isPublic;
+            Save();
+            NotifyProfileChanged();
+
+            string token = GetSessionToken();
+            if (!string.IsNullOrWhiteSpace(token))
+                StartCoroutine(UpdateProfilePrivacyOnServer(token, isPublic));
+        }
+
+        private IEnumerator UpdateProfilePrivacyOnServer(string token, bool isPublic)
+        {
+            ProfilePrivacyRequest payload = new ProfilePrivacyRequest
+            {
+                token = token,
+                isProfilePublic = isPublic
+            };
+
+            yield return SendProfileRequest(
+                "/profiles/privacy",
+                JsonUtility.ToJson(payload),
+                response => ApplyServerUser(response.user),
+                requestError => Debug.LogWarning("[ProfileService] Profile privacy update failed: " + requestError),
+                logErrors: false
+            );
+        }
+
         public bool TryAddFriendByPublicId(string publicPlayerId)
         {
             if (currentProfile == null)
@@ -580,6 +899,8 @@ namespace MahjongGame
 
         public void DeleteProfile()
         {
+            CancelPendingAuthentication();
+
             if (storage == null)
                 storage = new LocalProfileStorage();
 
@@ -598,13 +919,25 @@ namespace MahjongGame
             SetRememberProfile(false);
         }
 
+        public void ClearRememberedLogin()
+        {
+            CancelPendingAuthentication();
+            ClearSessionToken();
+            PlayerPrefs.DeleteKey(ScopedKey(KeyDeviceId));
+            ClearRememberedAccount();
+            PlayerPrefs.SetInt(ScopedKey(KeyRememberProfile), 0);
+            PlayerPrefs.Save();
+        }
+
         public void ChangeProfile()
         {
+            CancelPendingAuthentication();
+
             if (storage == null)
                 storage = new LocalProfileStorage();
 
             storage.Delete();
-            PlayerPrefs.DeleteKey(KeySessionToken);
+            ClearSessionToken();
             ResetProfileScopedCharacterSelection();
             currentProfile = null;
             PlayerPrefs.Save();
@@ -613,11 +946,11 @@ namespace MahjongGame
 
         public void SetRememberProfile(bool remember)
         {
-            PlayerPrefs.SetInt(KeyRememberProfile, remember ? 1 : 0);
+            PlayerPrefs.SetInt(ScopedKey(KeyRememberProfile), remember ? 1 : 0);
 
             if (!remember)
             {
-                PlayerPrefs.DeleteKey(KeySessionToken);
+                ClearSessionToken();
                 ClearRememberedAccount();
 
                 if (storage == null)
@@ -638,25 +971,34 @@ namespace MahjongGame
             bool requireUser = true
         )
         {
-            using UnityWebRequest request = new UnityWebRequest(BaseUrl + path, "POST");
-            byte[] body = Encoding.UTF8.GetBytes(json);
-            request.uploadHandler = new UploadHandlerRaw(body);
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Content-Type", "application/json");
-            request.timeout = 12;
+            string responseText = string.Empty;
+            string requestError = string.Empty;
+            bool failed = true;
 
-            yield return request.SendWebRequest();
+            for (int i = 0; i < BackendEndpoints.BaseUrls.Length; i++)
+            {
+                using UnityWebRequest request = new UnityWebRequest(BackendEndpoints.BuildUrl(BackendEndpoints.BaseUrls[i], path), "POST");
+                byte[] body = Encoding.UTF8.GetBytes(json);
+                request.uploadHandler = new UploadHandlerRaw(body);
+                request.downloadHandler = new DownloadHandlerBuffer();
+                request.SetRequestHeader("Content-Type", "application/json");
+                BackendEndpoints.ApplyClientVersionHeaders(request);
+                request.timeout = 12;
 
-            string responseText = request.downloadHandler != null ? request.downloadHandler.text : string.Empty;
-            bool failed = request.result == UnityWebRequest.Result.ConnectionError ||
-                          request.result == UnityWebRequest.Result.ProtocolError ||
-                          request.result == UnityWebRequest.Result.DataProcessingError;
+                yield return request.SendWebRequest();
+
+                responseText = request.downloadHandler != null ? request.downloadHandler.text : string.Empty;
+                requestError = request.error;
+                failed = BackendEndpoints.RequestFailed(request);
+                if (!failed || !BackendEndpoints.CanRetryWithFallback(request) || i == BackendEndpoints.BaseUrls.Length - 1)
+                    break;
+            }
 
             if (failed)
             {
                 lastServerError = string.IsNullOrWhiteSpace(responseText)
-                    ? request.error
-                    : ExtractError(responseText, request.error);
+                    ? requestError
+                    : ExtractError(responseText, requestError);
                 if (logErrors)
                     Debug.LogError("[ProfileService] Server profile request failed: " + lastServerError);
                 onError?.Invoke(lastServerError);
@@ -720,7 +1062,8 @@ namespace MahjongGame
                     AvatarId = Mathf.Max(0, profile.avatarId),
                     Occupied = profile.occupied || profile.profileCompleted || profile.id > 0,
                     InUseByOtherDevice = profile.inUseByOtherDevice,
-                    LastActiveAt = profile.lastActiveAt ?? string.Empty
+                    LastActiveAt = profile.lastActiveAt ?? string.Empty,
+                    CreatedAt = profile.createdAt ?? string.Empty
                 };
             }
 
@@ -732,22 +1075,21 @@ namespace MahjongGame
             if (user == null)
                 return;
 
-            if (currentProfile == null)
-            {
-                if (storage == null)
-                    storage = new LocalProfileStorage();
-
-                currentProfile = storage.Load();
-                if (currentProfile == null)
-                    currentProfile = new PlayerProfile();
-            }
+            EnsureLocalProfileForServerUser(user);
 
             currentProfile.EnsureData();
             currentProfile.SetOnlinePlayerId(user.id.ToString());
             currentProfile.SetGuestState(user.isGuest);
+            currentProfile.AccountEmail = string.IsNullOrWhiteSpace(user.email) ? currentProfile.AccountEmail : user.email.Trim().ToLowerInvariant();
             currentProfile.DynastyName = user.dynastyName ?? string.Empty;
             currentProfile.DynastyId = user.dynastyId ?? string.Empty;
+            currentProfile.AllianceTag = user.allianceTag ?? string.Empty;
+            currentProfile.AllianceName = user.allianceName ?? string.Empty;
+            currentProfile.AllianceLevel = Mathf.Max(0, user.allianceLevel);
             currentProfile.ProfileSlotIndex = Mathf.Clamp(user.slotIndex <= 0 ? 1 : user.slotIndex, 1, 3);
+            currentProfile.IsProfilePublic = user.isProfilePublic;
+            currentProfile.IsDeveloper = user.isDeveloper;
+            currentProfile.HasInfiniteCurrency = user.hasInfiniteCurrency;
 
             string displayName = string.IsNullOrWhiteSpace(user.nickname) ? "Player" : user.nickname.Trim();
             string publicId = string.IsNullOrWhiteSpace(user.publicPlayerId)
@@ -769,8 +1111,49 @@ namespace MahjongGame
             currentProfile.LastLoginUtc = DateTime.UtcNow.ToString("O");
             currentProfile.EnsureData();
 
+            if (CurrencyService.I != null)
+            {
+                CurrencyService.I.SetOzAltin(user.goldBalance);
+                CurrencyService.I.SetOzAmetist(user.amethystBalance);
+                CurrencyService.I.SetOzTile(user.ozTileBalance);
+            }
+            else
+            {
+                currentProfile.Currencies.SetAltin(user.goldBalance);
+                currentProfile.Currencies.SetAmetist(user.amethystBalance);
+                currentProfile.Currencies.SetTile(user.ozTileBalance);
+            }
+
             SaveIfRemembered();
             NotifyProfileChanged();
+        }
+
+        private void EnsureLocalProfileForServerUser(ServerUserDto user)
+        {
+            if (currentProfile == null)
+            {
+                if (storage == null)
+                    storage = new LocalProfileStorage();
+
+                currentProfile = storage.Load();
+                if (currentProfile == null)
+                    currentProfile = new PlayerProfile();
+            }
+
+            currentProfile.EnsureData();
+
+            string serverOnlineId = user.id.ToString();
+            bool hasLocalOnlineId = !string.IsNullOrWhiteSpace(currentProfile.OnlinePlayerId);
+            bool isDifferentServerProfile = hasLocalOnlineId &&
+                                            !string.Equals(currentProfile.OnlinePlayerId, serverOnlineId, StringComparison.Ordinal);
+
+            if (!isDifferentServerProfile)
+                return;
+
+            Debug.Log("[ProfileService] Server profile changed. Starting clean local profile state.");
+            ResetProfileScopedCharacterSelection();
+            currentProfile = new PlayerProfile();
+            currentProfile.EnsureData();
         }
 
         public void NotifyProfileChanged()
@@ -791,7 +1174,7 @@ namespace MahjongGame
 
         private void ApplyProfileResetIfNeeded()
         {
-            string appliedResetId = PlayerPrefs.GetString(KeyAppliedProfileResetId, string.Empty);
+            string appliedResetId = PlayerPrefs.GetString(ScopedKey(KeyAppliedProfileResetId), string.Empty);
             if (appliedResetId == ProfileResetId)
                 return;
 
@@ -806,7 +1189,7 @@ namespace MahjongGame
             if (AppSettings.I != null)
                 AppSettings.I.ClearLanguagePreference();
 
-            PlayerPrefs.SetString(KeyAppliedProfileResetId, ProfileResetId);
+            PlayerPrefs.SetString(ScopedKey(KeyAppliedProfileResetId), ProfileResetId);
             PlayerPrefs.Save();
 
             Debug.Log("[ProfileService] Applied profile reset: " + ProfileResetId);
@@ -815,8 +1198,8 @@ namespace MahjongGame
 
         private static void ClearServerIdentityPrefs()
         {
-            PlayerPrefs.DeleteKey(KeySessionToken);
-            PlayerPrefs.DeleteKey(KeyDeviceId);
+            ClearSessionToken();
+            PlayerPrefs.DeleteKey(ScopedKey(KeyDeviceId));
             ClearRememberedAccount();
         }
 
@@ -837,11 +1220,11 @@ namespace MahjongGame
         private static bool ShouldRememberProfile()
         {
             bool hasStoredIdentity =
-                !string.IsNullOrWhiteSpace(PlayerPrefs.GetString(KeySessionToken, string.Empty)) ||
+                !string.IsNullOrWhiteSpace(PlayerPrefs.GetString(ScopedKey(KeySessionToken), string.Empty)) ||
                 HasRememberedAccountCredentials();
 
             int defaultValue = hasStoredIdentity ? 1 : 0;
-            return PlayerPrefs.GetInt(KeyRememberProfile, defaultValue) == 1;
+            return PlayerPrefs.GetInt(ScopedKey(KeyRememberProfile), defaultValue) == 1;
         }
 
         private static bool HasRememberedAccountCredentials()
@@ -852,12 +1235,12 @@ namespace MahjongGame
 
         private static string GetRememberedAccountEmail()
         {
-            return PlayerPrefs.GetString(KeyRememberedAccountEmail, string.Empty);
+            return PlayerPrefs.GetString(ScopedKey(KeyRememberedAccountEmail), string.Empty);
         }
 
         private static string GetRememberedAccountPassword()
         {
-            return PlayerPrefs.GetString(KeyRememberedAccountPassword, string.Empty);
+            return PlayerPrefs.GetString(ScopedKey(KeyRememberedAccountPassword), string.Empty);
         }
 
         private static void StoreRememberedAccount(string email, string password)
@@ -868,15 +1251,34 @@ namespace MahjongGame
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
                 return;
 
-            PlayerPrefs.SetString(KeyRememberedAccountEmail, email.Trim().ToLowerInvariant());
-            PlayerPrefs.SetString(KeyRememberedAccountPassword, password);
+            string normalizedEmail = email.Trim().ToLowerInvariant();
+            if (normalizedEmail == "ozkullar" || normalizedEmail == "ozkullar@developer.symbiosis.local")
+            {
+                // A privileged developer password must never be persisted in PlayerPrefs.
+                ClearRememberedAccount();
+                PlayerPrefs.Save();
+                return;
+            }
+
+            PlayerPrefs.SetString(ScopedKey(KeyRememberedAccountEmail), normalizedEmail);
+            PlayerPrefs.SetString(ScopedKey(KeyRememberedAccountPassword), password);
+            PlayerPrefs.Save();
+        }
+
+        private static void ClearLegacyDeveloperCredentials()
+        {
+            string identifier = GetRememberedAccountEmail().Trim().ToLowerInvariant();
+            if (identifier != "ozkullar" && identifier != "ozkullar@developer.symbiosis.local")
+                return;
+
+            ClearRememberedAccount();
             PlayerPrefs.Save();
         }
 
         private static void ClearRememberedAccount()
         {
-            PlayerPrefs.DeleteKey(KeyRememberedAccountEmail);
-            PlayerPrefs.DeleteKey(KeyRememberedAccountPassword);
+            PlayerPrefs.DeleteKey(ScopedKey(KeyRememberedAccountEmail));
+            PlayerPrefs.DeleteKey(ScopedKey(KeyRememberedAccountPassword));
         }
 
         private static bool IsProfileNotFoundError(string error)
@@ -892,9 +1294,15 @@ namespace MahjongGame
                     error.IndexOf("Cannot POST", StringComparison.OrdinalIgnoreCase) >= 0);
         }
 
+        private static bool IsInvalidCredentialsError(string error)
+        {
+            return !string.IsNullOrWhiteSpace(error) &&
+                   error.IndexOf("Invalid credentials", StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
         private static string GetOrCreateDeviceId()
         {
-            string value = PlayerPrefs.GetString(KeyDeviceId, string.Empty);
+            string value = PlayerPrefs.GetString(ScopedKey(KeyDeviceId), string.Empty);
             if (!string.IsNullOrWhiteSpace(value))
                 return value;
 
@@ -904,14 +1312,20 @@ namespace MahjongGame
 
             value = rawDeviceId + ":" + ProfileResetId;
 
-            PlayerPrefs.SetString(KeyDeviceId, value);
+            PlayerPrefs.SetString(ScopedKey(KeyDeviceId), value);
             PlayerPrefs.Save();
             return value;
         }
 
         private static string GetSessionToken()
         {
-            return PlayerPrefs.GetString(KeySessionToken, string.Empty);
+            if (I != null && !string.IsNullOrWhiteSpace(I.runtimeSessionToken))
+                return I.runtimeSessionToken;
+
+            string storedToken = PlayerPrefs.GetString(ScopedKey(KeySessionToken), string.Empty);
+            if (I != null)
+                I.runtimeSessionToken = storedToken;
+            return storedToken;
         }
 
         private static void StoreSessionToken(string token)
@@ -919,11 +1333,62 @@ namespace MahjongGame
             if (string.IsNullOrWhiteSpace(token))
                 return;
 
+            if (I != null)
+            {
+                I.runtimeSessionToken = token;
+                I.sessionRecoveryBlockedUntilRealtime = 0f;
+                I.lastSessionRecoverySucceeded = true;
+                I.lastSessionRecoveryError = string.Empty;
+                I.automaticSessionRecoveryDisabled = false;
+                I.sessionRecoveryFailureCount = 0;
+            }
+
             if (!ShouldRememberProfile())
                 return;
 
-            PlayerPrefs.SetString(KeySessionToken, token);
+            PlayerPrefs.SetString(ScopedKey(KeySessionToken), token);
             PlayerPrefs.Save();
+        }
+
+        private static void ClearSessionToken()
+        {
+            if (I != null)
+            {
+                I.runtimeSessionToken = string.Empty;
+                I.lastSessionRecoverySucceeded = false;
+                I.lastSessionRecoveryError = string.Empty;
+                I.sessionRecoveryBlockedUntilRealtime = 0f;
+            }
+
+            PlayerPrefs.DeleteKey(ScopedKey(KeySessionToken));
+        }
+
+        private int BeginExplicitAuthentication(bool clearSessionToken = true)
+        {
+            CancelPendingAuthentication();
+            if (clearSessionToken)
+                ClearSessionToken();
+            automaticSessionRecoveryDisabled = false;
+            sessionRecoveryFailureCount = 0;
+            explicitAuthenticationInProgress = true;
+            return authenticationGeneration;
+        }
+
+        private void EndExplicitAuthentication(int completedGeneration)
+        {
+            if (authenticationGeneration == completedGeneration)
+                explicitAuthenticationInProgress = false;
+        }
+
+        private void CancelPendingAuthentication()
+        {
+            authenticationGeneration++;
+            sessionRecoveryInProgress = false;
+            sessionRecoveryGeneration = -1;
+            explicitAuthenticationInProgress = false;
+            lastSessionRecoverySucceeded = false;
+            lastSessionRecoveryError = string.Empty;
+            sessionRecoveryBlockedUntilRealtime = 0f;
         }
 
         private static string ToServerLanguage(GameLanguage language)
@@ -932,6 +1397,7 @@ namespace MahjongGame
             {
                 GameLanguage.Russian => "russian",
                 GameLanguage.English => "english",
+                GameLanguage.German => "german",
                 _ => "turkish"
             };
         }
@@ -988,13 +1454,22 @@ namespace MahjongGame
             public string token;
             public string dynastyName;
             public int slotIndex;
+            public bool autoAssignSlot;
             public string email;
             public string password;
             public string nickname;
             public int age;
             public string gender;
             public int avatarId;
+            public bool isProfilePublic;
             public string language;
+        }
+
+        [Serializable]
+        private sealed class ProfilePrivacyRequest
+        {
+            public string token;
+            public bool isProfilePublic;
         }
 
         [Serializable]
@@ -1035,11 +1510,20 @@ namespace MahjongGame
             public int accountId;
             public string dynastyName;
             public string dynastyId;
+            public string allianceTag;
+            public string allianceName;
+            public int allianceLevel;
+            public int goldBalance;
+            public int amethystBalance;
+            public int ozTileBalance;
+            public bool isDeveloper;
+            public bool hasInfiniteCurrency;
             public int slotIndex;
             public string language;
             public int age;
             public string gender;
             public int avatarId;
+            public bool isProfilePublic = true;
             public bool profileCompleted;
             public bool isGuest;
             public string createdAt;
@@ -1069,6 +1553,7 @@ namespace MahjongGame
             public bool occupied;
             public bool inUseByOtherDevice;
             public string lastActiveAt;
+            public string createdAt;
         }
 
         public struct AccountSlotInfo
@@ -1082,6 +1567,7 @@ namespace MahjongGame
             public bool Occupied;
             public bool InUseByOtherDevice;
             public string LastActiveAt;
+            public string CreatedAt;
 
             public static AccountSlotInfo Empty(int slotIndex)
             {
@@ -1095,7 +1581,8 @@ namespace MahjongGame
                     AvatarId = 0,
                     Occupied = false,
                     InUseByOtherDevice = false,
-                    LastActiveAt = string.Empty
+                    LastActiveAt = string.Empty,
+                    CreatedAt = string.Empty
                 };
             }
         }

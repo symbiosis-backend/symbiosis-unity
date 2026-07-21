@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "project": "Dynasty: Legacy Symbiosis",
+  "resourceFolder": "Assets/Resources/SymbiozTiles",
+  "id": "portable-sleeping-bag-backpack-views",
+  "file": "portable-sleeping-bag-backpack-views.png",
+  "sourceFile": "portable-sleeping-bag-backpack-views-source.png",
+  "resourcesLoadPath": "SymbiozTiles/portable-sleeping-bag-backpack-views",
+  "displayName": "Portable Sleeping Bag Backpack",
+  "role": "Separate wearable backpack element for the portable sleeping bag system.",
+  "equipmentInstruction": "Use as an independent equip/unequip overlay. Do not bake this backpack into the character body texture.",
+  "views": [
+    {
+      "name": "front",
+      "sheetPosition": "left",
+      "usage": "Shown when inspecting the item or when a forward-facing equipment view is needed."
+    },
+    {
+      "name": "side",
+      "sheetPosition": "right",
+      "usage": "Shown on the character back/side silhouette while the backpack is equipped."
+    }
+  ],
+  "characterFit": {
+    "targetCharacter": "architect survivor",
+    "intendedPlacement": "upper back, attached over the jacket and shoulder straps",
+    "canEquip": true,
+    "canUnequip": true
+  }
+}

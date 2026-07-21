@@ -153,9 +153,13 @@ namespace MahjongGame
             if (custom != null && custom.Count > 0)
                 return custom;
 
-            return board.BattleStore != null
-                ? board.BattleStore.GetTilesForRound(board.RoundIndex)
-                : null;
+            if (board.BattleStore == null)
+                return null;
+
+            if (board.Side == BattleBoardSide.Player)
+                return board.BattleStore.GetTilesForRound(board.RoundIndex);
+
+            return board.BattleStore.GetDefaultTilesForRound(board.RoundIndex);
         }
 
         public void ApplyLayoutSource()
@@ -310,6 +314,25 @@ namespace MahjongGame
                 return true;
             }
 
+            prepared = TryPrepareEdgeOrderBuild(
+                slots,
+                source,
+                slotCount,
+                repeatPairsToFillSlots,
+                out List<BattleTileData> edgeOrderResult);
+
+            if (prepared && edgeOrderResult != null && edgeOrderResult.Count > 0)
+            {
+                buildList.AddRange(edgeOrderResult);
+
+                if (debugLogs)
+                    Debug.Log($"[BattleBoardBuilder] Edge-order fallback build prepared. Count={buildList.Count}", this);
+
+                BuildPrepared?.Invoke(this);
+                NotifyStateChanged();
+                return true;
+            }
+
             if (requireSolvableBuild)
             {
                 LogWarning("Failed to prepare solvable build after constructive/solver attempts.");
@@ -438,6 +461,153 @@ namespace MahjongGame
             }
 
             return false;
+        }
+
+        private bool TryPrepareEdgeOrderBuild(
+            IReadOnlyList<LayoutSlot> slots,
+            IReadOnlyList<BattleTileData> source,
+            int slotCount,
+            bool repeatPairsToFillSlots,
+            out List<BattleTileData> result)
+        {
+            result = new List<BattleTileData>();
+
+            if (slots == null || source == null || slotCount <= 0)
+                return false;
+
+            List<BattleTileData> baseList = BuildBaseList(source, slotCount, repeatPairsToFillSlots);
+            int usableCount = Mathf.Min(baseList.Count, slots.Count);
+            if ((usableCount & 1) != 0)
+                usableCount -= 1;
+
+            if (usableCount <= 0)
+                return false;
+
+            List<PairData> pairs = BuildPairsFromFlatList(baseList, usableCount);
+            if (pairs.Count == 0)
+                return false;
+
+            List<RemovalNode> nodes = new();
+            for (int i = 0; i < usableCount; i++)
+            {
+                LayoutSlot slot = slots[i];
+                if (slot == null)
+                    return false;
+
+                nodes.Add(new RemovalNode(slot.X, slot.Y, slot.Z, i));
+            }
+
+            List<Vector2Int> removalPairs = new();
+            for (int pairIndex = 0; pairIndex < pairs.Count; pairIndex++)
+            {
+                if (!TryPickRemovalPair(nodes, out int firstIndex, out int secondIndex))
+                    return false;
+
+                nodes[firstIndex].Remaining = false;
+                nodes[secondIndex].Remaining = false;
+                removalPairs.Add(new Vector2Int(nodes[firstIndex].SlotIndex, nodes[secondIndex].SlotIndex));
+            }
+
+            BattleTileData[] bySlot = new BattleTileData[usableCount];
+            for (int i = 0; i < removalPairs.Count; i++)
+            {
+                PairData pair = pairs[i];
+                Vector2Int slotPair = removalPairs[i];
+                bySlot[slotPair.x] = pair.First;
+                bySlot[slotPair.y] = pair.Second;
+            }
+
+            for (int i = 0; i < bySlot.Length; i++)
+            {
+                if (bySlot[i] == null)
+                    return false;
+
+                result.Add(bySlot[i]);
+            }
+
+            return true;
+        }
+
+        private bool TryPickRemovalPair(List<RemovalNode> nodes, out int firstIndex, out int secondIndex)
+        {
+            firstIndex = -1;
+            secondIndex = -1;
+
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                if (!IsRemovalNodeFree(nodes, i))
+                    continue;
+
+                for (int j = nodes.Count - 1; j > i; j--)
+                {
+                    if (!IsRemovalNodeFree(nodes, j))
+                        continue;
+
+                    if (!CanUseTogether(nodes[i], nodes[j]))
+                        continue;
+
+                    firstIndex = i;
+                    secondIndex = j;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool IsRemovalNodeFree(List<RemovalNode> nodes, int index)
+        {
+            RemovalNode slot = nodes[index];
+            if (slot == null || !slot.Remaining)
+                return false;
+
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                if (i == index)
+                    continue;
+
+                RemovalNode other = nodes[i];
+                if (other == null || !other.Remaining)
+                    continue;
+
+                if (other.Z == slot.Z + 1)
+                {
+                    int dxTop = Mathf.Abs(other.X - slot.X);
+                    int dyTop = Mathf.Abs(other.Y - slot.Y);
+                    if (dxTop <= 1 && dyTop <= 1)
+                        return false;
+                }
+            }
+
+            bool leftBlocked = false;
+            bool rightBlocked = false;
+
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                if (i == index)
+                    continue;
+
+                RemovalNode other = nodes[i];
+                if (other == null || !other.Remaining || other.Z != slot.Z)
+                    continue;
+
+                int dx = other.X - slot.X;
+                int dy = Mathf.Abs(other.Y - slot.Y);
+
+                if (dy == 0)
+                {
+                    if (dx < 0 && Mathf.Abs(dx) <= 1)
+                        leftBlocked = true;
+
+                    if (dx > 0 && dx <= 1)
+                        rightBlocked = true;
+                }
+
+                if (leftBlocked && rightBlocked)
+                    return false;
+            }
+
+            return true;
         }
 
         private bool TrySortPairsForStability(List<PairData> pairs)
@@ -589,6 +759,20 @@ namespace MahjongGame
         }
 
         private bool CanUseTogether(ConstructiveNode a, ConstructiveNode b)
+        {
+            if (a == null || b == null)
+                return false;
+
+            if (a.Z != b.Z)
+                return true;
+
+            if (Mathf.Abs(a.Y - b.Y) > 0)
+                return true;
+
+            return Mathf.Abs(a.X - b.X) > 1;
+        }
+
+        private bool CanUseTogether(RemovalNode a, RemovalNode b)
         {
             if (a == null || b == null)
                 return false;
@@ -876,6 +1060,25 @@ namespace MahjongGame
                 Y = y;
                 Z = z;
                 Occupied = false;
+            }
+        }
+
+        [Serializable]
+        private sealed class RemovalNode
+        {
+            public int X;
+            public int Y;
+            public int Z;
+            public int SlotIndex;
+            public bool Remaining;
+
+            public RemovalNode(int x, int y, int z, int slotIndex)
+            {
+                X = x;
+                Y = y;
+                Z = z;
+                SlotIndex = slotIndex;
+                Remaining = true;
             }
         }
     }

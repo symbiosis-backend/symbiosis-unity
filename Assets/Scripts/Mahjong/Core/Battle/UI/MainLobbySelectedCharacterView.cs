@@ -11,6 +11,7 @@ namespace MahjongGame
         [Header("UI")]
         [SerializeField] private Image lobbyCharacterImage;
         [SerializeField] private BattleCharacterModelView lobbyCharacterModelView;
+        [SerializeField] private bool showLobbyCharacterAvatar = true;
 
         [Header("Buttons")]
         [SerializeField] private Button selectCharacterButton;
@@ -66,6 +67,12 @@ namespace MahjongGame
             Refresh();
         }
 
+        private void Update()
+        {
+            if (!subscribed)
+                Subscribe();
+        }
+
         private void OnEnable()
         {
             Subscribe();
@@ -85,8 +92,16 @@ namespace MahjongGame
             bool hasCharacter = data != null;
             Sprite targetSprite = GetLobbyDisplaySprite(data);
 
-            bool showingModel = ApplyLobbyModel(data);
-            ApplyLobbyImage(showingModel ? null : targetSprite);
+            if (showLobbyCharacterAvatar)
+            {
+                bool showingModel = ApplyLobbyModel(data);
+                ApplyLobbyImage(showingModel ? null : targetSprite);
+            }
+            else
+            {
+                HideLobbyAvatar();
+            }
+
             ApplyLobbyAnchor();
             ConfigureLobbyCharacterClickTarget();
 
@@ -181,7 +196,26 @@ namespace MahjongGame
                 return false;
             }
 
-            return lobbyCharacterModelView.Show(data, BattleCharacterModelView.ModelContext.Lobby);
+            return lobbyCharacterModelView.Show(data, BattleCharacterModelView.ModelContext.Profile);
+        }
+
+        private void HideLobbyAvatar()
+        {
+            if (lobbyCharacterModelView == null && lobbyCharacterImage != null)
+                lobbyCharacterModelView = lobbyCharacterImage.GetComponent<BattleCharacterModelView>();
+
+            if (lobbyCharacterModelView != null)
+                lobbyCharacterModelView.Hide();
+
+            if (lobbyCharacterImage != null)
+            {
+                lobbyCharacterImage.sprite = null;
+                lobbyCharacterImage.enabled = false;
+
+                Color color = lobbyCharacterImage.color;
+                color.a = 0f;
+                lobbyCharacterImage.color = color;
+            }
         }
 
         private void FitInside(RectTransform rt, float sourceW, float sourceH, float maxW, float maxH)
@@ -320,13 +354,16 @@ namespace MahjongGame
             if (!BattleCharacterSelectionService.HasInstance)
                 return null;
 
+            if (!BattleCharacterSelectionService.Instance.HasSelectedCharacter())
+                return null;
+
             return BattleCharacterSelectionService.Instance.GetSelectedCharacter();
         }
 
         private Sprite GetLobbyDisplaySprite(BattleCharacterDatabase.BattleCharacterData data)
         {
             if (data == null)
-                return fallbackLobbySprite;
+                return null;
 
             if (data.LobbySprite != null)
                 return data.LobbySprite;

@@ -38,8 +38,8 @@ namespace MahjongGame
         }
 
         [Header("Base Battle Stats")]
-        [SerializeField] private int maxHp = 100;
-        [SerializeField] private int attack = 10;
+        [SerializeField] private int maxHp = 480;
+        [SerializeField] private int attack = 36;
         [SerializeField, Range(0f, 1f)] private float armor = 0f;
         [SerializeField, Range(0f, 1f)] private float parryChance = 0f;
         [SerializeField, Range(0f, 1f)] private float critChance = 0.05f;
@@ -236,8 +236,8 @@ namespace MahjongGame
         }
 
         public void ResetToDefaults(
-            int defaultHp = 100,
-            int defaultAttack = 10,
+            int defaultHp = 480,
+            int defaultAttack = 36,
             float defaultArmor = 0f,
             float defaultParryChance = 0f,
             float defaultCritChance = 0.05f,

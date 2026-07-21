@@ -83,16 +83,41 @@ namespace MahjongGame
             return FreeAltinRewards[index];
         }
 
+        public static int GetFreeAltinForDay(int dayIndex)
+        {
+            if (dayIndex < 0)
+                dayIndex = 0;
+            if (dayIndex >= FreeAltinRewards.Length)
+                dayIndex = FreeAltinRewards.Length - 1;
+
+            return FreeAltinRewards[dayIndex];
+        }
+
         public static int GetAdAltin(PlayerProfile profile)
         {
             int index = GetSafeDayIndex(profile);
-            return FreeAltinRewards[index] * 2;
+            return GetAdAltinForDay(index);
+        }
+
+        public static int GetAdAltinForDay(int dayIndex)
+        {
+            return GetFreeAltinForDay(dayIndex) * 2;
         }
 
         public static int GetAdAmetist(PlayerProfile profile)
         {
             int index = GetSafeDayIndex(profile);
-            return AdAmetistRewards[index];
+            return GetAdAmetistForDay(index);
+        }
+
+        public static int GetAdAmetistForDay(int dayIndex)
+        {
+            if (dayIndex < 0)
+                dayIndex = 0;
+            if (dayIndex >= AdAmetistRewards.Length)
+                dayIndex = AdAmetistRewards.Length - 1;
+
+            return AdAmetistRewards[dayIndex];
         }
 
         public static bool ClaimFree(PlayerProfile profile)

@@ -6,7 +6,8 @@ namespace MahjongGame
         RandomMatch = 1,
         RankedMatch = 2,
         FriendMatch = 3,
-        LocalWifiMatch = 4
+        LocalWifiMatch = 4,
+        TournamentMatch = 5
     }
 
     public static class MahjongBattleLobbySession

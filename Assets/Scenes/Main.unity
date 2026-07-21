@@ -167,10 +167,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 35eac20fb57c16f4a948bf9a808404b7, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::MahjongGame.BGU_Vertical
   speed: 0.02
-  moveDown: 0
+  moveDown: 1
 --- !u!114 &52127437
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -191,7 +191,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: 542e9715f10e0ff48949d8bb50948154, type: 3}
+  m_Texture: {fileID: 2800000, guid: d48bb94c4e8e4e6d98b53b52e5b3c661, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -268,9 +268,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Okey
-
-'
+  m_text: ''
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -437,6 +435,7 @@ GameObject:
   - component: {fileID: 641697186}
   - component: {fileID: 641697185}
   - component: {fileID: 641697184}
+  - component: {fileID: 641697188}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -517,7 +516,7 @@ RectTransform:
   m_GameObject: {fileID: 641697183}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1181809263}
@@ -529,10 +528,22 @@ RectTransform:
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &641697188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 641697183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bacaf6973c20844b8992c83d149319c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &789507304
 GameObject:
   m_ObjectHideFlags: 0
@@ -1020,8 +1031,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1691216372}
-        m_TargetAssemblyTypeName: OkeyGame.SceneNavigator, Assembly-CSharp
-        m_MethodName: LoadLobbyOkey
+        m_TargetAssemblyTypeName: MahjongGame.SceneNavigator, Assembly-CSharp
+        m_MethodName: LoadLobbyMahjong
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1079,6 +1090,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1181809263}
   - component: {fileID: 1181809265}
+  - component: {fileID: 1181809266}
   m_Layer: 5
   m_Name: BG
   m_TagString: Untagged
@@ -1114,6 +1126,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1181809262}
   m_CullTransparentMesh: 1
+--- !u!114 &1181809266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1181809262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bb79f5c68734cb3ad871c1a84a772c1, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::MahjongGame.MainLobbyCometField
+  play: 1
+  maxActiveComets: 3
+  spawnDelayRange: {x: 2.8, y: 6.5}
+  lifetimeRange: {x: 1.8, y: 3.4}
+  lengthRange: {x: 42, y: 86}
+  thicknessRange: {x: 5, y: 9}
+  alphaRange: {x: 0.24, y: 0.46}
+  offscreenPadding: 90
+  cometColor: {r: 0.78, g: 0.92, b: 1, a: 1}
 --- !u!1 &1494106818
 GameObject:
   m_ObjectHideFlags: 0
@@ -1142,7 +1175,7 @@ RectTransform:
   m_GameObject: {fileID: 1494106818}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 451782844}
@@ -1151,10 +1184,10 @@ RectTransform:
   m_Father: {fileID: 1136750254}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1494106820
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1209,7 +1242,7 @@ Canvas:
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
-  m_OverrideSorting: 0
+  m_OverrideSorting: 1
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
@@ -1217,7 +1250,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 9999
+  m_SortingOrder: 32000
   m_TargetDisplay: 0
 --- !u!1 &1518639850
 GameObject:
@@ -1238,7 +1271,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1518639851
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1303,7 +1336,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1691216372}
-        m_TargetAssemblyTypeName: OkeyGame.SceneNavigator, Assembly-CSharp
+        m_TargetAssemblyTypeName: MahjongGame.SceneNavigator, Assembly-CSharp
         m_MethodName: LoadLobbyMahjong
         m_Mode: 1
         m_Arguments:
@@ -1409,13 +1442,15 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 84df95e341d96274982b2eb9528b3fc2, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::OkeyGame.SceneNavigator
+  m_EditorClassIdentifier: Assembly-CSharp::MahjongGame.SceneNavigator
   entryScene: Entry
   mainScene: Main
-  lobbyOkeyScene: LobbyOkey
-  gameOkeyScene: GameOkey
   lobbyMahjongScene: LobbyMahjong
+  battleLobbyMahjongScene: LobbyMahjongBattle
   gameMahjongScene: GameMahjong
+  symSudokuScene: SymSudoku
+  ozLobbyScene: OzLobby
+  ozGameScene: OzGame
   useDoorFxForMahjong: 1
   useDoorFxForMainToMahjong: 1
   useDoorFxForMahjongBackToMain: 1
@@ -1450,7 +1485,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1719210592
 RectTransform:
   m_ObjectHideFlags: 0

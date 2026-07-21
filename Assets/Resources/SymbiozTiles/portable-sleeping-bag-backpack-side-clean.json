@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "project": "Dynasty: Legacy Symbiosis",
+  "resourceFolder": "Assets/Resources/SymbiozTiles",
+  "id": "portable-sleeping-bag-backpack-side-clean",
+  "file": "portable-sleeping-bag-backpack-side-clean.png",
+  "sourceFile": "portable-sleeping-bag-backpack-side-clean-source.png",
+  "resourcesLoadPath": "SymbiozTiles/portable-sleeping-bag-backpack-side-clean",
+  "displayName": "Portable Sleeping Bag Backpack - Side Clean",
+  "role": "Separate side-view equip/unequip overlay for the portable sleeping bag backpack.",
+  "equipmentInstruction": "Use this clean side silhouette when the character stands or walks sideways. Place it on the upper back as an independent overlay, not baked into the character texture.",
+  "view": {
+    "name": "side",
+    "orientation": "pure side profile",
+    "shoulderLoops": false,
+    "looseShoulderStraps": false,
+    "intendedUse": "side-walk and side-idle character backpack layer"
+  },
+  "characterFit": {
+    "targetCharacter": "architect survivor",
+    "placement": "upper back, behind torso and above belt line",
+    "canEquip": true,
+    "canUnequip": true
+  }
+}

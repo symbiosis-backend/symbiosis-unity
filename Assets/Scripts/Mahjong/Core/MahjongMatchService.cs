@@ -9,6 +9,7 @@ namespace MahjongGame
         public bool Success;
         public MahjongGameMode Mode;
         public int GrantedAltin;
+        public int GrantedOzTile;
         public int Score;
         public int MaxCombo;
     }
@@ -68,9 +69,12 @@ namespace MahjongGame
             ProfileService.I.Save();
             ProfileService.I.NotifyProfileChanged();
 
+            int grantedReward = rewardResult != null ? rewardResult.TotalReward : 0;
+
             result.Success = true;
             result.Mode = matchResult.Mode;
-            result.GrantedAltin = rewardResult != null ? rewardResult.TotalReward : 0;
+            result.GrantedOzTile = grantedReward;
+            result.GrantedAltin = grantedReward;
             result.Score = Mathf.Max(0, matchResult.Score);
             result.MaxCombo = Mathf.Max(0, matchResult.MaxCombo);
 

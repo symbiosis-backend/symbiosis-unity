@@ -1,0 +1,16 @@
+{
+    "name": "Symbiosis.CorrosionCollapse.Runtime",
+    "rootNamespace": "Dynasty.Legacy.CorrosionCollapse",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "CORROSION_COLLAPSE_ENABLED"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -63,6 +63,14 @@ namespace MahjongGame
         private void OnDisable()
         {
             SceneManager.sceneLoaded -= OnSceneLoaded;
+
+            if (overlayRoot != null)
+            {
+                overlayRoot.SetActive(false);
+                Destroy(overlayRoot);
+            }
+            overlayRoot = null;
+            MainHubStateController.NotifyMainWindowClosed();
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -131,19 +139,29 @@ namespace MahjongGame
             if (overlayRoot != null)
                 return;
 
+            if (!MainHubStateController.CanOpenMainWindow("Changelog"))
+                return;
+
+            MainLobbyUiCoordinator.SetRightStackSuppressed(true);
+            SettingsMenuUI.SetMainSettingsButtonSuppressed(true);
             BuildOverlay();
+            MainGameLaunchBootstrap.RefreshVisibilityNow();
             StartCoroutine(LoadChangelog());
         }
 
         private void Close()
         {
             if (overlayRoot != null)
+            {
+                overlayRoot.SetActive(false);
                 Destroy(overlayRoot);
+            }
 
             overlayRoot = null;
             statusText = null;
             contentRoot = null;
             loading = false;
+            MainHubStateController.NotifyMainWindowClosed();
         }
 
         private void BuildOverlay()
@@ -397,13 +415,13 @@ namespace MahjongGame
             Close
         }
 
-        private static string ChronicleButtonText() => T("Хроники", "Chronicles", "Kronikler");
-        private static string ChroniclesTitleText() => T("Хроники проекта", "Project Chronicles", "Proje Kronikleri");
-        private static string CloseText() => T("Закрыть", "Close", "Kapat");
-        private static string WebsiteText() => T("Сайт", "Website", "Site");
-        private static string LoadingText() => T("Открываем хроники...", "Opening chronicles...", "Kronikler aciliyor...");
-        private static string VersionText() => T("Версия", "Version", "Surum");
-        private static string ChronicleBattleLobbyTitle() => T("Глава о боевом лобби", "The Battle Lobby Chapter", "Savas Lobisi Bolumu");
+        private static string ChronicleButtonText() => T("Хроники", "Chronicles", "Kronikler", "Chroniken");
+        private static string ChroniclesTitleText() => T("Хроники проекта", "Project Chronicles", "Proje Kronikleri", "Projektchroniken");
+        private static string CloseText() => T("Закрыть", "Close", "Kapat", "Schliessen");
+        private static string WebsiteText() => T("Сайт", "Website", "Site", "Website");
+        private static string LoadingText() => T("Открываем хроники...", "Opening chronicles...", "Kronikler aciliyor...", "Chroniken werden geoffnet...");
+        private static string VersionText() => T("Версия", "Version", "Surum", "Version");
+        private static string ChronicleBattleLobbyTitle() => T("Глава о боевом лобби", "The Battle Lobby Chapter", "Savas Lobisi Bolumu", "Kapitel zur Battle-Lobby");
         private static string ChronicleBattleLobbySummary() => T(
             "Мы переодели battle lobby в собственный интерфейсный слой: верхняя панель, окно настроек и окна поиска матча получили боевые спрайты, а типографика стала общей с Main. Лобби перестало выглядеть как смесь экранов и стало цельной боевой точкой входа.",
             "We rebuilt the battle lobby with its own interface layer: the top bar, settings window, and matchmaking windows now use battle art, while typography matches Main. The lobby no longer feels like a mix of screens and now reads as one coherent battle entry point.",
@@ -420,7 +438,7 @@ namespace MahjongGame
             "Из battle lobby убраны чат и друзья, а закрытие карусели больше не падает на поиске неактивных объектов.",
             "Chat and friends were removed from the battle lobby, and carousel shutdown no longer trips over inactive object lookups.",
             "Battle lobby'den chat ve arkadaslar kaldirildi; carousel kapanisi da artik pasif nesne aramasinda hata vermiyor.");
-        private static string ChronicleLatestTitle() => T("Глава о династии и центральном пункте", "The Dynasty and Central Point Chapter", "Hanedan ve Merkez Bolum");
+        private static string ChronicleLatestTitle() => T("Глава о династии и центральном пункте", "The Dynasty and Central Point Chapter", "Hanedan ve Merkez Bolum", "Kapitel zu Dynastie und Zentrum");
         private static string ChronicleLatestSummary() => T(
             "Мы собрали в центральном пункте первые династические инструменты: хранилище, куда можно отложить золото и аметисты, и отдельный банк для обмена аметистов на золото. Это уже не просто кнопки в меню, а маленькая глава о том, как у аккаунта появляется общая память и общий запас.",
             "We gathered the first dynasty tools into the central point: a vault for setting aside gold and amethysts, and a separate bank for exchanging amethysts into gold. These are no longer just menu buttons, but a small chapter about an account gaining shared memory and shared reserves.",
@@ -437,16 +455,16 @@ namespace MahjongGame
             "Левый верхний блок центрального пункта получил общий якорный слой, чтобы профиль, хранилище и банк держались вместе.",
             "The central point's upper-left block now has one shared anchor layer, keeping profile, vault, and bank together.",
             "Merkez bolumun sol ust blogu tek ortak anchor katmani kullaniyor; profil, depo ve banka birlikte duruyor.");
-        private static string ChronicleProjectTitle() => T("Хроники проекта", "Project Chronicles", "Proje Kronikleri");
+        private static string ChronicleProjectTitle() => T("Хроники проекта", "Project Chronicles", "Proje Kronikleri", "Projektchroniken");
         private static string ChronicleProjectSummary() => T(
             "Мы добавили место, где игра рассказывает о собственном пути: от первых сборок до новых систем, которые постепенно складывают Symbiosis в живой проект.",
             "We added a place where the game tells the story of its own path: from the first builds to the new systems that slowly shape Symbiosis into a living project.",
             "Oyunun kendi yolunu anlattigi bir yer ekledik: ilk surumlerden Symbiosis'i yavas yavas yasayan bir projeye donusturen sistemlere kadar.");
-        private static string ChronicleProjectChangeOne() => T("В игре появилась кнопка хроник.", "The game now has a Chronicles button.", "Oyuna Kronikler dugmesi eklendi.");
-        private static string ChronicleProjectChangeTwo() => T("На сайте появилась страница хроник.", "The website now has a Chronicles page.", "Web sitesine Kronikler sayfasi eklendi.");
+        private static string ChronicleProjectChangeOne() => T("В игре появилась кнопка хроник.", "The game now has a Chronicles button.", "Oyuna Kronikler dugmesi eklendi.", "Das Spiel hat jetzt einen Chroniken-Button.");
+        private static string ChronicleProjectChangeTwo() => T("На сайте появилась страница хроник.", "The website now has a Chronicles page.", "Web sitesine Kronikler sayfasi eklendi.", "Die Website hat jetzt eine Chroniken-Seite.");
         private static string ChronicleProjectChangeThree() => T("Если сервер недоступен, игра всё равно показывает локальную главу истории.", "If the server is unavailable, the game still shows a local chapter of the story.", "Sunucuya ulasilamazsa oyun yine de yerel bir hikaye bolumu gosterir.");
 
-        private static string T(string ru, string en, string tr)
+        private static string T(string ru, string en, string tr, string de = null)
         {
             if (AppSettings.I == null)
                 return en;
@@ -456,6 +474,7 @@ namespace MahjongGame
                 GameLanguage.Russian => ru,
                 GameLanguage.English => en,
                 GameLanguage.Turkish => tr,
+                GameLanguage.German => string.IsNullOrWhiteSpace(de) ? en : de,
                 _ => en
             };
         }

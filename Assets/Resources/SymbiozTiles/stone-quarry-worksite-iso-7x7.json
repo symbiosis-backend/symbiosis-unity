@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "project": "Dynasty: Legacy Symbiosis",
+  "resourceFolder": "Assets/Resources/SymbiozTiles",
+  "id": "stone-quarry-worksite-iso-7x7",
+  "file": "stone-quarry-worksite-iso-7x7.png",
+  "sourceFile": "stone-quarry-worksite-iso-7x7-source.png",
+  "resourcesLoadPath": "SymbiozTiles/stone-quarry-worksite-iso-7x7",
+  "displayName": "Stone Quarry Worksite - Isometric",
+  "role": "Isometric large stone resource gathering point where players approach to mine stone.",
+  "resourceType": "stone",
+  "style": "isometric",
+  "footprint": {
+    "widthCells": 7,
+    "heightCells": 7
+  },
+  "usage": {
+    "objectKind": "StoneQuarry",
+    "placement": "Place from the selected anchor cell as a 7x7 isometric worksite.",
+    "interaction": "Player approaches this area to gather stone."
+  }
+}

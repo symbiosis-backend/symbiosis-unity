@@ -92,7 +92,7 @@ namespace MahjongGame
                 return;
 
             Sprite spriteToUse = fallbackAvatar;
-            Sprite resourceSprite = ProfileAvatarResources.GetSprite(profile.Gender, profile.AvatarId);
+            Sprite resourceSprite = ProfileAvatarResources.GetDisplaySprite(profile);
             if (resourceSprite != null)
             {
                 spriteToUse = resourceSprite;
@@ -184,7 +184,7 @@ namespace MahjongGame
                 publicIdText.text = "ID: -";
 
             if (ageGenderText != null)
-                ageGenderText.text = "Age: -  Gender: -";
+                ageGenderText.text = GameLocalization.Format("profile.age_gender", "-", "-");
 
             if (avatarImage != null)
             {

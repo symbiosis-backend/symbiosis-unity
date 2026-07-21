@@ -1,16 +1,17 @@
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace MahjongGame
 {
     public static class CentralPointLayout
     {
-        public const float LeftX = 20f;
-        public const float TopY = -18f;
-        public const float MenuWidth = 285f;
-        public const float ProfileHeight = 340f;
-        public const float MenuButtonHeight = 84f;
-        public const float MenuGap = 12f;
+        public const float LeftX = MainLobbyUiCoordinator.LeftMenuX;
+        public const float TopY = MainLobbyUiCoordinator.LeftMenuTopY;
+        public const float MenuWidth = MainLobbyUiCoordinator.LeftMenuWidth;
+        public const float ProfileHeight = MainLobbyUiCoordinator.LeftProfileHeight;
+        public const float MenuButtonHeight = MainLobbyUiCoordinator.LeftMenuButtonHeight;
+        public const float MenuGap = MainLobbyUiCoordinator.LeftMenuGap;
 
         private const string LeftMenuRootName = "CentralPointLeftMenu";
 
@@ -18,6 +19,7 @@ namespace MahjongGame
         {
             Canvas[] canvases = UnityEngine.Object.FindObjectsByType<Canvas>(FindObjectsInactive.Include);
             Canvas fallback = null;
+            Scene activeScene = SceneManager.GetActiveScene();
 
             for (int i = 0; i < canvases.Length; i++)
             {
@@ -25,14 +27,54 @@ namespace MahjongGame
                 if (canvas == null)
                     continue;
 
+                if (!canvas.gameObject.scene.IsValid() || canvas.gameObject.scene != activeScene)
+                    continue;
+
                 if (string.Equals(canvas.name, "Canvas", StringComparison.Ordinal))
                     return canvas;
 
-                if (fallback == null && !string.Equals(canvas.name, "DoorCanvas", StringComparison.Ordinal))
+                if (fallback == null && IsUsableMainCanvas(canvas))
                     fallback = canvas;
             }
 
-            return fallback != null ? fallback : (canvases.Length > 0 ? canvases[0] : null);
+            if (fallback != null)
+                return fallback;
+
+            for (int i = 0; i < canvases.Length; i++)
+            {
+                Canvas canvas = canvases[i];
+                if (IsUsableMainCanvas(canvas))
+                    return canvas;
+            }
+
+            return canvases.Length > 0 ? canvases[0] : null;
+        }
+
+        private static bool IsUsableMainCanvas(Canvas canvas)
+        {
+            if (canvas == null)
+                return false;
+
+            return !IsRuntimeOverlayCanvasName(canvas.name);
+        }
+
+        public static bool IsRuntimeOverlayCanvasName(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+                return false;
+
+            return name.Contains("Door", StringComparison.OrdinalIgnoreCase)
+                || name.Contains("Transition", StringComparison.OrdinalIgnoreCase)
+                || name.Contains("Entry", StringComparison.OrdinalIgnoreCase)
+                || name.Contains("BrainGames", StringComparison.OrdinalIgnoreCase)
+                || name.Contains("Launch", StringComparison.OrdinalIgnoreCase)
+                || name.Contains("MahjongModeChoice", StringComparison.OrdinalIgnoreCase)
+                || name.Contains("MoonEffect", StringComparison.OrdinalIgnoreCase)
+                || name.Contains("InfoHint", StringComparison.OrdinalIgnoreCase)
+                || name.Contains("SymbiozLogin", StringComparison.OrdinalIgnoreCase)
+                || name.Contains("OrbiosisHangar", StringComparison.OrdinalIgnoreCase)
+                || name.Contains("SymbiGridOrientationBlackout", StringComparison.OrdinalIgnoreCase)
+                || name.Contains("SymbiGridSceneTransitionFx", StringComparison.OrdinalIgnoreCase);
         }
 
         public static RectTransform ResolveLeftMenuRoot(Canvas canvas = null)
@@ -51,21 +93,28 @@ namespace MahjongGame
                 rect = root.GetComponent<RectTransform>();
             }
 
-            rect.SetAsLastSibling();
-            SetTopLeft(rect, Vector2.zero, Vector2.zero);
+            Stretch(rect);
             return rect;
         }
 
         public static void SetTopLeft(RectTransform rect, Vector2 position, Vector2 size)
         {
+            MainLobbyUiCoordinator.LayoutTopLeft(rect, position, size);
+        }
+
+        private static void Stretch(RectTransform rect)
+        {
             if (rect == null)
                 return;
 
-            rect.anchorMin = new Vector2(0f, 1f);
-            rect.anchorMax = new Vector2(0f, 1f);
-            rect.pivot = new Vector2(0f, 1f);
-            rect.anchoredPosition = position;
-            rect.sizeDelta = size;
+            rect.anchorMin = Vector2.zero;
+            rect.anchorMax = Vector2.one;
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.anchoredPosition = Vector2.zero;
+            rect.sizeDelta = Vector2.zero;
+            rect.offsetMin = Vector2.zero;
+            rect.offsetMax = Vector2.zero;
+            rect.localScale = Vector3.one;
         }
     }
 }

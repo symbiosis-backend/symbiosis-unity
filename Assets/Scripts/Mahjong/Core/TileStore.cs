@@ -81,6 +81,20 @@ namespace MahjongGame
             if (pack != null && pack.Tiles != null && pack.Tiles.Count > 0)
                 return pack.Tiles;
 
+            if (StoryChinaContentLibrary.HasLevel(levelNumber))
+            {
+                IReadOnlyList<TileData> chinaTiles = StoryChinaTileLibrary.GetTiles(transform);
+                if (chinaTiles != null && chinaTiles.Count > 0)
+                    return chinaTiles;
+            }
+
+            if (StoryThemedContentLibrary.HasLevel(levelNumber))
+            {
+                IReadOnlyList<TileData> themedTiles = StoryThemedTileLibrary.GetTiles(levelNumber, transform);
+                if (themedTiles != null && themedTiles.Count > 0)
+                    return themedTiles;
+            }
+
             return baseTiles;
         }
 
@@ -94,7 +108,12 @@ namespace MahjongGame
         {
             LevelPack pack = GetLevelPack(levelNumber);
             if (pack == null || pack.Stages == null || pack.Stages.Count == 0)
-                return 0;
+            {
+                if (StoryChinaContentLibrary.HasLevel(levelNumber))
+                    return StoryChinaContentLibrary.StageCount;
+
+                return StoryThemedContentLibrary.GetStageCount(levelNumber);
+            }
 
             int count = 0;
 
@@ -108,6 +127,124 @@ namespace MahjongGame
         }
 
         public bool TryGetStageContent(int levelNumber, int stageIndex, out LevelStageContent content)
+        {
+            content = null;
+
+            if (TryGetSerializedStageContent(levelNumber, stageIndex, out content))
+                return true;
+
+            if (StoryChinaContentLibrary.TryCreateStage(levelNumber, stageIndex, ResolveLanguage(), out content))
+            {
+                ApplyFallbackBackground(content, stageIndex);
+                return true;
+            }
+
+            if (StoryThemedContentLibrary.TryCreateStage(levelNumber, stageIndex, ResolveLanguage(), out content))
+            {
+                ApplyFallbackBackground(content, stageIndex);
+                return true;
+            }
+
+            return false;
+        }
+
+        public string GetLevelDisplayName(int levelNumber)
+        {
+            LevelPack pack = GetLevelPack(levelNumber);
+            if (pack == null)
+            {
+                if (StoryChinaContentLibrary.HasLevel(levelNumber))
+                    return StoryChinaContentLibrary.GetLevelDisplayName(ResolveLanguage());
+
+                if (StoryThemedContentLibrary.HasLevel(levelNumber))
+                    return StoryThemedContentLibrary.GetLevelDisplayName(levelNumber, ResolveLanguage());
+
+                return $"Level {levelNumber}";
+            }
+
+            return string.IsNullOrWhiteSpace(pack.DisplayName) ? $"Level {levelNumber}" : pack.DisplayName;
+        }
+
+        public int GetMaxLevelNumber()
+        {
+            int max = Mathf.Max(StoryChinaContentLibrary.LevelNumber, StoryThemedContentLibrary.GetMaxLevelNumber());
+
+            if (levelPacks == null || levelPacks.Count == 0)
+                return max;
+
+            for (int i = 0; i < levelPacks.Count; i++)
+            {
+                LevelPack pack = levelPacks[i];
+                if (pack == null)
+                    continue;
+
+                if (pack.LevelNumber > max)
+                    max = pack.LevelNumber;
+            }
+
+            return max;
+        }
+
+        public int GetFirstLevelNumber()
+        {
+            int first = StoryChinaContentLibrary.LevelNumber;
+            bool found = StoryChinaContentLibrary.HasLevel(first);
+            int themedFirst = StoryThemedContentLibrary.GetFirstLevelNumber();
+            if (themedFirst > 0 && (!found || themedFirst < first))
+            {
+                first = themedFirst;
+                found = true;
+            }
+
+            if (levelPacks == null || levelPacks.Count == 0)
+                return found ? first : 0;
+
+            for (int i = 0; i < levelPacks.Count; i++)
+            {
+                LevelPack pack = levelPacks[i];
+                if (pack == null)
+                    continue;
+
+                if (!found || pack.LevelNumber < first)
+                {
+                    first = pack.LevelNumber;
+                    found = true;
+                }
+            }
+
+            return found ? first : 0;
+        }
+
+        public bool HasNextLevel(int currentLevel)
+        {
+            return GetNextLevelNumber(currentLevel) > 0;
+        }
+
+        public int GetNextLevelNumber(int currentLevel)
+        {
+            int next = int.MaxValue;
+            bool found = false;
+
+            TryRegisterNextLevelCandidate(StoryChinaContentLibrary.LevelNumber, currentLevel, ref next, ref found);
+            if (StoryThemedContentLibrary.TryGetNextLevelNumber(currentLevel, out int themedNext))
+                TryRegisterNextLevelCandidate(themedNext, currentLevel, ref next, ref found);
+
+            if (levelPacks != null)
+            {
+                for (int i = 0; i < levelPacks.Count; i++)
+                {
+                    LevelPack pack = levelPacks[i];
+                    if (pack == null)
+                        continue;
+
+                    TryRegisterNextLevelCandidate(pack.LevelNumber, currentLevel, ref next, ref found);
+                }
+            }
+
+            return found ? next : 0;
+        }
+
+        private bool TryGetSerializedStageContent(int levelNumber, int stageIndex, out LevelStageContent content)
         {
             content = null;
 
@@ -131,86 +268,29 @@ namespace MahjongGame
             return false;
         }
 
-        public string GetLevelDisplayName(int levelNumber)
+        private void ApplyFallbackBackground(LevelStageContent content, int stageIndex)
         {
-            LevelPack pack = GetLevelPack(levelNumber);
-            if (pack == null)
-                return $"Level {levelNumber}";
+            if (content == null || content.Background != null)
+                return;
 
-            return string.IsNullOrWhiteSpace(pack.DisplayName) ? $"Level {levelNumber}" : pack.DisplayName;
+            if (!TryGetSerializedStageContent(1, stageIndex, out LevelStageContent fallback))
+                return;
+
+            content.Background = fallback.Background;
         }
 
-        public int GetMaxLevelNumber()
+        private static void TryRegisterNextLevelCandidate(int candidate, int currentLevel, ref int next, ref bool found)
         {
-            if (levelPacks == null || levelPacks.Count == 0)
-                return 0;
+            if (candidate <= currentLevel || candidate >= next)
+                return;
 
-            int max = 0;
-
-            for (int i = 0; i < levelPacks.Count; i++)
-            {
-                LevelPack pack = levelPacks[i];
-                if (pack == null)
-                    continue;
-
-                if (pack.LevelNumber > max)
-                    max = pack.LevelNumber;
-            }
-
-            return max;
+            next = candidate;
+            found = true;
         }
 
-        public int GetFirstLevelNumber()
+        private static GameLanguage ResolveLanguage()
         {
-            if (levelPacks == null || levelPacks.Count == 0)
-                return 0;
-
-            int first = int.MaxValue;
-            bool found = false;
-
-            for (int i = 0; i < levelPacks.Count; i++)
-            {
-                LevelPack pack = levelPacks[i];
-                if (pack == null)
-                    continue;
-
-                if (pack.LevelNumber < first)
-                {
-                    first = pack.LevelNumber;
-                    found = true;
-                }
-            }
-
-            return found ? first : 0;
-        }
-
-        public bool HasNextLevel(int currentLevel)
-        {
-            return GetNextLevelNumber(currentLevel) > 0;
-        }
-
-        public int GetNextLevelNumber(int currentLevel)
-        {
-            if (levelPacks == null || levelPacks.Count == 0)
-                return 0;
-
-            int next = int.MaxValue;
-            bool found = false;
-
-            for (int i = 0; i < levelPacks.Count; i++)
-            {
-                LevelPack pack = levelPacks[i];
-                if (pack == null)
-                    continue;
-
-                if (pack.LevelNumber > currentLevel && pack.LevelNumber < next)
-                {
-                    next = pack.LevelNumber;
-                    found = true;
-                }
-            }
-
-            return found ? next : 0;
+            return AppSettings.I != null ? AppSettings.I.Language : GameLanguage.Turkish;
         }
     }
 }

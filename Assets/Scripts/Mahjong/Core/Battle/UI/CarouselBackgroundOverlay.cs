@@ -3,255 +3,350 @@ using UnityEngine.UI;
 
 namespace MahjongGame
 {
-    [DisallowMultipleComponent]
-    public sealed class CarouselBackgroundOverlay : MonoBehaviour
-    {
-        [Header("Target")]
-        [SerializeField] private RectTransform carouselRoot;
 
-        [Header("Visual")]
-        [SerializeField] private Sprite backgroundImage;
-        [SerializeField, Range(0f, 1f)] private float darkness = 0.9f;
-        [SerializeField] private bool preserveAspect = false;
+[DisallowMultipleComponent]
+public sealed class CarouselBackgroundOverlay : MonoBehaviour
+{
+	[Header("Target")]
+	[SerializeField]
+	private RectTransform carouselRoot;
 
-        [Header("Behavior")]
-        [SerializeField] private bool createOnAwake = true;
-        [SerializeField] private bool showOnEnable = true;
-        [SerializeField] private bool closeOnBackgroundClick = false;
-        [SerializeField] private bool destroyOnDisable = false;
+	[Header("Visual")]
+	[SerializeField]
+	private Sprite backgroundImage;
 
-        private GameObject overlayObject;
-        private RectTransform overlayRect;
-        private Image overlayImage;
-        private Button overlayButton;
-        private Canvas parentCanvas;
+	[SerializeField]
+	private string defaultBackgroundResourcePath = "Mahjong/Sprites/BattleLobbyParts/WindowForBattleLobby";
 
-        public bool IsCreated => overlayObject != null;
-        public bool IsVisible => overlayObject != null && overlayObject.activeSelf;
+	[SerializeField]
+	[Range(0f, 1f)]
+	private float darkness = 1f;
 
-        private void Reset()
-        {
-            if (carouselRoot == null)
-                carouselRoot = transform as RectTransform;
-        }
+	[SerializeField]
+	private bool forceFullscreenBlack;
 
-        private void Awake()
-        {
-            if (carouselRoot == null)
-                carouselRoot = transform as RectTransform;
+	[SerializeField]
+	[Range(0f, 1f)]
+	private float fullscreenBlackOpacity = 1f;
 
-            if (createOnAwake)
-                EnsureOverlay();
-        }
+	[SerializeField]
+	private bool preserveAspect;
 
-        private void OnEnable()
-        {
-            if (showOnEnable)
-                Show();
-        }
+	[Header("Behavior")]
+	[SerializeField]
+	private bool createOnAwake = true;
 
-        private void OnDisable()
-        {
-            if (destroyOnDisable)
-                DestroyOverlay();
-            else
-                Hide();
-        }
+	[SerializeField]
+	private bool showOnEnable = true;
 
-        private void OnDestroy()
-        {
-            if (overlayObject != null)
-                DestroyOverlay();
-        }
+	[SerializeField]
+	private bool closeOnBackgroundClick;
 
-        public void Show()
-        {
-            EnsureOverlay();
-            ApplyVisual();
+	[SerializeField]
+	private bool destroyOnDisable;
 
-            if (overlayObject != null)
-                overlayObject.SetActive(true);
+	private GameObject overlayObject;
 
-            MoveOverlayBehindCarousel();
-        }
+	private RectTransform overlayRect;
 
-        public void Hide()
-        {
-            if (overlayObject != null)
-                overlayObject.SetActive(false);
-        }
+	private Image overlayImage;
 
-        public void Toggle()
-        {
-            if (!IsCreated || !IsVisible)
-                Show();
-            else
-                Hide();
-        }
+	private Button overlayButton;
 
-        public void SetBackground(Sprite sprite)
-        {
-            backgroundImage = sprite;
-            ApplyVisual();
-        }
+	private Canvas parentCanvas;
 
-        public void SetDarkness(float value)
-        {
-            darkness = Mathf.Clamp01(value);
-            ApplyVisual();
-        }
+	public bool IsCreated => overlayObject != null;
 
-        private void EnsureOverlay()
-        {
-            if (overlayObject != null)
-            {
-                CacheReferences();
-                return;
-            }
+	public bool IsVisible
+	{
+		get
+		{
+			if (overlayObject != null)
+			{
+				return overlayObject.activeSelf;
+			}
+			return false;
+		}
+	}
 
-            if (carouselRoot == null)
-                carouselRoot = transform as RectTransform;
+	private void Reset()
+	{
+		if (carouselRoot == null)
+		{
+			carouselRoot = base.transform as RectTransform;
+		}
+	}
 
-            parentCanvas = GetComponentInParent<Canvas>(true);
-            if (parentCanvas == null)
-            {
-                Debug.LogWarning("[CarouselBackgroundOverlay] Parent Canvas not found.", this);
-                return;
-            }
+	private void Awake()
+	{
+		if (carouselRoot == null)
+		{
+			carouselRoot = base.transform as RectTransform;
+		}
+		if (createOnAwake)
+		{
+			EnsureOverlay();
+		}
+	}
 
-            Transform existing = parentCanvas.transform.Find("CarouselBackgroundOverlay_Auto");
-            if (existing != null)
-            {
-                overlayObject = existing.gameObject;
-                CacheReferences();
-                ApplyVisual();
-                MoveOverlayBehindCarousel();
-                return;
-            }
+	private void OnEnable()
+	{
+		if (showOnEnable)
+		{
+			Show();
+		}
+	}
 
-            overlayObject = new GameObject(
-                "CarouselBackgroundOverlay_Auto",
-                typeof(RectTransform),
-                typeof(CanvasRenderer),
-                typeof(Image),
-                typeof(Button)
-            );
+	private void OnDisable()
+	{
+		if (destroyOnDisable)
+		{
+			DestroyOverlay();
+		}
+		else
+		{
+			Hide();
+		}
+	}
 
-            overlayObject.transform.SetParent(parentCanvas.transform, false);
+	private void OnDestroy()
+	{
+		if (overlayObject != null)
+		{
+			DestroyOverlay();
+		}
+	}
 
-            CacheReferences();
+	public void Show()
+	{
+		EnsureOverlay();
+		ApplyFullscreenRect();
+		ApplyVisual();
+		if (overlayObject != null)
+		{
+			overlayObject.SetActive(value: true);
+		}
+		MoveOverlayBehindCarousel();
+	}
 
-            if (overlayRect != null)
-            {
-                overlayRect.anchorMin = Vector2.zero;
-                overlayRect.anchorMax = Vector2.one;
-                overlayRect.offsetMin = Vector2.zero;
-                overlayRect.offsetMax = Vector2.zero;
-                overlayRect.localScale = Vector3.one;
-                overlayRect.anchoredPosition3D = Vector3.zero;
-            }
+	public void Hide()
+	{
+		if (overlayObject != null)
+		{
+			overlayObject.SetActive(value: false);
+		}
+	}
 
-            if (overlayButton != null)
-            {
-                overlayButton.onClick.RemoveAllListeners();
-                overlayButton.onClick.AddListener(OnOverlayClicked);
-            }
+	public void Toggle()
+	{
+		if (!IsCreated || !IsVisible)
+		{
+			Show();
+		}
+		else
+		{
+			Hide();
+		}
+	}
 
-            ApplyVisual();
-            MoveOverlayBehindCarousel();
-        }
+	public void SetBackground(Sprite sprite)
+	{
+		backgroundImage = sprite;
+		ApplyVisual();
+	}
 
-        private void CacheReferences()
-        {
-            if (overlayObject == null)
-                return;
+	public void SetDarkness(float value)
+	{
+		darkness = Mathf.Clamp01(value);
+		ApplyVisual();
+	}
 
-            if (overlayRect == null)
-                overlayRect = overlayObject.GetComponent<RectTransform>();
+	private void EnsureOverlay()
+	{
+		if (overlayObject != null)
+		{
+			CacheReferences();
+			return;
+		}
+		if (carouselRoot == null)
+		{
+			carouselRoot = base.transform as RectTransform;
+		}
+		parentCanvas = GetComponentInParent<Canvas>(includeInactive: true);
+		if (parentCanvas == null)
+		{
+			Debug.LogWarning("[CarouselBackgroundOverlay] Parent Canvas not found.", this);
+			return;
+		}
+		Transform transform = parentCanvas.transform.Find("CarouselBackgroundOverlay_Auto");
+		if (transform != null)
+		{
+			overlayObject = transform.gameObject;
+			CacheReferences();
+			ApplyVisual();
+			MoveOverlayBehindCarousel();
+			return;
+		}
+		overlayObject = new GameObject("CarouselBackgroundOverlay_Auto", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
+		overlayObject.transform.SetParent(parentCanvas.transform, worldPositionStays: false);
+		CacheReferences();
+		ApplyFullscreenRect();
+		if (overlayButton != null)
+		{
+			overlayButton.onClick.RemoveAllListeners();
+			overlayButton.onClick.AddListener(OnOverlayClicked);
+		}
+		ApplyVisual();
+		MoveOverlayBehindCarousel();
+	}
 
-            if (overlayImage == null)
-                overlayImage = overlayObject.GetComponent<Image>();
+	private void CacheReferences()
+	{
+		if (!(overlayObject == null))
+		{
+			if (overlayRect == null)
+			{
+				overlayRect = overlayObject.GetComponent<RectTransform>();
+			}
+			if (overlayImage == null)
+			{
+				overlayImage = overlayObject.GetComponent<Image>();
+			}
+			if (overlayButton == null)
+			{
+				overlayButton = overlayObject.GetComponent<Button>();
+			}
+		}
+	}
 
-            if (overlayButton == null)
-                overlayButton = overlayObject.GetComponent<Button>();
-        }
+	private void ApplyVisual()
+	{
+		if (!(overlayImage == null))
+		{
+			if (backgroundImage == null && !string.IsNullOrWhiteSpace(defaultBackgroundResourcePath))
+			{
+				backgroundImage = LoadLargestSprite(defaultBackgroundResourcePath);
+			}
+			bool flag = backgroundImage != null || !string.IsNullOrWhiteSpace(defaultBackgroundResourcePath);
+			bool flag2 = forceFullscreenBlack && !flag;
+			overlayImage.sprite = (flag2 ? null : backgroundImage);
+			overlayImage.type = Image.Type.Simple;
+			overlayImage.preserveAspect = !flag2 && preserveAspect;
+			overlayImage.raycastTarget = true;
+			if (flag2)
+			{
+				overlayImage.color = new Color(0f, 0f, 0f, fullscreenBlackOpacity);
+			}
+			else if (backgroundImage != null)
+			{
+				overlayImage.color = new Color(1f, 1f, 1f, darkness);
+			}
+			else
+			{
+				overlayImage.color = new Color(0f, 0f, 0f, darkness);
+			}
+			if (overlayButton != null)
+			{
+				overlayButton.enabled = true;
+				overlayButton.transition = Selectable.Transition.None;
+			}
+		}
+	}
 
-        private void ApplyVisual()
-        {
-            if (overlayImage == null)
-                return;
+	private static Sprite LoadLargestSprite(string resourcePath)
+	{
+		Sprite sprite = Resources.Load<Sprite>(resourcePath);
+		if (sprite != null)
+		{
+			return sprite;
+		}
+		Sprite[] array = Resources.LoadAll<Sprite>(resourcePath);
+		if (array == null || array.Length == 0)
+		{
+			return null;
+		}
+		Sprite result = null;
+		float num = -1f;
+		foreach (Sprite sprite2 in array)
+		{
+			if (!(sprite2 == null))
+			{
+				float num2 = sprite2.rect.width * sprite2.rect.height;
+				if (!(num2 <= num))
+				{
+					result = sprite2;
+					num = num2;
+				}
+			}
+		}
+		return result;
+	}
 
-            overlayImage.sprite = backgroundImage;
-            overlayImage.type = Image.Type.Simple;
-            overlayImage.preserveAspect = preserveAspect;
-            overlayImage.raycastTarget = true;
+	private void ApplyFullscreenRect()
+	{
+		if (!(overlayRect == null))
+		{
+			overlayRect.anchorMin = Vector2.zero;
+			overlayRect.anchorMax = Vector2.one;
+			overlayRect.offsetMin = Vector2.zero;
+			overlayRect.offsetMax = Vector2.zero;
+			overlayRect.localScale = Vector3.one;
+			overlayRect.anchoredPosition3D = Vector3.zero;
+		}
+	}
 
-            // Если есть картинка — показываем её как есть, с прозрачностью.
-            // Если картинки нет — просто чёрное затемнение.
-            if (backgroundImage != null)
-                overlayImage.color = new Color(1f, 1f, 1f, darkness);
-            else
-                overlayImage.color = new Color(0f, 0f, 0f, darkness);
+	private void MoveOverlayBehindCarousel()
+	{
+		if (!(overlayObject == null) && !(carouselRoot == null))
+		{
+			Transform transform = overlayObject.transform;
+			Transform canvasDirectChild = GetCanvasDirectChild(carouselRoot);
+			if (!(transform.parent == null) && !(canvasDirectChild == null) && !(transform.parent != canvasDirectChild.parent))
+			{
+				int siblingIndex = canvasDirectChild.GetSiblingIndex();
+				int siblingIndex2 = Mathf.Max(0, siblingIndex - 1);
+				transform.SetSiblingIndex(siblingIndex2);
+			}
+		}
+	}
 
-            if (overlayButton != null)
-                overlayButton.enabled = true;
-        }
+	private Transform GetCanvasDirectChild(Transform target)
+	{
+		if (target == null || parentCanvas == null)
+		{
+			return null;
+		}
+		Transform transform = target;
+		Transform transform2 = parentCanvas.transform;
+		while (transform != null)
+		{
+			if (transform.parent == transform2)
+			{
+				return transform;
+			}
+			transform = transform.parent;
+		}
+		return null;
+	}
 
-        private void MoveOverlayBehindCarousel()
-        {
-            if (overlayObject == null || carouselRoot == null)
-                return;
+	private void OnOverlayClicked()
+	{
+		if (closeOnBackgroundClick && carouselRoot != null)
+		{
+			carouselRoot.gameObject.SetActive(value: false);
+		}
+	}
 
-            Transform overlayTransform = overlayObject.transform;
-            Transform carouselCanvasChild = GetCanvasDirectChild(carouselRoot);
-
-            if (overlayTransform.parent == null || carouselCanvasChild == null)
-                return;
-
-            if (overlayTransform.parent != carouselCanvasChild.parent)
-                return;
-
-            int carouselIndex = carouselCanvasChild.GetSiblingIndex();
-            int targetIndex = Mathf.Max(0, carouselIndex - 1);
-
-            overlayTransform.SetSiblingIndex(targetIndex);
-        }
-
-        private Transform GetCanvasDirectChild(Transform target)
-        {
-            if (target == null || parentCanvas == null)
-                return null;
-
-            Transform current = target;
-            Transform canvasTransform = parentCanvas.transform;
-
-            while (current != null)
-            {
-                if (current.parent == canvasTransform)
-                    return current;
-
-                current = current.parent;
-            }
-
-            return null;
-        }
-
-        private void OnOverlayClicked()
-        {
-            if (closeOnBackgroundClick && carouselRoot != null)
-                carouselRoot.gameObject.SetActive(false);
-        }
-
-        private void DestroyOverlay()
-        {
-            if (overlayObject == null)
-                return;
-
-            Destroy(overlayObject);
-            overlayObject = null;
-            overlayRect = null;
-            overlayImage = null;
-            overlayButton = null;
-        }
-    }
+	private void DestroyOverlay()
+	{
+		if (!(overlayObject == null))
+		{
+			Object.Destroy(overlayObject);
+			overlayObject = null;
+			overlayRect = null;
+			overlayImage = null;
+			overlayButton = null;
+		}
+	}
+}
 }

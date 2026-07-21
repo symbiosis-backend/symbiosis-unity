@@ -41,7 +41,7 @@ namespace MahjongGame
         [SerializeField] private int rewardPerComboStep = 1;
 
         [Header("Battle Reward")]
-        [SerializeField] private int battleWinReward = 100;
+        [SerializeField] private int battleWinReward = 10;
         [SerializeField] private bool allowStakeReward = true;
 
         [Header("Endless Reward")]
@@ -111,7 +111,7 @@ namespace MahjongGame
             MahjongRewardResult reward = CalculateReward(matchResult);
 
             if (reward.TotalReward > 0 && CurrencyService.I != null)
-                CurrencyService.I.AddOzAltin(reward.TotalReward);
+                CurrencyService.I.AddOzTile(reward.TotalReward);
 
             if (matchResult != null)
                 matchResult.RewardGranted = reward.TotalReward;

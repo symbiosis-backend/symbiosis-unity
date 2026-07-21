@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,6 +25,9 @@ namespace MahjongGame.Content
             if (Application.isBatchMode)
                 return;
 
+            if (ShouldSkipRemoteContent())
+                return;
+
             if (instance != null)
                 return;
 
@@ -34,6 +38,12 @@ namespace MahjongGame.Content
 
         private void Awake()
         {
+            if (ShouldSkipRemoteContent())
+            {
+                Destroy(gameObject);
+                return;
+            }
+
             if (instance != null && instance != this)
             {
                 Destroy(gameObject);
@@ -55,6 +65,9 @@ namespace MahjongGame.Content
             if (Application.isBatchMode)
                 return;
 
+            if (ShouldSkipRemoteContent())
+                return;
+
             if (instance == null)
                 Bootstrap();
 
@@ -64,6 +77,9 @@ namespace MahjongGame.Content
 
         public IEnumerator DownloadLabel(string label)
         {
+            if (ShouldSkipRemoteContent())
+                yield break;
+
             if (string.IsNullOrWhiteSpace(label))
                 yield break;
 
@@ -186,6 +202,43 @@ namespace MahjongGame.Content
         {
             if (handle.IsValid())
                 Addressables.Release(handle);
+        }
+
+        private static bool IsDirectSymbiozLaunch()
+        {
+            string[] args = Environment.GetCommandLineArgs();
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (string.Equals(args[i], "-symbioz-direct", StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static bool ShouldSkipRemoteContent()
+        {
+            if (IsDirectSymbiozLaunch())
+                return true;
+
+#if UNITY_STANDALONE
+            if (!Application.isEditor && !HasCommandLineArg("-enable-remote-content"))
+                return true;
+#endif
+
+            return false;
+        }
+
+        private static bool HasCommandLineArg(string arg)
+        {
+            string[] args = Environment.GetCommandLineArgs();
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (string.Equals(args[i], arg, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+
+            return false;
         }
     }
 }

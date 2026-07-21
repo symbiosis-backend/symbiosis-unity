@@ -1,0 +1,65 @@
+{
+  "base": "C:\\Unity Projects\\Symbiosis\\Assets\\Resources\\Orbiosis\\OrbStation_Level1.png",
+  "items": [
+    {
+      "level": 1,
+      "file": "OrbStation_Level01.png",
+      "source": "base copy",
+      "theme": "baseline station"
+    },
+    {
+      "level": 2,
+      "file": "OrbStation_Level02.png",
+      "source": "procedural upgrade from OrbStation_Level1.png",
+      "theme": "minor cyan reinforcement"
+    },
+    {
+      "level": 3,
+      "file": "OrbStation_Level03.png",
+      "source": "procedural upgrade from OrbStation_Level1.png",
+      "theme": "added armor modules"
+    },
+    {
+      "level": 4,
+      "file": "OrbStation_Level04.png",
+      "source": "procedural upgrade from OrbStation_Level1.png",
+      "theme": "expanded outer power ring"
+    },
+    {
+      "level": 5,
+      "file": "OrbStation_Level05.png",
+      "source": "procedural upgrade from OrbStation_Level1.png",
+      "theme": "brighter core and spokes"
+    },
+    {
+      "level": 6,
+      "file": "OrbStation_Level06.png",
+      "source": "procedural upgrade from OrbStation_Level1.png",
+      "theme": "gold energy tier begins"
+    },
+    {
+      "level": 7,
+      "file": "OrbStation_Level07.png",
+      "source": "procedural upgrade from OrbStation_Level1.png",
+      "theme": "reinforced golden modules"
+    },
+    {
+      "level": 8,
+      "file": "OrbStation_Level08.png",
+      "source": "procedural upgrade from OrbStation_Level1.png",
+      "theme": "crown nodes and heavier shields"
+    },
+    {
+      "level": 9,
+      "file": "OrbStation_Level09.png",
+      "source": "procedural upgrade from OrbStation_Level1.png",
+      "theme": "late-tier purple-gold resonance"
+    },
+    {
+      "level": 10,
+      "file": "OrbStation_Level10.png",
+      "source": "procedural upgrade from OrbStation_Level1.png",
+      "theme": "maximum evolved station shell"
+    }
+  ]
+}

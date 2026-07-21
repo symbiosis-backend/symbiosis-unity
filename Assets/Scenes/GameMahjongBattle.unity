@@ -1046,24 +1046,1163 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MahjongGame.BattleTileStore
   battleTiles:
-  - Id: fish
-    Prefab: {fileID: 1162972782420524311, guid: 0d354f94b5a92e448b663da8c8414f62, type: 3}
-  - Id: cat
-    Prefab: {fileID: 1162972782420524311, guid: 7b1ae45e060f42342942094baf51cdd8, type: 3}
-  - Id: bamboo
-    Prefab: {fileID: 1162972782420524311, guid: e2bcf7b90e702fb459e961819c88838f, type: 3}
-  - Id: money
-    Prefab: {fileID: 1162972782420524311, guid: 92e43d3fcdcf2094380ec26907e82bc7, type: 3}
-  totalRounds: 3
+  - Id: battle_tile_01
+    Prefab: {fileID: 1162972782420524311, guid: 83f0c256ee6a4c7cb1018d320c3bb251, type: 3}
+  - Id: battle_tile_02
+    Prefab: {fileID: 1162972782420524311, guid: 909e9d939aa0476d84dfd9155da046c2, type: 3}
+  - Id: battle_tile_03
+    Prefab: {fileID: 1162972782420524311, guid: 554c92258baa4845b399a0d4a7fb86c1, type: 3}
+  - Id: battle_tile_04
+    Prefab: {fileID: 1162972782420524311, guid: bf995772dead4cda8f5b22eec66e5939, type: 3}
+  - Id: battle_tile_09
+    Prefab: {fileID: 1162972782420524311, guid: c53338764bdc460a86b1290bffeeb5bb, type: 3}
+  - Id: battle_tile_11
+    Prefab: {fileID: 1162972782420524311, guid: b846dc53fed64989922451caccabb5f2, type: 3}
+  - Id: battle_tile_12
+    Prefab: {fileID: 1162972782420524311, guid: 1152467b1a31487295032401e4b6d25c, type: 3}
+  - Id: battle_tile_14
+    Prefab: {fileID: 1162972782420524311, guid: f9394e51e6ff43a9a75b6510834bdfc0, type: 3}
+  - Id: battle_tile_15
+    Prefab: {fileID: 1162972782420524311, guid: b6bcd8ab35384301999b5e9023200d14, type: 3}
+  - Id: battle_tile_16
+    Prefab: {fileID: 1162972782420524311, guid: a70cf94ff92a47b08694fb57bfb660af, type: 3}
+  - Id: battle_tile_19
+    Prefab: {fileID: 1162972782420524311, guid: 8876a913929748f7ad4ee99a79718b9c, type: 3}
+  - Id: battle_tile_20
+    Prefab: {fileID: 1162972782420524311, guid: ad570a99a4834ce5b7cd46e5d901400f, type: 3}
+  - Id: battle_tile_21
+    Prefab: {fileID: 1162972782420524311, guid: fe0d863f3b824b8f976c289f5a58ad81, type: 3}
+  - Id: battle_tile_22
+    Prefab: {fileID: 1162972782420524311, guid: 79596dc00a6a48cab3e78571dcee1ed2, type: 3}
+  - Id: battle_tile_24
+    Prefab: {fileID: 1162972782420524311, guid: 7d72a862796c449e8cf1988cb9775258, type: 3}
+  - Id: battle_tile_25
+    Prefab: {fileID: 1162972782420524311, guid: 4e41cebaf449492b826e0d752eaa5567, type: 3}
+  - Id: battle_tile_27
+    Prefab: {fileID: 1162972782420524311, guid: 422cb7da078f4b1295508387f918c0ad, type: 3}
+  - Id: battle_tile_28
+    Prefab: {fileID: 1162972782420524311, guid: b0a1b4c55caf4fad83399353e5531564, type: 3}
+  - Id: battle_tile_29
+    DisplayName: Ruby Phoenix Crest
+    Prefab: {fileID: 1162972782420524311, guid: 72b55cc5a79246d896fd1933a1a50eb7, type: 3}
+    Rarity: 2
+    IsDonate: 1
+    IsFree: 1
+    Description: A warm ruby crest that remembers every fallen flame. The phoenix mark feeds courage back into the hand that refuses to break.
+    PassiveBonus:
+      MaxHp: 0
+      Attack: 4
+      Armor: 0
+      ParryChance: 0
+      CritChance: 0.03
+      CritDamageMultiplier: 1
+    ActiveBonus:
+      Attack: 8
+      CritChance: 0.08
+      CritDamageMultiplier: 1.15
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 4
+    SymbiosisBonus:
+      MaxHp: 0
+      Attack: 3
+      Armor: 0
+      ParryChance: 0
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Phoenix Reprisal
+      Description: When this stone guides the build, ruby fire marks the next clean strike and pushes the hero toward a sharper critical hit.
+  - Id: battle_tile_31
+    DisplayName: Emerald Serpent Shield
+    Prefab: {fileID: 1162972782420524311, guid: 42a17dd7325c406087255053b75698f1, type: 3}
+    Rarity: 2
+    IsDonate: 1
+    IsFree: 1
+    Description: An old emerald ward curled around a black shield. It does not rush the strike; it waits, listens, and turns danger aside at the last breath.
+    PassiveBonus:
+      MaxHp: 20
+      Attack: 0
+      Armor: 0.02
+      ParryChance: 0.03
+      CritChance: 0
+      CritDamageMultiplier: 1
+    ActiveBonus:
+      Attack: 3
+      CritChance: 0
+      CritDamageMultiplier: 1
+      HealSelf: 16
+    SymbiosisAnimalTypes:
+    - 4
+    - 3
+    SymbiosisBonus:
+      MaxHp: 12
+      Attack: 0
+      Armor: 0.01
+      ParryChance: 0.02
+      CritChance: 0
+      CritDamageMultiplier: 1
+    Skill:
+      Name: Serpent Ward
+      Description: The serpent coils around the hero, turning pressure into guarded breath and restoring resolve after a matched hit.
+  - Id: battle_tile_37
+    DisplayName: Golden Lion Sun
+    Prefab: {fileID: 1162972782420524311, guid: d3c9aceeea9746dcba9235866cf37e42, type: 3}
+    Rarity: 3
+    IsDonate: 1
+    IsFree: 1
+    Description: A lion face hammered from sunlit gold. Its gaze turns hesitation into command and makes every clean match feel like a royal verdict.
+    PassiveBonus:
+      MaxHp: 10
+      Attack: 2
+      Armor: 0
+      ParryChance: 0
+      CritChance: 0.02
+      CritDamageMultiplier: 1.1
+    ActiveBonus:
+      Attack: 6
+      CritChance: 0.05
+      CritDamageMultiplier: 1.25
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 0
+    SymbiosisBonus:
+      MaxHp: 0
+      Attack: 3
+      Armor: 0
+      ParryChance: 0
+      CritChance: 0.03
+      CritDamageMultiplier: 1
+    Skill:
+      Name: Solar Command
+      Description: The lion sun calls the hand forward, making decisive matches strike with royal force.
+  - Id: battle_tile_33
+    DisplayName: Golden Dragon Mask
+    Prefab: {fileID: 1162972782420524311, guid: 2c0d56cb8a73405c905d0f6a7b213f33, type: 3}
+    Rarity: 3
+    IsDonate: 1
+    IsFree: 1
+    Description: A ceremonial dragon mask plated in old gold. It carries the breath of ancient rulers and wakes the hidden command inside a fearless strike.
+    PassiveBonus:
+      MaxHp: 0
+      Attack: 5
+      Armor: 0
+      ParryChance: 0
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    ActiveBonus:
+      Attack: 9
+      CritChance: 0.06
+      CritDamageMultiplier: 1.2
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 4
+    SymbiosisBonus:
+      MaxHp: 12
+      Attack: 3
+      Armor: 0
+      ParryChance: 0
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Dragon Edict
+      Description: The golden mask opens an ancient command: the next matching rhythm carries dragon authority into the blow.
+  - Id: battle_tile_34
+    DisplayName: Crimson Demon Mask
+    Prefab: {fileID: 1162972782420524311, guid: 9ed208d1d90c4e468c5a6494c19d7234, type: 3}
+    Rarity: 2
+    IsDonate: 1
+    IsFree: 1
+    Description: A red mask sealed with a restless oath. It does not protect the hand; it dares it to finish the fight before fear can answer.
+    PassiveBonus:
+      MaxHp: 0
+      Attack: 6
+      Armor: 0
+      ParryChance: 0
+      CritChance: 0.04
+      CritDamageMultiplier: 1
+    ActiveBonus:
+      Attack: 12
+      CritChance: 0.04
+      CritDamageMultiplier: 1.15
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 1
+    - 2
+    SymbiosisBonus:
+      MaxHp: 0
+      Attack: 3
+      Armor: 0
+      ParryChance: 0.01
+      CritChance: 0.03
+      CritDamageMultiplier: 1
+    Skill:
+      Name: Demon Dare
+      Description: The crimson mask burns caution away and turns a risky match into a heavier attack.
+  - Id: battle_tile_38
+    DisplayName: Turquoise Kraken Anchor
+    Prefab: {fileID: 1162972782420524311, guid: 7f59ce710f5041d6ab98dde854a4d536, type: 3}
+    Rarity: 2
+    IsDonate: 1
+    IsFree: 1
+    Description: A sea anchor wrapped in turquoise pressure and abyssal patience. It teaches the deck to hold its ground while the tide breaks around it.
+    PassiveBonus:
+      MaxHp: 24
+      Attack: 0
+      Armor: 0.02
+      ParryChance: 0.02
+      CritChance: 0
+      CritDamageMultiplier: 1
+    ActiveBonus:
+      Attack: 4
+      CritChance: 0
+      CritDamageMultiplier: 1
+      HealSelf: 18
+    SymbiosisAnimalTypes:
+    - 3
+    - 5
+    SymbiosisBonus:
+      MaxHp: 16
+      Attack: 0
+      Armor: 0.01
+      ParryChance: 0.02
+      CritChance: 0
+      CritDamageMultiplier: 1
+    Skill:
+      Name: Abyssal Hold
+      Description: The kraken anchor roots the hero in place, converting a matched hit into endurance and recovery.
+  - Id: battle_tile_47
+    DisplayName: Celestial Stag Antlers
+    Prefab: {fileID: 1162972782420524311, guid: 32b5c9b6691240ef91d474f7d9bb9147, type: 3}
+    Rarity: 4
+    IsDonate: 1
+    IsFree: 1
+    Description: Antlers drawn from a quiet constellation. They guide the warrior through the clean path between instinct and mercy.
+    PassiveBonus:
+      MaxHp: 18
+      Attack: 1
+      Armor: 0
+      ParryChance: 0.02
+      CritChance: 0.02
+      CritDamageMultiplier: 1
+    ActiveBonus:
+      Attack: 5
+      CritChance: 0.03
+      CritDamageMultiplier: 1
+      HealSelf: 12
+    SymbiosisAnimalTypes:
+    - 1
+    - 3
+    SymbiosisBonus:
+      MaxHp: 10
+      Attack: 1
+      Armor: 0
+      ParryChance: 0.03
+      CritChance: 0.01
+      CritDamageMultiplier: 1
+    Skill:
+      Name: Celestial Path
+      Description: The stag antlers reveal a clean route through danger, blending parry instinct with gentle recovery.
+  - Id: battle_tile_64
+    DisplayName: Crimson Vampire Chalice
+    Prefab: {fileID: 1162972782420524311, guid: 912ae075b9b84ef3b6068d6bb7ce9f64, type: 3}
+    Rarity: 5
+    IsDonate: 1
+    IsFree: 1
+    Description: A jeweled chalice filled with a red moon's promise. Every matched strike tastes the enemy's momentum and returns a little life to its bearer.
+    PassiveBonus:
+      MaxHp: 14
+      Attack: 2
+      Armor: 0
+      ParryChance: 0
+      CritChance: 0.03
+      CritDamageMultiplier: 1.05
+    ActiveBonus:
+      Attack: 7
+      CritChance: 0.04
+      CritDamageMultiplier: 1.1
+      HealSelf: 20
+    SymbiosisAnimalTypes:
+    - 2
+    - 1
+    SymbiosisBonus:
+      MaxHp: 8
+      Attack: 2
+      Armor: 0
+      ParryChance: 0
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Blood Chalice
+      Description: The chalice drinks from momentum; a successful match returns life while sharpening the strike.
+  - Id: battle_tile_30
+    DisplayName: Sapphire Frost Crown
+    Prefab: {fileID: 1162972782420524311, guid: 108d96f0ceb741789a9c9eb204ca9ed0, type: 3}
+    Rarity: 2
+    IsDonate: 1
+    IsFree: 1
+    Description: A crown cut from old winter sapphire. It quiets panic, seals the breath, and lets a calm ruler strike through frost.
+    PassiveBonus:
+      MaxHp: 16
+      Attack: 1
+      Armor: 0.01
+      ParryChance: 0.02
+      CritChance: 0.01
+      CritDamageMultiplier: 1.05
+    ActiveBonus:
+      Attack: 4
+      CritChance: 0.03
+      CritDamageMultiplier: 1.1
+      HealSelf: 10
+    SymbiosisAnimalTypes:
+    - 5
+    - 3
+    SymbiosisBonus:
+      MaxHp: 12
+      Attack: 1
+      Armor: 0.01
+      ParryChance: 0.02
+      CritChance: 0
+      CritDamageMultiplier: 1
+    Skill:
+      Name: Frost Dominion
+      Description: The crown settles cold command over the board, turning a matched hit into guarded recovery and sharper frost.
+  - Id: battle_tile_32
+    DisplayName: Amethyst Void Eye
+    Prefab: {fileID: 1162972782420524311, guid: e8e64d40c793454d9e1b1d7b7e849bf1, type: 3}
+    Rarity: 3
+    IsDonate: 1
+    IsFree: 1
+    Description: An amethyst eye watching from the hollow between moves. It reads hesitation and turns hidden fear into a precise cut.
+    PassiveBonus:
+      MaxHp: 0
+      Attack: 3
+      Armor: 0
+      ParryChance: 0
+      CritChance: 0.04
+      CritDamageMultiplier: 1.1
+    ActiveBonus:
+      Attack: 8
+      CritChance: 0.08
+      CritDamageMultiplier: 1.18
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 1
+    - 4
+    SymbiosisBonus:
+      MaxHp: 0
+      Attack: 2
+      Armor: 0
+      ParryChance: 0.01
+      CritChance: 0.03
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Void Gaze
+      Description: The eye opens for one clean match, exposing the weak point behind the enemy rhythm.
+  - Id: battle_tile_35
+    DisplayName: Cyan Crystal Sword
+    Prefab: {fileID: 1162972782420524311, guid: db47522c258b4794b2771fc8ad9e89f2, type: 3}
+    Rarity: 2
+    IsDonate: 1
+    IsFree: 1
+    Description: A cyan blade grown rather than forged. Its edge carries clear water and bright glass, cutting only when the hand is certain.
+    PassiveBonus:
+      MaxHp: 0
+      Attack: 4
+      Armor: 0
+      ParryChance: 0.01
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    ActiveBonus:
+      Attack: 9
+      CritChance: 0.04
+      CritDamageMultiplier: 1.12
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 2
+    - 5
+    SymbiosisBonus:
+      MaxHp: 0
+      Attack: 2
+      Armor: 0
+      ParryChance: 0.02
+      CritChance: 0.01
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Crystal Riposte
+      Description: The sword catches the shape of the match and sends it back as a clean cyan counterstrike.
+  - Id: battle_tile_39
+    DisplayName: White Holy Wing Spear
+    Prefab: {fileID: 1162972782420524311, guid: fd64cefb6d7942068b8e28b2e9775ae5, type: 3}
+    Rarity: 3
+    IsDonate: 1
+    IsFree: 1
+    Description: A spear wrapped in white wings and silent vows. It does not chase victory, it pierces the lie that keeps defeat alive.
+    PassiveBonus:
+      MaxHp: 18
+      Attack: 2
+      Armor: 0.01
+      ParryChance: 0.02
+      CritChance: 0.01
+      CritDamageMultiplier: 1
+    ActiveBonus:
+      Attack: 6
+      CritChance: 0.03
+      CritDamageMultiplier: 1.1
+      HealSelf: 16
+    SymbiosisAnimalTypes:
+    - 5
+    - 4
+    SymbiosisBonus:
+      MaxHp: 12
+      Attack: 2
+      Armor: 0.01
+      ParryChance: 0.02
+      CritChance: 0
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Winged Oath
+      Description: The spear lifts the bearer through a matched strike, mending resolve while the blow lands.
+  - Id: battle_tile_40
+    DisplayName: Green Necromancer Lantern
+    Prefab: {fileID: 1162972782420524311, guid: c17fcac15d1d4e5db4dafefc47231258, type: 3}
+    Rarity: 2
+    IsDonate: 1
+    IsFree: 1
+    Description: A green lantern full of whispering ash. It keeps memory from dying and teaches lost strength to return as poison light.
+    PassiveBonus:
+      MaxHp: 20
+      Attack: 0
+      Armor: 0.01
+      ParryChance: 0
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    ActiveBonus:
+      Attack: 4
+      CritChance: 0.03
+      CritDamageMultiplier: 1.05
+      HealSelf: 18
+    SymbiosisAnimalTypes:
+    - 1
+    - 3
+    SymbiosisBonus:
+      MaxHp: 12
+      Attack: 1
+      Armor: 0.01
+      ParryChance: 0
+      CritChance: 0.02
+      CritDamageMultiplier: 1
+    Skill:
+      Name: Graveglow
+      Description: The lantern drinks the echo of a match and returns part of it as eerie endurance.
+  - Id: battle_tile_41
+    DisplayName: Blue Thunder Hammer
+    Prefab: {fileID: 1162972782420524311, guid: ed40221dd26f4184ba6636b010c921e7, type: 3}
+    Rarity: 2
+    IsDonate: 1
+    IsFree: 1
+    Description: A hammer with blue lightning trapped in its stone heart. It waits for impact, then teaches the air to break.
+    PassiveBonus:
+      MaxHp: 8
+      Attack: 4
+      Armor: 0
+      ParryChance: 0
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    ActiveBonus:
+      Attack: 12
+      CritChance: 0.05
+      CritDamageMultiplier: 1.15
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 3
+    - 5
+    SymbiosisBonus:
+      MaxHp: 8
+      Attack: 2
+      Armor: 0.01
+      ParryChance: 0
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Thunderfall
+      Description: The hammer drops thunder into a matched hit and shakes extra force from the board.
+  - Id: battle_tile_42
+    DisplayName: Rose Dagger Relic
+    Prefab: {fileID: 1162972782420524311, guid: d0940d1524e54ca382ffdd8ecb4391de, type: 3}
+    Rarity: 3
+    IsDonate: 1
+    IsFree: 1
+    Description: A rose dagger grown around an old wound. Its beauty is careful, its thorn remembers exactly where armor opens.
+    PassiveBonus:
+      MaxHp: 0
+      Attack: 4
+      Armor: 0
+      ParryChance: 0.02
+      CritChance: 0.03
+      CritDamageMultiplier: 1.05
+    ActiveBonus:
+      Attack: 8
+      CritChance: 0.06
+      CritDamageMultiplier: 1.12
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 1
+    - 2
+    SymbiosisBonus:
+      MaxHp: 0
+      Attack: 2
+      Armor: 0
+      ParryChance: 0.02
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Thorn Kiss
+      Description: The relic kisses the next matched strike with thorned precision and a sharper critical edge.
+  - Id: battle_tile_43
+    DisplayName: Gryphon Shield
+    Prefab: {fileID: 1162972782420524311, guid: 497ddecf6704498099d90108b98ea72a, type: 3}
+    Rarity: 3
+    IsDonate: 1
+    IsFree: 1
+    Description: A golden gryphon rises across a shield of oath metal. Its wings remember the sky and its claws refuse surrender.
+    PassiveBonus:
+      MaxHp: 24
+      Attack: 1
+      Armor: 0.03
+      ParryChance: 0.02
+      CritChance: 0
+      CritDamageMultiplier: 1
+    ActiveBonus:
+      Attack: 5
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+      HealSelf: 18
+    SymbiosisAnimalTypes:
+    - 0
+    - 5
+    SymbiosisBonus:
+      MaxHp: 14
+      Attack: 1
+      Armor: 0.02
+      ParryChance: 0.02
+      CritChance: 0
+      CritDamageMultiplier: 1
+    Skill:
+      Name: Gryphon Guard
+      Description: The gryphon spreads its shield over a clean match, turning pressure into guarded momentum.
+  - Id: battle_tile_44
+    DisplayName: Violet Portal Key
+    Prefab: {fileID: 1162972782420524311, guid: b6ec6f91f81749d68765dd8d4b31c064, type: 3}
+    Rarity: 3
+    IsDonate: 1
+    IsFree: 1
+    Description: A violet key set before a storming doorway. It opens only for those willing to step between one heartbeat and the next.
+    PassiveBonus:
+      MaxHp: 6
+      Attack: 2
+      Armor: 0
+      ParryChance: 0.03
+      CritChance: 0.03
+      CritDamageMultiplier: 1.05
+    ActiveBonus:
+      Attack: 7
+      CritChance: 0.06
+      CritDamageMultiplier: 1.15
+      HealSelf: 8
+    SymbiosisAnimalTypes:
+    - 4
+    - 1
+    SymbiosisBonus:
+      MaxHp: 8
+      Attack: 2
+      Armor: 0
+      ParryChance: 0.02
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Portal Step
+      Description: The key folds distance around the match, letting the next strike arrive from an impossible angle.
+  - Id: battle_tile_45
+    DisplayName: Jade Lotus Skull
+    Prefab: {fileID: 1162972782420524311, guid: 341b87802aa5419da53853d9af9deff5, type: 3}
+    Rarity: 3
+    IsDonate: 1
+    IsFree: 1
+    Description: A skull nested in jade lotus leaves. It teaches decay to bloom and turns patient survival into a quiet threat.
+    PassiveBonus:
+      MaxHp: 22
+      Attack: 0
+      Armor: 0.02
+      ParryChance: 0.01
+      CritChance: 0.01
+      CritDamageMultiplier: 1
+    ActiveBonus:
+      Attack: 4
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+      HealSelf: 20
+    SymbiosisAnimalTypes:
+    - 3
+    - 1
+    SymbiosisBonus:
+      MaxHp: 16
+      Attack: 0
+      Armor: 0.01
+      ParryChance: 0.02
+      CritChance: 0.01
+      CritDamageMultiplier: 1
+    Skill:
+      Name: Lotus Afterlife
+      Description: The lotus opens under a matched hit, returning life from the place where fear expected rot.
+  - Id: battle_tile_46
+    DisplayName: Prismatic Crystal Relic
+    Prefab: {fileID: 1162972782420524311, guid: 37c0dd7480504918885efc8451fac71b, type: 3}
+    Rarity: 3
+    IsDonate: 1
+    IsFree: 1
+    Description: A prismatic crystal singing in every color at once. It does not choose a path, it aligns all paths into one hard beam.
+    PassiveBonus:
+      MaxHp: 10
+      Attack: 2
+      Armor: 0.01
+      ParryChance: 0.01
+      CritChance: 0.02
+      CritDamageMultiplier: 1.08
+    ActiveBonus:
+      Attack: 7
+      CritChance: 0.05
+      CritDamageMultiplier: 1.16
+      HealSelf: 10
+    SymbiosisAnimalTypes:
+    - 0
+    - 4
+    SymbiosisBonus:
+      MaxHp: 8
+      Attack: 2
+      Armor: 0.01
+      ParryChance: 0.01
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Prism Accord
+      Description: The crystal harmonizes the match and turns scattered force into one bright answer.
+  - Id: battle_tile_48
+    DisplayName: Magma Titan Gauntlet
+    Prefab: {fileID: 1162972782420524311, guid: 3740fb108a3a43869ac85e815eb1b92e, type: 3}
+    Rarity: 4
+    IsDonate: 1
+    IsFree: 1
+    Description: A titan gauntlet cracked with living magma. It is too heavy for doubt and too hot for retreat.
+    PassiveBonus:
+      MaxHp: 18
+      Attack: 5
+      Armor: 0.02
+      ParryChance: 0
+      CritChance: 0.01
+      CritDamageMultiplier: 1.08
+    ActiveBonus:
+      Attack: 14
+      CritChance: 0.04
+      CritDamageMultiplier: 1.2
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 3
+    - 0
+    SymbiosisBonus:
+      MaxHp: 18
+      Attack: 3
+      Armor: 0.02
+      ParryChance: 0
+      CritChance: 0.01
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Titan Grip
+      Description: The gauntlet closes around a matched strike and compresses it into molten impact.
+  - Id: battle_tile_49
+    DisplayName: Storm Eagle Talon
+    Prefab: {fileID: 1162972782420524311, guid: cb49548bd7bd4b889ae41f1df390cfd3, type: 3}
+    Rarity: 4
+    IsDonate: 1
+    IsFree: 1
+    Description: A storm eagle talon holding a shard of blue skyfire. It strikes where thunder has already chosen.
+    PassiveBonus:
+      MaxHp: 8
+      Attack: 4
+      Armor: 0
+      ParryChance: 0.03
+      CritChance: 0.04
+      CritDamageMultiplier: 1.08
+    ActiveBonus:
+      Attack: 11
+      CritChance: 0.08
+      CritDamageMultiplier: 1.18
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 0
+    - 5
+    SymbiosisBonus:
+      MaxHp: 8
+      Attack: 3
+      Armor: 0
+      ParryChance: 0.02
+      CritChance: 0.03
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Sky Talon
+      Description: The talon catches the match at its highest point and drops it as lightning.
+  - Id: battle_tile_50
+    DisplayName: Shadow Scythe Hourglass
+    Prefab: {fileID: 1162972782420524311, guid: 7baa3289046344ebbf9071c091946a33, type: 3}
+    Rarity: 4
+    IsDonate: 1
+    IsFree: 1
+    Description: A black scythe curved around an hourglass of purple dusk. It cuts not flesh first, but the moment that protected it.
+    PassiveBonus:
+      MaxHp: 8
+      Attack: 3
+      Armor: 0.01
+      ParryChance: 0.02
+      CritChance: 0.04
+      CritDamageMultiplier: 1.1
+    ActiveBonus:
+      Attack: 10
+      CritChance: 0.07
+      CritDamageMultiplier: 1.2
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 2
+    - 4
+    SymbiosisBonus:
+      MaxHp: 8
+      Attack: 2
+      Armor: 0
+      ParryChance: 0.02
+      CritChance: 0.03
+      CritDamageMultiplier: 1.08
+    Skill:
+      Name: Last Grain
+      Description: The hourglass loses one dark grain and the matched strike lands before the enemy is ready.
+  - Id: battle_tile_51
+    DisplayName: Coral Trident Shell
+    Prefab: {fileID: 1162972782420524311, guid: 8362af2e21334f80a7af4a04b64b2f79, type: 3}
+    Rarity: 4
+    IsDonate: 1
+    IsFree: 1
+    Description: A coral trident rising from pearl foam and deep tide. It carries the voice of reefs that endured every storm.
+    PassiveBonus:
+      MaxHp: 24
+      Attack: 2
+      Armor: 0.02
+      ParryChance: 0.02
+      CritChance: 0.01
+      CritDamageMultiplier: 1
+    ActiveBonus:
+      Attack: 7
+      CritChance: 0.03
+      CritDamageMultiplier: 1.08
+      HealSelf: 22
+    SymbiosisAnimalTypes:
+    - 5
+    - 3
+    SymbiosisBonus:
+      MaxHp: 18
+      Attack: 1
+      Armor: 0.02
+      ParryChance: 0.02
+      CritChance: 0
+      CritDamageMultiplier: 1
+    Skill:
+      Name: Reef Verdict
+      Description: The trident calls the tide through a match, restoring breath while the strike breaks like surf.
+  - Id: battle_tile_52
+    DisplayName: Jade Samurai Mask
+    Prefab: {fileID: 1162972782420524311, guid: 198f308c0e0a44e4b82be65f5b7a1140, type: 3}
+    Rarity: 4
+    IsDonate: 1
+    IsFree: 1
+    Description: A jade mask from a warrior who answered only to discipline. Its silence is sharper than any boast.
+    PassiveBonus:
+      MaxHp: 12
+      Attack: 4
+      Armor: 0.02
+      ParryChance: 0.03
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    ActiveBonus:
+      Attack: 9
+      CritChance: 0.05
+      CritDamageMultiplier: 1.15
+      HealSelf: 10
+    SymbiosisAnimalTypes:
+    - 2
+    - 5
+    SymbiosisBonus:
+      MaxHp: 10
+      Attack: 2
+      Armor: 0.01
+      ParryChance: 0.03
+      CritChance: 0.01
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Silent Iaido
+      Description: The mask holds the breath of the match, then releases one disciplined cut.
+  - Id: battle_tile_53
+    DisplayName: Bronze Minotaur Axe
+    Prefab: {fileID: 1162972782420524311, guid: 9ebc624a14d2404eae0b52c4b936e99b, type: 3}
+    Rarity: 4
+    IsDonate: 1
+    IsFree: 1
+    Description: A bronze axe bearing the glare of the labyrinth king. It loves straight answers and makes walls regret standing.
+    PassiveBonus:
+      MaxHp: 20
+      Attack: 5
+      Armor: 0.01
+      ParryChance: 0
+      CritChance: 0.02
+      CritDamageMultiplier: 1.08
+    ActiveBonus:
+      Attack: 15
+      CritChance: 0.03
+      CritDamageMultiplier: 1.18
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 3
+    - 0
+    SymbiosisBonus:
+      MaxHp: 18
+      Attack: 3
+      Armor: 0.01
+      ParryChance: 0
+      CritChance: 0.01
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Labyrinth Break
+      Description: The axe finds the center of the match and breaks through with brutal certainty.
+  - Id: battle_tile_54
+    DisplayName: Silver Spider Web Dagger
+    Prefab: {fileID: 1162972782420524311, guid: 536585f646114cbd8fded6956dc1fac6, type: 3}
+    Rarity: 4
+    IsDonate: 1
+    IsFree: 1
+    Description: A silver dagger woven through moonlit web. It waits without trembling and punishes the first wrong movement.
+    PassiveBonus:
+      MaxHp: 6
+      Attack: 3
+      Armor: 0
+      ParryChance: 0.04
+      CritChance: 0.04
+      CritDamageMultiplier: 1.08
+    ActiveBonus:
+      Attack: 9
+      CritChance: 0.08
+      CritDamageMultiplier: 1.16
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 1
+    - 2
+    SymbiosisBonus:
+      MaxHp: 8
+      Attack: 2
+      Armor: 0
+      ParryChance: 0.03
+      CritChance: 0.03
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Webbed Needle
+      Description: The web tightens around a matched hit and guides the dagger into the exposed point.
+  - Id: battle_tile_55
+    DisplayName: Lotus Moon Staff
+    Prefab: {fileID: 1162972782420524311, guid: 0467487c37734fefa374a5effcc7ee9d, type: 3}
+    Rarity: 4
+    IsDonate: 1
+    IsFree: 1
+    Description: A moon staff crowned with a sleeping lotus. It turns restless power into soft rhythm and soft rhythm into survival.
+    PassiveBonus:
+      MaxHp: 26
+      Attack: 1
+      Armor: 0.01
+      ParryChance: 0.03
+      CritChance: 0.01
+      CritDamageMultiplier: 1
+    ActiveBonus:
+      Attack: 5
+      CritChance: 0.03
+      CritDamageMultiplier: 1.05
+      HealSelf: 24
+    SymbiosisAnimalTypes:
+    - 1
+    - 3
+    SymbiosisBonus:
+      MaxHp: 18
+      Attack: 1
+      Armor: 0.01
+      ParryChance: 0.03
+      CritChance: 0
+      CritDamageMultiplier: 1
+    Skill:
+      Name: Moon Lotus
+      Description: The lotus opens in moonlight after a match, mending the hero without dulling the strike.
+  - Id: battle_tile_56
+    DisplayName: Blood Moon Bow
+    Prefab: {fileID: 1162972782420524311, guid: cafd1e1e1ddc45f789034ba9a30d1ef4, type: 3}
+    Rarity: 5
+    IsDonate: 1
+    IsFree: 1
+    Description: A bow bent around a burning blood moon. It does not miss because it fires at the wound destiny already marked.
+    PassiveBonus:
+      MaxHp: 6
+      Attack: 4
+      Armor: 0
+      ParryChance: 0.01
+      CritChance: 0.05
+      CritDamageMultiplier: 1.1
+    ActiveBonus:
+      Attack: 12
+      CritChance: 0.09
+      CritDamageMultiplier: 1.22
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 2
+    - 1
+    SymbiosisBonus:
+      MaxHp: 8
+      Attack: 3
+      Armor: 0
+      ParryChance: 0.01
+      CritChance: 0.04
+      CritDamageMultiplier: 1.08
+    Skill:
+      Name: Red Eclipse
+      Description: The bow darkens the match under a blood moon and releases a ruthless critical shot.
+  - Id: battle_tile_57
+    DisplayName: Plague Doctor Raven Mask
+    Prefab: {fileID: 1162972782420524311, guid: ff35024419804ecaa395c4b8ae6ffd4f, type: 3}
+    Rarity: 5
+    IsDonate: 1
+    IsFree: 1
+    Description: A raven mask with green lenses and bottled omens. It studies the sickness in battle and teaches it to serve.
+    PassiveBonus:
+      MaxHp: 18
+      Attack: 2
+      Armor: 0.01
+      ParryChance: 0.02
+      CritChance: 0.03
+      CritDamageMultiplier: 1.05
+    ActiveBonus:
+      Attack: 6
+      CritChance: 0.05
+      CritDamageMultiplier: 1.1
+      HealSelf: 18
+    SymbiosisAnimalTypes:
+    - 1
+    - 5
+    SymbiosisBonus:
+      MaxHp: 12
+      Attack: 2
+      Armor: 0.01
+      ParryChance: 0.02
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Raven Remedy
+      Description: The mask distills danger from a matched hit and returns it as bitter recovery.
+  - Id: battle_tile_58
+    DisplayName: Sun Priest Ankh
+    Prefab: {fileID: 1162972782420524311, guid: 6371c026cfe54c56ab4e148b9c679029, type: 3}
+    Rarity: 5
+    IsDonate: 1
+    IsFree: 1
+    Description: A sun priest ankh blazing with old noon. Its gold does not glitter for vanity, it remembers resurrection.
+    PassiveBonus:
+      MaxHp: 22
+      Attack: 3
+      Armor: 0.01
+      ParryChance: 0.01
+      CritChance: 0.03
+      CritDamageMultiplier: 1.08
+    ActiveBonus:
+      Attack: 8
+      CritChance: 0.05
+      CritDamageMultiplier: 1.12
+      HealSelf: 22
+    SymbiosisAnimalTypes:
+    - 4
+    - 0
+    SymbiosisBonus:
+      MaxHp: 16
+      Attack: 2
+      Armor: 0.01
+      ParryChance: 0.01
+      CritChance: 0.03
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Noon Rite
+      Description: The ankh invokes the sun over a clean match, restoring life and raising the strike.
+  - Id: battle_tile_59
+    DisplayName: Frost Wolf Axe
+    Prefab: {fileID: 1162972782420524311, guid: 69133029a6614a5c920f4da3ca4412cd, type: 3}
+    Rarity: 5
+    IsDonate: 1
+    IsFree: 1
+    Description: A frost axe carved with the head of a winter wolf. It hunts in silence and leaves only blue breath behind.
+    PassiveBonus:
+      MaxHp: 14
+      Attack: 4
+      Armor: 0.01
+      ParryChance: 0.02
+      CritChance: 0.03
+      CritDamageMultiplier: 1.08
+    ActiveBonus:
+      Attack: 11
+      CritChance: 0.06
+      CritDamageMultiplier: 1.18
+      HealSelf: 8
+    SymbiosisAnimalTypes:
+    - 2
+    - 5
+    SymbiosisBonus:
+      MaxHp: 12
+      Attack: 3
+      Armor: 0.01
+      ParryChance: 0.02
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Winter Hunt
+      Description: The wolf axe follows the matched trail and bites with cold, precise force.
+  - Id: battle_tile_60
+    DisplayName: Onyx Coffin Shield
+    Prefab: {fileID: 1162972782420524311, guid: fd177e203a8e49d1bff32add0642b11d, type: 3}
+    Rarity: 5
+    IsDonate: 1
+    IsFree: 1
+    Description: An onyx coffin shield sealed with black vows. It turns endings into walls and makes despair hold the line.
+    PassiveBonus:
+      MaxHp: 34
+      Attack: 0
+      Armor: 0.04
+      ParryChance: 0.02
+      CritChance: 0
+      CritDamageMultiplier: 1
+    ActiveBonus:
+      Attack: 4
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+      HealSelf: 26
+    SymbiosisAnimalTypes:
+    - 3
+    - 4
+    SymbiosisBonus:
+      MaxHp: 22
+      Attack: 0
+      Armor: 0.03
+      ParryChance: 0.02
+      CritChance: 0
+      CritDamageMultiplier: 1
+    Skill:
+      Name: Coffin Wall
+      Description: The shield closes around the match, absorbing dread and returning stubborn life.
+  - Id: battle_tile_61
+    DisplayName: Emerald Druid Horn
+    Prefab: {fileID: 1162972782420524311, guid: f430dada96c04484ac909a0299b6975a, type: 3}
+    Rarity: 5
+    IsDonate: 1
+    IsFree: 1
+    Description: An emerald horn grown from ancient woodland bone. It calls roots under the battlefield and asks them to remember the hero.
+    PassiveBonus:
+      MaxHp: 28
+      Attack: 1
+      Armor: 0.02
+      ParryChance: 0.03
+      CritChance: 0.01
+      CritDamageMultiplier: 1
+    ActiveBonus:
+      Attack: 5
+      CritChance: 0.03
+      CritDamageMultiplier: 1.08
+      HealSelf: 24
+    SymbiosisAnimalTypes:
+    - 3
+    - 1
+    SymbiosisBonus:
+      MaxHp: 20
+      Attack: 1
+      Armor: 0.02
+      ParryChance: 0.03
+      CritChance: 0
+      CritDamageMultiplier: 1
+    Skill:
+      Name: Rootcall
+      Description: The horn sounds beneath a matched strike and pulls endurance up through the earth.
+  - Id: battle_tile_62
+    DisplayName: Comet Spearhead
+    Prefab: {fileID: 1162972782420524311, guid: 0bb0e0bab2a34464b3011131379f32bb, type: 3}
+    Rarity: 5
+    IsDonate: 1
+    IsFree: 1
+    Description: A spearhead split between fire and blue star ice. It falls like a promise from the sky and leaves no easy answer.
+    PassiveBonus:
+      MaxHp: 10
+      Attack: 5
+      Armor: 0
+      ParryChance: 0.01
+      CritChance: 0.04
+      CritDamageMultiplier: 1.1
+    ActiveBonus:
+      Attack: 14
+      CritChance: 0.07
+      CritDamageMultiplier: 1.22
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 4
+    - 0
+    SymbiosisBonus:
+      MaxHp: 10
+      Attack: 3
+      Armor: 0
+      ParryChance: 0.01
+      CritChance: 0.03
+      CritDamageMultiplier: 1.08
+    Skill:
+      Name: Cometfall
+      Description: The spearhead turns the match into a falling star, bright, sudden, and difficult to survive.
+  - Id: battle_tile_63
+    DisplayName: Royal Chess Knight Lance
+    Prefab: {fileID: 1162972782420524311, guid: 1eab65feee7b49f1826d8c032ae32a9c, type: 3}
+    Rarity: 5
+    IsDonate: 1
+    IsFree: 1
+    Description: A royal lance crowned by a blue knight. It moves by old rules, then wins from the angle no common soldier saw.
+    PassiveBonus:
+      MaxHp: 16
+      Attack: 4
+      Armor: 0.01
+      ParryChance: 0.03
+      CritChance: 0.03
+      CritDamageMultiplier: 1.08
+    ActiveBonus:
+      Attack: 10
+      CritChance: 0.06
+      CritDamageMultiplier: 1.18
+      HealSelf: 10
+    SymbiosisAnimalTypes:
+    - 5
+    - 0
+    SymbiosisBonus:
+      MaxHp: 12
+      Attack: 3
+      Armor: 0.01
+      ParryChance: 0.02
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Knight Fork
+      Description: The lance leaps through the matched pattern and strikes from a royal diagonal.
+  totalRounds: 1
   roundConfigs:
   - RoundIndex: 1
-    TilesToUse: 30
-    LayoutLevel: 1
-  - RoundIndex: 2
-    TilesToUse: 30
-    LayoutLevel: 2
-  - RoundIndex: 3
-    TilesToUse: 30
+    TilesToUse: 56
     LayoutLevel: 3
 --- !u!4 &430858862
 Transform:
@@ -1371,7 +2510,7 @@ MonoBehaviour:
   resultPanelBackgroundColor: {r: 0, g: 0, b: 0, a: 0.72}
   winResultColor: {r: 0.3, g: 1, b: 0.38, a: 1}
   failedResultColor: {r: 1, g: 0.25, b: 0.2, a: 1}
-  totalCombatRounds: 3
+  totalCombatRounds: 1
   nextRoundDelay: 1.25
   roundPrefix: 'Round '
   stateFight: Fight
@@ -1410,9 +2549,9 @@ MonoBehaviour:
   playerBoard: {fileID: 861931675}
   opponentBoard: {fileID: 1860237493}
   statsHub: {fileID: 0}
-  maxPlayerHp: 100
-  maxOpponentHp: 100
-  damagePerPair: 1
+  maxPlayerHp: 480
+  maxOpponentHp: 480
+  damagePerPair: 36
   useSelectedCharacterStats: 1
   createStatsHubIfMissing: 1
   useCharacterDamageStats: 1
@@ -1422,7 +2561,7 @@ MonoBehaviour:
   opponentCritChance: 0.08
   opponentCritDamageMultiplier: 1.5
   opponentRankHpStep: 100
-  opponentHpPerStep: 4
+  opponentHpPerStep: 12
   opponentRankAttackStep: 150
   opponentAttackPerStep: 1
   playerHpText: {fileID: 46366227}
@@ -1946,7 +3085,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 9197304086652216982, guid: e3f021c322005564a8d72bed07dddc0e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d20f3cb2d16a4f349a00bbecb7de5b21, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3353,7 +4492,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 9197304086652216982, guid: e3f021c322005564a8d72bed07dddc0e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d20f3cb2d16a4f349a00bbecb7de5b21, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

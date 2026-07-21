@@ -35,6 +35,7 @@ namespace MahjongGame
 
         [Header("Face Mode")]
         [SerializeField] private bool faceIsFullTileArt = true;
+        [SerializeField] private Vector2 fullTileArtScale = new(1.082f, 1.08f);
 
         [Header("Base Size")]
         [SerializeField] private Vector2 size = new(56f, 76f);
@@ -76,6 +77,8 @@ namespace MahjongGame
         public RectTransform Rect => rect;
         public Vector2 Size => size;
         public BattleBoard Owner => owner;
+        public Sprite BackSprite => backSprite;
+        public Sprite FaceSprite => faceSprite;
 
         public BattleTileRevealState RevealState => revealState;
         public bool IsClosed => revealState == BattleTileRevealState.Closed;
@@ -111,6 +114,8 @@ namespace MahjongGame
         {
             size.x = Mathf.Max(16f, size.x);
             size.y = Mathf.Max(16f, size.y);
+            fullTileArtScale.x = Mathf.Max(0.5f, fullTileArtScale.x);
+            fullTileArtScale.y = Mathf.Max(0.5f, fullTileArtScale.y);
             faceWidthPercent = Mathf.Clamp(faceWidthPercent, 0.2f, 1f);
             faceHeightPercent = Mathf.Clamp(faceHeightPercent, 0.2f, 1f);
             blockedShakeDuration = Mathf.Max(0.01f, blockedShakeDuration);
@@ -180,6 +185,7 @@ namespace MahjongGame
         public void SetId(string newId)
         {
             id = string.IsNullOrWhiteSpace(newId) ? string.Empty : newId;
+            RefreshUpgradeStars();
             NotifyStateChanged();
         }
 
@@ -204,6 +210,7 @@ namespace MahjongGame
                 backSprite = data.Prefab.backSprite;
                 faceSprite = data.Prefab.faceSprite;
                 faceIsFullTileArt = data.Prefab.faceIsFullTileArt;
+                fullTileArtScale = data.Prefab.fullTileArtScale;
                 size = data.Prefab.size;
                 faceWidthPercent = data.Prefab.faceWidthPercent;
                 faceHeightPercent = data.Prefab.faceHeightPercent;
@@ -526,7 +533,9 @@ namespace MahjongGame
                 {
                     faceImage.sprite = faceSprite;
                     faceImage.enabled = hasFace;
-                    faceImage.rectTransform.sizeDelta = size;
+                    faceImage.rectTransform.sizeDelta = new Vector2(
+                        size.x * fullTileArtScale.x,
+                        size.y * fullTileArtScale.y);
                     faceImage.rectTransform.anchoredPosition = Vector2.zero;
                     faceImage.preserveAspect = false;
                 }
@@ -574,6 +583,20 @@ namespace MahjongGame
                     faceImage.enabled = false;
                     break;
             }
+
+            RefreshUpgradeStars();
+        }
+
+        private void RefreshUpgradeStars()
+        {
+            if (faceImage == null)
+                return;
+
+            int upgradeLevel = MahjongSession.LaunchMode == MahjongLaunchMode.Battle && owner != null
+                ? MahjongSession.GetBattleTileUpgradeLevel(owner.Side, id)
+                : BattleTileInventoryService.GetUpgradeLevel(ProfileService.I?.Current, id);
+            bool visible = revealState == BattleTileRevealState.Revealed && faceImage.enabled;
+            BattleTileUpgradeVisual.Apply(transform, faceImage.rectTransform.anchoredPosition, faceImage.rectTransform.sizeDelta, upgradeLevel, visible);
         }
 
         private void RefreshColor()

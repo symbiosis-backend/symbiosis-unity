@@ -116,10 +116,10 @@ TextureImporter:
       name: tray_0
       rect:
         serializedVersion: 2
-        x: 40
-        y: 21
-        width: 1278
-        height: 424
+        x: 30
+        y: 250
+        width: 1480
+        height: 590
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

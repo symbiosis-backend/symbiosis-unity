@@ -7,8 +7,7 @@ namespace MahjongGame
     {
         private static readonly string[] FriendsSceneNames =
         {
-            "Main",
-            "LobbyMahjong"
+            "Main"
         };
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -17,6 +16,10 @@ namespace MahjongGame
             EnsureService();
             SceneManager.sceneLoaded -= OnSceneLoaded;
             SceneManager.sceneLoaded += OnSceneLoaded;
+            SceneManager.activeSceneChanged -= OnActiveSceneChanged;
+            SceneManager.activeSceneChanged += OnActiveSceneChanged;
+            DoorFx.SceneTransitionStarted -= OnSceneTransitionStarted;
+            DoorFx.SceneTransitionStarted += OnSceneTransitionStarted;
             EnsureForScene(SceneManager.GetActiveScene());
         }
 
@@ -24,6 +27,20 @@ namespace MahjongGame
         {
             EnsureService();
             EnsureForScene(scene);
+        }
+
+        private static void OnActiveSceneChanged(Scene previousScene, Scene nextScene)
+        {
+            if (!ShouldShowFriendsInScene(nextScene.name))
+                DestroySceneFriendsUi();
+        }
+
+        private static void OnSceneTransitionStarted(string targetSceneName)
+        {
+            if (ShouldShowFriendsInScene(targetSceneName))
+                return;
+
+            HideSceneFriendsUi();
         }
 
         public static void EnsureForCurrentScene()
@@ -35,14 +52,21 @@ namespace MahjongGame
         private static void EnsureService()
         {
             if (FriendsService.I != null)
+            {
+                PersistentObjectUtility.DontDestroyOnLoad(FriendsService.I.gameObject);
                 return;
+            }
 
             GameObject service = new GameObject("FriendsService");
             service.AddComponent<FriendsService>();
+            PersistentObjectUtility.DontDestroyOnLoad(service);
         }
 
         private static void EnsureForScene(Scene scene)
         {
+            if (!IsSceneReady(scene))
+                return;
+
             if (!ShouldShowFriendsInScene(scene.name))
             {
                 DestroySceneFriendsUi();
@@ -61,11 +85,42 @@ namespace MahjongGame
             FriendsUI.CreateInScene();
         }
 
+        private static bool IsSceneReady(Scene scene)
+        {
+            return scene.IsValid() && scene.isLoaded && scene == SceneManager.GetActiveScene();
+        }
+
         private static void DestroySceneFriendsUi()
         {
-            FriendsUI ui = Object.FindAnyObjectByType<FriendsUI>(FindObjectsInactive.Include);
-            if (ui != null)
-                Object.Destroy(ui.gameObject);
+            FriendsUI[] all = Object.FindObjectsByType<FriendsUI>(FindObjectsInactive.Include);
+            for (int i = 0; i < all.Length; i++)
+            {
+                FriendsUI ui = all[i];
+                if (ui == null)
+                    continue;
+
+                SafeDestroyRuntimeUi(ui.gameObject);
+            }
+        }
+
+        private static void HideSceneFriendsUi()
+        {
+            FriendsUI[] all = Object.FindObjectsByType<FriendsUI>(FindObjectsInactive.Include);
+            for (int i = 0; i < all.Length; i++)
+            {
+                FriendsUI ui = all[i];
+                if (ui != null)
+                    ui.gameObject.SetActive(false);
+            }
+        }
+
+        private static void SafeDestroyRuntimeUi(GameObject obj)
+        {
+            if (obj == null)
+                return;
+
+            obj.SetActive(false);
+            Object.Destroy(obj);
         }
 
         private static bool ShouldShowFriendsInScene(string sceneName)

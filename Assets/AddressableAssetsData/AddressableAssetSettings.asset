@@ -81,7 +81,7 @@ MonoBehaviour:
       - m_Id: 786031e7b0e53cd489070aa0cbe62119
         m_Value: '{UnityEngine.AddressableAssets.Addressables.RuntimePath}/[BuildTarget]'
       - m_Id: f6a3acec96aa71948840c6faddb68c36
-        m_Value: 'http://91.99.176.77:8080/downloads/addressables/[BuildTarget]'
+        m_Value: 'https://dlsymbiosis.com/downloads/addressables/[BuildTarget]'
     m_ProfileEntryNames:
     - m_Id: 2e497c69877d69444a8ac270a72dae6b
       m_Name: BuildTarget

@@ -1,0 +1,20 @@
+{
+    "name": "Symbiosis.CorrosionCollapse.Editor",
+    "rootNamespace": "Dynasty.Legacy.CorrosionCollapse.Editor",
+    "references": [
+        "Symbiosis.CorrosionCollapse.Runtime"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "CORROSION_COLLAPSE_ENABLED"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

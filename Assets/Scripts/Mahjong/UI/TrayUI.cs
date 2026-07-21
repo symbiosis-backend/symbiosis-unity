@@ -12,6 +12,7 @@ namespace MahjongGame
     {
         public event Action Changed;
         public event Action LoseTriggered;
+        public event Action<Tile, Tile> PairMatched;
 
         [Header("Roots")]
         [SerializeField] private RectTransform slotsRoot;
@@ -43,6 +44,7 @@ namespace MahjongGame
         private bool loseTriggered;
 
         public bool IsBusy => false;
+        public bool IsResolvingMatches => flyingCounter > 0 || matchQueueRoutine != null;
         public int Count => tiles.Count;
         public bool IsFull => tiles.Count >= maxSlots;
 
@@ -247,6 +249,8 @@ namespace MahjongGame
                 breakingTiles.Add(a);
                 breakingTiles.Add(b);
 
+                PairMatched?.Invoke(a, b);
+
                 if (ComboSystem.I != null)
                     ComboSystem.I.RegisterSuccessPair();
 
@@ -271,6 +275,36 @@ namespace MahjongGame
 
             EvaluateLoseCondition();
             matchQueueRoutine = null;
+        }
+
+        public bool TryPopLastTile(out Tile tile)
+        {
+            tile = null;
+
+            if (loseTriggered || flyingCounter > 0 || matchQueueRoutine != null)
+                return false;
+
+            for (int i = tiles.Count - 1; i >= 0; i--)
+            {
+                Tile candidate = tiles[i];
+                if (candidate == null || breakingTiles.Contains(candidate))
+                    continue;
+
+                tiles.RemoveAt(i);
+                landedTiles.Remove(candidate);
+                tile = candidate;
+                RefreshPositionsImmediate();
+                EvaluateLoseCondition();
+                Changed?.Invoke();
+                return true;
+            }
+
+            return false;
+        }
+
+        public void ClearLoseStateForRescue()
+        {
+            loseTriggered = false;
         }
 
         private void EvaluateLoseCondition()

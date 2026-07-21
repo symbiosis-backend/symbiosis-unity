@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "project": "Dynasty: Legacy Symbiosis",
+  "resourceFolder": "Assets/Resources/SymbiozTiles",
+  "id": "stone-quarry-worksite-7x7",
+  "file": "stone-quarry-worksite-7x7.png",
+  "sourceFile": "stone-quarry-worksite-7x7-source.png",
+  "resourcesLoadPath": "SymbiozTiles/stone-quarry-worksite-7x7",
+  "displayName": "Stone Quarry Worksite",
+  "role": "Large stone resource gathering point where players approach to mine stone.",
+  "resourceType": "stone",
+  "footprint": {
+    "widthCells": 7,
+    "heightCells": 7
+  },
+  "usage": {
+    "objectKind": "StoneQuarry",
+    "placement": "Place from the selected anchor cell as a 7x7 worksite.",
+    "interaction": "Player approaches this area to gather stone."
+  }
+}

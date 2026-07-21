@@ -24,9 +24,11 @@ namespace MahjongGame
         [SerializeField] private Button russianLanguageButton;
         [SerializeField] private Button englishLanguageButton;
         [SerializeField] private Button turkishLanguageButton;
+        [SerializeField] private Button germanLanguageButton;
 
         [Header("Scene Names")]
         [SerializeField] private string lobbySceneName = "Main";
+        [SerializeField] private string lobbyDoorSpriteResourcePath = "Mahjong/Sprites/Doors/AirlockDoorLeaf_Cohesive";
 
         [Header("Transition")]
         [SerializeField, Min(0f)] private float startDelay = 0.15f;
@@ -52,6 +54,8 @@ namespace MahjongGame
         {
             LogRuntime("ProfileBootstrap Awake begin");
             EnsureLanguagePanel();
+            SetLanguageSelectionVisible(false);
+            SetProfileSetupVisible(false);
             LogRuntime("ProfileBootstrap language panel ensured");
             BindLanguageButtons();
             LogRuntime("ProfileBootstrap Awake done");
@@ -211,6 +215,11 @@ namespace MahjongGame
             SelectLanguage(GameLanguage.Turkish);
         }
 
+        public void SelectGermanLanguage()
+        {
+            SelectLanguage(GameLanguage.German);
+        }
+
         private void SelectLanguage(GameLanguage language)
         {
             if (AppSettings.I != null)
@@ -271,9 +280,25 @@ namespace MahjongGame
                 yield break;
             }
 
+            if (string.Equals(lobbySceneName, "Main", StringComparison.Ordinal) &&
+                EntryMainTransitionFx.TryPlay(lobbySceneName, lobbyDoorSpriteResourcePath))
+            {
+                LogRuntime("Loading lobby through EntryMainTransitionFx. Target=" + lobbySceneName);
+                yield break;
+            }
+
+            DoorFx doorFx = DoorFx.EnsureRuntime();
+            if (doorFx != null && doorFx.isActiveAndEnabled && doorFx.IsReady())
+            {
+                LogRuntime("Loading lobby through DoorFx. Target=" + lobbySceneName);
+                doorFx.LoadScene(lobbySceneName, lobbyDoorSpriteResourcePath);
+                yield break;
+            }
+
             AsyncOperation operation = null;
             try
             {
+                LogRuntime("DoorFx unavailable; loading lobby directly. Target=" + lobbySceneName);
                 operation = SceneManager.LoadSceneAsync(lobbySceneName, LoadSceneMode.Single);
             }
             catch (Exception ex)
@@ -366,6 +391,9 @@ namespace MahjongGame
 
             if (turkishLanguageButton != null)
                 turkishLanguageButton.onClick.AddListener(SelectTurkishLanguage);
+
+            if (germanLanguageButton != null)
+                germanLanguageButton.onClick.AddListener(SelectGermanLanguage);
         }
 
         private void UnbindLanguageButtons()
@@ -378,6 +406,9 @@ namespace MahjongGame
 
             if (turkishLanguageButton != null)
                 turkishLanguageButton.onClick.RemoveListener(SelectTurkishLanguage);
+
+            if (germanLanguageButton != null)
+                germanLanguageButton.onClick.RemoveListener(SelectGermanLanguage);
         }
 
         private void EnsureLanguagePanel()
@@ -412,7 +443,7 @@ namespace MahjongGame
             windowRect.anchorMax = new Vector2(0.5f, 0.5f);
             windowRect.pivot = new Vector2(0.5f, 0.5f);
             windowRect.anchoredPosition = Vector2.zero;
-            windowRect.sizeDelta = new Vector2(620f, 460f);
+            windowRect.sizeDelta = new Vector2(620f, 540f);
 
             SolidRuntimeGraphic windowGraphic = window.GetComponent<SolidRuntimeGraphic>();
             windowGraphic.color = new Color(0.09f, 0.12f, 0.17f, 0.98f);
@@ -435,6 +466,7 @@ namespace MahjongGame
             russianLanguageButton = CreateLanguageButton(window.transform, "RU", "RU  Русский");
             englishLanguageButton = CreateLanguageButton(window.transform, "EN", "EN  English");
             turkishLanguageButton = CreateLanguageButton(window.transform, "TR", "TR  Turkce");
+            germanLanguageButton = CreateLanguageButton(window.transform, "DE", "DE  Deutsch");
 
             languageSelectionPanel = overlay;
             languageSelectionPanel.SetActive(false);
@@ -553,6 +585,28 @@ namespace MahjongGame
         {
             if (profileSetupPanel != null)
                 profileSetupPanel.SetActive(value);
+
+            SetGeneratedProfileSetupRootsVisible(value);
+        }
+
+        private static void SetGeneratedProfileSetupRootsVisible(bool visible)
+        {
+            RectTransform[] rects = Resources.FindObjectsOfTypeAll<RectTransform>();
+            for (int i = 0; i < rects.Length; i++)
+            {
+                RectTransform rect = rects[i];
+                if (rect == null || rect.gameObject == null)
+                    continue;
+
+                if (!rect.gameObject.scene.IsValid())
+                    continue;
+
+                if (!string.Equals(rect.name, "ProfileSetupLandscapeRoot", StringComparison.Ordinal))
+                    continue;
+
+                if (rect.gameObject.activeSelf != visible)
+                    rect.gameObject.SetActive(visible);
+            }
         }
 
         private void SetFade(float alpha)

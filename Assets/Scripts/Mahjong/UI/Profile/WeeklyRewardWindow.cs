@@ -2,12 +2,16 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using System.Collections;
+using MahjongGame.Monetization;
 
 namespace MahjongGame
 {
     [DisallowMultipleComponent]
     public sealed class WeeklyRewardWindow : MonoBehaviour
     {
+        private const string MainLobbySceneName = "Main";
+
         [Header("Root")]
         [SerializeField] private GameObject windowRoot;
         [SerializeField] private RectTransform windowRect;
@@ -44,6 +48,9 @@ namespace MahjongGame
 
         private PlayerProfile profile;
         private GameObject generatedBackdropRoot;
+        private Coroutine adRefreshRoutine;
+        private Coroutine liveAdStatusRoutine;
+        private bool rewardedAdRequestInProgress;
 
         [Serializable]
         public sealed class WeeklyRewardWindowVisual
@@ -98,6 +105,15 @@ namespace MahjongGame
 
         private void Awake()
         {
+            if (!IsMainLobbyScene())
+            {
+                if (windowRoot != null)
+                    windowRoot.SetActive(false);
+
+                enabled = false;
+                return;
+            }
+
             AutoResolveVisualRefs();
 
             if (freeButton != null)
@@ -136,8 +152,16 @@ namespace MahjongGame
             ApplyVisualPreview();
         }
 
+        private void OnDisable()
+        {
+            StopLiveAdStatusRefresh();
+        }
+
         public void Open(PlayerProfile targetProfile)
         {
+            if (!IsMainLobbyScene())
+                return;
+
             profile = targetProfile;
             if (profile == null)
                 return;
@@ -153,6 +177,7 @@ namespace MahjongGame
             ApplyLayoutPreview();
             ApplyVisualPreview();
             RefreshUI();
+            StartLiveAdStatusRefresh();
         }
 
         public void Close()
@@ -161,6 +186,7 @@ namespace MahjongGame
                 windowRoot.SetActive(false);
 
             ShowBackdrop(false);
+            StopLiveAdStatusRefresh();
         }
 
         public void RefreshUI()
@@ -187,7 +213,7 @@ namespace MahjongGame
             int adAmetist = WeeklyRewardService.GetAdAmetist(profile);
 
             if (todayRewardText != null)
-                todayRewardText.text = $"Day {dayNumber} Reward";
+                todayRewardText.text = GameLocalization.Format("weekly.day_reward", dayNumber);
 
             if (freeButtonText != null)
                 freeButtonText.text = $"{freeAltin} Altın";
@@ -197,9 +223,10 @@ namespace MahjongGame
 
             bool timeBlocked = WeeklyRewardService.IsTimeBlocked(profile);
             bool canClaim = WeeklyRewardService.CanClaimToday(profile);
+            RewardedAdAvailability adAvailability = MonetizationService.Ensure().GetRewardedAdAvailability(MonetizationService.WeeklyRewardedPlacementId);
 
             bool freeInteractable = !timeBlocked && canClaim;
-            bool adInteractable = !timeBlocked && canClaim;
+            bool adInteractable = !timeBlocked && canClaim && adAvailability.IsReady && !rewardedAdRequestInProgress;
 
             if (freeButton != null)
                 freeButton.interactable = freeInteractable;
@@ -216,16 +243,21 @@ namespace MahjongGame
             if (statusText != null)
             {
                 if (timeBlocked)
-                    statusText.text = "Time error detected";
+                    statusText.text = GameLocalization.Text("weekly.time_error");
+                else if (canClaim && !adAvailability.IsReady)
+                    statusText.text = ResolveStatusMessage(adAvailability.Message);
                 else if (canClaim)
-                    statusText.text = "Reward available";
+                    statusText.text = GameLocalization.Text("weekly.available");
                 else
-                    statusText.text = "Reward already claimed today";
+                    statusText.text = GameLocalization.Text("weekly.claimed_today");
             }
         }
 
         private void OnFreeClicked()
         {
+            if (!IsMainLobbyScene())
+                return;
+
             if (profile == null)
                 return;
 
@@ -239,15 +271,117 @@ namespace MahjongGame
 
         private void OnAdClicked()
         {
+            if (!IsMainLobbyScene())
+                return;
+
             if (profile == null)
                 return;
 
-            if (WeeklyRewardService.ClaimAd(profile))
+            if (rewardedAdRequestInProgress)
+                return;
+
+            WeeklyRewardService.EnsureInitialized(profile);
+            if (WeeklyRewardService.IsTimeBlocked(profile) || !WeeklyRewardService.CanClaimToday(profile))
             {
+                RefreshUI();
+                return;
+            }
+
+            RewardedAdAvailability availability = MonetizationService.Ensure().GetRewardedAdAvailability(MonetizationService.WeeklyRewardedPlacementId);
+            if (!availability.IsReady)
+            {
+                RefreshUI();
+                if (statusText != null)
+                    statusText.text = ResolveStatusMessage(availability.Message);
+                return;
+            }
+
+            rewardedAdRequestInProgress = true;
+            RefreshUI();
+
+            if (statusText != null)
+                statusText.text = GameLocalization.Text("shop.ad_loading");
+
+            MonetizationService.Ensure().ShowRewardedAd(MonetizationService.WeeklyRewardedPlacementId, result =>
+            {
+                rewardedAdRequestInProgress = false;
+
+                if (!result.IsCompleted)
+                {
+                    RefreshUI();
+                    if (statusText != null)
+                        statusText.text = ResolveStatusMessage(string.IsNullOrWhiteSpace(result.Message) ? "shop.ad_not_ready" : result.Message);
+
+                    if (string.Equals(result.Message, "shop.ad_not_ready", StringComparison.Ordinal))
+                        ScheduleAdButtonRefresh();
+
+                    return;
+                }
+
+                if (!WeeklyRewardService.ClaimAd(profile))
+                {
+                    RefreshUI();
+                    return;
+                }
+
                 SaveAndNotify();
                 RefreshUI();
                 RefreshExternalTargets();
+            });
+        }
+
+        private void ScheduleAdButtonRefresh()
+        {
+            if (adRefreshRoutine != null)
+                StopCoroutine(adRefreshRoutine);
+
+            adRefreshRoutine = StartCoroutine(RefreshAdButtonAfterDelay());
+        }
+
+        private IEnumerator RefreshAdButtonAfterDelay()
+        {
+            yield return new WaitForSecondsRealtime(2f);
+
+            if (windowRoot != null && windowRoot.activeInHierarchy)
+                RefreshUI();
+
+            adRefreshRoutine = null;
+        }
+
+        private void StartLiveAdStatusRefresh()
+        {
+            if (liveAdStatusRoutine == null)
+                liveAdStatusRoutine = StartCoroutine(LiveAdStatusRefreshRoutine());
+        }
+
+        private void StopLiveAdStatusRefresh()
+        {
+            if (liveAdStatusRoutine == null)
+                return;
+
+            StopCoroutine(liveAdStatusRoutine);
+            liveAdStatusRoutine = null;
+        }
+
+        private IEnumerator LiveAdStatusRefreshRoutine()
+        {
+            WaitForSecondsRealtime wait = new WaitForSecondsRealtime(1f);
+            while (windowRoot != null && windowRoot.activeInHierarchy)
+            {
+                RefreshUI();
+                yield return wait;
             }
+
+            liveAdStatusRoutine = null;
+        }
+
+        private static string ResolveStatusMessage(string messageOrKey)
+        {
+            if (string.IsNullOrWhiteSpace(messageOrKey))
+                return string.Empty;
+
+            string localized = GameLocalization.Text(messageOrKey);
+            return localized == messageOrKey ? messageOrKey : localized;
         }
 
         private void SaveAndNotify()
@@ -501,6 +635,11 @@ namespace MahjongGame
             text.fontSizeMin = minSize;
             text.fontSizeMax = maxSize;
             text.color = color;
+        }
+
+        private bool IsMainLobbyScene()
+        {
+            return string.Equals(gameObject.scene.name, MainLobbySceneName, StringComparison.Ordinal);
         }
     }
 }

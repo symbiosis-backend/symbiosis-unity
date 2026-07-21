@@ -17,6 +17,10 @@ namespace MahjongGame
     public sealed class BattleParryChoiceUI : MonoBehaviour
     {
         private const int ZoneCount = 3;
+        private const string ParryWindowResourcePath = "Mahjong/Sprites/Parry/ParryWindow";
+        private const string ParryHeadResourcePath = "Mahjong/Sprites/Parry/ParryHead";
+        private const string ParryBodyResourcePath = "Mahjong/Sprites/Parry/ParryBody";
+        private const string ParryLegsResourcePath = "Mahjong/Sprites/Parry/ParryLegs";
 
         [Header("Layout")]
         [SerializeField] private GameObject root;
@@ -65,6 +69,8 @@ namespace MahjongGame
         private bool playerReady;
         private bool opponentReady;
         private bool flipOpponentCharacter;
+        private bool forceMissOnce;
+        private bool disableTimerOnce;
 
         public static BattleParryChoiceUI CreateRuntime()
         {
@@ -77,8 +83,11 @@ namespace MahjongGame
 
                 CanvasScaler scaler = canvasObject.GetComponent<CanvasScaler>();
                 scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-                scaler.referenceResolution = new Vector2(1920f, 1080f);
+                scaler.referenceResolution = new Vector2(2400f, 1080f);
+                scaler.matchWidthOrHeight = 0.5f;
             }
+
+            EventSystemInputModeGuard.EnsureCompatibleEventSystems();
 
             GameObject uiObject = new GameObject("BattleParryChoiceUI", typeof(RectTransform), typeof(BattleParryChoiceUI));
             uiObject.transform.SetParent(canvas.transform, false);
@@ -99,6 +108,8 @@ namespace MahjongGame
         private void OnDisable()
         {
             awaitingChoice = false;
+            forceMissOnce = false;
+            disableTimerOnce = false;
             StopRunningRoutines();
         }
 
@@ -131,13 +142,34 @@ namespace MahjongGame
             SetSideInteractable(playerZoneButtons, true);
             SetSideInteractable(opponentZoneButtons, false);
 
+            bool useTimer = !disableTimerOnce;
+            disableTimerOnce = false;
             opponentRoutine = StartCoroutine(OpponentChoiceRoutine());
-            timerRoutine = StartCoroutine(TimerRoutine(Mathf.Max(0.5f, timeoutSeconds)));
+            if (useTimer)
+            {
+                timerRoutine = StartCoroutine(TimerRoutine(Mathf.Max(0.5f, timeoutSeconds)));
+            }
+            else if (timerText != null)
+            {
+                timerText.text = string.Empty;
+            }
         }
 
         public void Cancel()
         {
+            forceMissOnce = false;
+            disableTimerOnce = false;
             Hide();
+        }
+
+        public void ForceMissOnce()
+        {
+            forceMissOnce = true;
+        }
+
+        public void DisableTimerOnce()
+        {
+            disableTimerOnce = true;
         }
 
         public void SetCharacterSprites(Sprite playerSprite, Sprite opponentSprite, bool flipOpponent)
@@ -252,6 +284,12 @@ namespace MahjongGame
             awaitingChoice = false;
             StopChoiceRoutines();
 
+            if (forceMissOnce)
+            {
+                forceMissOnce = false;
+                opponentZone = GetDifferentZone(playerZone);
+            }
+
             if (attackerSide == BattleBoardSide.Player)
             {
                 attackZone = playerZone;
@@ -268,17 +306,22 @@ namespace MahjongGame
             PlayResultCharacterAnimation(parried);
 
             if (titleText != null)
-                titleText.text = parried ? "PARRIED" : "DAMAGE";
+                titleText.text = parried ? GameLocalization.Text("battle.parry.parried") : GameLocalization.Text("battle.parry.damage");
 
             if (hintText != null)
                 hintText.text = forced
-                    ? "Time is up"
-                    : parried ? "Parry zone matched the attack" : "Parry zone missed the attack";
+                    ? GameLocalization.Text("battle.parry.time_up")
+                    : parried ? GameLocalization.Text("battle.parry.matched") : GameLocalization.Text("battle.parry.missed");
 
             if (timerText != null)
                 timerText.text = string.Empty;
 
             revealRoutine = StartCoroutine(RevealRoutine(parried));
+        }
+
+        private static BattleHitZone GetDifferentZone(BattleHitZone zone)
+        {
+            return (BattleHitZone)(((int)zone + 1) % ZoneCount);
         }
 
         private void PlayResultCharacterAnimation(bool parried)
@@ -312,18 +355,18 @@ namespace MahjongGame
         private void RefreshTexts()
         {
             if (titleText != null)
-                titleText.text = "Choose zone";
+                titleText.text = GameLocalization.Text("battle.parry.choose_zone");
 
             if (hintText != null)
                 hintText.text = attackerSide == BattleBoardSide.Player
-                    ? "You attack, enemy parries"
-                    : "Enemy attacks, you parry";
+                    ? GameLocalization.Text("battle.parry.you_attack_enemy_parries")
+                    : GameLocalization.Text("battle.parry.enemy_attacks_you_parry");
 
             if (playerLabelText != null)
-                playerLabelText.text = attackerSide == BattleBoardSide.Player ? "You attack" : "You parry";
+                playerLabelText.text = attackerSide == BattleBoardSide.Player ? GameLocalization.Text("battle.parry.you_attack") : GameLocalization.Text("battle.parry.you_parry");
 
             if (opponentLabelText != null)
-                opponentLabelText.text = attackerSide == BattleBoardSide.Player ? "Enemy parries" : "Enemy attacks";
+                opponentLabelText.text = attackerSide == BattleBoardSide.Player ? GameLocalization.Text("battle.parry.enemy_parries") : GameLocalization.Text("battle.parry.enemy_attacks");
         }
 
         private void RefreshZoneVisuals(bool reveal)
@@ -401,33 +444,33 @@ namespace MahjongGame
             rootRect.anchorMin = new Vector2(0.5f, 0.5f);
             rootRect.anchorMax = new Vector2(0.5f, 0.5f);
             rootRect.pivot = new Vector2(0.5f, 0.5f);
-            rootRect.anchoredPosition = Vector2.zero;
-            rootRect.sizeDelta = parryPanelSprite != null ? new Vector2(760f, 520f) : new Vector2(900f, 430f);
+            rootRect.anchoredPosition = new Vector2(0f, 4f);
+            rootRect.sizeDelta = parryPanelSprite != null ? new Vector2(1180f, 860f) : new Vector2(1180f, 760f);
 
             Image background = root.GetComponent<Image>();
-            background.sprite = null;
+            background.sprite = parryPanelSprite;
             background.preserveAspect = false;
-            background.color = parryPanelSprite != null ? new Color(0f, 0f, 0f, 0f) : new Color(0f, 0f, 0f, 0.82f);
+            background.color = parryPanelSprite != null ? Color.white : new Color(0f, 0f, 0f, 0.82f);
             background.raycastTarget = true;
 
-            titleText = titleText != null ? titleText : CreateText(root.transform, "Title", new Vector2(0f, 214f), new Vector2(440f, 42f), 34f, TextAlignmentOptions.Center);
-            hintText = hintText != null ? hintText : CreateText(root.transform, "Hint", new Vector2(0f, 178f), new Vector2(440f, 28f), 20f, TextAlignmentOptions.Center);
-            timerText = timerText != null ? timerText : CreateText(root.transform, "Timer", new Vector2(0f, 138f), new Vector2(120f, 34f), 28f, TextAlignmentOptions.Center);
-            playerCharacterImage = playerCharacterImage != null ? playerCharacterImage : CreateCharacterImage(root.transform, "PlayerParryCharacter", new Vector2(-315f, -48f), new Vector2(118f, 270f), false);
-            opponentCharacterImage = opponentCharacterImage != null ? opponentCharacterImage : CreateCharacterImage(root.transform, "OpponentParryCharacter", new Vector2(315f, -48f), new Vector2(118f, 270f), true);
-            ConfigureRect(titleText != null ? titleText.rectTransform : null, new Vector2(0f, 214f), new Vector2(440f, 42f));
-            ConfigureRect(hintText != null ? hintText.rectTransform : null, new Vector2(0f, 178f), new Vector2(440f, 28f));
-            ConfigureRect(timerText != null ? timerText.rectTransform : null, new Vector2(0f, 138f), new Vector2(120f, 34f));
-            ConfigureRect(playerCharacterImage != null ? playerCharacterImage.rectTransform : null, new Vector2(-315f, -48f), new Vector2(118f, 270f));
-            ConfigureRect(opponentCharacterImage != null ? opponentCharacterImage.rectTransform : null, new Vector2(315f, -48f), new Vector2(118f, 270f));
+            titleText = titleText != null ? titleText : CreateText(root.transform, "Title", new Vector2(0f, 330f), new Vector2(660f, 70f), 48f, TextAlignmentOptions.Center);
+            hintText = hintText != null ? hintText : CreateText(root.transform, "Hint", new Vector2(0f, 276f), new Vector2(760f, 42f), 30f, TextAlignmentOptions.Center);
+            timerText = timerText != null ? timerText : CreateText(root.transform, "Timer", new Vector2(0f, 224f), new Vector2(160f, 54f), 42f, TextAlignmentOptions.Center);
+            playerCharacterImage = playerCharacterImage != null ? playerCharacterImage : CreateCharacterImage(root.transform, "PlayerParryCharacter", new Vector2(-430f, -34f), new Vector2(180f, 360f), false);
+            opponentCharacterImage = opponentCharacterImage != null ? opponentCharacterImage : CreateCharacterImage(root.transform, "OpponentParryCharacter", new Vector2(430f, -34f), new Vector2(180f, 360f), true);
+            ConfigureRect(titleText != null ? titleText.rectTransform : null, new Vector2(0f, 330f), new Vector2(660f, 70f));
+            ConfigureRect(hintText != null ? hintText.rectTransform : null, new Vector2(0f, 276f), new Vector2(760f, 42f));
+            ConfigureRect(timerText != null ? timerText.rectTransform : null, new Vector2(0f, 224f), new Vector2(160f, 54f));
+            ConfigureRect(playerCharacterImage != null ? playerCharacterImage.rectTransform : null, new Vector2(-430f, -34f), new Vector2(180f, 360f));
+            ConfigureRect(opponentCharacterImage != null ? opponentCharacterImage.rectTransform : null, new Vector2(430f, -34f), new Vector2(180f, 360f));
 
-            Transform playerPanel = CreateSidePanel(root.transform, "PlayerZones", new Vector2(-130f, -58f));
-            Transform opponentPanel = CreateSidePanel(root.transform, "OpponentZones", new Vector2(130f, -58f));
+            Transform playerPanel = CreateSidePanel(root.transform, "PlayerZones", new Vector2(-350f, -58f));
+            Transform opponentPanel = CreateSidePanel(root.transform, "OpponentZones", new Vector2(350f, -58f));
 
-            playerLabelText = playerLabelText != null ? playerLabelText : CreateText(playerPanel, "Label", new Vector2(0f, 130f), new Vector2(186f, 24f), 18f, TextAlignmentOptions.Center);
-            opponentLabelText = opponentLabelText != null ? opponentLabelText : CreateText(opponentPanel, "Label", new Vector2(0f, 130f), new Vector2(186f, 24f), 18f, TextAlignmentOptions.Center);
-            ConfigureRect(playerLabelText != null ? playerLabelText.rectTransform : null, new Vector2(0f, 130f), new Vector2(186f, 24f));
-            ConfigureRect(opponentLabelText != null ? opponentLabelText.rectTransform : null, new Vector2(0f, 130f), new Vector2(186f, 24f));
+            playerLabelText = playerLabelText != null ? playerLabelText : CreateText(playerPanel, "Label", new Vector2(0f, 228f), new Vector2(300f, 42f), 28f, TextAlignmentOptions.Center);
+            opponentLabelText = opponentLabelText != null ? opponentLabelText : CreateText(opponentPanel, "Label", new Vector2(0f, 228f), new Vector2(300f, 42f), 28f, TextAlignmentOptions.Center);
+            ConfigureRect(playerLabelText != null ? playerLabelText.rectTransform : null, new Vector2(0f, 228f), new Vector2(300f, 42f));
+            ConfigureRect(opponentLabelText != null ? opponentLabelText.rectTransform : null, new Vector2(0f, 228f), new Vector2(300f, 42f));
 
             EnsureZoneButtons(playerPanel, playerZoneButtons);
             EnsureZoneButtons(opponentPanel, opponentZoneButtons);
@@ -449,12 +492,12 @@ namespace MahjongGame
             rect.anchorMax = new Vector2(0.5f, 0.5f);
             rect.pivot = new Vector2(0.5f, 0.5f);
             rect.anchoredPosition = anchoredPosition;
-            rect.sizeDelta = parryPanelSprite != null ? new Vector2(190f, 285f) : new Vector2(270f, 260f);
+            rect.sizeDelta = new Vector2(330f, 520f);
 
             Image image = panel.GetComponent<Image>();
-            image.sprite = parryPanelSprite;
-            image.preserveAspect = parryPanelSprite != null;
-            image.color = parryPanelSprite != null ? Color.white : new Color(1f, 1f, 1f, 0.08f);
+            image.sprite = null;
+            image.preserveAspect = false;
+            image.color = new Color(0f, 0f, 0f, 0f);
             image.raycastTarget = false;
 
             return panel.transform;
@@ -578,7 +621,7 @@ namespace MahjongGame
             for (int i = 0; i < ZoneCount; i++)
             {
                 BattleHitZone zone = (BattleHitZone)i;
-                string objectName = ResolveZoneLabel(zone) + "Zone";
+                string objectName = zone + "Zone";
                 Transform existing = parent.Find(objectName);
                 GameObject buttonObject = existing != null
                     ? existing.gameObject
@@ -590,8 +633,8 @@ namespace MahjongGame
                 rect.anchorMin = new Vector2(0.5f, 0.5f);
                 rect.anchorMax = new Vector2(0.5f, 0.5f);
                 rect.pivot = new Vector2(0.5f, 0.5f);
-                rect.anchoredPosition = new Vector2(0f, 70f - i * 72f);
-                rect.sizeDelta = ResolveZoneSprite(zone) != null ? new Vector2(66f, 66f) : new Vector2(58f, 58f);
+                rect.anchoredPosition = new Vector2(0f, 122f - i * 128f);
+                rect.sizeDelta = ResolveZoneSprite(zone) != null ? new Vector2(112f, 112f) : new Vector2(96f, 96f);
 
                 Image image = buttonObject.GetComponent<Image>();
                 image.color = neutralColor;
@@ -605,7 +648,7 @@ namespace MahjongGame
 
                 TMP_Text label = buttonObject.GetComponentInChildren<TMP_Text>(true);
                 if (label == null)
-                    label = CreateText(buttonObject.transform, "Label", Vector2.zero, Vector2.zero, 18f, TextAlignmentOptions.Center);
+                    label = CreateText(buttonObject.transform, "Label", Vector2.zero, Vector2.zero, 26f, TextAlignmentOptions.Center);
 
                 RectTransform labelRect = label.rectTransform;
                 labelRect.anchorMin = Vector2.zero;
@@ -637,11 +680,15 @@ namespace MahjongGame
 
             TextMeshProUGUI text = textObject.GetComponent<TextMeshProUGUI>();
             text.fontSize = fontSize;
+            text.enableAutoSizing = true;
+            text.fontSizeMin = Mathf.Max(16f, fontSize * 0.7f);
+            text.fontSizeMax = fontSize;
             text.color = Color.white;
             text.alignment = alignment;
             text.raycastTarget = false;
             text.textWrappingMode = TextWrappingModes.NoWrap;
-            text.overflowMode = TextOverflowModes.Ellipsis;
+            text.overflowMode = TextOverflowModes.Truncate;
+            BattlePopupStyle.ApplyText(text, true);
 
             return text;
         }
@@ -736,11 +783,11 @@ namespace MahjongGame
             switch (zone)
             {
                 case BattleHitZone.Top:
-                    return "Top";
+                    return GameLocalization.Text("battle.parry.zone.top");
                 case BattleHitZone.Middle:
-                    return "Mid";
+                    return GameLocalization.Text("battle.parry.zone.middle");
                 case BattleHitZone.Bottom:
-                    return "Low";
+                    return GameLocalization.Text("battle.parry.zone.bottom");
                 default:
                     return zone.ToString();
             }
@@ -761,22 +808,26 @@ namespace MahjongGame
             }
         }
 
-        [System.Diagnostics.Conditional("UNITY_EDITOR")]
         private void ResolveDefaultArtSprites()
         {
+            parryPanelSprite = parryPanelSprite != null ? parryPanelSprite : Resources.Load<Sprite>(ParryWindowResourcePath);
+            parryHeadSprite = parryHeadSprite != null ? parryHeadSprite : Resources.Load<Sprite>(ParryHeadResourcePath);
+            parryBodySprite = parryBodySprite != null ? parryBodySprite : Resources.Load<Sprite>(ParryBodyResourcePath);
+            parryLegsSprite = parryLegsSprite != null ? parryLegsSprite : Resources.Load<Sprite>(ParryLegsResourcePath);
+
 #if UNITY_EDITOR
             parryPanelSprite = parryPanelSprite != null
                 ? parryPanelSprite
-                : LoadEditorSprite("Assets/Scripts/Mahjong/Sprites/Parry/ParryPanel.png");
+                : LoadEditorSprite("Assets/Resources/Mahjong/Sprites/Parry/ParryWindow.png");
             parryHeadSprite = parryHeadSprite != null
                 ? parryHeadSprite
-                : LoadEditorSprite("Assets/Scripts/Mahjong/Sprites/Parry/ParryHead.png");
+                : LoadEditorSprite("Assets/Resources/Mahjong/Sprites/Parry/ParryHead.png");
             parryBodySprite = parryBodySprite != null
                 ? parryBodySprite
-                : LoadEditorSprite("Assets/Scripts/Mahjong/Sprites/Parry/ParryBody.png");
+                : LoadEditorSprite("Assets/Resources/Mahjong/Sprites/Parry/ParryBody.png");
             parryLegsSprite = parryLegsSprite != null
                 ? parryLegsSprite
-                : LoadEditorSprite("Assets/Scripts/Mahjong/Sprites/Parry/ParryLegs.png");
+                : LoadEditorSprite("Assets/Resources/Mahjong/Sprites/Parry/ParryLegs.png");
 #endif
         }
 

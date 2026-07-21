@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 467798687684906199, guid: 2de3f086e1953fc469b740130c2803c2, type: 3}
+  m_Sprite: {fileID: 5721118556696467918, guid: 2e365ab7da070a8429a50e0676a2b868, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -286,7 +286,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MahjongGame.BattleTile
   id: 
-  backSprite: {fileID: 467798687684906199, guid: 2de3f086e1953fc469b740130c2803c2, type: 3}
+  backSprite: {fileID: 5721118556696467918, guid: 2e365ab7da070a8429a50e0676a2b868, type: 3}
   faceSprite: {fileID: 0}
   faceIsFullTileArt: 1
   size: {x: 120, y: 160}

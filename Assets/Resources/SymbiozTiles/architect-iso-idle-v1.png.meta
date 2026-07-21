@@ -1,0 +1,975 @@
+fileFormatVersion: 2
+guid: 32f944d070f3e9c4b8f45de6d7dc68a4
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 8428295743611527931
+    second: architect-iso-idle-v1_0
+  - first:
+      213: -5043967378114598036
+    second: architect-iso-idle-v1_1
+  - first:
+      213: -294618988276297612
+    second: architect-iso-idle-v1_2
+  - first:
+      213: 242393033678154338
+    second: architect-iso-idle-v1_3
+  - first:
+      213: 7064841490020193859
+    second: architect-iso-idle-v1_4
+  - first:
+      213: -5217742525017494824
+    second: architect-iso-idle-v1_5
+  - first:
+      213: 2101385936299511750
+    second: architect-iso-idle-v1_6
+  - first:
+      213: 7214044201365982268
+    second: architect-iso-idle-v1_7
+  - first:
+      213: -7849383824651821031
+    second: architect-iso-idle-v1_8
+  - first:
+      213: -7273157267600999456
+    second: architect-iso-idle-v1_9
+  - first:
+      213: -2180526458940762461
+    second: architect-iso-idle-v1_10
+  - first:
+      213: 2963491548389049977
+    second: architect-iso-idle-v1_11
+  - first:
+      213: 3215186602411922720
+    second: architect-iso-idle-v1_12
+  - first:
+      213: -1140193227866353765
+    second: architect-iso-idle-v1_13
+  - first:
+      213: -5684694158622232375
+    second: architect-iso-idle-v1_14
+  - first:
+      213: -4361690540638167704
+    second: architect-iso-idle-v1_15
+  - first:
+      213: 3344812056231557825
+    second: architect-iso-idle-v1_16
+  - first:
+      213: -2631384521244573649
+    second: architect-iso-idle-v1_17
+  - first:
+      213: 247458340134754221
+    second: architect-iso-idle-v1_18
+  - first:
+      213: 5684568266277572096
+    second: architect-iso-idle-v1_19
+  - first:
+      213: -8079299047362982957
+    second: architect-iso-idle-v1_20
+  - first:
+      213: -699645875644355502
+    second: architect-iso-idle-v1_21
+  - first:
+      213: 3831408538713206343
+    second: architect-iso-idle-v1_22
+  - first:
+      213: 7904418128177813652
+    second: architect-iso-idle-v1_23
+  - first:
+      213: 2062043970461857445
+    second: architect-iso-idle-v1_24
+  - first:
+      213: 6913339137835746836
+    second: architect-iso-idle-v1_25
+  - first:
+      213: -209751361289625752
+    second: architect-iso-idle-v1_26
+  - first:
+      213: 8777006416809882028
+    second: architect-iso-idle-v1_27
+  - first:
+      213: -9083858378024419565
+    second: architect-iso-idle-v1_28
+  - first:
+      213: 6391104591650165158
+    second: architect-iso-idle-v1_29
+  - first:
+      213: 4066588341074435152
+    second: architect-iso-idle-v1_30
+  - first:
+      213: 7589088808834470758
+    second: architect-iso-idle-v1_31
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_0
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 1809
+        width: 63
+        height: 151
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf2e6e3e25257f470800000000000000
+      internalID: 8428295743611527931
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_1
+      rect:
+        serializedVersion: 2
+        x: 352
+        y: 1809
+        width: 64
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c6b22d8c46a300ab0800000000000000
+      internalID: -5043967378114598036
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_2
+      rect:
+        serializedVersion: 2
+        x: 608
+        y: 1809
+        width: 64
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 470d4b3579d49ebf0800000000000000
+      internalID: -294618988276297612
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_3
+      rect:
+        serializedVersion: 2
+        x: 864
+        y: 1809
+        width: 64
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26a6a6c0e272d5300800000000000000
+      internalID: 242393033678154338
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_4
+      rect:
+        serializedVersion: 2
+        x: 99
+        y: 1553
+        width: 57
+        height: 152
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 346581f67eb5b0260800000000000000
+      internalID: 7064841490020193859
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_5
+      rect:
+        serializedVersion: 2
+        x: 355
+        y: 1553
+        width: 57
+        height: 152
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8dae1ea71dad697b0800000000000000
+      internalID: -5217742525017494824
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_6
+      rect:
+        serializedVersion: 2
+        x: 612
+        y: 1553
+        width: 56
+        height: 152
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6cf422d106f992d10800000000000000
+      internalID: 2101385936299511750
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_7
+      rect:
+        serializedVersion: 2
+        x: 868
+        y: 1553
+        width: 56
+        height: 151
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3cc260cafe6d1460800000000000000
+      internalID: 7214044201365982268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_8
+      rect:
+        serializedVersion: 2
+        x: 109
+        y: 1297
+        width: 37
+        height: 158
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9106ee1dff2611390800000000000000
+      internalID: -7849383824651821031
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_9
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 1297
+        width: 38
+        height: 158
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0eb771dfffd801b90800000000000000
+      internalID: -7273157267600999456
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_10
+      rect:
+        serializedVersion: 2
+        x: 621
+        y: 1297
+        width: 38
+        height: 158
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a6de7f0db63db1e0800000000000000
+      internalID: -2180526458940762461
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_11
+      rect:
+        serializedVersion: 2
+        x: 877
+        y: 1297
+        width: 38
+        height: 157
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9760a9cacdf602920800000000000000
+      internalID: 2963491548389049977
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_12
+      rect:
+        serializedVersion: 2
+        x: 99
+        y: 1041
+        width: 57
+        height: 156
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0259b5b1e23ae9c20800000000000000
+      internalID: 3215186602411922720
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_13
+      rect:
+        serializedVersion: 2
+        x: 356
+        y: 1041
+        width: 56
+        height: 156
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9f48bddc483d20f0800000000000000
+      internalID: -1140193227866353765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_14
+      rect:
+        serializedVersion: 2
+        x: 611
+        y: 1041
+        width: 57
+        height: 156
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c0759218c8eb11b0800000000000000
+      internalID: -5684694158622232375
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_15
+      rect:
+        serializedVersion: 2
+        x: 867
+        y: 1041
+        width: 57
+        height: 157
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86d941100992873c0800000000000000
+      internalID: -4361690540638167704
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_16
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 785
+        width: 63
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ca3024f7d82b6e20800000000000000
+      internalID: 3344812056231557825
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_17
+      rect:
+        serializedVersion: 2
+        x: 351
+        y: 785
+        width: 65
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2081c738b17b7bd0800000000000000
+      internalID: -2631384521244573649
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_18
+      rect:
+        serializedVersion: 2
+        x: 607
+        y: 785
+        width: 65
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da7907c9c062f6300800000000000000
+      internalID: 247458340134754221
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_19
+      rect:
+        serializedVersion: 2
+        x: 864
+        y: 785
+        width: 64
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00ecee458b4a3ee40800000000000000
+      internalID: 5684568266277572096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_20
+      rect:
+        serializedVersion: 2
+        x: 100
+        y: 529
+        width: 56
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3db07c7825090ef80800000000000000
+      internalID: -8079299047362982957
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_21
+      rect:
+        serializedVersion: 2
+        x: 355
+        y: 529
+        width: 57
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25ca6a178cb5a46f0800000000000000
+      internalID: -699645875644355502
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_22
+      rect:
+        serializedVersion: 2
+        x: 611
+        y: 529
+        width: 57
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74e266b24c5eb2530800000000000000
+      internalID: 3831408538713206343
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_23
+      rect:
+        serializedVersion: 2
+        x: 868
+        y: 529
+        width: 56
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 498523e786222bd60800000000000000
+      internalID: 7904418128177813652
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_24
+      rect:
+        serializedVersion: 2
+        x: 110
+        y: 273
+        width: 35
+        height: 137
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a67d92e01add9c10800000000000000
+      internalID: 2062043970461857445
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_25
+      rect:
+        serializedVersion: 2
+        x: 366
+        y: 273
+        width: 36
+        height: 138
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4164182415d11ff50800000000000000
+      internalID: 6913339137835746836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_26
+      rect:
+        serializedVersion: 2
+        x: 622
+        y: 273
+        width: 36
+        height: 137
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86f5d2b8f30d61df0800000000000000
+      internalID: -209751361289625752
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_27
+      rect:
+        serializedVersion: 2
+        x: 878
+        y: 273
+        width: 35
+        height: 137
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca1f64165d03ec970800000000000000
+      internalID: 8777006416809882028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_28
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 17
+        width: 53
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31ff5ebfee6afe180800000000000000
+      internalID: -9083858378024419565
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_29
+      rect:
+        serializedVersion: 2
+        x: 357
+        y: 17
+        width: 54
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a11dabb3c3c1b850800000000000000
+      internalID: 6391104591650165158
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_30
+      rect:
+        serializedVersion: 2
+        x: 613
+        y: 17
+        width: 54
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 05c9c7dec8c6f6830800000000000000
+      internalID: 4066588341074435152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1_31
+      rect:
+        serializedVersion: 2
+        x: 869
+        y: 17
+        width: 53
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 663987b101cd15960800000000000000
+      internalID: 7589088808834470758
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      architect-iso-idle-v1_0: 8428295743611527931
+      architect-iso-idle-v1_1: -5043967378114598036
+      architect-iso-idle-v1_10: -2180526458940762461
+      architect-iso-idle-v1_11: 2963491548389049977
+      architect-iso-idle-v1_12: 3215186602411922720
+      architect-iso-idle-v1_13: -1140193227866353765
+      architect-iso-idle-v1_14: -5684694158622232375
+      architect-iso-idle-v1_15: -4361690540638167704
+      architect-iso-idle-v1_16: 3344812056231557825
+      architect-iso-idle-v1_17: -2631384521244573649
+      architect-iso-idle-v1_18: 247458340134754221
+      architect-iso-idle-v1_19: 5684568266277572096
+      architect-iso-idle-v1_2: -294618988276297612
+      architect-iso-idle-v1_20: -8079299047362982957
+      architect-iso-idle-v1_21: -699645875644355502
+      architect-iso-idle-v1_22: 3831408538713206343
+      architect-iso-idle-v1_23: 7904418128177813652
+      architect-iso-idle-v1_24: 2062043970461857445
+      architect-iso-idle-v1_25: 6913339137835746836
+      architect-iso-idle-v1_26: -209751361289625752
+      architect-iso-idle-v1_27: 8777006416809882028
+      architect-iso-idle-v1_28: -9083858378024419565
+      architect-iso-idle-v1_29: 6391104591650165158
+      architect-iso-idle-v1_3: 242393033678154338
+      architect-iso-idle-v1_30: 4066588341074435152
+      architect-iso-idle-v1_31: 7589088808834470758
+      architect-iso-idle-v1_4: 7064841490020193859
+      architect-iso-idle-v1_5: -5217742525017494824
+      architect-iso-idle-v1_6: 2101385936299511750
+      architect-iso-idle-v1_7: 7214044201365982268
+      architect-iso-idle-v1_8: -7849383824651821031
+      architect-iso-idle-v1_9: -7273157267600999456
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

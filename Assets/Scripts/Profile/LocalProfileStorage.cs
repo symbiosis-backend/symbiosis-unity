@@ -9,12 +9,13 @@ namespace MahjongGame
         private const string FileName = "profile.json";
 
         private readonly string filePath;
+        private string lastSavedJson;
 
         public string FilePath => filePath;
 
         public LocalProfileStorage()
         {
-            filePath = Path.Combine(Application.persistentDataPath, FileName);
+            filePath = Path.Combine(Application.persistentDataPath, ClientProfileScope.AppendToFileName(FileName));
         }
 
         public bool Exists()
@@ -37,9 +38,11 @@ namespace MahjongGame
                     Directory.CreateDirectory(directory);
 
                 string json = JsonUtility.ToJson(profile, true);
-                File.WriteAllText(filePath, json);
+                if (string.Equals(json, lastSavedJson, StringComparison.Ordinal))
+                    return;
 
-                Debug.Log($"[LocalProfileStorage] Profile saved: {filePath}");
+                File.WriteAllText(filePath, json);
+                lastSavedJson = json;
             }
             catch (Exception ex)
             {
@@ -73,6 +76,7 @@ namespace MahjongGame
                     return null;
                 }
 
+                lastSavedJson = json;
                 return profile;
             }
             catch (Exception ex)
@@ -90,6 +94,7 @@ namespace MahjongGame
             try
             {
                 File.Delete(filePath);
+                lastSavedJson = null;
                 Debug.Log($"[LocalProfileStorage] Profile deleted: {filePath}");
             }
             catch (Exception ex)

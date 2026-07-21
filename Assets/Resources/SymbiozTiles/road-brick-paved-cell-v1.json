@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "project": "Dynasty: Legacy Symbiosis",
+  "resourceFolder": "Assets/Resources/SymbiozTiles",
+  "id": "road-brick-paved-cell-v1",
+  "file": "road-brick-paved-cell-v1.png",
+  "resourcesLoadPath": "SymbiozTiles/road-brick-paved-cell-v1",
+  "displayName": "Brick Paved Road Cell",
+  "role": "One-cell paved road texture made from worn bricks and cobblestones.",
+  "footprint": {
+    "widthCells": 1,
+    "heightCells": 1
+  },
+  "usage": {
+    "objectKind": "Road",
+    "placement": "Use as a full square top-down road cell texture.",
+    "tiling": "Can be placed next to other road cells to form paved paths."
+  }
+}

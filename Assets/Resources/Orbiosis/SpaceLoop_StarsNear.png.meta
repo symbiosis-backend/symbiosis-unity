@@ -1,0 +1,2223 @@
+fileFormatVersion: 2
+guid: 16e69985b2750fd42bccb2787d4796e9
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -7883448075591007041
+    second: SpaceLoop_StarsNear_0
+  - first:
+      213: -3728935666813073745
+    second: SpaceLoop_StarsNear_1
+  - first:
+      213: -543427088597813847
+    second: SpaceLoop_StarsNear_2
+  - first:
+      213: 3348025836453578100
+    second: SpaceLoop_StarsNear_3
+  - first:
+      213: 5562166066724126045
+    second: SpaceLoop_StarsNear_4
+  - first:
+      213: 9179819430305783132
+    second: SpaceLoop_StarsNear_5
+  - first:
+      213: 1913152192119976337
+    second: SpaceLoop_StarsNear_6
+  - first:
+      213: 1181320690151340456
+    second: SpaceLoop_StarsNear_7
+  - first:
+      213: -2100761525571898780
+    second: SpaceLoop_StarsNear_8
+  - first:
+      213: -162026683318260583
+    second: SpaceLoop_StarsNear_9
+  - first:
+      213: 718894177365060558
+    second: SpaceLoop_StarsNear_10
+  - first:
+      213: -3553852443123922074
+    second: SpaceLoop_StarsNear_11
+  - first:
+      213: 3325592159418653242
+    second: SpaceLoop_StarsNear_12
+  - first:
+      213: 6128037757405962515
+    second: SpaceLoop_StarsNear_13
+  - first:
+      213: -2136555855396248665
+    second: SpaceLoop_StarsNear_14
+  - first:
+      213: -3032898811944899582
+    second: SpaceLoop_StarsNear_15
+  - first:
+      213: -6989801748317316609
+    second: SpaceLoop_StarsNear_16
+  - first:
+      213: -864556696106232147
+    second: SpaceLoop_StarsNear_17
+  - first:
+      213: 4662264317476479541
+    second: SpaceLoop_StarsNear_18
+  - first:
+      213: -7968505184783744464
+    second: SpaceLoop_StarsNear_19
+  - first:
+      213: 5499550767635948184
+    second: SpaceLoop_StarsNear_20
+  - first:
+      213: 5762695461973026320
+    second: SpaceLoop_StarsNear_21
+  - first:
+      213: 4696852948124965398
+    second: SpaceLoop_StarsNear_22
+  - first:
+      213: 175718150022910465
+    second: SpaceLoop_StarsNear_23
+  - first:
+      213: 8270548409270011569
+    second: SpaceLoop_StarsNear_24
+  - first:
+      213: 681848689039577266
+    second: SpaceLoop_StarsNear_25
+  - first:
+      213: -6084268889409580451
+    second: SpaceLoop_StarsNear_26
+  - first:
+      213: 3983700079491676277
+    second: SpaceLoop_StarsNear_27
+  - first:
+      213: 7139835240148625909
+    second: SpaceLoop_StarsNear_28
+  - first:
+      213: 7206423742781034610
+    second: SpaceLoop_StarsNear_29
+  - first:
+      213: -7475626655292448231
+    second: SpaceLoop_StarsNear_30
+  - first:
+      213: -3995957211588445340
+    second: SpaceLoop_StarsNear_31
+  - first:
+      213: -8973654215596086730
+    second: SpaceLoop_StarsNear_32
+  - first:
+      213: 6638848753060328710
+    second: SpaceLoop_StarsNear_33
+  - first:
+      213: 8724400481506064215
+    second: SpaceLoop_StarsNear_34
+  - first:
+      213: 4054009063602549789
+    second: SpaceLoop_StarsNear_35
+  - first:
+      213: 5270818055963536780
+    second: SpaceLoop_StarsNear_36
+  - first:
+      213: 3268399076686239885
+    second: SpaceLoop_StarsNear_37
+  - first:
+      213: 920507721316411451
+    second: SpaceLoop_StarsNear_38
+  - first:
+      213: 1393479764691640707
+    second: SpaceLoop_StarsNear_39
+  - first:
+      213: -7586000013135937510
+    second: SpaceLoop_StarsNear_40
+  - first:
+      213: 1577788184672459819
+    second: SpaceLoop_StarsNear_41
+  - first:
+      213: -3578802315693928206
+    second: SpaceLoop_StarsNear_42
+  - first:
+      213: 1539439436926369322
+    second: SpaceLoop_StarsNear_43
+  - first:
+      213: 5300273651993513818
+    second: SpaceLoop_StarsNear_44
+  - first:
+      213: 5575866612155978963
+    second: SpaceLoop_StarsNear_45
+  - first:
+      213: -5075973129076987238
+    second: SpaceLoop_StarsNear_46
+  - first:
+      213: -1256942706331316836
+    second: SpaceLoop_StarsNear_47
+  - first:
+      213: -6482212457098126764
+    second: SpaceLoop_StarsNear_48
+  - first:
+      213: 1325917590125917678
+    second: SpaceLoop_StarsNear_49
+  - first:
+      213: -769071831166592435
+    second: SpaceLoop_StarsNear_50
+  - first:
+      213: 4612733419481384636
+    second: SpaceLoop_StarsNear_51
+  - first:
+      213: -2300785062201977234
+    second: SpaceLoop_StarsNear_52
+  - first:
+      213: -236815705792835181
+    second: SpaceLoop_StarsNear_53
+  - first:
+      213: 8377294587841051331
+    second: SpaceLoop_StarsNear_54
+  - first:
+      213: 1616519686756252194
+    second: SpaceLoop_StarsNear_55
+  - first:
+      213: -3937535628673691610
+    second: SpaceLoop_StarsNear_56
+  - first:
+      213: -4993667245278388252
+    second: SpaceLoop_StarsNear_57
+  - first:
+      213: -3262142151163924364
+    second: SpaceLoop_StarsNear_58
+  - first:
+      213: 8801091831904903765
+    second: SpaceLoop_StarsNear_59
+  - first:
+      213: 3743166634293552579
+    second: SpaceLoop_StarsNear_60
+  - first:
+      213: -1010941298537284913
+    second: SpaceLoop_StarsNear_61
+  - first:
+      213: -3744855872715585795
+    second: SpaceLoop_StarsNear_62
+  - first:
+      213: 3693841201874934695
+    second: SpaceLoop_StarsNear_63
+  - first:
+      213: 1538533615208662432
+    second: SpaceLoop_StarsNear_64
+  - first:
+      213: 2773588881135315489
+    second: SpaceLoop_StarsNear_65
+  - first:
+      213: -7447780405429173600
+    second: SpaceLoop_StarsNear_66
+  - first:
+      213: -2939165376945969714
+    second: SpaceLoop_StarsNear_67
+  - first:
+      213: -8243624339731906566
+    second: SpaceLoop_StarsNear_68
+  - first:
+      213: -3654142099915601264
+    second: SpaceLoop_StarsNear_69
+  - first:
+      213: 2970584298105446971
+    second: SpaceLoop_StarsNear_70
+  - first:
+      213: -2105274850388797206
+    second: SpaceLoop_StarsNear_71
+  - first:
+      213: -3415344062287389620
+    second: SpaceLoop_StarsNear_72
+  - first:
+      213: -2073023224891269249
+    second: SpaceLoop_StarsNear_73
+  - first:
+      213: 8174280717653698690
+    second: SpaceLoop_StarsNear_74
+  - first:
+      213: 5318779322918472385
+    second: SpaceLoop_StarsNear_75
+  - first:
+      213: 7030073121500998838
+    second: SpaceLoop_StarsNear_76
+  - first:
+      213: -6548662576268203731
+    second: SpaceLoop_StarsNear_77
+  - first:
+      213: -1335679942283729716
+    second: SpaceLoop_StarsNear_78
+  - first:
+      213: -565819754134503253
+    second: SpaceLoop_StarsNear_79
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_0
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 684
+        width: 135
+        height: 854
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb449295ebd589290800000000000000
+      internalID: -7883448075591007041
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_1
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 116
+        width: 930
+        height: 1423
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa6825d84c8204cc0800000000000000
+      internalID: -3728935666813073745
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_2
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 1184
+        width: 15
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a57dce21fb5578f0800000000000000
+      internalID: -543427088597813847
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_3
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 360
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47545a872c3967e20800000000000000
+      internalID: 3348025836453578100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_4
+      rect:
+        serializedVersion: 2
+        x: 39
+        y: 250
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5db2dc6198c03d40800000000000000
+      internalID: 5562166066724126045
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_5
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 451
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c5dda959225456f70800000000000000
+      internalID: 9179819430305783132
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_6
+      rect:
+        serializedVersion: 2
+        x: 52
+        y: 380
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 191329c48c1ec8a10800000000000000
+      internalID: 1913152192119976337
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_7
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 309
+        width: 70
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a93a46a8e4e46010800000000000000
+      internalID: 1181320690151340456
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_8
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 374
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 462ba76d58898d2e0800000000000000
+      internalID: -2100761525571898780
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_9
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 300
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99c2ea8079d50cdf0800000000000000
+      internalID: -162026683318260583
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_10
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 1109
+        width: 71
+        height: 119
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ecbe0f802760af900800000000000000
+      internalID: 718894177365060558
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_11
+      rect:
+        serializedVersion: 2
+        x: 91
+        y: 878
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 66bc177380e2eaec0800000000000000
+      internalID: -3553852443123922074
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_12
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 610
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3a19f10370e62e20800000000000000
+      internalID: 3325592159418653242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_13
+      rect:
+        serializedVersion: 2
+        x: 110
+        y: 1290
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3112d546fd92b0550800000000000000
+      internalID: 6128037757405962515
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_14
+      rect:
+        serializedVersion: 2
+        x: 110
+        y: 1067
+        width: 26
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a3635cf4cd6952e0800000000000000
+      internalID: -2136555855396248665
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_15
+      rect:
+        serializedVersion: 2
+        x: 116
+        y: 259
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20ce15a799af8e5d0800000000000000
+      internalID: -3032898811944899582
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_16
+      rect:
+        serializedVersion: 2
+        x: 121
+        y: 1020
+        width: 50
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff9542de75c3ffe90800000000000000
+      internalID: -6989801748317316609
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_17
+      rect:
+        serializedVersion: 2
+        x: 125
+        y: 1095
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da61768f34a7004f0800000000000000
+      internalID: -864556696106232147
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_18
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 713
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5322a2ce1b0b3b040800000000000000
+      internalID: 4662264317476479541
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_19
+      rect:
+        serializedVersion: 2
+        x: 138
+        y: 1115
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0324b1ed0ce2a6190800000000000000
+      internalID: -7968505184783744464
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_20
+      rect:
+        serializedVersion: 2
+        x: 139
+        y: 254
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 892ea290944525c40800000000000000
+      internalID: 5499550767635948184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_21
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 1425
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 01668a79df439ff40800000000000000
+      internalID: 5762695461973026320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_22
+      rect:
+        serializedVersion: 2
+        x: 146
+        y: 255
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 61a1c3f0fd29e2140800000000000000
+      internalID: 4696852948124965398
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_23
+      rect:
+        serializedVersion: 2
+        x: 147
+        y: 982
+        width: 23
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10254b8f9b6407200800000000000000
+      internalID: 175718150022910465
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_24
+      rect:
+        serializedVersion: 2
+        x: 155
+        y: 999
+        width: 16
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b6063085f3e6c270800000000000000
+      internalID: 8270548409270011569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_25
+      rect:
+        serializedVersion: 2
+        x: 156
+        y: 1148
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b015c425c9667900800000000000000
+      internalID: 681848689039577266
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_26
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 216
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5218c05ea5509ba0800000000000000
+      internalID: -6084268889409580451
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_27
+      rect:
+        serializedVersion: 2
+        x: 166
+        y: 974
+        width: 6
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 578fbc1ad12f84730800000000000000
+      internalID: 3983700079491676277
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_28
+      rect:
+        serializedVersion: 2
+        x: 167
+        y: 999
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f9efdb825ac51360800000000000000
+      internalID: 7139835240148625909
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_29
+      rect:
+        serializedVersion: 2
+        x: 167
+        y: 190
+        width: 43
+        height: 58
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2709769763c520460800000000000000
+      internalID: 7206423742781034610
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_30
+      rect:
+        serializedVersion: 2
+        x: 171
+        y: 984
+        width: 15
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9122ad12a2d314890800000000000000
+      internalID: -7475626655292448231
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_31
+      rect:
+        serializedVersion: 2
+        x: 171
+        y: 970
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 46b3c9966128b88c0800000000000000
+      internalID: -3995957211588445340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_32
+      rect:
+        serializedVersion: 2
+        x: 171
+        y: 951
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63a653e090d277380800000000000000
+      internalID: -8973654215596086730
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_33
+      rect:
+        serializedVersion: 2
+        x: 174
+        y: 1075
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 605b4bb44cde12c50800000000000000
+      internalID: 6638848753060328710
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_34
+      rect:
+        serializedVersion: 2
+        x: 196
+        y: 151
+        width: 6
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7577a6a930c431970800000000000000
+      internalID: 8724400481506064215
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_35
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 178
+        width: 10
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d147e38a3cbb24830800000000000000
+      internalID: 4054009063602549789
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_36
+      rect:
+        serializedVersion: 2
+        x: 223
+        y: 170
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8deb6d8815b52940800000000000000
+      internalID: 5270818055963536780
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_37
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 778
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d88191eb4afab5d20800000000000000
+      internalID: 3268399076686239885
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_38
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 560
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b38a11e35ec46cc00800000000000000
+      internalID: 920507721316411451
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_39
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 1213
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 381e3288672a65310800000000000000
+      internalID: 1393479764691640707
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_40
+      rect:
+        serializedVersion: 2
+        x: 297
+        y: 297
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a108cee2e2d19b690800000000000000
+      internalID: -7586000013135937510
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_41
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 818
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2cd5369efd65e510800000000000000
+      internalID: 1577788184672459819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_42
+      rect:
+        serializedVersion: 2
+        x: 313
+        y: 1077
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f0d7b3514a855ec0800000000000000
+      internalID: -3578802315693928206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_43
+      rect:
+        serializedVersion: 2
+        x: 446
+        y: 357
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2e3937f2003d5510800000000000000
+      internalID: 1539439436926369322
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_44
+      rect:
+        serializedVersion: 2
+        x: 470
+        y: 149
+        width: 13
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a5f8f6fedca5e8940800000000000000
+      internalID: 5300273651993513818
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_45
+      rect:
+        serializedVersion: 2
+        x: 476
+        y: 137
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3d4948c3425716d40800000000000000
+      internalID: 5575866612155978963
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_46
+      rect:
+        serializedVersion: 2
+        x: 500
+        y: 841
+        width: 14
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9a20ff25558e89b0800000000000000
+      internalID: -5075973129076987238
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_47
+      rect:
+        serializedVersion: 2
+        x: 535
+        y: 213
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c9d8a16a4417e8ee0800000000000000
+      internalID: -1256942706331316836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_48
+      rect:
+        serializedVersion: 2
+        x: 558
+        y: 1238
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45add005d1e8a06a0800000000000000
+      internalID: -6482212457098126764
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_49
+      rect:
+        serializedVersion: 2
+        x: 607
+        y: 450
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee5b5e0f50b966210800000000000000
+      internalID: 1325917590125917678
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_50
+      rect:
+        serializedVersion: 2
+        x: 627
+        y: 254
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4a5e888e35b355f0800000000000000
+      internalID: -769071831166592435
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_51
+      rect:
+        serializedVersion: 2
+        x: 662
+        y: 1370
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb6c2cf0b98b30040800000000000000
+      internalID: 4612733419481384636
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_52
+      rect:
+        serializedVersion: 2
+        x: 677
+        y: 693
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e661dee0d28f110e0800000000000000
+      internalID: -2300785062201977234
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_53
+      rect:
+        serializedVersion: 2
+        x: 692
+        y: 238
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3911cface59a6bcf0800000000000000
+      internalID: -236815705792835181
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_54
+      rect:
+        serializedVersion: 2
+        x: 723
+        y: 254
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ca7117fa01224470800000000000000
+      internalID: 8377294587841051331
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_55
+      rect:
+        serializedVersion: 2
+        x: 728
+        y: 438
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 22a388527180f6610800000000000000
+      internalID: 1616519686756252194
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_56
+      rect:
+        serializedVersion: 2
+        x: 738
+        y: 403
+        width: 60
+        height: 77
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 620d57a25301b59c0800000000000000
+      internalID: -3937535628673691610
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_57
+      rect:
+        serializedVersion: 2
+        x: 740
+        y: 1048
+        width: 9
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ef9da6191ee2bab0800000000000000
+      internalID: -4993667245278388252
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_58
+      rect:
+        serializedVersion: 2
+        x: 753
+        y: 408
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 470bb014ffa8ab2d0800000000000000
+      internalID: -3262142151163924364
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_59
+      rect:
+        serializedVersion: 2
+        x: 759
+        y: 1064
+        width: 16
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 552a8441462c32a70800000000000000
+      internalID: 8801091831904903765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_60
+      rect:
+        serializedVersion: 2
+        x: 760
+        y: 1132
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c56924c83662f330800000000000000
+      internalID: 3743166634293552579
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_61
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 1437
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fcab9e3ce3a68f1f0800000000000000
+      internalID: -1010941298537284913
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_62
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 711
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df680c3cc69970cc0800000000000000
+      internalID: -3744855872715585795
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_63
+      rect:
+        serializedVersion: 2
+        x: 773
+        y: 196
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ab15769009234330800000000000000
+      internalID: 3693841201874934695
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_64
+      rect:
+        serializedVersion: 2
+        x: 774
+        y: 476
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a58289eb28f95510800000000000000
+      internalID: 1538533615208662432
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_65
+      rect:
+        serializedVersion: 2
+        x: 776
+        y: 988
+        width: 153
+        height: 432
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 12a2b0d6464cd7620800000000000000
+      internalID: 2773588881135315489
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_66
+      rect:
+        serializedVersion: 2
+        x: 794
+        y: 1362
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a287496e2b24a890800000000000000
+      internalID: -7447780405429173600
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_67
+      rect:
+        serializedVersion: 2
+        x: 806
+        y: 511
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec5220b79acf537d0800000000000000
+      internalID: -2939165376945969714
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_68
+      rect:
+        serializedVersion: 2
+        x: 809
+        y: 1299
+        width: 7
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: afff380f653c89d80800000000000000
+      internalID: -8243624339731906566
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_69
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 1405
+        width: 121
+        height: 143
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 09a0bbfde11e94dc0800000000000000
+      internalID: -3654142099915601264
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_70
+      rect:
+        serializedVersion: 2
+        x: 811
+        y: 1307
+        width: 30
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b32ade72ea2a93920800000000000000
+      internalID: 2970584298105446971
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_71
+      rect:
+        serializedVersion: 2
+        x: 828
+        y: 325
+        width: 10
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae813048daf88c2e0800000000000000
+      internalID: -2105274850388797206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_72
+      rect:
+        serializedVersion: 2
+        x: 829
+        y: 169
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c4cde9daba24a90d0800000000000000
+      internalID: -3415344062287389620
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_73
+      rect:
+        serializedVersion: 2
+        x: 830
+        y: 1356
+        width: 6
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7f983d3c542b33e0800000000000000
+      internalID: -2073023224891269249
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_74
+      rect:
+        serializedVersion: 2
+        x: 830
+        y: 1343
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 288e216e001e07170800000000000000
+      internalID: 8174280717653698690
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_75
+      rect:
+        serializedVersion: 2
+        x: 833
+        y: 974
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ca8f353d9910d940800000000000000
+      internalID: 5318779322918472385
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_76
+      rect:
+        serializedVersion: 2
+        x: 841
+        y: 1417
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6bca610d146df8160800000000000000
+      internalID: 7030073121500998838
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_77
+      rect:
+        serializedVersion: 2
+        x: 851
+        y: 1335
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d29a3ab451a7e15a0800000000000000
+      internalID: -6548662576268203731
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_78
+      rect:
+        serializedVersion: 2
+        x: 894
+        y: 1365
+        width: 17
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc460925b26b67de0800000000000000
+      internalID: -1335679942283729716
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpaceLoop_StarsNear_79
+      rect:
+        serializedVersion: 2
+        x: 898
+        y: 621
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba00ae37eedc528f0800000000000000
+      internalID: -565819754134503253
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      SpaceLoop_StarsNear_0: -7883448075591007041
+      SpaceLoop_StarsNear_1: -3728935666813073745
+      SpaceLoop_StarsNear_10: 718894177365060558
+      SpaceLoop_StarsNear_11: -3553852443123922074
+      SpaceLoop_StarsNear_12: 3325592159418653242
+      SpaceLoop_StarsNear_13: 6128037757405962515
+      SpaceLoop_StarsNear_14: -2136555855396248665
+      SpaceLoop_StarsNear_15: -3032898811944899582
+      SpaceLoop_StarsNear_16: -6989801748317316609
+      SpaceLoop_StarsNear_17: -864556696106232147
+      SpaceLoop_StarsNear_18: 4662264317476479541
+      SpaceLoop_StarsNear_19: -7968505184783744464
+      SpaceLoop_StarsNear_2: -543427088597813847
+      SpaceLoop_StarsNear_20: 5499550767635948184
+      SpaceLoop_StarsNear_21: 5762695461973026320
+      SpaceLoop_StarsNear_22: 4696852948124965398
+      SpaceLoop_StarsNear_23: 175718150022910465
+      SpaceLoop_StarsNear_24: 8270548409270011569
+      SpaceLoop_StarsNear_25: 681848689039577266
+      SpaceLoop_StarsNear_26: -6084268889409580451
+      SpaceLoop_StarsNear_27: 3983700079491676277
+      SpaceLoop_StarsNear_28: 7139835240148625909
+      SpaceLoop_StarsNear_29: 7206423742781034610
+      SpaceLoop_StarsNear_3: 3348025836453578100
+      SpaceLoop_StarsNear_30: -7475626655292448231
+      SpaceLoop_StarsNear_31: -3995957211588445340
+      SpaceLoop_StarsNear_32: -8973654215596086730
+      SpaceLoop_StarsNear_33: 6638848753060328710
+      SpaceLoop_StarsNear_34: 8724400481506064215
+      SpaceLoop_StarsNear_35: 4054009063602549789
+      SpaceLoop_StarsNear_36: 5270818055963536780
+      SpaceLoop_StarsNear_37: 3268399076686239885
+      SpaceLoop_StarsNear_38: 920507721316411451
+      SpaceLoop_StarsNear_39: 1393479764691640707
+      SpaceLoop_StarsNear_4: 5562166066724126045
+      SpaceLoop_StarsNear_40: -7586000013135937510
+      SpaceLoop_StarsNear_41: 1577788184672459819
+      SpaceLoop_StarsNear_42: -3578802315693928206
+      SpaceLoop_StarsNear_43: 1539439436926369322
+      SpaceLoop_StarsNear_44: 5300273651993513818
+      SpaceLoop_StarsNear_45: 5575866612155978963
+      SpaceLoop_StarsNear_46: -5075973129076987238
+      SpaceLoop_StarsNear_47: -1256942706331316836
+      SpaceLoop_StarsNear_48: -6482212457098126764
+      SpaceLoop_StarsNear_49: 1325917590125917678
+      SpaceLoop_StarsNear_5: 9179819430305783132
+      SpaceLoop_StarsNear_50: -769071831166592435
+      SpaceLoop_StarsNear_51: 4612733419481384636
+      SpaceLoop_StarsNear_52: -2300785062201977234
+      SpaceLoop_StarsNear_53: -236815705792835181
+      SpaceLoop_StarsNear_54: 8377294587841051331
+      SpaceLoop_StarsNear_55: 1616519686756252194
+      SpaceLoop_StarsNear_56: -3937535628673691610
+      SpaceLoop_StarsNear_57: -4993667245278388252
+      SpaceLoop_StarsNear_58: -3262142151163924364
+      SpaceLoop_StarsNear_59: 8801091831904903765
+      SpaceLoop_StarsNear_6: 1913152192119976337
+      SpaceLoop_StarsNear_60: 3743166634293552579
+      SpaceLoop_StarsNear_61: -1010941298537284913
+      SpaceLoop_StarsNear_62: -3744855872715585795
+      SpaceLoop_StarsNear_63: 3693841201874934695
+      SpaceLoop_StarsNear_64: 1538533615208662432
+      SpaceLoop_StarsNear_65: 2773588881135315489
+      SpaceLoop_StarsNear_66: -7447780405429173600
+      SpaceLoop_StarsNear_67: -2939165376945969714
+      SpaceLoop_StarsNear_68: -8243624339731906566
+      SpaceLoop_StarsNear_69: -3654142099915601264
+      SpaceLoop_StarsNear_7: 1181320690151340456
+      SpaceLoop_StarsNear_70: 2970584298105446971
+      SpaceLoop_StarsNear_71: -2105274850388797206
+      SpaceLoop_StarsNear_72: -3415344062287389620
+      SpaceLoop_StarsNear_73: -2073023224891269249
+      SpaceLoop_StarsNear_74: 8174280717653698690
+      SpaceLoop_StarsNear_75: 5318779322918472385
+      SpaceLoop_StarsNear_76: 7030073121500998838
+      SpaceLoop_StarsNear_77: -6548662576268203731
+      SpaceLoop_StarsNear_78: -1335679942283729716
+      SpaceLoop_StarsNear_79: -565819754134503253
+      SpaceLoop_StarsNear_8: -2100761525571898780
+      SpaceLoop_StarsNear_9: -162026683318260583
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

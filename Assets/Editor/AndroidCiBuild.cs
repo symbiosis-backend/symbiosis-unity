@@ -3,34 +3,64 @@ using System;
 using System.IO;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
 public static class AndroidCiBuild
 {
-    private const string DefaultOutputPath = "Builds/Android/symbiosis-latest.apk";
+    private const string DefaultApkOutputPath = "Builds/Android/symbiosis-latest.apk";
+    private const string DefaultAabOutputPath = "Builds/Android/symbiosis-play-release.aab";
     private const string VersionFilePath = "ProjectSettings/SymbiosisVersion.json";
 
     public static void BuildApk()
     {
-        string outputPath = ReadEnv("BUILD_OUTPUT_PATH", DefaultOutputPath);
+        BuildAndroid(ReadEnv("BUILD_OUTPUT_PATH", DefaultApkOutputPath), false, "APK");
+    }
+
+    public static void BuildAab()
+    {
+        BuildAndroid(ReadEnv("BUILD_OUTPUT_PATH", DefaultAabOutputPath), true, "AAB");
+    }
+
+    private static void BuildAndroid(string outputPath, bool buildAppBundle, string artifactName)
+    {
+        string absoluteOutputPath = ResolveProjectRelativePath(outputPath);
         AppVersion version = ReadVersionFile();
         string versionName = ReadEnv("BUILD_VERSION_NAME", version.versionName);
+        string productName = ReadEnv("BUILD_PRODUCT_NAME", PlayerSettings.productName);
         int fallbackVersionCode = ReadIntEnv("BUILD_VERSION_CODE_OFFSET", 0) +
                                   ReadIntEnv("GITHUB_RUN_NUMBER", version.versionCode);
         int versionCode = ReadIntEnv("BUILD_VERSION_CODE", fallbackVersionCode);
 
-        Directory.CreateDirectory(Path.GetDirectoryName(outputPath) ?? "Builds/Android");
+        Directory.CreateDirectory(Path.GetDirectoryName(absoluteOutputPath) ?? "Builds/Android");
+        if (File.Exists(absoluteOutputPath))
+            File.Delete(absoluteOutputPath);
 
+        PlayerSettings.productName = productName;
         PlayerSettings.bundleVersion = versionName;
         PlayerSettings.Android.bundleVersionCode = Math.Max(1, versionCode);
+        PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.Android, "com.ozkullar.dlsymbiosis");
         PlayerSettings.Android.applicationEntry = AndroidApplicationEntry.Activity;
         PlayerSettings.Android.forceInternetPermission = true;
+        PlayerSettings.SetScriptingBackend(NamedBuildTarget.Android, ScriptingImplementation.IL2CPP);
+        PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARMv7 | AndroidArchitecture.ARM64;
+        PlayerSettings.Android.minifyDebug = false;
+        PlayerSettings.Android.minifyRelease = true;
         ApplyKeystoreFromEnvironment();
+        EditorUserBuildSettings.buildAppBundle = buildAppBundle;
 
         string[] scenes = EditorBuildSettings.scenes
             .Where(scene => scene.enabled)
             .Select(scene => scene.path)
+            .Where(path =>
+            {
+                bool exists = File.Exists(path);
+                if (!exists)
+                    Debug.LogWarning("[AndroidCiBuild] Skipping missing scene in Build Settings: " + path);
+
+                return exists;
+            })
             .ToArray();
 
         if (scenes.Length == 0)
@@ -41,7 +71,7 @@ public static class AndroidCiBuild
         BuildPlayerOptions options = new BuildPlayerOptions
         {
             scenes = scenes,
-            locationPathName = outputPath,
+            locationPathName = absoluteOutputPath,
             target = BuildTarget.Android,
             options = BuildOptions.None
         };
@@ -54,7 +84,25 @@ public static class AndroidCiBuild
             throw new InvalidOperationException("Android build failed: " + summary.result);
         }
 
-        Debug.Log("[AndroidCiBuild] APK built at " + outputPath + " version=" + versionName + " code=" + versionCode);
+        FileInfo artifact = new FileInfo(absoluteOutputPath);
+        if (!artifact.Exists || artifact.Length <= 0)
+        {
+            throw new FileNotFoundException("Android build reported success, but the artifact was not created.", absoluteOutputPath);
+        }
+
+        Debug.Log("[AndroidCiBuild] " + artifactName + " built at " + artifact.FullName + " bytes=" + artifact.Length + " product=" + productName + " version=" + versionName + " code=" + versionCode + " backend=IL2CPP architectures=ARMv7|ARM64");
+    }
+
+    private static string ResolveProjectRelativePath(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+            throw new ArgumentException("Build output path is empty.", nameof(path));
+
+        if (Path.IsPathRooted(path))
+            return Path.GetFullPath(path);
+
+        string projectRoot = Directory.GetParent(Application.dataPath)?.FullName ?? Directory.GetCurrentDirectory();
+        return Path.GetFullPath(Path.Combine(projectRoot, path));
     }
 
     private static void ApplyKeystoreFromEnvironment()

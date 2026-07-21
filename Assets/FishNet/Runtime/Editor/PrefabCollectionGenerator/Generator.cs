@@ -354,13 +354,33 @@ namespace FishNet.Editing.PrefabCollectionGenerator
             if (prefabCollection == null)
                 return;
 
-            //Clear and add built list.
-            prefabCollection.Clear();
-            prefabCollection.AddObjects(foundNobs, false);
+            bool collectionChanged = prefabCollection.GetObjectCount() != foundNobs.Count;
+            if (!collectionChanged)
+            {
+                for (int i = 0; i < foundNobs.Count; i++)
+                {
+                    if (prefabCollection.Prefabs[i] != foundNobs[i])
+                    {
+                        collectionChanged = true;
+                        break;
+                    }
+                }
+            }
+
+            if (collectionChanged)
+            {
+                prefabCollection.Clear();
+                prefabCollection.AddObjects(foundNobs, false);
+            }
+
             bool dirtied = prefabCollection.SetAssetPathHashes(0);
+            dirtied |= collectionChanged;
 
             if (log)
                 UnityDebug.Log($"Default prefab generator found {prefabCollection.GetObjectCount()} prefabs in {sw.ElapsedMilliseconds}ms.{GetDirtiedMessage(settings, dirtied)}");
+
+            if (!dirtied)
+                return;
 
             EditorUtility.SetDirty(prefabCollection);
             if (settings.SaveChanges)

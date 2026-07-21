@@ -1,0 +1,975 @@
+fileFormatVersion: 2
+guid: 39709d82fb9cb5648ba46b662f043948
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 6778819125943911639
+    second: architect-iso-template-v1_0
+  - first:
+      213: -9220121190933460374
+    second: architect-iso-template-v1_1
+  - first:
+      213: 2659869194039138323
+    second: architect-iso-template-v1_2
+  - first:
+      213: -4421321304410715718
+    second: architect-iso-template-v1_3
+  - first:
+      213: -7840364566619848095
+    second: architect-iso-template-v1_4
+  - first:
+      213: 5630284442877137137
+    second: architect-iso-template-v1_5
+  - first:
+      213: 7124080716714290188
+    second: architect-iso-template-v1_6
+  - first:
+      213: -7188519007576259095
+    second: architect-iso-template-v1_7
+  - first:
+      213: 7679577122485156453
+    second: architect-iso-template-v1_8
+  - first:
+      213: 9119457261574285001
+    second: architect-iso-template-v1_9
+  - first:
+      213: 8037525789015572824
+    second: architect-iso-template-v1_10
+  - first:
+      213: -7931766617042487573
+    second: architect-iso-template-v1_11
+  - first:
+      213: 1954821782196183978
+    second: architect-iso-template-v1_12
+  - first:
+      213: 3129915958881425609
+    second: architect-iso-template-v1_13
+  - first:
+      213: -2046289628852278820
+    second: architect-iso-template-v1_14
+  - first:
+      213: 161001025028762148
+    second: architect-iso-template-v1_15
+  - first:
+      213: 7446242449176294017
+    second: architect-iso-template-v1_16
+  - first:
+      213: 3668930758393809067
+    second: architect-iso-template-v1_17
+  - first:
+      213: -5121584248687713441
+    second: architect-iso-template-v1_18
+  - first:
+      213: 4415819366541513896
+    second: architect-iso-template-v1_19
+  - first:
+      213: 4448689953727721263
+    second: architect-iso-template-v1_20
+  - first:
+      213: -438556486904879082
+    second: architect-iso-template-v1_21
+  - first:
+      213: 6659142308364422205
+    second: architect-iso-template-v1_22
+  - first:
+      213: 971865452212794493
+    second: architect-iso-template-v1_23
+  - first:
+      213: -8522861155039557544
+    second: architect-iso-template-v1_24
+  - first:
+      213: 2132514391519318158
+    second: architect-iso-template-v1_25
+  - first:
+      213: -7299596893613786898
+    second: architect-iso-template-v1_26
+  - first:
+      213: 8636822470420044394
+    second: architect-iso-template-v1_27
+  - first:
+      213: 6024390390801272642
+    second: architect-iso-template-v1_28
+  - first:
+      213: -2843430804857867671
+    second: architect-iso-template-v1_29
+  - first:
+      213: -3798855639659222563
+    second: architect-iso-template-v1_30
+  - first:
+      213: 2681375939676651119
+    second: architect-iso-template-v1_31
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: architect-iso-template-v1_0
+      rect:
+        serializedVersion: 2
+        x: 90
+        y: 1815
+        width: 76
+        height: 134
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d4c28e4414331e50800000000000000
+      internalID: 6778819125943911639
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_1
+      rect:
+        serializedVersion: 2
+        x: 347
+        y: 1815
+        width: 74
+        height: 134
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6a0c5c80ac8b0080800000000000000
+      internalID: -9220121190933460374
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_2
+      rect:
+        serializedVersion: 2
+        x: 602
+        y: 1815
+        width: 75
+        height: 134
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31815bb70f0c9e420800000000000000
+      internalID: 2659869194039138323
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_3
+      rect:
+        serializedVersion: 2
+        x: 860
+        y: 1815
+        width: 72
+        height: 134
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab98bb4e2bf44a2c0800000000000000
+      internalID: -4421321304410715718
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_4
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 1559
+        width: 67
+        height: 132
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 162801977fd613390800000000000000
+      internalID: -7840364566619848095
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_5
+      rect:
+        serializedVersion: 2
+        x: 348
+        y: 1559
+        width: 71
+        height: 131
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f0991aced9c22e40800000000000000
+      internalID: 5630284442877137137
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_6
+      rect:
+        serializedVersion: 2
+        x: 603
+        y: 1559
+        width: 73
+        height: 126
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0c27f6baa1ddd260800000000000000
+      internalID: 7124080716714290188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_7
+      rect:
+        serializedVersion: 2
+        x: 861
+        y: 1559
+        width: 69
+        height: 131
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e5064c8c004d3c90800000000000000
+      internalID: -7188519007576259095
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_8
+      rect:
+        serializedVersion: 2
+        x: 89
+        y: 1303
+        width: 78
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 56ab1fa64b6539a60800000000000000
+      internalID: 7679577122485156453
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_9
+      rect:
+        serializedVersion: 2
+        x: 343
+        y: 1303
+        width: 81
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c6ed7cff02de8e70800000000000000
+      internalID: 9119457261574285001
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_10
+      rect:
+        serializedVersion: 2
+        x: 600
+        y: 1303
+        width: 79
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8518057de170b8f60800000000000000
+      internalID: 8037525789015572824
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_11
+      rect:
+        serializedVersion: 2
+        x: 855
+        y: 1303
+        width: 82
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be671ed3944bce190800000000000000
+      internalID: -7931766617042487573
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_12
+      rect:
+        serializedVersion: 2
+        x: 90
+        y: 1047
+        width: 75
+        height: 129
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa3eff6cd0ce02b10800000000000000
+      internalID: 1954821782196183978
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_13
+      rect:
+        serializedVersion: 2
+        x: 346
+        y: 1047
+        width: 75
+        height: 127
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c814f94bf1bf6b20800000000000000
+      internalID: 3129915958881425609
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_14
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 1047
+        width: 71
+        height: 127
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd9a1bc9c6e1a93e0800000000000000
+      internalID: -2046289628852278820
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_15
+      rect:
+        serializedVersion: 2
+        x: 858
+        y: 1047
+        width: 76
+        height: 129
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 42a2059449dfb3200800000000000000
+      internalID: 161001025028762148
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_16
+      rect:
+        serializedVersion: 2
+        x: 93
+        y: 791
+        width: 69
+        height: 129
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 182769e3e0e565760800000000000000
+      internalID: 7446242449176294017
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_17
+      rect:
+        serializedVersion: 2
+        x: 349
+        y: 791
+        width: 70
+        height: 129
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba8419ff519aae230800000000000000
+      internalID: 3668930758393809067
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_18
+      rect:
+        serializedVersion: 2
+        x: 605
+        y: 791
+        width: 69
+        height: 130
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f53abb9d24a7ce8b0800000000000000
+      internalID: -5121584248687713441
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_19
+      rect:
+        serializedVersion: 2
+        x: 861
+        y: 791
+        width: 69
+        height: 129
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8a45ffe5154284d30800000000000000
+      internalID: 4415819366541513896
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_20
+      rect:
+        serializedVersion: 2
+        x: 94
+        y: 535
+        width: 68
+        height: 129
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2f2ac751fbecbd30800000000000000
+      internalID: 4448689953727721263
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_21
+      rect:
+        serializedVersion: 2
+        x: 350
+        y: 535
+        width: 67
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6186710e23fe9e9f0800000000000000
+      internalID: -438556486904879082
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_22
+      rect:
+        serializedVersion: 2
+        x: 607
+        y: 535
+        width: 66
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3c06d6d5a60a6c50800000000000000
+      internalID: 6659142308364422205
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_23
+      rect:
+        serializedVersion: 2
+        x: 863
+        y: 535
+        width: 65
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d743e98ca72cc7d00800000000000000
+      internalID: 971865452212794493
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_24
+      rect:
+        serializedVersion: 2
+        x: 90
+        y: 279
+        width: 75
+        height: 123
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 85844ef7fe6b8b980800000000000000
+      internalID: -8522861155039557544
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_25
+      rect:
+        serializedVersion: 2
+        x: 346
+        y: 279
+        width: 75
+        height: 123
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e80dae06a86389d10800000000000000
+      internalID: 2132514391519318158
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_26
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 279
+        width: 71
+        height: 123
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee8fa98dc4f92ba90800000000000000
+      internalID: -7299596893613786898
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_27
+      rect:
+        serializedVersion: 2
+        x: 857
+        y: 279
+        width: 77
+        height: 122
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6a9f79e6482cd770800000000000000
+      internalID: 8636822470420044394
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_28
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 23
+        width: 65
+        height: 133
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24f8cff442fea9350800000000000000
+      internalID: 6024390390801272642
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_29
+      rect:
+        serializedVersion: 2
+        x: 348
+        y: 23
+        width: 71
+        height: 133
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9623b058fba1a88d0800000000000000
+      internalID: -2843430804857867671
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_30
+      rect:
+        serializedVersion: 2
+        x: 607
+        y: 23
+        width: 65
+        height: 132
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd96f154ce0c74bc0800000000000000
+      internalID: -3798855639659222563
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-template-v1_31
+      rect:
+        serializedVersion: 2
+        x: 862
+        y: 23
+        width: 68
+        height: 132
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6eb4b9e539263520800000000000000
+      internalID: 2681375939676651119
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      architect-iso-template-v1_0: 6778819125943911639
+      architect-iso-template-v1_1: -9220121190933460374
+      architect-iso-template-v1_10: 8037525789015572824
+      architect-iso-template-v1_11: -7931766617042487573
+      architect-iso-template-v1_12: 1954821782196183978
+      architect-iso-template-v1_13: 3129915958881425609
+      architect-iso-template-v1_14: -2046289628852278820
+      architect-iso-template-v1_15: 161001025028762148
+      architect-iso-template-v1_16: 7446242449176294017
+      architect-iso-template-v1_17: 3668930758393809067
+      architect-iso-template-v1_18: -5121584248687713441
+      architect-iso-template-v1_19: 4415819366541513896
+      architect-iso-template-v1_2: 2659869194039138323
+      architect-iso-template-v1_20: 4448689953727721263
+      architect-iso-template-v1_21: -438556486904879082
+      architect-iso-template-v1_22: 6659142308364422205
+      architect-iso-template-v1_23: 971865452212794493
+      architect-iso-template-v1_24: -8522861155039557544
+      architect-iso-template-v1_25: 2132514391519318158
+      architect-iso-template-v1_26: -7299596893613786898
+      architect-iso-template-v1_27: 8636822470420044394
+      architect-iso-template-v1_28: 6024390390801272642
+      architect-iso-template-v1_29: -2843430804857867671
+      architect-iso-template-v1_3: -4421321304410715718
+      architect-iso-template-v1_30: -3798855639659222563
+      architect-iso-template-v1_31: 2681375939676651119
+      architect-iso-template-v1_4: -7840364566619848095
+      architect-iso-template-v1_5: 5630284442877137137
+      architect-iso-template-v1_6: 7124080716714290188
+      architect-iso-template-v1_7: -7188519007576259095
+      architect-iso-template-v1_8: 7679577122485156453
+      architect-iso-template-v1_9: 9119457261574285001
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

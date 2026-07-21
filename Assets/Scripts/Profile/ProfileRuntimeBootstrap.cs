@@ -22,6 +22,8 @@ namespace MahjongGame
         {
             EnsureComponent<ProfileService>("ProfileService");
             EnsureComponent<CurrencyService>("CurrencyService");
+            EnsureComponent<MailboxService>("MailboxService");
+            EnsureComponent<Monetization.MonetizationService>("MonetizationService");
             EnsureComponent<MahjongTitleService>("MahjongTitleService");
             EnsureComponent<MahjongRewardService>("MahjongRewardService");
             TryLoadCachedProfile();
@@ -50,11 +52,14 @@ namespace MahjongGame
                 if (!instance.gameObject.activeSelf)
                     instance.gameObject.SetActive(true);
 
+                PersistentObjectUtility.DontDestroyOnLoad(instance.gameObject);
                 return instance;
             }
 
             GameObject serviceObject = new GameObject(objectName);
-            return serviceObject.AddComponent<T>();
+            T created = serviceObject.AddComponent<T>();
+            PersistentObjectUtility.DontDestroyOnLoad(serviceObject);
+            return created;
         }
     }
 }

@@ -8,6 +8,8 @@ namespace MahjongGame
     [RequireComponent(typeof(AudioSource))]
     public sealed class TrayFX : MonoBehaviour
     {
+        private const string DefaultTileSoundResourcePath = "Mahjong/Sounds/TileStoneHit";
+
         [Header("Flight Animation")]
         [SerializeField] private float flyDuration = 0.28f;
         [SerializeField] private float arcHeight = 85f;
@@ -48,6 +50,8 @@ namespace MahjongGame
             audioSource.playOnAwake = false;
             audioSource.loop = false;
             audioSource.spatialBlend = 0f;
+
+            EnsureDefaultAudioClips();
         }
 
 #if UNITY_EDITOR
@@ -364,7 +368,12 @@ namespace MahjongGame
 
         private void PlayTileLandSound()
         {
+            EnsureDefaultAudioClips();
+
             if (audioSource == null || tileLandClip == null)
+                return;
+
+            if (AppSettings.I != null && !AppSettings.I.SoundEnabled)
                 return;
 
             audioSource.PlayOneShot(tileLandClip, tileLandVolume);
@@ -372,10 +381,31 @@ namespace MahjongGame
 
         private void PlayMatchSound()
         {
+            EnsureDefaultAudioClips();
+
             if (audioSource == null || tileMatchClip == null)
                 return;
 
+            if (AppSettings.I != null && !AppSettings.I.SoundEnabled)
+                return;
+
             audioSource.PlayOneShot(tileMatchClip, tileMatchVolume);
+        }
+
+        private void EnsureDefaultAudioClips()
+        {
+            if (tileLandClip != null && tileMatchClip != null)
+                return;
+
+            AudioClip defaultClip = Resources.Load<AudioClip>(DefaultTileSoundResourcePath);
+            if (defaultClip == null)
+                return;
+
+            if (tileLandClip == null)
+                tileLandClip = defaultClip;
+
+            if (tileMatchClip == null)
+                tileMatchClip = defaultClip;
         }
 
         private static float EaseOutCubic(float t)

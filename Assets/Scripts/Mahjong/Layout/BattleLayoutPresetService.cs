@@ -168,20 +168,7 @@ namespace MahjongGame
 
         private string ResolveLevelName(int level)
         {
-            return level switch
-            {
-                1 => "Duel Line",
-                2 => "Twin Rows",
-                3 => "Crown",
-                4 => "Fang",
-                5 => "Arena",
-                6 => "Wings",
-                7 => "Gate",
-                8 => "Core Ring",
-                9 => "Crossfire",
-                10 => "Fortress",
-                _ => "Battle Layout " + level
-            };
+            return BattleLayoutPresets.GetLevelName(level);
         }
 
         private void EmitError(string message)

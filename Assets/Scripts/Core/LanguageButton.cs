@@ -11,6 +11,7 @@ namespace MahjongGame
         private const string RussianLanguageButtonResourcePath = "Mahjong/Sprites/RuButton";
         private const string EnglishLanguageButtonResourcePath = "Mahjong/Sprites/EngButton";
         private const string TurkishLanguageButtonResourcePath = "Mahjong/Sprites/TrButton";
+        private const string GermanLanguageButtonResourcePath = "Mahjong/Sprites/ButtonDE";
 
         [SerializeField] private GameLanguage language = GameLanguage.Russian;
         [SerializeField] private TMP_Text label;
@@ -22,6 +23,7 @@ namespace MahjongGame
         private static Sprite russianLanguageButtonSprite;
         private static Sprite englishLanguageButtonSprite;
         private static Sprite turkishLanguageButtonSprite;
+        private static Sprite germanLanguageButtonSprite;
         private Button button;
 
         private void Awake()
@@ -73,16 +75,23 @@ namespace MahjongGame
             {
                 GameLanguage.English => "settings.language_en",
                 GameLanguage.Turkish => "settings.language_tr",
+                GameLanguage.German => "settings.language_de",
                 _ => "settings.language_ru"
             };
 
             string text = GameLocalization.Text(key);
 
             if (label != null)
+            {
                 label.text = text;
+                LocalizedTextStyle.Apply(label);
+            }
 
             if (legacyLabel != null)
+            {
                 legacyLabel.text = text;
+                LocalizedTextStyle.Apply(legacyLabel);
+            }
 
             Sprite sprite = GetLanguageButtonSprite(language);
             if (targetImage != null)
@@ -122,6 +131,7 @@ namespace MahjongGame
             {
                 GameLanguage.English => LoadEnglishLanguageButtonSprite(),
                 GameLanguage.Turkish => LoadTurkishLanguageButtonSprite(),
+                GameLanguage.German => LoadGermanLanguageButtonSprite(),
                 _ => LoadRussianLanguageButtonSprite()
             };
         }
@@ -151,6 +161,15 @@ namespace MahjongGame
 
             turkishLanguageButtonSprite = LoadFirstSprite(TurkishLanguageButtonResourcePath);
             return turkishLanguageButtonSprite;
+        }
+
+        private static Sprite LoadGermanLanguageButtonSprite()
+        {
+            if (germanLanguageButtonSprite != null)
+                return germanLanguageButtonSprite;
+
+            germanLanguageButtonSprite = LoadFirstSprite(GermanLanguageButtonResourcePath);
+            return germanLanguageButtonSprite;
         }
 
         private static Sprite LoadFirstSprite(string resourcePath)

@@ -36,6 +36,8 @@ namespace MahjongGame
         [Header("Adaptive Difficulty")]
         [SerializeField] private bool useAdaptiveDifficulty = true;
         [SerializeField, Range(0f, 1f)] private float baseSkill = 0.46f;
+        [SerializeField, Range(0f, 1f)] private float firstBattleSkill = 0.28f;
+        [SerializeField, Range(0f, 1f)] private float highPerformerSkill = 0.72f;
         [SerializeField, Range(0f, 1f)] private float minAdaptiveSkill = 0.22f;
         [SerializeField, Range(0f, 1f)] private float maxAdaptiveSkill = 0.76f;
         [SerializeField, Min(0.1f)] private float playerTargetPairSeconds = 6f;
@@ -60,6 +62,8 @@ namespace MahjongGame
         private Coroutine botRoutine;
         private bool activeRound;
         private float speedFactor = 1f;
+        private float roundBaseSkill;
+        private float memoryDropMultiplier = 1f;
         private float adaptiveSkill;
         private float playerPairSecondsEma = -1f;
         private float lastPlayerPairTime = -1f;
@@ -173,7 +177,7 @@ namespace MahjongGame
         public void RestartBot()
         {
             Log("RestartBot");
-            if (IsLocalWifiBattleActive())
+            if (IsLocalWifiBattleActive() || IsInactiveTutorialOpponent())
             {
                 StopBotInternal(false);
                 return;
@@ -189,6 +193,13 @@ namespace MahjongGame
             if (IsLocalWifiBattleActive())
             {
                 Log("TryStartBot skipped for local Wi-Fi battle");
+                StopBotInternal(false);
+                return;
+            }
+
+            if (IsInactiveTutorialOpponent())
+            {
+                Log("TryStartBot skipped for guided tutorial stage");
                 StopBotInternal(false);
                 return;
             }
@@ -215,14 +226,21 @@ namespace MahjongGame
                 BindBoard();
             }
 
+            float difficultyFactor = Mathf.Clamp(MahjongSession.BattleOpponentDifficultyFactor <= 0f
+                ? 1f
+                : MahjongSession.BattleOpponentDifficultyFactor, 0.55f, 1.45f);
             speedFactor = ResolveSpeedFactor(
                 MahjongSession.BattleOpponentRankTier,
-                MahjongSession.BattleOpponentRankPoints);
-            adaptiveSkill = Mathf.Clamp(baseSkill, minAdaptiveSkill, maxAdaptiveSkill);
+                MahjongSession.BattleOpponentRankPoints) * Mathf.Lerp(0.92f, 1.12f, Mathf.InverseLerp(0.55f, 1.45f, difficultyFactor));
+            roundBaseSkill = ResolveRoundBaseSkill(difficultyFactor);
+            memoryDropMultiplier = ResolveMemoryDropMultiplier(difficultyFactor);
+            adaptiveSkill = Mathf.Clamp(roundBaseSkill, minAdaptiveSkill, maxAdaptiveSkill);
             ResetAdaptiveRoundStats();
 
             Log(
                 $"Resolved speedFactor={speedFactor:0.00} | " +
+                $"difficultyFactor={difficultyFactor:0.00} | " +
+                $"roundBaseSkill={roundBaseSkill:0.00} | " +
                 $"RankTier='{MahjongSession.BattleOpponentRankTier}' | " +
                 $"RankPoints={MahjongSession.BattleOpponentRankPoints}");
 
@@ -338,6 +356,11 @@ namespace MahjongGame
             opponentBoard.PairMismatched -= HandlePairMismatched;
         }
 
+        private static bool IsInactiveTutorialOpponent()
+        {
+            return BattleLoreTutorialSession.IsActive && BattleLoreTutorialSession.ActiveStage <= 3;
+        }
+
         private void BindPlayerBoard()
         {
             if (playerBoard == null)
@@ -427,7 +450,7 @@ namespace MahjongGame
             if (board != opponentBoard || tile == null)
                 return;
 
-            if (Roll(memoryDropChance))
+            if (Roll(GetMemoryDropChance()))
             {
                 ForgetTile(tile);
                 Log($"Memory missed: {tile.name}");
@@ -457,7 +480,7 @@ namespace MahjongGame
 
             if (first != null)
             {
-                if (Roll(memoryDropChance))
+                if (Roll(GetMemoryDropChance()))
                     ForgetTile(first);
                 else
                     memory[first] = first.Id;
@@ -465,7 +488,7 @@ namespace MahjongGame
 
             if (second != null)
             {
-                if (Roll(memoryDropChance))
+                if (Roll(GetMemoryDropChance()))
                     ForgetTile(second);
                 else
                     memory[second] = second.Id;
@@ -763,18 +786,18 @@ namespace MahjongGame
             playerMismatchCount = 0;
             botMatchCount = 0;
             botMismatchCount = 0;
-            adaptiveSkill = Mathf.Clamp(baseSkill, minAdaptiveSkill, maxAdaptiveSkill);
+            adaptiveSkill = Mathf.Clamp(GetActiveBaseSkill(), minAdaptiveSkill, maxAdaptiveSkill);
         }
 
         private void UpdateAdaptiveSkill()
         {
             if (!useAdaptiveDifficulty)
             {
-                adaptiveSkill = Mathf.Clamp(baseSkill, minAdaptiveSkill, maxAdaptiveSkill);
+                adaptiveSkill = Mathf.Clamp(GetActiveBaseSkill(), minAdaptiveSkill, maxAdaptiveSkill);
                 return;
             }
 
-            float target = baseSkill;
+            float target = GetActiveBaseSkill();
 
             if (combatSystem != null && combatSystem.IsCombatStarted)
             {
@@ -810,7 +833,7 @@ namespace MahjongGame
             }
 
             target = Mathf.Clamp(target, minAdaptiveSkill, maxAdaptiveSkill);
-            adaptiveSkill = Mathf.Lerp(adaptiveSkill <= 0f ? baseSkill : adaptiveSkill, target, adaptiveSmoothing);
+            adaptiveSkill = Mathf.Lerp(adaptiveSkill <= 0f ? GetActiveBaseSkill() : adaptiveSkill, target, adaptiveSmoothing);
         }
 
         private BattleBoard FindOpponentBoard()
@@ -888,6 +911,32 @@ namespace MahjongGame
                 return maxKnownPairUseChance;
 
             return Mathf.Lerp(minKnownPairUseChance, maxKnownPairUseChance, Mathf.Clamp01(adaptiveSkill));
+        }
+
+        private float GetMemoryDropChance()
+        {
+            float skillMemoryMultiplier = useAdaptiveDifficulty
+                ? Mathf.Lerp(1.25f, 0.55f, Mathf.Clamp01(adaptiveSkill))
+                : 1f;
+            return Mathf.Clamp01(memoryDropChance * memoryDropMultiplier * skillMemoryMultiplier);
+        }
+
+        private float GetActiveBaseSkill()
+        {
+            return roundBaseSkill > 0f ? roundBaseSkill : baseSkill;
+        }
+
+        private float ResolveRoundBaseSkill(float difficultyFactor)
+        {
+            float normalized = Mathf.InverseLerp(0.62f, 1.38f, Mathf.Clamp(difficultyFactor, 0.62f, 1.38f));
+            float resolved = Mathf.Lerp(firstBattleSkill, highPerformerSkill, normalized);
+            return Mathf.Clamp(resolved, minAdaptiveSkill, maxAdaptiveSkill);
+        }
+
+        private float ResolveMemoryDropMultiplier(float difficultyFactor)
+        {
+            float normalized = Mathf.InverseLerp(0.62f, 1.38f, Mathf.Clamp(difficultyFactor, 0.62f, 1.38f));
+            return Mathf.Lerp(1.35f, 0.58f, normalized);
         }
 
         private bool Roll(float chance)

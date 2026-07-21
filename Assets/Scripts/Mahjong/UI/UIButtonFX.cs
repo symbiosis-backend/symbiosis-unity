@@ -39,6 +39,27 @@ public sealed class UIButtonFX : MonoBehaviour
 
     private static Sprite sparkleSprite;
 
+    public void ApplyMainMahjongButtonPreset()
+    {
+        useBreath = true;
+        breathSpeed = 0.5f;
+        breathAmount = 0.035f;
+        useBrightnessPulse = true;
+        brightnessSpeed = 0.5f;
+        brightnessAmount = 0.08f;
+        useSparkles = true;
+        sparkleCount = 2;
+        sparkleSizeMinMax = new Vector2(16f, 28f);
+        sparkleLifetimeMinMax = new Vector2(0.45f, 0.9f);
+        sparkleDelayMinMax = new Vector2(0.6f, 1.8f);
+        sparkleScaleMinMax = new Vector2(0.65f, 1.15f);
+        sparkleAlpha = 0.75f;
+        sparkleInset = 18f;
+        sparkleColor = new Color(1f, 1f, 1f, 0.75f);
+        randomRotation = true;
+        sparkleRotationSpeed = 18f;
+    }
+
     private sealed class SparkleData
     {
         public RectTransform rect;

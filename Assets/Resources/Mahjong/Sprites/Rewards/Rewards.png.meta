@@ -1,0 +1,1781 @@
+fileFormatVersion: 2
+guid: 4f98e2827a1e9a34c89173b59a5e8a39
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2065769495487608585
+    second: Rewards_0
+  - first:
+      213: -7075836903382875746
+    second: Rewards_1
+  - first:
+      213: 4757601588859586736
+    second: Rewards_2
+  - first:
+      213: 5011971038547840623
+    second: Rewards_3
+  - first:
+      213: 4392588225026742278
+    second: Rewards_4
+  - first:
+      213: 2760469414346272549
+    second: Rewards_5
+  - first:
+      213: 3249299329818170383
+    second: Rewards_6
+  - first:
+      213: 1808084088616992680
+    second: Rewards_7
+  - first:
+      213: -2569594224930435309
+    second: Rewards_8
+  - first:
+      213: 7928138542046243696
+    second: Rewards_9
+  - first:
+      213: 2653131696867924771
+    second: Rewards_10
+  - first:
+      213: 7995103136111847369
+    second: Rewards_11
+  - first:
+      213: -320573145189800223
+    second: Rewards_12
+  - first:
+      213: 1259763274466890916
+    second: Rewards_13
+  - first:
+      213: 5642667584888647553
+    second: Rewards_14
+  - first:
+      213: -8613401439815176104
+    second: Rewards_15
+  - first:
+      213: -1065872864608986426
+    second: Rewards_16
+  - first:
+      213: -6401477482723041830
+    second: Rewards_17
+  - first:
+      213: 2011225096492777180
+    second: Rewards_18
+  - first:
+      213: 4738856925750383228
+    second: Rewards_19
+  - first:
+      213: 6768577579880643025
+    second: Rewards_20
+  - first:
+      213: 2951710012121152296
+    second: Rewards_21
+  - first:
+      213: -2119354176556703836
+    second: Rewards_22
+  - first:
+      213: 4516515234957079770
+    second: Rewards_23
+  - first:
+      213: 1995657002934967854
+    second: Rewards_24
+  - first:
+      213: 6578481172182816896
+    second: Rewards_25
+  - first:
+      213: -861471699984607439
+    second: Rewards_26
+  - first:
+      213: -3662850098306504739
+    second: Rewards_27
+  - first:
+      213: -7952103667777832893
+    second: Rewards_28
+  - first:
+      213: -8737236993960529918
+    second: Rewards_29
+  - first:
+      213: -4863748598715099969
+    second: Rewards_30
+  - first:
+      213: 5676091664922641688
+    second: Rewards_31
+  - first:
+      213: 2346410022908606451
+    second: Rewards_32
+  - first:
+      213: -4712369945552705109
+    second: Rewards_33
+  - first:
+      213: 306638730785320767
+    second: Rewards_34
+  - first:
+      213: -4712169305185740482
+    second: Rewards_35
+  - first:
+      213: -3873146412504061514
+    second: Rewards_36
+  - first:
+      213: 5134143129752847805
+    second: Rewards_37
+  - first:
+      213: -7813760975745921267
+    second: Rewards_38
+  - first:
+      213: -2953810927139600160
+    second: Rewards_39
+  - first:
+      213: 781810375415204933
+    second: Rewards_40
+  - first:
+      213: 6793923685718814654
+    second: Rewards_41
+  - first:
+      213: 3234207853960691705
+    second: Rewards_42
+  - first:
+      213: -2529383530551710842
+    second: Rewards_43
+  - first:
+      213: 2097811679525950403
+    second: Rewards_44
+  - first:
+      213: -7670265517673188316
+    second: Rewards_45
+  - first:
+      213: 5011351288141565830
+    second: Rewards_46
+  - first:
+      213: -3947066296164497052
+    second: Rewards_47
+  - first:
+      213: -1124919556284497711
+    second: Rewards_48
+  - first:
+      213: 2293771659328250445
+    second: Rewards_49
+  - first:
+      213: 417177603722941791
+    second: Rewards_50
+  - first:
+      213: -8179114361684352038
+    second: Rewards_51
+  - first:
+      213: 6761619314197138037
+    second: Rewards_52
+  - first:
+      213: 8331964719642650064
+    second: Rewards_53
+  - first:
+      213: -3923613374590909388
+    second: Rewards_54
+  - first:
+      213: -7351221918528466553
+    second: Rewards_55
+  - first:
+      213: -1271112528799965470
+    second: Rewards_56
+  - first:
+      213: -5304260083639240577
+    second: Rewards_57
+  - first:
+      213: -1906251404812011134
+    second: Rewards_58
+  - first:
+      213: -482367304331733386
+    second: Rewards_59
+  - first:
+      213: -5218864064717879664
+    second: Rewards_60
+  - first:
+      213: -8774828379855068805
+    second: Rewards_61
+  - first:
+      213: 160875585422273984
+    second: Rewards_62
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Rewards_0
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 0
+        width: 370
+        height: 1024
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f88f99b699e453e0800000000000000
+      internalID: -2065769495487608585
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_1
+      rect:
+        serializedVersion: 2
+        x: 350
+        y: 808
+        width: 424
+        height: 216
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e91834563d39dcd90800000000000000
+      internalID: -7075836903382875746
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_2
+      rect:
+        serializedVersion: 2
+        x: 830
+        y: 853
+        width: 203
+        height: 171
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b84fce2075660240800000000000000
+      internalID: 4757601588859586736
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_3
+      rect:
+        serializedVersion: 2
+        x: 1039
+        y: 520
+        width: 487
+        height: 504
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6e8031ea191e8540800000000000000
+      internalID: 5011971038547840623
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_4
+      rect:
+        serializedVersion: 2
+        x: 1087
+        y: 875
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 608584db7bb95fc30800000000000000
+      internalID: 4392588225026742278
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_5
+      rect:
+        serializedVersion: 2
+        x: 951
+        y: 853
+        width: 14
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52fa0778e482f4620800000000000000
+      internalID: 2760469414346272549
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_6
+      rect:
+        serializedVersion: 2
+        x: 994
+        y: 856
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f041ab26684d71d20800000000000000
+      internalID: 3249299329818170383
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_7
+      rect:
+        serializedVersion: 2
+        x: 1041
+        y: 862
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8af3d0226ea971910800000000000000
+      internalID: 1808084088616992680
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_8
+      rect:
+        serializedVersion: 2
+        x: 765
+        y: 519
+        width: 357
+        height: 337
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31f402eaaa7f65cd0800000000000000
+      internalID: -2569594224930435309
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_9
+      rect:
+        serializedVersion: 2
+        x: 922
+        y: 848
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07befb8bff7660e60800000000000000
+      internalID: 7928138542046243696
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_10
+      rect:
+        serializedVersion: 2
+        x: 946
+        y: 847
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32b542ea831d1d420800000000000000
+      internalID: 2653131696867924771
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_11
+      rect:
+        serializedVersion: 2
+        x: 967
+        y: 851
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c7ee8241ff44fe60800000000000000
+      internalID: 7995103136111847369
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_12
+      rect:
+        serializedVersion: 2
+        x: 970
+        y: 847
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e6ae644c681d8bf0800000000000000
+      internalID: -320573145189800223
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_13
+      rect:
+        serializedVersion: 2
+        x: 995
+        y: 849
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a49eab06049b7110800000000000000
+      internalID: 1259763274466890916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_14
+      rect:
+        serializedVersion: 2
+        x: 1087
+        y: 850
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18f26e6b548ce4e40800000000000000
+      internalID: 5642667584888647553
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_15
+      rect:
+        serializedVersion: 2
+        x: 403
+        y: 496
+        width: 359
+        height: 350
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8507af7b60d077880800000000000000
+      internalID: -8613401439815176104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_16
+      rect:
+        serializedVersion: 2
+        x: 630
+        y: 840
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6cad041e6424531f0800000000000000
+      internalID: -1065872864608986426
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_17
+      rect:
+        serializedVersion: 2
+        x: 650
+        y: 840
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: add91ac55226927a0800000000000000
+      internalID: -6401477482723041830
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_18
+      rect:
+        serializedVersion: 2
+        x: 672
+        y: 839
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cde7dcfb19e49eb10800000000000000
+      internalID: 2011225096492777180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_19
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 807
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7250c4344dc3c140800000000000000
+      internalID: 4738856925750383228
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_20
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 791
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d9757b8271deed50800000000000000
+      internalID: 6768577579880643025
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_21
+      rect:
+        serializedVersion: 2
+        x: 218
+        y: 783
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82bf1700e9496f820800000000000000
+      internalID: 2951710012121152296
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_22
+      rect:
+        serializedVersion: 2
+        x: 59
+        y: 464
+        width: 342
+        height: 316
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4afd811fa9a8692e0800000000000000
+      internalID: -2119354176556703836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_23
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 779
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad4b14a3da2edae30800000000000000
+      internalID: 4516515234957079770
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_24
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 767
+        width: 9
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2e9571887ff1bb10800000000000000
+      internalID: 1995657002934967854
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_25
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 535
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0885d8595c57b4b50800000000000000
+      internalID: 6578481172182816896
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_26
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 543
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1379d5a9d007b04f0800000000000000
+      internalID: -861471699984607439
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_27
+      rect:
+        serializedVersion: 2
+        x: 994
+        y: 536
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd7afe00e31fa2dc0800000000000000
+      internalID: -3662850098306504739
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_28
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 527
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3487501a8d374a190800000000000000
+      internalID: -7952103667777832893
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_29
+      rect:
+        serializedVersion: 2
+        x: 994
+        y: 528
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 200b490fe391fb680800000000000000
+      internalID: -8737236993960529918
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_30
+      rect:
+        serializedVersion: 2
+        x: 1041
+        y: 533
+        width: 6
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fb458c03b6e708cb0800000000000000
+      internalID: -4863748598715099969
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_31
+      rect:
+        serializedVersion: 2
+        x: 1087
+        y: 528
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8150548cb4785ce40800000000000000
+      internalID: 5676091664922641688
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_32
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 519
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f732e8eb7f109020800000000000000
+      internalID: 2346410022908606451
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_33
+      rect:
+        serializedVersion: 2
+        x: 769
+        y: 0
+        width: 362
+        height: 526
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba9aa11708c4a9eb0800000000000000
+      internalID: -4712369945552705109
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_34
+      rect:
+        serializedVersion: 2
+        x: 994
+        y: 520
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3fe5de0d46614400800000000000000
+      internalID: 306638730785320767
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_35
+      rect:
+        serializedVersion: 2
+        x: 995
+        y: 514
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3997eaabf20b9eb0800000000000000
+      internalID: -4712169305185740482
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_36
+      rect:
+        serializedVersion: 2
+        x: 1087
+        y: 520
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b9ed9fcbd1df3ac0800000000000000
+      internalID: -3873146412504061514
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_37
+      rect:
+        serializedVersion: 2
+        x: 1130
+        y: 1
+        width: 396
+        height: 521
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db54ee289f3204740800000000000000
+      internalID: 5134143129752847805
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_38
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 511
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0fcad8aac1ff8390800000000000000
+      internalID: -7813760975745921267
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_39
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 487
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e84d2a9c94f107d0800000000000000
+      internalID: -2953810927139600160
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_40
+      rect:
+        serializedVersion: 2
+        x: 413
+        y: 1
+        width: 357
+        height: 499
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 54c865ce46c89da00800000000000000
+      internalID: 781810375415204933
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_41
+      rect:
+        serializedVersion: 2
+        x: 567
+        y: 493
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ebfe16ea89dd84e50800000000000000
+      internalID: 6793923685718814654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_42
+      rect:
+        serializedVersion: 2
+        x: 567
+        y: 487
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9fffa1958e632ec20800000000000000
+      internalID: 3234207853960691705
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_43
+      rect:
+        serializedVersion: 2
+        x: 644
+        y: 483
+        width: 16
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68bedb88413d5ecd0800000000000000
+      internalID: -2529383530551710842
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_44
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 476
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c35fcb9b9cec1d10800000000000000
+      internalID: 2097811679525950403
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_45
+      rect:
+        serializedVersion: 2
+        x: 155
+        y: 475
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4247926862ebd8590800000000000000
+      internalID: -7670265517673188316
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_46
+      rect:
+        serializedVersion: 2
+        x: 175
+        y: 477
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68fcf5ef175eb8540800000000000000
+      internalID: 5011351288141565830
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_47
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 473
+        width: 12
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 469c238bd143939c0800000000000000
+      internalID: -3947066296164497052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_48
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 477
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d0c5c6af9b7360f0800000000000000
+      internalID: -1124919556284497711
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_49
+      rect:
+        serializedVersion: 2
+        x: 266
+        y: 471
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d426e16db2d15df10800000000000000
+      internalID: 2293771659328250445
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_50
+      rect:
+        serializedVersion: 2
+        x: 274
+        y: 479
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f55972ef1dc1ac500800000000000000
+      internalID: 417177603722941791
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_51
+      rect:
+        serializedVersion: 2
+        x: 289
+        y: 457
+        width: 34
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad32286a2d2fd7e80800000000000000
+      internalID: -8179114361684352038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_52
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 142
+        width: 361
+        height: 328
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57a042111f816dd50800000000000000
+      internalID: 6761619314197138037
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_53
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 470
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d5236394c511a370800000000000000
+      internalID: 8331964719642650064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_54
+      rect:
+        serializedVersion: 2
+        x: 82
+        y: 462
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 434898b8c668c89c0800000000000000
+      internalID: -3923613374590909388
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_55
+      rect:
+        serializedVersion: 2
+        x: 214
+        y: 463
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7819b011d963bf990800000000000000
+      internalID: -7351221918528466553
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_56
+      rect:
+        serializedVersion: 2
+        x: 196
+        y: 458
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ee5453c3e91c5ee0800000000000000
+      internalID: -1271112528799965470
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_57
+      rect:
+        serializedVersion: 2
+        x: 223
+        y: 457
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f78366e9e8b7366b0800000000000000
+      internalID: -5304260083639240577
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_58
+      rect:
+        serializedVersion: 2
+        x: 994
+        y: 184
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28937937272ab85e0800000000000000
+      internalID: -1906251404812011134
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_59
+      rect:
+        serializedVersion: 2
+        x: 994
+        y: 176
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6765b0e0e794e49f0800000000000000
+      internalID: -482367304331733386
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_60
+      rect:
+        serializedVersion: 2
+        x: 994
+        y: 168
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 096807ba8ced297b0800000000000000
+      internalID: -5218864064717879664
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_61
+      rect:
+        serializedVersion: 2
+        x: 994
+        y: 152
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b71e8bd541c893680800000000000000
+      internalID: -8774828379855068805
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rewards_62
+      rect:
+        serializedVersion: 2
+        x: 994
+        y: 144
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0cda02a1e7b8b3200800000000000000
+      internalID: 160875585422273984
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Rewards_0: -2065769495487608585
+      Rewards_1: -7075836903382875746
+      Rewards_10: 2653131696867924771
+      Rewards_11: 7995103136111847369
+      Rewards_12: -320573145189800223
+      Rewards_13: 1259763274466890916
+      Rewards_14: 5642667584888647553
+      Rewards_15: -8613401439815176104
+      Rewards_16: -1065872864608986426
+      Rewards_17: -6401477482723041830
+      Rewards_18: 2011225096492777180
+      Rewards_19: 4738856925750383228
+      Rewards_2: 4757601588859586736
+      Rewards_20: 6768577579880643025
+      Rewards_21: 2951710012121152296
+      Rewards_22: -2119354176556703836
+      Rewards_23: 4516515234957079770
+      Rewards_24: 1995657002934967854
+      Rewards_25: 6578481172182816896
+      Rewards_26: -861471699984607439
+      Rewards_27: -3662850098306504739
+      Rewards_28: -7952103667777832893
+      Rewards_29: -8737236993960529918
+      Rewards_3: 5011971038547840623
+      Rewards_30: -4863748598715099969
+      Rewards_31: 5676091664922641688
+      Rewards_32: 2346410022908606451
+      Rewards_33: -4712369945552705109
+      Rewards_34: 306638730785320767
+      Rewards_35: -4712169305185740482
+      Rewards_36: -3873146412504061514
+      Rewards_37: 5134143129752847805
+      Rewards_38: -7813760975745921267
+      Rewards_39: -2953810927139600160
+      Rewards_4: 4392588225026742278
+      Rewards_40: 781810375415204933
+      Rewards_41: 6793923685718814654
+      Rewards_42: 3234207853960691705
+      Rewards_43: -2529383530551710842
+      Rewards_44: 2097811679525950403
+      Rewards_45: -7670265517673188316
+      Rewards_46: 5011351288141565830
+      Rewards_47: -3947066296164497052
+      Rewards_48: -1124919556284497711
+      Rewards_49: 2293771659328250445
+      Rewards_5: 2760469414346272549
+      Rewards_50: 417177603722941791
+      Rewards_51: -8179114361684352038
+      Rewards_52: 6761619314197138037
+      Rewards_53: 8331964719642650064
+      Rewards_54: -3923613374590909388
+      Rewards_55: -7351221918528466553
+      Rewards_56: -1271112528799965470
+      Rewards_57: -5304260083639240577
+      Rewards_58: -1906251404812011134
+      Rewards_59: -482367304331733386
+      Rewards_6: 3249299329818170383
+      Rewards_60: -5218864064717879664
+      Rewards_61: -8774828379855068805
+      Rewards_62: 160875585422273984
+      Rewards_7: 1808084088616992680
+      Rewards_8: -2569594224930435309
+      Rewards_9: 7928138542046243696
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

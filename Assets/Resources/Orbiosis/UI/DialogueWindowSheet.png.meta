@@ -1,0 +1,455 @@
+fileFormatVersion: 2
+guid: 8d854f4a8bbd8c942b578a55db6f3aef
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4399667715034167444
+    second: DialogueWindowSheet_0
+  - first:
+      213: -8488640775677363024
+    second: DialogueWindowSheet_1
+  - first:
+      213: 3424448766905560211
+    second: DialogueWindowSheet_2
+  - first:
+      213: -817948138850403733
+    second: DialogueWindowSheet_3
+  - first:
+      213: -5995643640511194205
+    second: DialogueWindowSheet_4
+  - first:
+      213: 2746231900530775627
+    second: DialogueWindowSheet_5
+  - first:
+      213: -1815363601325883240
+    second: DialogueWindowSheet_6
+  - first:
+      213: -6921138074260689762
+    second: DialogueWindowSheet_7
+  - first:
+      213: -4812562666496191507
+    second: DialogueWindowSheet_8
+  - first:
+      213: 8209532284241392239
+    second: DialogueWindowSheet_9
+  - first:
+      213: 3256007194035558796
+    second: DialogueWindowSheet_10
+  - first:
+      213: -8674873201393147889
+    second: DialogueWindowSheet_11
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: DialogueWindowSheet_0
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 691
+        width: 824
+        height: 278
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 498bd54f972ce0d30800000000000000
+      internalID: 4399667715034167444
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DialogueWindowSheet_1
+      rect:
+        serializedVersion: 2
+        x: 882
+        y: 707
+        width: 246
+        height: 248
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0bcbad3703a423a80800000000000000
+      internalID: -8488640775677363024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DialogueWindowSheet_2
+      rect:
+        serializedVersion: 2
+        x: 1149
+        y: 882
+        width: 335
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39c2eee8206168f20800000000000000
+      internalID: 3424448766905560211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DialogueWindowSheet_3
+      rect:
+        serializedVersion: 2
+        x: 1144
+        y: 718
+        width: 361
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6a312b508016a4f0800000000000000
+      internalID: -817948138850403733
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DialogueWindowSheet_4
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 373
+        width: 824
+        height: 278
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ab108f00e13bcca0800000000000000
+      internalID: -5995643640511194205
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DialogueWindowSheet_5
+      rect:
+        serializedVersion: 2
+        x: 882
+        y: 393
+        width: 246
+        height: 248
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b469bf50d539c1620800000000000000
+      internalID: 2746231900530775627
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DialogueWindowSheet_6
+      rect:
+        serializedVersion: 2
+        x: 1149
+        y: 568
+        width: 335
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8900ccc3c688ec6e0800000000000000
+      internalID: -1815363601325883240
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DialogueWindowSheet_7
+      rect:
+        serializedVersion: 2
+        x: 1144
+        y: 404
+        width: 361
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e9ca24a579d23ff90800000000000000
+      internalID: -6921138074260689762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DialogueWindowSheet_8
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 54
+        width: 824
+        height: 278
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: de3103cb0c7563db0800000000000000
+      internalID: -4812562666496191507
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DialogueWindowSheet_9
+      rect:
+        serializedVersion: 2
+        x: 882
+        y: 74
+        width: 246
+        height: 246
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f623f46dd1e1ee170800000000000000
+      internalID: 8209532284241392239
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DialogueWindowSheet_10
+      rect:
+        serializedVersion: 2
+        x: 1149
+        y: 247
+        width: 335
+        height: 74
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c891b9aba49af2d20800000000000000
+      internalID: 3256007194035558796
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DialogueWindowSheet_11
+      rect:
+        serializedVersion: 2
+        x: 1144
+        y: 83
+        width: 361
+        height: 108
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f00e767e8c8ac9780800000000000000
+      internalID: -8674873201393147889
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      DialogueWindowSheet_0: 4399667715034167444
+      DialogueWindowSheet_1: -8488640775677363024
+      DialogueWindowSheet_10: 3256007194035558796
+      DialogueWindowSheet_11: -8674873201393147889
+      DialogueWindowSheet_2: 3424448766905560211
+      DialogueWindowSheet_3: -817948138850403733
+      DialogueWindowSheet_4: -5995643640511194205
+      DialogueWindowSheet_5: 2746231900530775627
+      DialogueWindowSheet_6: -1815363601325883240
+      DialogueWindowSheet_7: -6921138074260689762
+      DialogueWindowSheet_8: -4812562666496191507
+      DialogueWindowSheet_9: 8209532284241392239
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

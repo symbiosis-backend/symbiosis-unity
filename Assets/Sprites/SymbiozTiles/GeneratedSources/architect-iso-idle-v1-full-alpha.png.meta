@@ -1,0 +1,975 @@
+fileFormatVersion: 2
+guid: 427ef01fbd870374587f65249d2a90e0
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4450158058022399357
+    second: architect-iso-idle-v1-full-alpha_0
+  - first:
+      213: -7096264611036777758
+    second: architect-iso-idle-v1-full-alpha_1
+  - first:
+      213: -3395627515640545617
+    second: architect-iso-idle-v1-full-alpha_2
+  - first:
+      213: 695095641787200610
+    second: architect-iso-idle-v1-full-alpha_3
+  - first:
+      213: 94358089815865030
+    second: architect-iso-idle-v1-full-alpha_4
+  - first:
+      213: 5852831602014112873
+    second: architect-iso-idle-v1-full-alpha_5
+  - first:
+      213: -4084344315462416710
+    second: architect-iso-idle-v1-full-alpha_6
+  - first:
+      213: 1445056980601158260
+    second: architect-iso-idle-v1-full-alpha_7
+  - first:
+      213: -5400177150577938857
+    second: architect-iso-idle-v1-full-alpha_8
+  - first:
+      213: -7858017272628467788
+    second: architect-iso-idle-v1-full-alpha_9
+  - first:
+      213: -7119660189020933718
+    second: architect-iso-idle-v1-full-alpha_10
+  - first:
+      213: -3124878414782396495
+    second: architect-iso-idle-v1-full-alpha_11
+  - first:
+      213: -5340763842467886585
+    second: architect-iso-idle-v1-full-alpha_12
+  - first:
+      213: 2011371310659750603
+    second: architect-iso-idle-v1-full-alpha_13
+  - first:
+      213: -5358557923274470097
+    second: architect-iso-idle-v1-full-alpha_14
+  - first:
+      213: -8261242783069215107
+    second: architect-iso-idle-v1-full-alpha_15
+  - first:
+      213: -929613133665664658
+    second: architect-iso-idle-v1-full-alpha_16
+  - first:
+      213: -7789020322174206249
+    second: architect-iso-idle-v1-full-alpha_17
+  - first:
+      213: 5497144651906395912
+    second: architect-iso-idle-v1-full-alpha_18
+  - first:
+      213: -5922888751016344724
+    second: architect-iso-idle-v1-full-alpha_19
+  - first:
+      213: -1607910379245784174
+    second: architect-iso-idle-v1-full-alpha_20
+  - first:
+      213: 5454591927565458072
+    second: architect-iso-idle-v1-full-alpha_21
+  - first:
+      213: -1298328262979921798
+    second: architect-iso-idle-v1-full-alpha_22
+  - first:
+      213: -6451182357843183624
+    second: architect-iso-idle-v1-full-alpha_23
+  - first:
+      213: 1809727723649043912
+    second: architect-iso-idle-v1-full-alpha_24
+  - first:
+      213: -6242534650137695029
+    second: architect-iso-idle-v1-full-alpha_25
+  - first:
+      213: -7990730153228913330
+    second: architect-iso-idle-v1-full-alpha_26
+  - first:
+      213: -8808803077050901888
+    second: architect-iso-idle-v1-full-alpha_27
+  - first:
+      213: -2746710972319446340
+    second: architect-iso-idle-v1-full-alpha_28
+  - first:
+      213: -3193150239452081744
+    second: architect-iso-idle-v1-full-alpha_29
+  - first:
+      213: -4889968712014436866
+    second: architect-iso-idle-v1-full-alpha_30
+  - first:
+      213: 4797629659337982212
+    second: architect-iso-idle-v1-full-alpha_31
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_0
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 1087
+        width: 63
+        height: 151
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7d64c20d2322cd30800000000000000
+      internalID: 4450158058022399357
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_1
+      rect:
+        serializedVersion: 2
+        x: 443
+        y: 1088
+        width: 65
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e23af21fe0058d90800000000000000
+      internalID: -7096264611036777758
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_2
+      rect:
+        serializedVersion: 2
+        x: 734
+        y: 1088
+        width: 65
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: faef3bce3ce40e0d0800000000000000
+      internalID: -3395627515640545617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_3
+      rect:
+        serializedVersion: 2
+        x: 1018
+        y: 1088
+        width: 64
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 264f5adadc975a900800000000000000
+      internalID: 695095641787200610
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_4
+      rect:
+        serializedVersion: 2
+        x: 145
+        y: 925
+        width: 57
+        height: 152
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c6b829ce2a3f4100800000000000000
+      internalID: 94358089815865030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_5
+      rect:
+        serializedVersion: 2
+        x: 443
+        y: 925
+        width: 57
+        height: 152
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96c4b38155f693150800000000000000
+      internalID: 5852831602014112873
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_6
+      rect:
+        serializedVersion: 2
+        x: 734
+        y: 925
+        width: 57
+        height: 152
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab60a702c7e7157c0800000000000000
+      internalID: -4084344315462416710
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_7
+      rect:
+        serializedVersion: 2
+        x: 1017
+        y: 925
+        width: 57
+        height: 152
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47a3ee8eaafdd0410800000000000000
+      internalID: 1445056980601158260
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_8
+      rect:
+        serializedVersion: 2
+        x: 158
+        y: 758
+        width: 37
+        height: 158
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75eee9f2e77be05b0800000000000000
+      internalID: -5400177150577938857
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_9
+      rect:
+        serializedVersion: 2
+        x: 455
+        y: 758
+        width: 38
+        height: 158
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b7a8129ce6b2f290800000000000000
+      internalID: -7858017272628467788
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_10
+      rect:
+        serializedVersion: 2
+        x: 747
+        y: 758
+        width: 38
+        height: 158
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa1bae797c2e13d90800000000000000
+      internalID: -7119660189020933718
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_11
+      rect:
+        serializedVersion: 2
+        x: 1029
+        y: 759
+        width: 38
+        height: 157
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b70c9853a332a4d0800000000000000
+      internalID: -3124878414782396495
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_12
+      rect:
+        serializedVersion: 2
+        x: 147
+        y: 590
+        width: 57
+        height: 157
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70a8374f49bc1e5b0800000000000000
+      internalID: -5340763842467886585
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_13
+      rect:
+        serializedVersion: 2
+        x: 444
+        y: 590
+        width: 57
+        height: 157
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bca4943ec83d9eb10800000000000000
+      internalID: 2011371310659750603
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_14
+      rect:
+        serializedVersion: 2
+        x: 737
+        y: 590
+        width: 57
+        height: 157
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2dcedaa5f392a5b0800000000000000
+      internalID: -5358557923274470097
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_15
+      rect:
+        serializedVersion: 2
+        x: 1018
+        y: 590
+        width: 57
+        height: 157
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7666ef657b2a5d80800000000000000
+      internalID: -8261242783069215107
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_16
+      rect:
+        serializedVersion: 2
+        x: 144
+        y: 432
+        width: 63
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e61025db7c95913f0800000000000000
+      internalID: -929613133665664658
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_17
+      rect:
+        serializedVersion: 2
+        x: 440
+        y: 432
+        width: 65
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7def184f847d7e390800000000000000
+      internalID: -7789020322174206249
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_18
+      rect:
+        serializedVersion: 2
+        x: 733
+        y: 432
+        width: 65
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80fa1df8fe7c94c40800000000000000
+      internalID: 5497144651906395912
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_19
+      rect:
+        serializedVersion: 2
+        x: 1015
+        y: 432
+        width: 64
+        height: 148
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c63838fcf0cadcda0800000000000000
+      internalID: -5922888751016344724
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_20
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 271
+        width: 56
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2933466770e8fa9e0800000000000000
+      internalID: -1607910379245784174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_21
+      rect:
+        serializedVersion: 2
+        x: 445
+        y: 271
+        width: 57
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89a904d557a92bb40800000000000000
+      internalID: 5454591927565458072
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_22
+      rect:
+        serializedVersion: 2
+        x: 738
+        y: 271
+        width: 57
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a785b3bd2596bfde0800000000000000
+      internalID: -1298328262979921798
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_23
+      rect:
+        serializedVersion: 2
+        x: 1019
+        y: 271
+        width: 56
+        height: 150
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f77d7b43dbc876a0800000000000000
+      internalID: -6451182357843183624
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_24
+      rect:
+        serializedVersion: 2
+        x: 156
+        y: 127
+        width: 35
+        height: 137
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8cd074cb6c17d1910800000000000000
+      internalID: 1809727723649043912
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_25
+      rect:
+        serializedVersion: 2
+        x: 452
+        y: 126
+        width: 37
+        height: 138
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bcca9706fcf0e59a0800000000000000
+      internalID: -6242534650137695029
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_26
+      rect:
+        serializedVersion: 2
+        x: 746
+        y: 127
+        width: 36
+        height: 137
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e45b9c823493b1190800000000000000
+      internalID: -7990730153228913330
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_27
+      rect:
+        serializedVersion: 2
+        x: 1026
+        y: 127
+        width: 36
+        height: 137
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08a5300c548d0c580800000000000000
+      internalID: -8808803077050901888
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_28
+      rect:
+        serializedVersion: 2
+        x: 145
+        y: 15
+        width: 53
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cba4b326ce8b1e9d0800000000000000
+      internalID: -2746710972319446340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_29
+      rect:
+        serializedVersion: 2
+        x: 443
+        y: 15
+        width: 54
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b1510776c6afa3d0800000000000000
+      internalID: -3193150239452081744
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_30
+      rect:
+        serializedVersion: 2
+        x: 737
+        y: 15
+        width: 54
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef5ea955d57532cb0800000000000000
+      internalID: -4889968712014436866
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-iso-idle-v1-full-alpha_31
+      rect:
+        serializedVersion: 2
+        x: 1017
+        y: 15
+        width: 54
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40108b891ca949240800000000000000
+      internalID: 4797629659337982212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      architect-iso-idle-v1-full-alpha_0: 4450158058022399357
+      architect-iso-idle-v1-full-alpha_1: -7096264611036777758
+      architect-iso-idle-v1-full-alpha_10: -7119660189020933718
+      architect-iso-idle-v1-full-alpha_11: -3124878414782396495
+      architect-iso-idle-v1-full-alpha_12: -5340763842467886585
+      architect-iso-idle-v1-full-alpha_13: 2011371310659750603
+      architect-iso-idle-v1-full-alpha_14: -5358557923274470097
+      architect-iso-idle-v1-full-alpha_15: -8261242783069215107
+      architect-iso-idle-v1-full-alpha_16: -929613133665664658
+      architect-iso-idle-v1-full-alpha_17: -7789020322174206249
+      architect-iso-idle-v1-full-alpha_18: 5497144651906395912
+      architect-iso-idle-v1-full-alpha_19: -5922888751016344724
+      architect-iso-idle-v1-full-alpha_2: -3395627515640545617
+      architect-iso-idle-v1-full-alpha_20: -1607910379245784174
+      architect-iso-idle-v1-full-alpha_21: 5454591927565458072
+      architect-iso-idle-v1-full-alpha_22: -1298328262979921798
+      architect-iso-idle-v1-full-alpha_23: -6451182357843183624
+      architect-iso-idle-v1-full-alpha_24: 1809727723649043912
+      architect-iso-idle-v1-full-alpha_25: -6242534650137695029
+      architect-iso-idle-v1-full-alpha_26: -7990730153228913330
+      architect-iso-idle-v1-full-alpha_27: -8808803077050901888
+      architect-iso-idle-v1-full-alpha_28: -2746710972319446340
+      architect-iso-idle-v1-full-alpha_29: -3193150239452081744
+      architect-iso-idle-v1-full-alpha_3: 695095641787200610
+      architect-iso-idle-v1-full-alpha_30: -4889968712014436866
+      architect-iso-idle-v1-full-alpha_31: 4797629659337982212
+      architect-iso-idle-v1-full-alpha_4: 94358089815865030
+      architect-iso-idle-v1-full-alpha_5: 5852831602014112873
+      architect-iso-idle-v1-full-alpha_6: -4084344315462416710
+      architect-iso-idle-v1-full-alpha_7: 1445056980601158260
+      architect-iso-idle-v1-full-alpha_8: -5400177150577938857
+      architect-iso-idle-v1-full-alpha_9: -7858017272628467788
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

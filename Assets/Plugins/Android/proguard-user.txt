@@ -1,0 +1,38 @@
+# Google Mobile Ads Unity 11 includes optional next-generation wrappers while
+# Symbiosis uses the stable play-services-ads API. R8 reports the optional SDK
+# surface as missing; these narrow rules match its generated missing_rules.txt.
+-dontwarn com.google.android.libraries.ads.mobile.sdk.MobileAds
+-dontwarn com.google.android.libraries.ads.mobile.sdk.appopen.AppOpenAd
+-dontwarn com.google.android.libraries.ads.mobile.sdk.appopen.AppOpenAdEventCallback
+-dontwarn com.google.android.libraries.ads.mobile.sdk.appopen.AppOpenAdPreloader
+-dontwarn com.google.android.libraries.ads.mobile.sdk.banner.AdSize
+-dontwarn com.google.android.libraries.ads.mobile.sdk.banner.BannerAd
+-dontwarn com.google.android.libraries.ads.mobile.sdk.banner.BannerAdEventCallback
+-dontwarn com.google.android.libraries.ads.mobile.sdk.banner.BannerAdRequest
+-dontwarn com.google.android.libraries.ads.mobile.sdk.common.AdInspectorError
+-dontwarn com.google.android.libraries.ads.mobile.sdk.common.AdLoadCallback
+-dontwarn com.google.android.libraries.ads.mobile.sdk.common.AdRequest
+-dontwarn com.google.android.libraries.ads.mobile.sdk.common.AdValue
+-dontwarn com.google.android.libraries.ads.mobile.sdk.common.FullScreenContentError
+-dontwarn com.google.android.libraries.ads.mobile.sdk.common.LoadAdError
+-dontwarn com.google.android.libraries.ads.mobile.sdk.common.OnAdInspectorClosedListener
+-dontwarn com.google.android.libraries.ads.mobile.sdk.common.PrecisionType
+-dontwarn com.google.android.libraries.ads.mobile.sdk.common.PreloadCallback
+-dontwarn com.google.android.libraries.ads.mobile.sdk.common.PreloadConfiguration
+-dontwarn com.google.android.libraries.ads.mobile.sdk.common.RequestConfiguration
+-dontwarn com.google.android.libraries.ads.mobile.sdk.common.ResponseInfo
+-dontwarn com.google.android.libraries.ads.mobile.sdk.common.VersionInfo
+-dontwarn com.google.android.libraries.ads.mobile.sdk.initialization.InitializationConfig$Builder
+-dontwarn com.google.android.libraries.ads.mobile.sdk.initialization.InitializationConfig
+-dontwarn com.google.android.libraries.ads.mobile.sdk.initialization.InitializationStatus
+-dontwarn com.google.android.libraries.ads.mobile.sdk.initialization.OnAdapterInitializationCompleteListener
+-dontwarn com.google.android.libraries.ads.mobile.sdk.interstitial.InterstitialAd
+-dontwarn com.google.android.libraries.ads.mobile.sdk.interstitial.InterstitialAdEventCallback
+-dontwarn com.google.android.libraries.ads.mobile.sdk.interstitial.InterstitialAdPreloader
+-dontwarn com.google.android.libraries.ads.mobile.sdk.rewarded.OnUserEarnedRewardListener
+-dontwarn com.google.android.libraries.ads.mobile.sdk.rewarded.RewardItem
+-dontwarn com.google.android.libraries.ads.mobile.sdk.rewarded.RewardedAd
+-dontwarn com.google.android.libraries.ads.mobile.sdk.rewarded.RewardedAdEventCallback
+-dontwarn com.google.android.libraries.ads.mobile.sdk.rewarded.RewardedAdPreloader
+-dontwarn com.google.android.libraries.ads.mobile.sdk.rewardedinterstitial.RewardedInterstitialAd
+-dontwarn com.google.android.libraries.ads.mobile.sdk.rewardedinterstitial.RewardedInterstitialAdEventCallback

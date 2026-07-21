@@ -1,7 +1,7 @@
 {
-  "versionName": "1.0.9",
-  "versionCode": 100009,
+  "versionName": "1.0.23",
+  "versionCode": 100024,
   "minimumVersionCode": 1,
   "forceUpdate": false,
-  "releaseNotes": "Хроники battle lobby: боевое лобби получило отдельный top bar, новые окна и кнопки, общий шрифт из Main и чистый экран без чата и друзей."
+  "releaseNotes": "Main guidance and project support\n\nAdded first-visit guidance for Main sections, improved the direct developer feedback flow and rewarded project support, clarified shared profile storage, and improved Android UI stability."
 }

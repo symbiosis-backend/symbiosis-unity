@@ -45,18 +45,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MahjongGame.BattleCharacterDatabase
   dontDestroyOnLoad: 1
-  autoMarkFirstCharactersAsStarterFree: 1
-  starterFreeCount: 1
+  autoMarkFirstCharactersAsStarterFree: 0
+  starterFreeCount: 0
   verboseLogs: 1
   characters:
   - Id: Tiger_Male
     ServerId: Tiger_Male
-    DisplayName: Kaplan
+    DisplayName: "\u042F\u0440\u043E\u0441\u0442\u043D\u044B\u0439"
     AnimalType: 0
     Gender: 0
-    ProfileSprite: {fileID: 5922086282754563003, guid: 4beddebd96b380348bea41bfb9932ab1, type: 3}
-    LobbySprite: {fileID: -7331025856235524042, guid: fdafa24eaf318484a858ea7f7791b951, type: 3}
-    BattleSprite: {fileID: -1114355159972045852, guid: 6681c6fbf85a3ff42aaaf7ff70cb1597, type: 3}
+    ProfileSprite: {fileID: 2843766704243448379, guid: 27bc0b751e3e240468bba3fc8e8b8a69, type: 3}
+    LobbySprite: {fileID: 2843766704243448379, guid: 27bc0b751e3e240468bba3fc8e8b8a69, type: 3}
+    BattleSprite: {fileID: 2843766704243448379, guid: 27bc0b751e3e240468bba3fc8e8b8a69, type: 3}
     ProfileModelPrefab: {fileID: 919132149155446097, guid: f4421df7854211f4b9232c8f374422d0, type: 3}
     LobbyModelPrefab: {fileID: 919132149155446097, guid: 30df81f9795ee0f4b85b1f0f3c26cd8d, type: 3}
     BattleModelPrefab: {fileID: 919132149155446097, guid: 020600579e78cc849b240c4c063368a0, type: 3}
@@ -94,29 +94,29 @@ MonoBehaviour:
     BattleIdleAnimation: {fileID: -203655887218126122, guid: 020600579e78cc849b240c4c063368a0, type: 3}
     AttackAnimation: {fileID: 0}
     HitAnimation: {fileID: 0}
-    VictoryAnimation: {fileID: 0}
-    DefeatAnimation: {fileID: 0}
+    VictoryAnimation: {fileID: -203655887218126122, guid: 2ae504690dbd44f9b5f8b9ca4bfc4862, type: 3}
+    DefeatAnimation: {fileID: -203655887218126122, guid: 661a1cbfa0634145bf05f9c1ffcfad21, type: 3}
     Stats:
-      MaxHp: 100
-      Attack: 16
-      Armor: 0.05
-      ParryChance: 0.05
-      CritChance: 0.12
-      CritDamageMultiplier: 1.7
-    IsStarterFree: 1
-    UnlockType: 0
+      MaxHp: 480
+      Attack: 40
+      Armor: 0.04
+      ParryChance: 0.03
+      CritChance: 0.1
+      CritDamageMultiplier: 1.6
+    IsStarterFree: 0
+    UnlockType: 1
     PriceCurrency: 0
     PriceAmount: 0
     SortOrder: 0
     IsEnabled: 1
   - Id: Tiger_Female
     ServerId: Tiger_Female
-    DisplayName: "Di\u015Fi Kaplan"
+    DisplayName: "\u042F\u0440\u043E\u0441\u0442\u043D\u0430\u044F"
     AnimalType: 0
     Gender: 1
-    ProfileSprite: {fileID: -2092013373732166123, guid: efeebb115566c5f478baaf9346f0d4b0, type: 3}
-    LobbySprite: {fileID: -6548253190619179607, guid: daeca1ee79144cd43b2f3620d38770a2, type: 3}
-    BattleSprite: {fileID: 6881283377525404965, guid: 4380fc0f8eb5f4a40b324964c884f9b1, type: 3}
+    ProfileSprite: {fileID: -3390902597707552727, guid: e266912c5218c5e4ca99cd27ea4e08b2, type: 3}
+    LobbySprite: {fileID: -3390902597707552727, guid: e266912c5218c5e4ca99cd27ea4e08b2, type: 3}
+    BattleSprite: {fileID: -3390902597707552727, guid: e266912c5218c5e4ca99cd27ea4e08b2, type: 3}
     ProfileModelPrefab: {fileID: 919132149155446097, guid: a67c9e01002188a43b0a868f8ba345f7, type: 3}
     LobbyModelPrefab: {fileID: 919132149155446097, guid: 8605c024991276f4785b0b70bcd74912, type: 3}
     BattleModelPrefab: {fileID: 919132149155446097, guid: 0427655c952a9404e8289e589d531b3f, type: 3}
@@ -154,29 +154,29 @@ MonoBehaviour:
     BattleIdleAnimation: {fileID: -203655887218126122, guid: 0427655c952a9404e8289e589d531b3f, type: 3}
     AttackAnimation: {fileID: 0}
     HitAnimation: {fileID: 0}
-    VictoryAnimation: {fileID: 0}
-    DefeatAnimation: {fileID: 0}
+    VictoryAnimation: {fileID: -203655887218126122, guid: 56cde4efb54b4a2dab6ae66d83ab4a1f, type: 3}
+    DefeatAnimation: {fileID: -203655887218126122, guid: 41a21507f996490f9e5a9fca3c6727a0, type: 3}
     Stats:
-      MaxHp: 100
-      Attack: 16
-      Armor: 0.05
-      ParryChance: 0.05
-      CritChance: 0.12
+      MaxHp: 450
+      Attack: 37
+      Armor: 0.03
+      ParryChance: 0.07
+      CritChance: 0.15
       CritDamageMultiplier: 1.7
     IsStarterFree: 0
     UnlockType: 1
-    PriceCurrency: 1
-    PriceAmount: 10000
+    PriceCurrency: 0
+    PriceAmount: 0
     SortOrder: 1
     IsEnabled: 1
   - Id: Fox_Male
     ServerId: Fox_Male
-    DisplayName: Tilki
+    DisplayName: "\u0425\u0438\u0442\u0440\u044B\u0439"
     AnimalType: 1
     Gender: 0
-    ProfileSprite: {fileID: 4136927331722710171, guid: bed3f18d432c16644a93a01ed113e5be, type: 3}
-    LobbySprite: {fileID: 8780525085496321212, guid: 8a09cd700c143d34aa7f8a0d955ccf1c, type: 3}
-    BattleSprite: {fileID: 5653441568391001000, guid: 9c413690306e8fc40a6faf2f46343b14, type: 3}
+    ProfileSprite: {fileID: 1391192078531787074, guid: 96caed21bf711134ebde1f607f3ab289, type: 3}
+    LobbySprite: {fileID: 1391192078531787074, guid: 96caed21bf711134ebde1f607f3ab289, type: 3}
+    BattleSprite: {fileID: 1391192078531787074, guid: 96caed21bf711134ebde1f607f3ab289, type: 3}
     ProfileModelPrefab: {fileID: 919132149155446097, guid: 98e4a4dcc9a864d44bc1a978e2aabafc, type: 3}
     LobbyModelPrefab: {fileID: 919132149155446097, guid: 49079895e1b4a2349915e00b457eac4e, type: 3}
     BattleModelPrefab: {fileID: 919132149155446097, guid: 9775d68b80fe97147942be35fcce7d7f, type: 3}
@@ -213,30 +213,30 @@ MonoBehaviour:
     LobbyIdleAnimation: {fileID: -203655887218126122, guid: 49079895e1b4a2349915e00b457eac4e, type: 3}
     BattleIdleAnimation: {fileID: -203655887218126122, guid: 9775d68b80fe97147942be35fcce7d7f, type: 3}
     AttackAnimation: {fileID: 0}
-    HitAnimation: {fileID: 0}
-    VictoryAnimation: {fileID: 0}
-    DefeatAnimation: {fileID: 0}
+    HitAnimation: {fileID: -203655887218126122, guid: 85b2e0c0fe0a48939bedd38650f457ce, type: 3}
+    VictoryAnimation: {fileID: -203655887218126122, guid: 9ff6d9ba26d14868850b6e569688f7f1, type: 3}
+    DefeatAnimation: {fileID: -203655887218126122, guid: 3ef0d03e44bd404f9e4fc1122756a79a, type: 3}
     Stats:
-      MaxHp: 90
-      Attack: 14
+      MaxHp: 440
+      Attack: 36
       Armor: 0.03
       ParryChance: 0.12
-      CritChance: 0.18
-      CritDamageMultiplier: 1.8
+      CritChance: 0.17
+      CritDamageMultiplier: 1.75
     IsStarterFree: 0
     UnlockType: 1
-    PriceCurrency: 1
-    PriceAmount: 10000
+    PriceCurrency: 0
+    PriceAmount: 0
     SortOrder: 2
     IsEnabled: 1
   - Id: Fox_Female
     ServerId: Fox_Female
-    DisplayName: "Di\u015Fi Tilki"
+    DisplayName: "\u0425\u0438\u0442\u0440\u0430\u044F"
     AnimalType: 1
     Gender: 1
-    ProfileSprite: {fileID: -1823834011136338262, guid: bf48f2aad84ab6747846b5fcbe491e0b, type: 3}
-    LobbySprite: {fileID: 5664021045868730111, guid: fde6ea1b39db3734da352ff0b07a35bb, type: 3}
-    BattleSprite: {fileID: -1804185198696560210, guid: a6849f5af0e38b54f86de21df6c8d479, type: 3}
+    ProfileSprite: {fileID: 8228715921995670482, guid: f1c88a4c4b424bf4abbd265f672c8f30, type: 3}
+    LobbySprite: {fileID: 8228715921995670482, guid: f1c88a4c4b424bf4abbd265f672c8f30, type: 3}
+    BattleSprite: {fileID: 8228715921995670482, guid: f1c88a4c4b424bf4abbd265f672c8f30, type: 3}
     ProfileModelPrefab: {fileID: 919132149155446097, guid: 94059623b2d83984b9de29f24f5f90b9, type: 3}
     LobbyModelPrefab: {fileID: 919132149155446097, guid: 9b95bd006e83f6043ad136b3eb3b707f, type: 3}
     BattleModelPrefab: {fileID: 919132149155446097, guid: fff8762acc7123f4eb5f0fac02cd5671, type: 3}
@@ -274,29 +274,29 @@ MonoBehaviour:
     BattleIdleAnimation: {fileID: -203655887218126122, guid: fff8762acc7123f4eb5f0fac02cd5671, type: 3}
     AttackAnimation: {fileID: 0}
     HitAnimation: {fileID: 0}
-    VictoryAnimation: {fileID: 0}
-    DefeatAnimation: {fileID: 0}
+    VictoryAnimation: {fileID: -203655887218126122, guid: b77f7a4f4d874c968b8107013c474c94, type: 3}
+    DefeatAnimation: {fileID: -203655887218126122, guid: b36bae1c7a6443e6b7889fed46973090, type: 3}
     Stats:
-      MaxHp: 90
-      Attack: 14
-      Armor: 0.03
-      ParryChance: 0.12
-      CritChance: 0.17999999
-      CritDamageMultiplier: 1.8
+      MaxHp: 420
+      Attack: 36
+      Armor: 0.02
+      ParryChance: 0.15
+      CritChance: 0.21
+      CritDamageMultiplier: 1.85
     IsStarterFree: 0
     UnlockType: 1
-    PriceCurrency: 1
-    PriceAmount: 10000
+    PriceCurrency: 0
+    PriceAmount: 0
     SortOrder: 3
     IsEnabled: 1
   - Id: Wolf_Male
     ServerId: Wolf_Male
-    DisplayName: Kurt
+    DisplayName: "\u0412\u043E\u043B\u044C\u043D\u044B\u0439"
     AnimalType: 2
     Gender: 0
-    ProfileSprite: {fileID: 3131535292473191252, guid: 53756277cce42c94ca47a3084e06d9ee, type: 3}
-    LobbySprite: {fileID: 545131134261710223, guid: b010109bb45cbc840892d0c5411e0ed0, type: 3}
-    BattleSprite: {fileID: -3691030334517025286, guid: fd832e7d2dafac643b411f42e5b8e166, type: 3}
+    ProfileSprite: {fileID: -2115450911722833845, guid: c17e2c6a78ebfdd47849c77d10719eee, type: 3}
+    LobbySprite: {fileID: -2115450911722833845, guid: c17e2c6a78ebfdd47849c77d10719eee, type: 3}
+    BattleSprite: {fileID: -2115450911722833845, guid: c17e2c6a78ebfdd47849c77d10719eee, type: 3}
     ProfileModelPrefab: {fileID: 919132149155446097, guid: 88c817d590d376e44b005c29ff5ad894, type: 3}
     LobbyModelPrefab: {fileID: 919132149155446097, guid: 1c2cf82e892223041ac732326316de9c, type: 3}
     BattleModelPrefab: {fileID: 919132149155446097, guid: 9be4f32c940ce6a489d9832c1377a120, type: 3}
@@ -334,29 +334,29 @@ MonoBehaviour:
     BattleIdleAnimation: {fileID: -203655887218126122, guid: 9be4f32c940ce6a489d9832c1377a120, type: 3}
     AttackAnimation: {fileID: 0}
     HitAnimation: {fileID: 0}
-    VictoryAnimation: {fileID: 0}
-    DefeatAnimation: {fileID: 0}
+    VictoryAnimation: {fileID: -203655887218126122, guid: 2dce84e612154543bcc0966335500ae0, type: 3}
+    DefeatAnimation: {fileID: -203655887218126122, guid: f27232c1f7b24c18a5c72f26fca594a4, type: 3}
     Stats:
-      MaxHp: 110
-      Attack: 15
-      Armor: 0.08
-      ParryChance: 0.1
+      MaxHp: 520
+      Attack: 35
+      Armor: 0.07
+      ParryChance: 0.08
       CritChance: 0.1
-      CritDamageMultiplier: 1.65
+      CritDamageMultiplier: 1.6
     IsStarterFree: 0
     UnlockType: 1
-    PriceCurrency: 1
-    PriceAmount: 10000
+    PriceCurrency: 0
+    PriceAmount: 0
     SortOrder: 4
     IsEnabled: 1
   - Id: Wolf_Female
     ServerId: Wolf_Female
-    DisplayName: "Di\u015Fi Kurt"
+    DisplayName: "\u0412\u043E\u043B\u044C\u043D\u0430\u044F"
     AnimalType: 2
     Gender: 1
-    ProfileSprite: {fileID: -9168346944554896092, guid: 115e160ccbf888641975694f16b178fd, type: 3}
-    LobbySprite: {fileID: 5659714355461499569, guid: 6cfe2c2240dd2464a88f916f16143c61, type: 3}
-    BattleSprite: {fileID: 6363640529827648534, guid: 0f1af8796aa34b54997d34a392e832d5, type: 3}
+    ProfileSprite: {fileID: 263719907473295341, guid: 99a324a399268b446b52754870e21c07, type: 3}
+    LobbySprite: {fileID: 263719907473295341, guid: 99a324a399268b446b52754870e21c07, type: 3}
+    BattleSprite: {fileID: 263719907473295341, guid: 99a324a399268b446b52754870e21c07, type: 3}
     ProfileModelPrefab: {fileID: 919132149155446097, guid: 1926fe71a1d77b841999a04418b8d39f, type: 3}
     LobbyModelPrefab: {fileID: 919132149155446097, guid: 34d52c882792cac439d5130f32d44318, type: 3}
     BattleModelPrefab: {fileID: 919132149155446097, guid: aa5f8c6b4ed8612459ea1a5bff1e01ef, type: 3}
@@ -394,30 +394,30 @@ MonoBehaviour:
     BattleIdleAnimation: {fileID: -203655887218126122, guid: aa5f8c6b4ed8612459ea1a5bff1e01ef, type: 3}
     AttackAnimation: {fileID: 0}
     HitAnimation: {fileID: 0}
-    VictoryAnimation: {fileID: 0}
-    DefeatAnimation: {fileID: 0}
+    VictoryAnimation: {fileID: -203655887218126122, guid: 2708944890f84a65acfa0912a27f4273, type: 3}
+    DefeatAnimation: {fileID: -203655887218126122, guid: b893343af11a47198d790acf7e14e93d, type: 3}
     Stats:
-      MaxHp: 110
-      Attack: 15
-      Armor: 0.08
-      ParryChance: 0.1
-      CritChance: 0.1
+      MaxHp: 490
+      Attack: 35
+      Armor: 0.05
+      ParryChance: 0.11
+      CritChance: 0.12
       CritDamageMultiplier: 1.65
     IsStarterFree: 0
     UnlockType: 1
-    PriceCurrency: 1
-    PriceAmount: 10000
+    PriceCurrency: 0
+    PriceAmount: 0
     SortOrder: 5
     IsEnabled: 1
   - Id: Bear_Male
     ServerId: Bear_Male
-    DisplayName: "Ay\u0131"
+    DisplayName: "\u041D\u0435\u0441\u0433\u0438\u0431\u0430\u0435\u043C\u044B\u0439"
     AnimalType: 3
     Gender: 0
-    ProfileSprite: {fileID: -7723284180558215798, guid: 8bb570009401e4c4099bc0026b23e1e6, type: 3}
-    LobbySprite: {fileID: -5691024563735804951, guid: 14398b74b8e47ed4a93be22385e7243e, type: 3}
-    BattleSprite: {fileID: -6053548776758094169, guid: 8f89f3559eecb8f4c9e19d2652c16532, type: 3}
-    ProfileModelPrefab: {fileID: 919132149155446097, guid: 8d0f2f0f7070d9642becfda0a2805d2e, type: 3}
+    ProfileSprite: {fileID: -2288062499695482330, guid: cba3ff76c771e6042b43ab4bcd72e079, type: 3}
+    LobbySprite: {fileID: -2288062499695482330, guid: cba3ff76c771e6042b43ab4bcd72e079, type: 3}
+    BattleSprite: {fileID: -2288062499695482330, guid: cba3ff76c771e6042b43ab4bcd72e079, type: 3}
+    ProfileModelPrefab: {fileID: 919132149155446097, guid: 3534a6b517b079142be9abb3236d506a, type: 3}
     LobbyModelPrefab: {fileID: 919132149155446097, guid: 120cb76fc1810764e80dd7f7ff6ed196, type: 3}
     BattleModelPrefab: {fileID: 919132149155446097, guid: a18fdc38204cd5b4a8bff973bc71343d, type: 3}
     ModelTexture: {fileID: 2800000, guid: 2ee10596510245e4dbf62dd7471494ef, type: 3}
@@ -449,34 +449,34 @@ MonoBehaviour:
     ProfileAnimatorController: {fileID: 0}
     LobbyAnimatorController: {fileID: 0}
     BattleAnimatorController: {fileID: 0}
-    ProfileIdleAnimation: {fileID: -203655887218126122, guid: 8d0f2f0f7070d9642becfda0a2805d2e, type: 3}
+    ProfileIdleAnimation: {fileID: -203655887218126122, guid: 3534a6b517b079142be9abb3236d506a, type: 3}
     LobbyIdleAnimation: {fileID: -203655887218126122, guid: 120cb76fc1810764e80dd7f7ff6ed196, type: 3}
     BattleIdleAnimation: {fileID: -203655887218126122, guid: a18fdc38204cd5b4a8bff973bc71343d, type: 3}
     AttackAnimation: {fileID: 0}
     HitAnimation: {fileID: 0}
-    VictoryAnimation: {fileID: 0}
-    DefeatAnimation: {fileID: 0}
+    VictoryAnimation: {fileID: -203655887218126122, guid: 6bb8a0b96c8751e4b8d7ecc4ca6da1a9, type: 3}
+    DefeatAnimation: {fileID: -203655887218126122, guid: 0880e3134f0fd494682da0c7d28fd28f, type: 3}
     Stats:
-      MaxHp: 130
-      Attack: 12
-      Armor: 0.15
-      ParryChance: 0.08
-      CritChance: 0.06
-      CritDamageMultiplier: 1.5
+      MaxHp: 620
+      Attack: 31
+      Armor: 0.1
+      ParryChance: 0.03
+      CritChance: 0.05
+      CritDamageMultiplier: 1.45
     IsStarterFree: 0
     UnlockType: 1
-    PriceCurrency: 1
-    PriceAmount: 10000
+    PriceCurrency: 0
+    PriceAmount: 0
     SortOrder: 6
     IsEnabled: 1
   - Id: Bear_Female
     ServerId: Bear_Female
-    DisplayName: "Di\u015Fi Ay\u0131"
+    DisplayName: "\u041D\u0435\u0441\u0433\u0438\u0431\u0430\u0435\u043C\u0430\u044F"
     AnimalType: 3
     Gender: 1
-    ProfileSprite: {fileID: 7720101571090157658, guid: 31bbed2b7b1f09248af08df842f26dc8, type: 3}
-    LobbySprite: {fileID: 7380176090309922993, guid: 2c0bbe7650df64642bd8ef72673d2dad, type: 3}
-    BattleSprite: {fileID: -7933112123717573220, guid: 590c63c062b956246ae85586bb25e686, type: 3}
+    ProfileSprite: {fileID: 5264971464685614090, guid: e0e9df26c51fbfb4a9bebadd9b736dfb, type: 3}
+    LobbySprite: {fileID: 5264971464685614090, guid: e0e9df26c51fbfb4a9bebadd9b736dfb, type: 3}
+    BattleSprite: {fileID: 5264971464685614090, guid: e0e9df26c51fbfb4a9bebadd9b736dfb, type: 3}
     ProfileModelPrefab: {fileID: 919132149155446097, guid: 6498d9b94ed8a1c49b061883573336d7, type: 3}
     LobbyModelPrefab: {fileID: 919132149155446097, guid: efe78762c1edd4d4280762f4f5bafc28, type: 3}
     BattleModelPrefab: {fileID: 919132149155446097, guid: 1c3d0b3911e0c9f46ab0db36fcc27b0e, type: 3}
@@ -514,18 +514,258 @@ MonoBehaviour:
     BattleIdleAnimation: {fileID: -203655887218126122, guid: 1c3d0b3911e0c9f46ab0db36fcc27b0e, type: 3}
     AttackAnimation: {fileID: 0}
     HitAnimation: {fileID: 0}
+    VictoryAnimation: {fileID: -203655887218126122, guid: 94b718022d337fd45bdb6dc152328dcf, type: 3}
+    DefeatAnimation: {fileID: -203655887218126122, guid: d24316a6cc2508742a5b52444775c006, type: 3}
+    Stats:
+      MaxHp: 580
+      Attack: 32
+      Armor: 0.08
+      ParryChance: 0.06
+      CritChance: 0.08
+      CritDamageMultiplier: 1.55
+    IsStarterFree: 0
+    UnlockType: 1
+    PriceCurrency: 0
+    PriceAmount: 0
+    SortOrder: 7
+    IsEnabled: 1
+  - Id: Dragon_Male
+    ServerId: Dragon_Male
+    DisplayName: "\u0414\u0440\u0435\u0432\u043D\u0438\u0439"
+    AnimalType: 4
+    Gender: 0
+    ProfileSprite: {fileID: 4434336217889180844, guid: 62449ba768558b641800a1bf35c68cd0, type: 3}
+    LobbySprite: {fileID: 4434336217889180844, guid: 62449ba768558b641800a1bf35c68cd0, type: 3}
+    BattleSprite: {fileID: 4434336217889180844, guid: 62449ba768558b641800a1bf35c68cd0, type: 3}
+    ProfileModelPrefab: {fileID: 919132149155446097, guid: bf82a0846b6113f43bf88ac403aa5bcf, type: 3}
+    LobbyModelPrefab: {fileID: 0}
+    BattleModelPrefab: {fileID: 919132149155446097, guid: f896ae1ba5789964d905ee13003468cb, type: 3}
+    ModelTexture: {fileID: 2800000, guid: 0a1f5a2740e64a8438fd2e30124dadb6, type: 3}
+    ModelTextureScale: {x: 1, y: 1}
+    ModelTextureOffset: {x: 0, y: 0}
+    UseSolidModelColor: 0
+    SolidModelColor: {r: 0.45, g: 0.34, b: 0.23, a: 1}
+    ProfileModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    LobbyModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    BattleModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    ProfileModelAddressKey: 
+    LobbyModelAddressKey: 
+    BattleModelAddressKey: 
+    ProfileAnimatorController: {fileID: 0}
+    LobbyAnimatorController: {fileID: 0}
+    BattleAnimatorController: {fileID: 0}
+    ProfileIdleAnimation: {fileID: -203655887218126122, guid: bf82a0846b6113f43bf88ac403aa5bcf, type: 3}
+    LobbyIdleAnimation: {fileID: 0}
+    BattleIdleAnimation: {fileID: -203655887218126122, guid: f896ae1ba5789964d905ee13003468cb, type: 3}
+    AttackAnimation: {fileID: 0}
+    HitAnimation: {fileID: 0}
     VictoryAnimation: {fileID: 0}
     DefeatAnimation: {fileID: 0}
     Stats:
-      MaxHp: 130
-      Attack: 12
-      Armor: 0.15
-      ParryChance: 0.08
-      CritChance: 0.06
-      CritDamageMultiplier: 1.5
+      MaxHp: 540
+      Attack: 38
+      Armor: 0.07
+      ParryChance: 0.05
+      CritChance: 0.11
+      CritDamageMultiplier: 1.65
+    IsStarterFree: 0
+    UnlockType: 2
+    PriceCurrency: 2
+    PriceAmount: 300
+    SortOrder: 8
+    IsEnabled: 1
+  - Id: Dragon_Female
+    ServerId: Dragon_Female
+    DisplayName: "\u0414\u0440\u0435\u0432\u043D\u044F\u044F"
+    AnimalType: 4
+    Gender: 1
+    ProfileSprite: {fileID: -5096944157096695561, guid: ef847c6746108bf4c9f6d48c97fad2c3, type: 3}
+    LobbySprite: {fileID: -5096944157096695561, guid: ef847c6746108bf4c9f6d48c97fad2c3, type: 3}
+    BattleSprite: {fileID: -5096944157096695561, guid: ef847c6746108bf4c9f6d48c97fad2c3, type: 3}
+    ProfileModelPrefab: {fileID: 919132149155446097, guid: c5237c4a9b8839b428ba757d313956df, type: 3}
+    LobbyModelPrefab: {fileID: 0}
+    BattleModelPrefab: {fileID: 919132149155446097, guid: c0e2ce5fd0f0571459c8ced1aeca6ade, type: 3}
+    ModelTexture: {fileID: 2800000, guid: 3492d45effd49804b90ed1dc57fe4a71, type: 3}
+    ModelTextureScale: {x: 1, y: 1}
+    ModelTextureOffset: {x: 0, y: 0}
+    UseSolidModelColor: 0
+    SolidModelColor: {r: 0.45, g: 0.34, b: 0.23, a: 1}
+    ProfileModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    LobbyModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    BattleModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    ProfileModelAddressKey: 
+    LobbyModelAddressKey: 
+    BattleModelAddressKey: 
+    ProfileAnimatorController: {fileID: 0}
+    LobbyAnimatorController: {fileID: 0}
+    BattleAnimatorController: {fileID: 0}
+    ProfileIdleAnimation: {fileID: -203655887218126122, guid: c5237c4a9b8839b428ba757d313956df, type: 3}
+    LobbyIdleAnimation: {fileID: 0}
+    BattleIdleAnimation: {fileID: -203655887218126122, guid: c0e2ce5fd0f0571459c8ced1aeca6ade, type: 3}
+    AttackAnimation: {fileID: 0}
+    HitAnimation: {fileID: 0}
+    VictoryAnimation: {fileID: 0}
+    DefeatAnimation: {fileID: 0}
+    Stats:
+      MaxHp: 505
+      Attack: 38
+      Armor: 0.05
+      ParryChance: 0.09
+      CritChance: 0.15
+      CritDamageMultiplier: 1.75
+    IsStarterFree: 0
+    UnlockType: 2
+    PriceCurrency: 2
+    PriceAmount: 300
+    SortOrder: 9
+    IsEnabled: 1
+  - Id: Dog_Male
+    ServerId: Dog_Male
+    DisplayName: "\u0412\u0435\u0440\u043D\u044B\u0439"
+    AnimalType: 5
+    Gender: 0
+    ProfileSprite: {fileID: -6673051833240907976, guid: 6bb4f818df874304eb96eaae128e31ee, type: 3}
+    LobbySprite: {fileID: -6673051833240907976, guid: 6bb4f818df874304eb96eaae128e31ee, type: 3}
+    BattleSprite: {fileID: -6673051833240907976, guid: 6bb4f818df874304eb96eaae128e31ee, type: 3}
+    ProfileModelPrefab: {fileID: 919132149155446097, guid: 0f14c62858d0dd04b972d7a71d10ae29, type: 3}
+    LobbyModelPrefab: {fileID: 0}
+    BattleModelPrefab: {fileID: 919132149155446097, guid: a3c6cf2e643734d43b4ecbb84e1518bc, type: 3}
+    ModelTexture: {fileID: 2800000, guid: b5355b9206b40d54eada30af786ca67d, type: 3}
+    ModelTextureScale: {x: 1, y: 1}
+    ModelTextureOffset: {x: 0, y: 0}
+    UseSolidModelColor: 0
+    SolidModelColor: {r: 0.45, g: 0.34, b: 0.23, a: 1}
+    ProfileModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    LobbyModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    BattleModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    ProfileModelAddressKey: 
+    LobbyModelAddressKey: 
+    BattleModelAddressKey: 
+    ProfileAnimatorController: {fileID: 0}
+    LobbyAnimatorController: {fileID: 0}
+    BattleAnimatorController: {fileID: 0}
+    ProfileIdleAnimation: {fileID: -203655887218126122, guid: 0f14c62858d0dd04b972d7a71d10ae29, type: 3}
+    LobbyIdleAnimation: {fileID: 0}
+    BattleIdleAnimation: {fileID: -203655887218126122, guid: a3c6cf2e643734d43b4ecbb84e1518bc, type: 3}
+    AttackAnimation: {fileID: 0}
+    HitAnimation: {fileID: 0}
+    VictoryAnimation: {fileID: 0}
+    DefeatAnimation: {fileID: 0}
+    Stats:
+      MaxHp: 500
+      Attack: 34
+      Armor: 0.06
+      ParryChance: 0.13
+      CritChance: 0.09
+      CritDamageMultiplier: 1.55
     IsStarterFree: 0
     UnlockType: 1
-    PriceCurrency: 1
-    PriceAmount: 10000
-    SortOrder: 7
+    PriceCurrency: 0
+    PriceAmount: 0
+    SortOrder: 10
+    IsEnabled: 1
+  - Id: Dog_Female
+    ServerId: Dog_Female
+    DisplayName: "\u0412\u0435\u0440\u043D\u0430\u044F"
+    AnimalType: 5
+    Gender: 1
+    ProfileSprite: {fileID: 504637597103373137, guid: 6b407bfe888f61940bc31eee94edc59c, type: 3}
+    LobbySprite: {fileID: 504637597103373137, guid: 6b407bfe888f61940bc31eee94edc59c, type: 3}
+    BattleSprite: {fileID: 504637597103373137, guid: 6b407bfe888f61940bc31eee94edc59c, type: 3}
+    ProfileModelPrefab: {fileID: 919132149155446097, guid: 4479d38d1722b644bbc291c0001dc1a6, type: 3}
+    LobbyModelPrefab: {fileID: 0}
+    BattleModelPrefab: {fileID: 919132149155446097, guid: 8f096ad4f1a81dd41843c3249d00d370, type: 3}
+    ModelTexture: {fileID: 2800000, guid: 376a82d0f66333748960a9276fd50827, type: 3}
+    ModelTextureScale: {x: 1, y: 1}
+    ModelTextureOffset: {x: 0, y: 0}
+    UseSolidModelColor: 0
+    SolidModelColor: {r: 0.45, g: 0.34, b: 0.23, a: 1}
+    ProfileModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    LobbyModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    BattleModelAddress:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    ProfileModelAddressKey: 
+    LobbyModelAddressKey: 
+    BattleModelAddressKey: 
+    ProfileAnimatorController: {fileID: 0}
+    LobbyAnimatorController: {fileID: 0}
+    BattleAnimatorController: {fileID: 0}
+    ProfileIdleAnimation: {fileID: -203655887218126122, guid: 4479d38d1722b644bbc291c0001dc1a6, type: 3}
+    LobbyIdleAnimation: {fileID: 0}
+    BattleIdleAnimation: {fileID: -203655887218126122, guid: 8f096ad4f1a81dd41843c3249d00d370, type: 3}
+    AttackAnimation: {fileID: 0}
+    HitAnimation: {fileID: 0}
+    VictoryAnimation: {fileID: 0}
+    DefeatAnimation: {fileID: 0}
+    Stats:
+      MaxHp: 470
+      Attack: 34
+      Armor: 0.05
+      ParryChance: 0.16
+      CritChance: 0.11
+      CritDamageMultiplier: 1.6
+    IsStarterFree: 0
+    UnlockType: 1
+    PriceCurrency: 0
+    PriceAmount: 0
+    SortOrder: 11
     IsEnabled: 1

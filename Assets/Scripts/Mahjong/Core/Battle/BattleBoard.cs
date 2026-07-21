@@ -15,6 +15,8 @@ namespace MahjongGame
     [DisallowMultipleComponent]
     public sealed class BattleBoard : MonoBehaviour
     {
+        private const string DefaultRevealSoundResourcePath = "Mahjong/Sounds/BattleTileReveal";
+
         public event Action<BattleBoard> BuildStarted;
         public event Action<BattleBoard> BuildCompleted;
         public event Action<BattleBoard> Cleared;
@@ -57,6 +59,12 @@ namespace MahjongGame
         [SerializeField] private float mismatchHideDelay = 0.75f;
         [SerializeField] private float matchedHideDelay = 0.15f;
 
+        [Header("Reveal Audio")]
+        [SerializeField] private AudioClip tileRevealClip;
+        [SerializeField, Range(0f, 1f)] private float tileRevealVolume = 0.5f;
+        [SerializeField, Range(0.05f, 1f)] private float tileRevealDurationMultiplier = 0.5f;
+        [SerializeField, Min(0.01f)] private float tileHidePitch = 2f;
+
         [Header("Fit")]
         [SerializeField] private float paddingX = 20f;
         [SerializeField] private float paddingY = 24f;
@@ -90,6 +98,10 @@ namespace MahjongGame
         private BattleTile firstRevealed;
         private BattleTile secondRevealed;
         private Coroutine resolveRoutine;
+        private AudioSource revealAudioSource;
+        private AudioSource fastRevealAudioSource;
+        private Coroutine revealStopRoutine;
+        private Coroutine fastRevealStopRoutine;
 
         public BattleBoardSide Side => side;
         public bool AllowPlayerInput => allowPlayerInput;
@@ -131,6 +143,7 @@ namespace MahjongGame
         {
             EnsureBattleStore();
             EnsureModules();
+            EnsureRevealAudio();
         }
 
         private void OnDestroy()
@@ -492,6 +505,30 @@ namespace MahjongGame
             NotifyBoardStateChanged();
         }
 
+        public void RefitIntoBoardArea(float overrideMaxFitScale)
+        {
+            FitAndCenterIntoBoardArea(overrideMaxFitScale);
+            rules?.RefreshBlockedView();
+            NotifyBoardStateChanged();
+        }
+
+        public void RefitIntoBoardArea(
+            float overrideMaxFitScale,
+            float extraPaddingLeft,
+            float extraPaddingRight,
+            float extraPaddingTop,
+            float extraPaddingBottom)
+        {
+            FitAndCenterIntoBoardArea(
+                overrideMaxFitScale,
+                extraPaddingLeft,
+                extraPaddingRight,
+                extraPaddingTop,
+                extraPaddingBottom);
+            rules?.RefreshBlockedView();
+            NotifyBoardStateChanged();
+        }
+
         public void ForceFail()
         {
             if (IsFinished)
@@ -560,7 +597,15 @@ namespace MahjongGame
             if (tile == null)
                 return;
 
+            bool wasClosed = tile.IsClosed;
             tile.Reveal();
+            if (wasClosed && tile.IsRevealed)
+            {
+                PlayTileFlipSound(1f);
+                if (side == BattleBoardSide.Player)
+                    AppSettings.I?.VibrateLight();
+            }
+
             tile.SetSelected(true);
 
             TileSelected?.Invoke(this, tile);
@@ -611,6 +656,8 @@ namespace MahjongGame
             {
                 first.SetMatched();
                 second.SetMatched();
+                if (side == BattleBoardSide.Player)
+                    AppSettings.I?.VibrateMedium();
                 PairMatched?.Invoke(this, first, second);
 
                 yield return new WaitForSeconds(Mathf.Max(0.01f, matchedHideDelay));
@@ -747,6 +794,21 @@ namespace MahjongGame
 
         private void FitAndCenterIntoBoardArea()
         {
+            FitAndCenterIntoBoardArea(maxFitScale);
+        }
+
+        private void FitAndCenterIntoBoardArea(float maxScaleOverride)
+        {
+            FitAndCenterIntoBoardArea(maxScaleOverride, 0f, 0f, 0f, 0f);
+        }
+
+        private void FitAndCenterIntoBoardArea(
+            float maxScaleOverride,
+            float extraPaddingLeft,
+            float extraPaddingRight,
+            float extraPaddingTop,
+            float extraPaddingBottom)
+        {
             if (boardArea == null || root == null || spawned.Count == 0)
                 return;
 
@@ -761,16 +823,24 @@ namespace MahjongGame
             float adaptivePaddingY = Mathf.Clamp(boardArea.rect.height * fitPaddingYPercent, minBattleFitPaddingY, maxBattleFitPaddingY);
             float safePaddingX = Mathf.Max(paddingX, adaptivePaddingX);
             float safePaddingY = Mathf.Max(paddingY, adaptivePaddingY);
-            float availableWidth = Mathf.Max(1f, boardArea.rect.width - safePaddingX * 2f);
-            float availableHeight = Mathf.Max(1f, boardArea.rect.height - safePaddingY * 2f);
+            extraPaddingLeft = Mathf.Max(0f, extraPaddingLeft);
+            extraPaddingRight = Mathf.Max(0f, extraPaddingRight);
+            extraPaddingTop = Mathf.Max(0f, extraPaddingTop);
+            extraPaddingBottom = Mathf.Max(0f, extraPaddingBottom);
+
+            float availableWidth = Mathf.Max(1f, boardArea.rect.width - safePaddingX * 2f - extraPaddingLeft - extraPaddingRight);
+            float availableHeight = Mathf.Max(1f, boardArea.rect.height - safePaddingY * 2f - extraPaddingTop - extraPaddingBottom);
 
             float scaleX = availableWidth / contentSize.x;
             float scaleY = availableHeight / contentSize.y;
-            float fitScale = Mathf.Clamp(Mathf.Min(scaleX, scaleY), minFitScale, maxFitScale);
+            float fitScale = Mathf.Clamp(Mathf.Min(scaleX, scaleY), minFitScale, Mathf.Max(minFitScale, maxScaleOverride));
 
             Vector2 center = (min + max) * 0.5f;
+            Vector2 safeCenterOffset = new(
+                (extraPaddingLeft - extraPaddingRight) * 0.5f,
+                (extraPaddingBottom - extraPaddingTop) * 0.5f);
             root.localScale = Vector3.one * fitScale;
-            root.anchoredPosition = -center * fitScale;
+            root.anchoredPosition = safeCenterOffset - center * fitScale;
         }
 
         private bool TryGetSpawnedBounds(out Vector2 min, out Vector2 max)
@@ -853,8 +923,89 @@ namespace MahjongGame
             if (tile == null)
                 return;
 
+            bool wasRevealed = tile.IsRevealed;
             tile.SetSelected(false);
             tile.HideToBack();
+            if (wasRevealed && tile.IsClosed)
+                PlayTileFlipSound(tileHidePitch);
+        }
+
+        private void EnsureRevealAudio()
+        {
+            if (tileRevealClip == null)
+                tileRevealClip = Resources.Load<AudioClip>(DefaultRevealSoundResourcePath);
+
+            if (tileRevealClip == null)
+                return;
+
+            if (revealAudioSource == null)
+                revealAudioSource = gameObject.AddComponent<AudioSource>();
+            if (fastRevealAudioSource == null)
+                fastRevealAudioSource = gameObject.AddComponent<AudioSource>();
+
+            ConfigureRevealAudioSource(revealAudioSource, 1f);
+            ConfigureRevealAudioSource(fastRevealAudioSource, tileHidePitch);
+        }
+
+        private static void ConfigureRevealAudioSource(AudioSource source, float pitch)
+        {
+            if (source == null)
+                return;
+
+            source.playOnAwake = false;
+            source.loop = false;
+            source.spatialBlend = 0f;
+            source.pitch = Mathf.Max(0.01f, pitch);
+            source.volume = 1f;
+        }
+
+        private void PlayTileFlipSound(float pitch)
+        {
+            if (side != BattleBoardSide.Player)
+                return;
+
+            if (AppSettings.I != null && !AppSettings.I.SoundEnabled)
+                return;
+
+            EnsureRevealAudio();
+            if (revealAudioSource == null || tileRevealClip == null)
+                return;
+
+            AudioSource source = pitch > 1.01f && fastRevealAudioSource != null ? fastRevealAudioSource : revealAudioSource;
+            source.pitch = Mathf.Max(0.01f, pitch);
+            float volume = tileRevealVolume > 0f ? tileRevealVolume : 0.5f;
+            source.volume = volume;
+            source.clip = tileRevealClip;
+            source.Stop();
+            source.Play();
+
+            float durationMultiplier = tileRevealDurationMultiplier > 0f ? tileRevealDurationMultiplier : 0.5f;
+            float playbackLength = tileRevealClip.length * Mathf.Clamp01(durationMultiplier) / source.pitch;
+            if (source == fastRevealAudioSource)
+            {
+                if (fastRevealStopRoutine != null)
+                    StopCoroutine(fastRevealStopRoutine);
+                fastRevealStopRoutine = StartCoroutine(StopRevealAudioAfterDelay(source, playbackLength, true));
+            }
+            else
+            {
+                if (revealStopRoutine != null)
+                    StopCoroutine(revealStopRoutine);
+                revealStopRoutine = StartCoroutine(StopRevealAudioAfterDelay(source, playbackLength, false));
+            }
+        }
+
+        private IEnumerator StopRevealAudioAfterDelay(AudioSource source, float delay, bool fastSource)
+        {
+            yield return new WaitForSeconds(Mathf.Max(0.01f, delay));
+
+            if (source != null)
+                source.Stop();
+
+            if (fastSource)
+                fastRevealStopRoutine = null;
+            else
+                revealStopRoutine = null;
         }
 
         private void EnsureBattleStore()

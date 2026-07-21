@@ -23,10 +23,6 @@ namespace MahjongGame
         [Header("Labels")]
         [SerializeField] private string rankPointsPrefix = "RP: ";
 
-        [Header("Fallback")]
-        [SerializeField] private string fallbackName = "Player";
-        [SerializeField] private string fallbackRankTier = "Unranked";
-
         private void Awake()
         {
             Refresh();
@@ -39,6 +35,8 @@ namespace MahjongGame
 
         public void Refresh()
         {
+            ApplyBattleFont();
+
             bool isBattle = MahjongSession.LaunchMode == MahjongLaunchMode.Battle;
 
             if (battleHudRoot != null)
@@ -48,12 +46,13 @@ namespace MahjongGame
                 return;
 
             string opponentName = string.IsNullOrWhiteSpace(MahjongSession.BattleOpponentName)
-                ? fallbackName
+                ? GameLocalization.Text("battle.common.player")
                 : MahjongSession.BattleOpponentName;
+            opponentName = AllianceIdentityFormatter.FormatName(opponentName, MahjongSession.BattleOpponentAllianceTag);
 
             string rankTier = string.IsNullOrWhiteSpace(MahjongSession.BattleOpponentRankTier)
-                ? fallbackRankTier
-                : MahjongSession.BattleOpponentRankTier;
+                ? GameLocalization.Text("battle.rank.unranked")
+                : LocalizeRankTier(MahjongSession.BattleOpponentRankTier);
 
             int rankPoints = Mathf.Max(0, MahjongSession.BattleOpponentRankPoints);
             int avatarId = Mathf.Max(0, MahjongSession.BattleOpponentAvatarId);
@@ -67,17 +66,24 @@ namespace MahjongGame
             if (opponentRankPointsText != null)
                 opponentRankPointsText.text = rankPointsPrefix + rankPoints;
 
-            ApplyAvatar(avatarId);
+            ApplyAvatar(avatarId, MahjongSession.BattleOpponentGender);
         }
 
-        private void ApplyAvatar(int avatarId)
+        private void ApplyAvatar(int avatarId, PlayerGender gender)
         {
             if (opponentAvatarImage == null)
                 return;
 
             Sprite chosen = defaultAvatarSprite;
 
-            if (avatarSprites != null && avatarSprites.Length > 0)
+            if (gender == PlayerGender.Male || gender == PlayerGender.Female)
+            {
+                Sprite resourceAvatar = ProfileAvatarResources.GetSprite(gender, avatarId);
+                if (resourceAvatar != null)
+                    chosen = resourceAvatar;
+            }
+
+            if (chosen == defaultAvatarSprite && avatarSprites != null && avatarSprites.Length > 0)
             {
                 if (avatarId >= 0 && avatarId < avatarSprites.Length && avatarSprites[avatarId] != null)
                     chosen = avatarSprites[avatarId];
@@ -87,6 +93,28 @@ namespace MahjongGame
 
             opponentAvatarImage.sprite = chosen;
             opponentAvatarImage.enabled = chosen != null;
+        }
+
+        private void ApplyBattleFont()
+        {
+            BattlePopupStyle.ApplyFontOnly(opponentNameText);
+            BattlePopupStyle.ApplyFontOnly(opponentRankTierText);
+            BattlePopupStyle.ApplyFontOnly(opponentRankPointsText);
+        }
+
+        private static string LocalizeRankTier(string tier)
+        {
+            if (string.IsNullOrWhiteSpace(tier))
+                return GameLocalization.Text("battle.rank.unranked");
+
+            string value = tier.Trim().ToLowerInvariant();
+            if (value.Contains("master")) return GameLocalization.Text("battle.rank.master");
+            if (value.Contains("platinum")) return GameLocalization.Text("battle.rank.platinum");
+            if (value.Contains("gold")) return GameLocalization.Text("battle.rank.gold");
+            if (value.Contains("silver")) return GameLocalization.Text("battle.rank.silver");
+            if (value.Contains("bronze")) return GameLocalization.Text("battle.rank.bronze");
+            if (value.Contains("unranked")) return GameLocalization.Text("battle.rank.unranked");
+            return tier.Trim();
         }
     }
 }

@@ -20,7 +20,9 @@ namespace MahjongGame
             Tiger = 0,
             Fox = 1,
             Wolf = 2,
-            Bear = 3
+            Bear = 3,
+            Dragon = 4,
+            Dog = 5
         }
 
         public enum CharacterGender
@@ -42,11 +44,22 @@ namespace MahjongGame
         {
             None = 0,
             OzAltin = 1,
-            OzAmetist = 2
+            OzAmetist = 2,
+            OzTile = 3
         }
 
-        public const int DefaultFirstPaidCharacterPrice = 10000;
+        public const int DefaultFirstPaidCharacterPrice = 5000;
+        public const int DefaultPaidCharacterPriceStep = 5000;
+        public const int DefaultDragonAmetistPrice = 300;
+        private const string AvatarResourceFolder = "BattleCharacters/Avatars";
+        private const string ModelResourceFolder = "BattleCharacters/Models";
         public static event Action CatalogChanged;
+        private static readonly Dictionary<string, Sprite> runtimeAvatarSprites =
+            new Dictionary<string, Sprite>(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<string, GameObject> runtimeModelPrefabs =
+            new Dictionary<string, GameObject>(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<string, Texture2D> runtimeModelTextures =
+            new Dictionary<string, Texture2D>(StringComparer.OrdinalIgnoreCase);
 
         [Serializable]
         public struct BattleCharacterStats
@@ -86,8 +99,7 @@ namespace MahjongGame
 
             private static int NormalizeLegacyMaxHp(int hp)
             {
-                int safeHp = Mathf.Max(1, hp);
-                return safeHp >= 300 ? Mathf.Max(1, Mathf.RoundToInt(safeHp / 10f)) : safeHp;
+                return Mathf.Max(1, hp);
             }
         }
 
@@ -261,8 +273,8 @@ namespace MahjongGame
 
         [Header("Catalog Settings")]
         [SerializeField] private bool dontDestroyOnLoad = true;
-        [SerializeField] private bool autoMarkFirstCharactersAsStarterFree = true;
-        [SerializeField] private int starterFreeCount = 1;
+        [SerializeField] private bool autoMarkFirstCharactersAsStarterFree = false;
+        [SerializeField] private int starterFreeCount = 0;
         [SerializeField] private bool verboseLogs = true;
 
         [Header("Characters")]
@@ -400,12 +412,75 @@ namespace MahjongGame
                 string localized = GameLocalization.Text(key);
                 if (!string.IsNullOrWhiteSpace(localized) && !string.Equals(localized, key, StringComparison.Ordinal))
                     return localized;
+
+                string builtInName = GetBuiltInArchetypeDisplayName(id);
+                if (!string.IsNullOrWhiteSpace(builtInName))
+                    return builtInName;
             }
 
             if (!string.IsNullOrWhiteSpace(fallbackDisplayName))
                 return fallbackDisplayName.Trim();
 
             return string.IsNullOrWhiteSpace(id) ? string.Empty : id.Trim();
+        }
+
+        private static string GetBuiltInArchetypeDisplayName(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+                return string.Empty;
+
+            string normalizedId = id.Trim().ToLowerInvariant();
+            GameLanguage language = AppSettings.I != null ? AppSettings.I.Language : GameLanguage.Russian;
+
+            switch (normalizedId)
+            {
+                case "tiger_male":
+                    return PickArchetypeName(language, "Яростный", "Fierce", "Hiddetli", "Grimmig");
+                case "tiger_female":
+                    return PickArchetypeName(language, "Яростная", "Fierce", "Hiddetli", "Grimmig");
+                case "fox_male":
+                    return PickArchetypeName(language, "Хитрый", "Sly", "Kurnaz", "Listig");
+                case "fox_female":
+                    return PickArchetypeName(language, "Хитрая", "Sly", "Kurnaz", "Listig");
+                case "wolf_male":
+                    return PickArchetypeName(language, "Вольный", "Freeborn", "Özgür", "Frei");
+                case "wolf_female":
+                    return PickArchetypeName(language, "Вольная", "Freeborn", "Özgür", "Frei");
+                case "bear_male":
+                    return PickArchetypeName(language, "Несгибаемый", "Unbroken", "Eğilmez", "Unbeugsam");
+                case "bear_female":
+                    return PickArchetypeName(language, "Несгибаемая", "Unbroken", "Eğilmez", "Unbeugsam");
+                case "dragon_male":
+                    return PickArchetypeName(language, "Древний", "Ancient", "Kadim", "Uralter");
+                case "dragon_female":
+                    return PickArchetypeName(language, "Древняя", "Ancient", "Kadim", "Uralte");
+                case "dog_male":
+                    return PickArchetypeName(language, "Верный", "Faithful", "Sadık", "Treu");
+                case "dog_female":
+                    return PickArchetypeName(language, "Верная", "Faithful", "Sadık", "Treu");
+                default:
+                    return string.Empty;
+            }
+        }
+
+        private static string PickArchetypeName(
+            GameLanguage language,
+            string russian,
+            string english,
+            string turkish,
+            string german)
+        {
+            switch (language)
+            {
+                case GameLanguage.English:
+                    return english;
+                case GameLanguage.Turkish:
+                    return turkish;
+                case GameLanguage.German:
+                    return german;
+                default:
+                    return russian;
+            }
         }
 
         public BattleCharacterData GetFirstStarterCharacterOrNull()
@@ -543,7 +618,194 @@ namespace MahjongGame
         private void InitializeRuntimeData()
         {
             SanitizeAll();
+            AssignAvatarSpritesFromResources();
+            AssignModelAssetsFromResources();
             RebuildCache();
+        }
+
+        private void AssignAvatarSpritesFromResources()
+        {
+            if (characters == null)
+                return;
+
+            for (int i = 0; i < characters.Count; i++)
+            {
+                BattleCharacterData data = characters[i];
+                if (data == null)
+                    continue;
+
+                Sprite avatar = LoadRuntimeAvatarSprite(data);
+                if (avatar == null)
+                    continue;
+
+                if (data.ProfileSprite == null)
+                    data.ProfileSprite = avatar;
+
+                if (data.LobbySprite == null)
+                    data.LobbySprite = avatar;
+
+                if (data.BattleSprite == null)
+                    data.BattleSprite = avatar;
+            }
+        }
+
+        private static Sprite LoadRuntimeAvatarSprite(BattleCharacterData data)
+        {
+            if (data == null || string.IsNullOrWhiteSpace(data.Id))
+                return null;
+
+            string compactId = data.Id.Trim().Replace("_", string.Empty);
+            string[] names =
+            {
+                $"{compactId}Foto",
+                $"{data.Id.Trim()}Foto",
+                $"{data.AnimalType}{data.Gender}Foto"
+            };
+
+            for (int i = 0; i < names.Length; i++)
+            {
+                string resourcePath = $"{AvatarResourceFolder}/{names[i]}";
+                if (runtimeAvatarSprites.TryGetValue(resourcePath, out Sprite cached))
+                    return cached;
+
+                Sprite sprite = Resources.Load<Sprite>(resourcePath);
+                if (sprite == null)
+                {
+                    Texture2D texture = Resources.Load<Texture2D>(resourcePath);
+                    if (texture != null)
+                    {
+                        sprite = Sprite.Create(
+                            texture,
+                            new Rect(0f, 0f, texture.width, texture.height),
+                            new Vector2(0.5f, 0.5f),
+                            100f);
+                        sprite.name = names[i];
+                    }
+                }
+
+                if (sprite == null)
+                    continue;
+
+                runtimeAvatarSprites[resourcePath] = sprite;
+                return sprite;
+            }
+
+            return null;
+        }
+
+        private void AssignModelAssetsFromResources()
+        {
+            if (characters == null)
+                return;
+
+            for (int i = 0; i < characters.Count; i++)
+            {
+                BattleCharacterData data = characters[i];
+                if (data == null)
+                    continue;
+
+                if (data.ProfileModelPrefab == null)
+                    data.ProfileModelPrefab = LoadRuntimeModelPrefab(data, "Profile");
+
+                if (data.LobbyModelPrefab == null)
+                    data.LobbyModelPrefab = LoadRuntimeModelPrefab(data, "Lobby");
+
+                if (data.BattleModelPrefab == null)
+                    data.BattleModelPrefab = LoadRuntimeModelPrefab(data, "Battle");
+
+                if (data.ModelTexture == null)
+                    data.ModelTexture = LoadRuntimeModelTexture(data);
+            }
+        }
+
+        private static GameObject LoadRuntimeModelPrefab(BattleCharacterData data, string context)
+        {
+            if (data == null || string.IsNullOrWhiteSpace(data.Id))
+                return null;
+
+            string id = data.Id.Trim();
+            string compactId = id.Replace("_", string.Empty);
+            string animal = data.AnimalType.ToString();
+            string gender = data.Gender.ToString();
+            string compactAnimalGender = animal + gender;
+            string[] contextNames = string.Equals(context, "Profile", StringComparison.Ordinal)
+                ? new[] { "Profile", "Profil", "Profilee", "Salute" }
+                : string.Equals(context, "Lobby", StringComparison.Ordinal)
+                    ? new[] { "Lobby", "LobbyNew" }
+                    : new[] { context };
+
+            for (int i = 0; i < contextNames.Length; i++)
+            {
+                string contextName = contextNames[i];
+                string[] names =
+                {
+                    $"{id}_{contextName}",
+                    $"{id}{contextName}",
+                    $"{compactId}_{contextName}",
+                    $"{compactId}{contextName}",
+                    $"{animal}_{gender}_{contextName}",
+                    $"{animal}{gender}{contextName}",
+                    $"{compactAnimalGender}_{contextName}",
+                    $"{compactAnimalGender}{contextName}"
+                };
+
+                for (int n = 0; n < names.Length; n++)
+                {
+                    string resourcePath = $"{ModelResourceFolder}/{names[n]}";
+                    if (runtimeModelPrefabs.TryGetValue(resourcePath, out GameObject cached))
+                        return cached;
+
+                    GameObject prefab = Resources.Load<GameObject>(resourcePath);
+                    if (prefab == null)
+                        continue;
+
+                    runtimeModelPrefabs[resourcePath] = prefab;
+                    return prefab;
+                }
+            }
+
+            return null;
+        }
+
+        private static Texture2D LoadRuntimeModelTexture(BattleCharacterData data)
+        {
+            if (data == null || string.IsNullOrWhiteSpace(data.Id))
+                return null;
+
+            string id = data.Id.Trim();
+            string compactId = id.Replace("_", string.Empty);
+            string compactIdWithExtraE = compactId.Replace("Female", "Femalee");
+            string[] names =
+            {
+                $"{id}_basecolor",
+                $"{id}_BaseColor",
+                $"{id}_albedo",
+                $"{id}_Albedo",
+                $"{compactId}_basecolor",
+                $"{compactId}_BaseColor",
+                $"{compactId}_albedo",
+                $"{compactId}_Albedo",
+                $"{compactIdWithExtraE}_basecolor",
+                $"{compactIdWithExtraE}_BaseColor",
+                $"{compactIdWithExtraE}_albedo",
+                $"{compactIdWithExtraE}_Albedo"
+            };
+
+            for (int i = 0; i < names.Length; i++)
+            {
+                string resourcePath = $"{ModelResourceFolder}/{names[i]}";
+                if (runtimeModelTextures.TryGetValue(resourcePath, out Texture2D cached))
+                    return cached;
+
+                Texture2D texture = Resources.Load<Texture2D>(resourcePath);
+                if (texture == null)
+                    continue;
+
+                runtimeModelTextures[resourcePath] = texture;
+                return texture;
+            }
+
+            return null;
         }
 
         private BattleCharacterData FindOrCreateCharacter(string id)
@@ -625,12 +887,129 @@ namespace MahjongGame
                 characters[i].Sanitize();
             }
 
+            EnsureBuiltInDragonCharacters();
+            EnsureBuiltInDogCharacters();
+            ApplyBuiltInCharacterBalance();
+
 #if UNITY_EDITOR
             EditorAutoAssignSharedFbxAssets();
 #endif
 
             if (autoMarkFirstCharactersAsStarterFree)
                 ApplyStarterFreeRule();
+        }
+
+        private void EnsureBuiltInDragonCharacters()
+        {
+            if (characters == null)
+                return;
+
+            if (FindExistingCharacter(characters, "Dragon_Male") == null)
+            {
+                AddDefaultCharacter(
+                    characters,
+                    "Dragon_Male",
+                    "Древний",
+                    CharacterAnimalType.Dragon,
+                    CharacterGender.Male,
+                    new BattleCharacterStats(540, 38, 0.07f, 0.05f, 0.11f, 1.65f),
+                    8);
+            }
+
+            if (FindExistingCharacter(characters, "Dragon_Female") == null)
+            {
+                AddDefaultCharacter(
+                    characters,
+                    "Dragon_Female",
+                    "Древняя",
+                    CharacterAnimalType.Dragon,
+                    CharacterGender.Female,
+                    new BattleCharacterStats(505, 38, 0.05f, 0.09f, 0.15f, 1.75f),
+                    9);
+            }
+        }
+
+        private void EnsureBuiltInDogCharacters()
+        {
+            if (characters == null)
+                return;
+
+            if (FindExistingCharacter(characters, "Dog_Male") == null)
+            {
+                AddDefaultCharacter(
+                    characters,
+                    "Dog_Male",
+                    "Верный",
+                    CharacterAnimalType.Dog,
+                    CharacterGender.Male,
+                    new BattleCharacterStats(500, 34, 0.06f, 0.13f, 0.09f, 1.55f),
+                    10);
+            }
+
+            if (FindExistingCharacter(characters, "Dog_Female") == null)
+            {
+                AddDefaultCharacter(
+                    characters,
+                    "Dog_Female",
+                    "Верная",
+                    CharacterAnimalType.Dog,
+                    CharacterGender.Female,
+                    new BattleCharacterStats(470, 34, 0.05f, 0.16f, 0.11f, 1.60f),
+                    11);
+            }
+        }
+
+        private void ApplyBuiltInCharacterBalance()
+        {
+            if (characters == null)
+                return;
+
+            for (int i = 0; i < characters.Count; i++)
+            {
+                BattleCharacterData data = characters[i];
+                if (data == null || string.IsNullOrWhiteSpace(data.Id))
+                    continue;
+
+                switch (data.Id.Trim())
+                {
+                    case "Tiger_Male":
+                        data.Stats = new BattleCharacterStats(480, 40, 0.04f, 0.03f, 0.10f, 1.60f);
+                        break;
+                    case "Tiger_Female":
+                        data.Stats = new BattleCharacterStats(450, 37, 0.03f, 0.07f, 0.15f, 1.70f);
+                        break;
+                    case "Fox_Male":
+                        data.Stats = new BattleCharacterStats(440, 36, 0.03f, 0.12f, 0.17f, 1.75f);
+                        break;
+                    case "Fox_Female":
+                        data.Stats = new BattleCharacterStats(420, 36, 0.02f, 0.15f, 0.21f, 1.85f);
+                        break;
+                    case "Wolf_Male":
+                        data.Stats = new BattleCharacterStats(520, 35, 0.07f, 0.08f, 0.10f, 1.60f);
+                        break;
+                    case "Wolf_Female":
+                        data.Stats = new BattleCharacterStats(490, 35, 0.05f, 0.11f, 0.12f, 1.65f);
+                        break;
+                    case "Bear_Male":
+                        data.Stats = new BattleCharacterStats(620, 31, 0.10f, 0.03f, 0.05f, 1.45f);
+                        break;
+                    case "Bear_Female":
+                        data.Stats = new BattleCharacterStats(580, 32, 0.08f, 0.06f, 0.08f, 1.55f);
+                        break;
+                    case "Dragon_Male":
+                        data.Stats = new BattleCharacterStats(540, 38, 0.07f, 0.05f, 0.11f, 1.65f);
+                        break;
+                    case "Dragon_Female":
+                        data.Stats = new BattleCharacterStats(505, 38, 0.05f, 0.09f, 0.15f, 1.75f);
+                        break;
+                    case "Dog_Male":
+                        data.Stats = new BattleCharacterStats(500, 34, 0.06f, 0.13f, 0.09f, 1.55f);
+                        break;
+                    case "Dog_Female":
+                        data.Stats = new BattleCharacterStats(470, 34, 0.05f, 0.16f, 0.11f, 1.60f);
+                        break;
+                }
+            }
         }
 
 #if UNITY_EDITOR
@@ -658,6 +1037,9 @@ namespace MahjongGame
                 AnimationClip resolvedProfileClip = LoadFirstAnimationClip(resolvedProfileModel) ?? data.ProfileIdleAnimation ?? profileClip;
                 AnimationClip resolvedLobbyClip = LoadFirstAnimationClip(resolvedLobbyModel) ?? data.LobbyIdleAnimation ?? lobbyClip;
                 AnimationClip resolvedBattleClip = LoadFirstAnimationClip(resolvedBattleModel) ?? data.BattleIdleAnimation ?? battleClip;
+                AnimationClip resolvedHitClip = LoadFirstAnimationClip(LoadCharacterModel(data, "Hit"));
+                AnimationClip resolvedVictoryClip = LoadFirstAnimationClip(LoadCharacterModel(data, "Win"));
+                AnimationClip resolvedDefeatClip = LoadFirstAnimationClip(LoadCharacterModel(data, "Defeat"));
 
                 changed |= AssignIfDifferent(ref data.ProfileModelPrefab, resolvedProfileModel);
                 changed |= AssignIfDifferent(ref data.LobbyModelPrefab, resolvedLobbyModel);
@@ -666,6 +1048,9 @@ namespace MahjongGame
                 changed |= AssignIfDifferent(ref data.ProfileIdleAnimation, resolvedProfileClip);
                 changed |= AssignIfDifferent(ref data.LobbyIdleAnimation, resolvedLobbyClip);
                 changed |= AssignIfDifferent(ref data.BattleIdleAnimation, resolvedBattleClip);
+                changed |= AssignIfDifferent(ref data.HitAnimation, resolvedHitClip);
+                changed |= AssignIfDifferent(ref data.VictoryAnimation, resolvedVictoryClip);
+                changed |= AssignIfDifferent(ref data.DefeatAnimation, resolvedDefeatClip);
 
                 if (resolvedTexture != null)
                     changed |= AssignIfDifferent(ref data.ModelTexture, resolvedTexture);
@@ -704,7 +1089,9 @@ namespace MahjongGame
             string gender = data.Gender.ToString();
             string compactAnimalGender = animal + gender;
             string[] contextNames = string.Equals(context, "Profile", StringComparison.Ordinal)
-                ? new[] { "Salute", "Profile", "Profil" }
+                ? new[] { "Profile", "Profil", "Profilee", "Salute" }
+                : string.Equals(context, "Lobby", StringComparison.Ordinal)
+                    ? new[] { "Lobby", "LobbyNew" }
                 : new[] { context };
 
             for (int i = 0; i < contextNames.Length; i++)
@@ -841,7 +1228,7 @@ namespace MahjongGame
 
             for (int i = 0; i < characters.Count; i++)
             {
-                if (characters[i] != null && characters[i].IsEnabled)
+                if (characters[i] != null && characters[i].IsEnabled && characters[i].AnimalType != CharacterAnimalType.Dragon)
                     temp.Add(characters[i]);
             }
 
@@ -863,9 +1250,21 @@ namespace MahjongGame
                 else
                 {
                     data.UnlockType = CharacterUnlockType.SoftCurrency;
-                    data.PriceCurrency = CharacterPriceCurrencyType.OzAltin;
-                    data.PriceAmount = DefaultFirstPaidCharacterPrice;
+                    data.PriceCurrency = CharacterPriceCurrencyType.OzTile;
+                    data.PriceAmount = 0;
                 }
+            }
+
+            for (int i = 0; i < characters.Count; i++)
+            {
+                BattleCharacterData data = characters[i];
+                if (data == null || !data.IsEnabled || data.AnimalType != CharacterAnimalType.Dragon)
+                    continue;
+
+                data.IsStarterFree = false;
+                data.UnlockType = CharacterUnlockType.PremiumCurrency;
+                data.PriceCurrency = CharacterPriceCurrencyType.OzAmetist;
+                data.PriceAmount = DefaultDragonAmetistPrice;
             }
 
         }
@@ -899,82 +1298,118 @@ namespace MahjongGame
         private void GenerateDefaultCharacters()
         {
             List<BattleCharacterData> existing = characters;
-            characters = new List<BattleCharacterData>(8);
+            characters = new List<BattleCharacterData>(12);
 
-            autoMarkFirstCharactersAsStarterFree = true;
-            starterFreeCount = 1;
+            autoMarkFirstCharactersAsStarterFree = false;
+            starterFreeCount = 0;
 
             AddDefaultCharacter(
                 existing,
                 "Tiger_Male",
-                "Kaplan",
+                "Яростный",
                 CharacterAnimalType.Tiger,
                 CharacterGender.Male,
-                new BattleCharacterStats(100, 16, 0.05f, 0.05f, 0.12f, 1.7f),
+                new BattleCharacterStats(480, 40, 0.04f, 0.03f, 0.1f, 1.6f),
                 0);
 
             AddDefaultCharacter(
                 existing,
                 "Tiger_Female",
-                "Di\u015Fi Kaplan",
+                "Яростная",
                 CharacterAnimalType.Tiger,
                 CharacterGender.Female,
-                new BattleCharacterStats(100, 16, 0.05f, 0.05f, 0.12f, 1.7f),
+                new BattleCharacterStats(450, 37, 0.03f, 0.07f, 0.15f, 1.7f),
                 1);
 
             AddDefaultCharacter(
                 existing,
                 "Fox_Male",
-                "Tilki",
+                "Хитрый",
                 CharacterAnimalType.Fox,
                 CharacterGender.Male,
-                new BattleCharacterStats(90, 14, 0.03f, 0.12f, 0.18f, 1.8f),
+                new BattleCharacterStats(440, 36, 0.03f, 0.12f, 0.17f, 1.75f),
                 2);
 
             AddDefaultCharacter(
                 existing,
                 "Fox_Female",
-                "Di\u015Fi Tilki",
+                "Хитрая",
                 CharacterAnimalType.Fox,
                 CharacterGender.Female,
-                new BattleCharacterStats(90, 14, 0.03f, 0.12f, 0.18f, 1.8f),
+                new BattleCharacterStats(420, 36, 0.02f, 0.15f, 0.21f, 1.85f),
                 3);
 
             AddDefaultCharacter(
                 existing,
                 "Wolf_Male",
-                "Kurt",
+                "Вольный",
                 CharacterAnimalType.Wolf,
                 CharacterGender.Male,
-                new BattleCharacterStats(110, 15, 0.08f, 0.1f, 0.1f, 1.65f),
+                new BattleCharacterStats(520, 35, 0.07f, 0.08f, 0.1f, 1.6f),
                 4);
 
             AddDefaultCharacter(
                 existing,
                 "Wolf_Female",
-                "Di\u015Fi Kurt",
+                "Вольная",
                 CharacterAnimalType.Wolf,
                 CharacterGender.Female,
-                new BattleCharacterStats(110, 15, 0.08f, 0.1f, 0.1f, 1.65f),
+                new BattleCharacterStats(490, 35, 0.05f, 0.11f, 0.12f, 1.65f),
                 5);
 
             AddDefaultCharacter(
                 existing,
                 "Bear_Male",
-                "Ay\u0131",
+                "Несгибаемый",
                 CharacterAnimalType.Bear,
                 CharacterGender.Male,
-                new BattleCharacterStats(130, 12, 0.15f, 0.08f, 0.06f, 1.5f),
+                new BattleCharacterStats(620, 31, 0.1f, 0.03f, 0.05f, 1.45f),
                 6);
 
             AddDefaultCharacter(
                 existing,
                 "Bear_Female",
-                "Di\u015Fi Ay\u0131",
+                "Несгибаемая",
                 CharacterAnimalType.Bear,
                 CharacterGender.Female,
-                new BattleCharacterStats(130, 12, 0.15f, 0.08f, 0.06f, 1.5f),
+                new BattleCharacterStats(580, 32, 0.08f, 0.06f, 0.08f, 1.55f),
                 7);
+
+            AddDefaultCharacter(
+                existing,
+                "Dragon_Male",
+                "Древний",
+                CharacterAnimalType.Dragon,
+                CharacterGender.Male,
+                new BattleCharacterStats(540, 38, 0.07f, 0.05f, 0.11f, 1.65f),
+                8);
+
+            AddDefaultCharacter(
+                existing,
+                "Dragon_Female",
+                "Древняя",
+                CharacterAnimalType.Dragon,
+                CharacterGender.Female,
+                new BattleCharacterStats(505, 38, 0.05f, 0.09f, 0.15f, 1.75f),
+                9);
+
+            AddDefaultCharacter(
+                existing,
+                "Dog_Male",
+                "Верный",
+                CharacterAnimalType.Dog,
+                CharacterGender.Male,
+                new BattleCharacterStats(500, 34, 0.06f, 0.13f, 0.09f, 1.55f),
+                10);
+
+            AddDefaultCharacter(
+                existing,
+                "Dog_Female",
+                "Верная",
+                CharacterAnimalType.Dog,
+                CharacterGender.Female,
+                new BattleCharacterStats(470, 34, 0.05f, 0.16f, 0.11f, 1.60f),
+                11);
 
             InitializeRuntimeData();
             MarkDirtyInEditor();
@@ -998,14 +1433,16 @@ namespace MahjongGame
             data.AnimalType = animalType;
             data.Gender = gender;
             data.Stats = stats;
-            data.IsStarterFree = sortOrder == 0;
-            data.UnlockType = data.IsStarterFree
-                ? CharacterUnlockType.Default
+            data.IsStarterFree = false;
+            data.UnlockType = animalType == CharacterAnimalType.Dragon
+                ? CharacterUnlockType.PremiumCurrency
                 : CharacterUnlockType.SoftCurrency;
-            data.PriceCurrency = data.IsStarterFree
-                ? CharacterPriceCurrencyType.None
-                : CharacterPriceCurrencyType.OzAltin;
-            data.PriceAmount = data.IsStarterFree ? 0 : DefaultFirstPaidCharacterPrice;
+            data.PriceCurrency = animalType == CharacterAnimalType.Dragon
+                ? CharacterPriceCurrencyType.OzAmetist
+                : CharacterPriceCurrencyType.OzTile;
+            data.PriceAmount = animalType == CharacterAnimalType.Dragon
+                ? DefaultDragonAmetistPrice
+                : 0;
             data.SortOrder = sortOrder;
             data.IsEnabled = true;
 
@@ -1091,16 +1528,22 @@ namespace MahjongGame
             switch (animalType)
             {
                 case CharacterAnimalType.Tiger:
-                    return "Kaplan";
+                    return "Яростный";
 
                 case CharacterAnimalType.Fox:
-                    return "Tilki";
+                    return "Хитрый";
 
                 case CharacterAnimalType.Wolf:
-                    return "Kurt";
+                    return "Вольный";
 
                 case CharacterAnimalType.Bear:
-                    return "Ay\u0131";
+                    return "Несгибаемый";
+
+                case CharacterAnimalType.Dragon:
+                    return "Древний";
+
+                case CharacterAnimalType.Dog:
+                    return "Верный";
 
                 default:
                     return animalType.ToString();

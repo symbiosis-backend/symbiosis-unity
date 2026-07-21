@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "project": "Dynasty: Legacy Symbiosis",
+  "resourceFolder": "Assets/Resources/SymbiozTiles",
+  "id": "sawmill-lumberyard-worksite-iso-7x7",
+  "file": "sawmill-lumberyard-worksite-iso-7x7.png",
+  "sourceFile": "sawmill-lumberyard-worksite-iso-7x7-source.png",
+  "resourcesLoadPath": "SymbiozTiles/sawmill-lumberyard-worksite-iso-7x7",
+  "displayName": "Sawmill Lumberyard Worksite - Isometric",
+  "role": "Isometric large wood resource gathering point where players approach to process logs and gather wood.",
+  "resourceType": "wood",
+  "style": "isometric",
+  "footprint": {
+    "widthCells": 7,
+    "heightCells": 7
+  },
+  "usage": {
+    "objectKind": "Sawmill",
+    "placement": "Place from the selected anchor cell as a 7x7 isometric worksite.",
+    "interaction": "Player approaches this area to gather wood."
+  }
+}

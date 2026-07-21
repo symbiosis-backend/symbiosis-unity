@@ -31,6 +31,8 @@ namespace MahjongGame
         [Header("Colors")]
         [SerializeField] private Color normalColor = Color.white;
         [SerializeField] private Color blockedColor = new Color(0.62f, 0.62f, 0.62f, 1f);
+        [SerializeField] private Color selectedColor = new Color(1f, 0.92f, 0.52f, 1f);
+        [SerializeField] private Color assistHintColor = new Color(0.42f, 1f, 0.72f, 1f);
 
         [Header("Blocked Shake")]
         [SerializeField] private bool enableBlockedShake = true;
@@ -45,9 +47,12 @@ namespace MahjongGame
         [SerializeField] private Image faceImage;
         [SerializeField] private bool selected;
         [SerializeField] private bool blocked;
+        [SerializeField] private bool assistHinted;
 
         private Board owner;
         private Coroutine blockedShakeRoutine;
+        private bool showBlockedVisual = true;
+        private bool shakeWhenBlocked = true;
 
         public string Id => id;
         public bool Selected => selected;
@@ -136,11 +141,29 @@ namespace MahjongGame
 
         public void SetBlocked(bool value)
         {
+            SetBlocked(value, true, true);
+        }
+
+        public void SetBlocked(bool value, bool showVisual, bool shakeOnClick)
+        {
             blocked = value;
+            showBlockedVisual = showVisual;
+            shakeWhenBlocked = shakeOnClick;
             RefreshColor();
 
             if (!blocked)
                 StopBlockedShakeImmediate();
+        }
+
+        public void SetAssistHint(bool value)
+        {
+            assistHinted = value;
+            RefreshColor();
+        }
+
+        public void PlayAssistHintMotion()
+        {
+            PlayBlockedShake();
         }
 
         public void HideNow()
@@ -163,10 +186,52 @@ namespace MahjongGame
             StopBlockedShakeImmediate();
         }
 
+        public void CopyAppearanceFrom(Tile template, string newId)
+        {
+            if (template == null)
+                return;
+
+            id = newId;
+            backSprite = template.backSprite;
+            faceSprite = template.faceSprite;
+            faceIsFullTileArt = template.faceIsFullTileArt;
+            size = template.size;
+            faceWidthPercent = template.faceWidthPercent;
+            faceHeightPercent = template.faceHeightPercent;
+            faceOffset = template.faceOffset;
+            preserveFaceAspect = template.preserveFaceAspect;
+
+            CacheRefs();
+            EnsureLayers();
+            ApplyVisual();
+            RefreshColor();
+            StopBlockedShakeImmediate();
+        }
+
+        public void SetRuntimeSize(Vector2 newSize)
+        {
+            size = new Vector2(Mathf.Max(16f, newSize.x), Mathf.Max(16f, newSize.y));
+
+            CacheRefs();
+            EnsureLayers();
+            ApplyVisual();
+            RefreshColor();
+            StopBlockedShakeImmediate();
+        }
+
+        public void ConfigureRuntimeTemplate(string newId, Sprite fullTileSprite, Vector2 templateSize)
+        {
+            id = newId;
+            faceIsFullTileArt = true;
+            size = templateSize;
+            SetSprites(null, fullTileSprite);
+        }
+
         private void ResetRuntimeFlags()
         {
             selected = false;
             blocked = false;
+            assistHinted = false;
         }
 
         private void OnClick()
@@ -176,7 +241,8 @@ namespace MahjongGame
 
             if (blocked)
             {
-                PlayBlockedShake();
+                if (shakeWhenBlocked)
+                    PlayBlockedShake();
                 return;
             }
 
@@ -412,6 +478,15 @@ namespace MahjongGame
         private void RefreshColor()
         {
             Color tint = normalColor;
+
+            if (blocked && showBlockedVisual)
+                tint = blockedColor;
+
+            if (selected)
+                tint = selectedColor;
+
+            if (assistHinted)
+                tint = assistHintColor;
 
             if (backImage != null)
                 backImage.color = tint;

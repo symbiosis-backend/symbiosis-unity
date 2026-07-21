@@ -133,12 +133,18 @@ namespace MahjongGame
             boardArea.localRotation = Quaternion.identity;
             boardArea.localScale = Vector3.one;
 
-            float trayHeight = trayArea.rect.height;
-            float top = trayTopOffset + trayHeight + gapBetweenTrayAndBoard + boardTopPadding + topPadding;
-            float bottom = bottomPadding + boardBottomPadding;
+            bool landscape = Screen.width > Screen.height;
+            float effectiveSidePadding = landscape ? Mathf.Min(sidePadding, 8f) : sidePadding;
+            float effectiveTopPadding = landscape ? Mathf.Min(topPadding, 0f) : topPadding;
+            float effectiveBottomPadding = landscape ? Mathf.Min(bottomPadding, 6f) : bottomPadding;
+            float effectiveGap = landscape ? Mathf.Min(gapBetweenTrayAndBoard, 0f) : gapBetweenTrayAndBoard;
 
-            boardArea.offsetMin = new Vector2(sidePadding, bottom);
-            boardArea.offsetMax = new Vector2(-sidePadding, -top);
+            float trayHeight = trayArea.rect.height;
+            float top = trayTopOffset + trayHeight + effectiveGap + boardTopPadding + effectiveTopPadding;
+            float bottom = effectiveBottomPadding + boardBottomPadding;
+
+            boardArea.offsetMin = new Vector2(effectiveSidePadding, bottom);
+            boardArea.offsetMax = new Vector2(-effectiveSidePadding, -top);
         }
 
         private void SetTilesRoot()
@@ -152,8 +158,6 @@ namespace MahjongGame
             tilesRoot.anchorMin = new Vector2(0.5f, 0.5f);
             tilesRoot.anchorMax = new Vector2(0.5f, 0.5f);
             tilesRoot.pivot = new Vector2(0.5f, 0.5f);
-            tilesRoot.anchoredPosition = Vector2.zero;
-            tilesRoot.localScale = Vector3.one;
             tilesRoot.localRotation = Quaternion.identity;
         }
 
@@ -178,10 +182,7 @@ namespace MahjongGame
             }
 
             if (tilesRoot != null)
-            {
-                tilesRoot.localScale = Vector3.one;
                 tilesRoot.localRotation = Quaternion.identity;
-            }
         }
     }
 }

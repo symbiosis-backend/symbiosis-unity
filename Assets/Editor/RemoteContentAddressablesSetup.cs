@@ -12,7 +12,7 @@ public static class RemoteContentAddressablesSetup
 {
     private const string RemoteGroupName = "RemoteContent";
     private const string RemoteBuildPath = "ServerData/[BuildTarget]";
-    private const string RemoteLoadPath = "http://91.99.176.77:8080/downloads/addressables/[BuildTarget]";
+    private const string RemoteLoadPath = "https://dlsymbiosis.com/downloads/addressables/[BuildTarget]";
 
     [MenuItem("Symbiosis/Addressables/Configure Remote Content")]
     public static void ConfigureRemoteContent()

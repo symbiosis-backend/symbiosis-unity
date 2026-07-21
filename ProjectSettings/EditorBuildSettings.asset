@@ -15,14 +15,8 @@ EditorBuildSettings:
     path: Assets/Scenes/Main.unity
     guid: ef30b7449f7a0354497c9f2f0e58cdf5
   - enabled: 1
-    path: Assets/Scenes/Codex.unity
-    guid: ffef5e20aa0bf084880d5c7830fc1ce6
-  - enabled: 0
-    path: Assets/Scenes/Tetris.unity
-    guid: 99fc0e4d08cd6a349b476202ae5f3df1
-  - enabled: 0
-    path: Assets/Scenes/Voider.unity
-    guid: 849ba011ea5440bcb7eae2cfa5660e35
+    path: Assets/Scenes/Alliance.unity
+    guid: a1c3d7f20e9b4c2486f41ad58c9e7301
   - enabled: 1
     path: Assets/Scenes/GameMahjongBattle.unity
     guid: 2f4e0c678d665364a96ee20b20e0c0e2
@@ -36,17 +30,23 @@ EditorBuildSettings:
     path: Assets/Scenes/LobbyMahjongBattle.unity
     guid: ff95f2284631a48488748269436d36a3
   - enabled: 0
-    path: Assets/Scenes/LobbyOkey.unity
-    guid: 845ee415a76c67e42a43ecadcc8fff78
+    path: Assets/Archived/Scenes/Unused_2026-07-04/OzGame.unity
+    guid: 243ee363f8b58904daa9cb8bab43dc04
   - enabled: 0
-    path: Assets/Scenes/GameOkey.unity
-    guid: be186c3b7a4f4a9488be032d161b1962
+    path: Assets/Archived/Scenes/Unused_2026-07-04/OzLobby.unity
+    guid: 9bd2ce51142f4e1d8a7cb8c4d83a614a
+  - enabled: 0
+    path: Assets/Archived/Scenes/Unused_2026-07-04/SymSudoku.unity
+    guid: 1392e9a6b6f74fcf919df3a42ea046e9
   - enabled: 1
-    path: Assets/Scenes/ClusterSlums.unity
-    guid: 1a84fbbae2c1de24383ee0fc7ffde224
+    path: Assets/Scenes/SymbiGrid.unity
+    guid: 7c61aa91a8c545d58e9e8e8be01edbb3
   - enabled: 1
-    path: Assets/Scenes/ClusterElysium.unity
-    guid: 8de9ebbda0e427540b53d7bd9565cffd
+    path: Assets/Scenes/Orbiosis.unity
+    guid: 664ca5de5b6245499e15ea5ce26c9a81
+  - enabled: 1
+    path: Assets/Scenes/SymbiozFlagship.unity
+    guid: 1720de2489384531beb5a867fa3fa058
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: e20224d5d22530748a2b06a4480d266b, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 3590b91b4603b465dbb4216d601bff33, type: 3}

@@ -1354,6 +1354,7 @@ MonoBehaviour:
   levelResultUI: {fileID: 635241057}
   gameplayHudRoot: {fileID: 404533439}
   gameplayBackgroundImage: {fileID: 162718884}
+  endlessGameplayBackground: {fileID: 1636521031, guid: 299e76d02ed047e0bba96dd9c984eb02, type: 3}
   levelIndex: 1
   buildOnStart: 1
   shuffleOnBuild: 1
@@ -1363,7 +1364,21 @@ MonoBehaviour:
   paddingY: 24
   minFitScale: 0.2
   maxFitScale: 1
+  maxUpscaleFitScale: 2.35
+  smallLayoutSlotThreshold: 32
+  smallLayoutWidthFill: 0.72
+  smallLayoutHeightFill: 0.82
+  normalLayoutWidthFill: 0.92
+  normalLayoutHeightFill: 0.86
   maxStoryLevel: 10
+  tutorialGapX: -14
+  tutorialGapY: -30
+  storyGapX: -14
+  storyGapY: -30
+  endlessGapX: -14
+  endlessGapY: -30
+  layerShiftX: 48
+  layerShiftY: 66
 --- !u!4 &409246326
 Transform:
   m_ObjectHideFlags: 0
@@ -1856,13 +1871,17 @@ MonoBehaviour:
   btnMenu: {fileID: 1583509157}
   btnNext: {fileID: 1200238695}
   btnRetry: {fileID: 1362403404}
-  winSprite: {fileID: -5238655081840268978, guid: c0af22ac465ab8d4a91f94c34e269bb2, type: 3}
-  loseSprite: {fileID: 6688391416331695147, guid: c3158fe11c0d2bd4fb60292ab231553b, type: 3}
+  winSprite: {fileID: 0}
+  loseSprite: {fileID: 0}
   winClip: {fileID: 8300000, guid: 765cf6bcd4f28ef4e96a90ee6e243cde, type: 3}
   loseClip: {fileID: 8300000, guid: 95ba9d9b9bba72b4ea779e8e9b686914, type: 3}
   audioVolume: 1
   lobbySceneName: LobbyMahjong
   gameSceneName: GameMahjong
+  useModernResultStyle: 1
+  panelSize: {x: 520, y: 282}
+  primaryButtonSize: {x: 174, y: 50}
+  secondaryButtonSize: {x: 160, y: 50}
 --- !u!82 &635241058
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2028,122 +2047,114 @@ MonoBehaviour:
     DisplayName: "Mahjong'a Ho\u015Fgeldiniz"
     Music: {fileID: 8300000, guid: 59d5dcc18fcdc02429813b0c0c1b8893, type: 3}
     Tiles:
-    - Id: bamboo
-      Prefab: {fileID: 6253049638512766740, guid: 515c0dc81470f48438fc80049419a56f, type: 3}
-    - Id: sonsuz
-      Prefab: {fileID: 6253049638512766740, guid: 4201256a4ededc34280673d4b190f5e3, type: 3}
-    - Id: lucky
-      Prefab: {fileID: 6253049638512766740, guid: 56c43cb5b51ef194dacd9114181abf8a, type: 3}
-    - Id: rich
-      Prefab: {fileID: 6253049638512766740, guid: 9f73199c6f5180e43b5b0ec2f4081410, type: 3}
-    - Id: three
-      Prefab: {fileID: 6253049638512766740, guid: 4cc8fecd86db8eb4b925bb7eadd823a0, type: 3}
-    - Id: fish
-      Prefab: {fileID: 6253049638512766740, guid: cf93f73e335db0443a3d4f0cfe047a83, type: 3}
-    - Id: lotos
-      Prefab: {fileID: 6253049638512766740, guid: a379973f381761146b63c3c42b5bf73a, type: 3}
-    - Id: cat
-      Prefab: {fileID: 6253049638512766740, guid: 2616fa9a1f2e3a447a85e88a44552442, type: 3}
-    - Id: bird
-      Prefab: {fileID: 6253049638512766740, guid: e4fc730c74c80b54cb1a777153271378, type: 3}
-    - Id: money
-      Prefab: {fileID: 6253049638512766740, guid: 177179d175c2a6c49b6de20f97313ae2, type: 3}
+    - Id: china_bamboo_forest
+      Prefab: {fileID: 6253049638512766740, guid: aff635beb3ac441e8f94171d2e0ff348, type: 3}
+    - Id: china_tiger
+      Prefab: {fileID: 6253049638512766740, guid: 94e5245bb4684d6db5628b6a7babcb52, type: 3}
+    - Id: china_tortoise
+      Prefab: {fileID: 6253049638512766740, guid: 5bbf41029671431286dd29295f0df2d8, type: 3}
+    - Id: china_lotus_flower
+      Prefab: {fileID: 6253049638512766740, guid: c4c4accc50714ef7b02f5f6b9b378083, type: 3}
+    - Id: china_panda
+      Prefab: {fileID: 6253049638512766740, guid: 17e077dd714a422b837ea2ef51bc6fb8, type: 3}
+    - Id: china_dragon
+      Prefab: {fileID: 6253049638512766740, guid: acc7c06aa737474a935f052e2e367f9b, type: 3}
+    - Id: china_yin_yang
+      Prefab: {fileID: 6253049638512766740, guid: d84d5ff256c84391add2f4ef4f06aed7, type: 3}
+    - Id: china_dharma_wheel
+      Prefab: {fileID: 6253049638512766740, guid: 46dad09f6b30402eaf3c79349ca2dda0, type: 3}
+    - Id: china_imperial_seal
+      Prefab: {fileID: 6253049638512766740, guid: f5f6ca8cdf2949d0ba8ae9c56152662e, type: 3}
     Stages:
     - StageIndex: 1
       LayoutLevel: 1
       UseCustomLayout: 0
       CustomSlots: []
       Background: {fileID: -1071225944978810969, guid: 51b6c3abe2f45de468edcc148a432b81, type: 3}
-      Title: Mahjong
-      Description: "Mahjong, 19. y\xFCzy\u0131lda \xC7in\u2019de \xE7ok oyunculu
-        stratejik bir masa oyunu olarak ortaya \xE7\u0131km\u0131\u015Ft\u0131r,
-        ancak zamanla mekanikleri tek oyunculu formata uyarlanm\u0131\u015F ve bizim
-        oyunumuz da bu versiyonu temel alm\u0131\u015Ft\u0131r."
+      Title: "Ilk Eslesme"
+      Description: "Bu ilk etapta sadece birkac tas var. Ayni sembolden iki acik
+        tasi bul, once birine dokun, sonra esini sec. Dogru eslesme taslari kaldirir
+        ve oyun alanini temizler."
     - StageIndex: 2
       LayoutLevel: 2
       UseCustomLayout: 0
       CustomSlots: []
       Background: {fileID: 6739164850763713329, guid: abeb88fb0fef3f04390e9599c265a636, type: 3}
-      Title: Seviye 2
-      Description: "Orijinal Mahjong\u2019da ama\xE7 ta\u015F kombinasyonlar\u0131
-        olu\u015Fturmakt\u0131r, fakat bu mant\u0131k solitaire (tek oyunculu) versiyonda
-        e\u015Fle\u015Fen ta\u015Flar\u0131 bulup kald\u0131rma sistemine d\xF6n\xFC\u015Fm\xFC\u015Ft\xFCr
-        ve bu sistem bizim oyunumuzda da kullan\u0131lmaktad\u0131r."
+      Title: "Acik Taslar"
+      Description: "Her tas hemen alinmaz. Bir tasin ustu kapaliysa veya iki yani
+        da sikismissa o tas beklemelidir. Once serbest duran acik taslari ara; Mahjong
+        okumasi burada baslar."
     - StageIndex: 3
       LayoutLevel: 3
       UseCustomLayout: 0
       CustomSlots: []
       Background: {fileID: -2944664853789933741, guid: b2d1b590becb1764b852ddc4ba45bb21, type: 3}
-      Title: 
-      Description: "Klasik Mahjong ta\u015Flar\u0131 kendine \xF6zg\xFC semboller
-        ve g\xF6rsel farkl\u0131l\u0131klar i\xE7erir; bu \xF6zellik bizim oyunumuzda
-        da korunarak oyuncunun ta\u015Flar\u0131 h\u0131zl\u0131 tan\u0131mas\u0131
-        ve e\u015Fle\u015Ftirmesi sa\u011Flan\u0131r."
+      Title: "Goz ve Hafiza"
+      Description: "Sekiz taslik bu alanda sembolleri hizli tani. Esleri aklinda
+        tutmak hamleleri hizlandirir. Mahjong, dikkat ve gorsel hafizayi sakin bir
+        sekilde calistirir."
     - StageIndex: 4
       LayoutLevel: 4
       UseCustomLayout: 0
       CustomSlots: []
       Background: {fileID: 1003138819240211484, guid: 3b99f403a09d5214eaa07cf4c3c6de9a, type: 3}
-      Title: 
-      Description: "Geleneksel Mahjong\u2019da masay\u0131 do\u011Fru okuyabilmek
-        ve mevcut hamleleri analiz edebilmek \xE7ok \xF6nemlidir; ayn\u0131 prensip
-        bizim oyunumuzda \u201Ca\xE7\u0131k ta\u015Flar\u201D mekani\u011Fi ile uygulanmaktad\u0131r."
+      Title: "Mahjong Nereden Geldi?"
+      Description: "Mahjong 19. yuzyilda Cin'de cok oyunculu stratejik bir masa
+        oyunu olarak ortaya cikti. Zamanla kurallari farkli oyun bicimlerine uyarlandi
+        ve bugun tek oyunculu eslestirme formu da yayginlasti."
     - StageIndex: 5
       LayoutLevel: 5
       UseCustomLayout: 0
       CustomSlots: []
       Background: {fileID: -1071225944978810969, guid: 51b6c3abe2f45de468edcc148a432b81, type: 3}
-      Title: 
-      Description: "Tarihsel olarak Mahjong ta\u015Flar\u0131 masada katmanl\u0131
-        \u015Fekilde dizilirdi ve bu \xE7ok katmanl\u0131 yap\u0131, bizim oyunumuzdaki
-        seviyelerin derinlik ve zorluk sisteminin temelini olu\u015Fturur."
+      Title: "Klasikten Solitaire'e"
+      Description: "Klasik Mahjong'da oyuncular kombinasyon kurar. Bizim Story
+        Mode akisimiza yakin olan solitaire bicimde ise oyuncu ayni taslari bulur,
+        kaldirir ve tahtayi adim adim acar."
     - StageIndex: 6
       LayoutLevel: 6
       UseCustomLayout: 0
       CustomSlots: []
       Background: {fileID: 6860068949404887012, guid: 39ff397a0622edc4fa4d86c02f5fdfb2, type: 3}
-      Title: 
-      Description: "Mahjong, \xE7ocuklar ve yeti\u015Fkinler i\xE7in haf\u0131zay\u0131,
-        dikkat s\xFCresini ve g\xF6rsel alg\u0131y\u0131 geli\u015Ftiren g\xFC\xE7l\xFC
-        bir zihinsel egzersiz olarak kabul edilir."
+      Title: "Hamleni Planla"
+      Description: "Taslari rastgele toplamak yerine once alani tara. Hangi eslesme
+        yeni taslari acacak? Dogru sira, tahtayi daha rahat temizlemeni saglar."
     - StageIndex: 7
       LayoutLevel: 7
       UseCustomLayout: 0
       CustomSlots: []
       Background: {fileID: 4110671742852751834, guid: 3e5a6e364e8bed941bb6bfabc8c12526, type: 3}
-      Title: 
-      Description: "D\xFCzenli olarak Mahjong oynamak, \xF6zellikle \xE7ocuklarda
-        problem \xE7\xF6zme becerilerini ve sab\u0131rl\u0131 d\xFC\u015F\xFCnme
-        al\u0131\u015Fkanl\u0131\u011F\u0131n\u0131 geli\u015Ftirmeye yard\u0131mc\u0131
-        olur."
+      Title: "Katmanlar"
+      Description: "Artik bazi taslar digerlerinin ustunde durur. Ustteki tas once
+        kaldirilmazsa alttaki tas kapali kalir. Katmanlari okumak, Mahjong'un temel
+        zeka egzersizlerinden biridir."
     - StageIndex: 8
       LayoutLevel: 8
       UseCustomLayout: 0
       CustomSlots: []
       Background: {fileID: -497180305073538546, guid: 92fce6fc1d6dfe242a88a9a972ffee4d, type: 3}
-      Title: 
-      Description: "Klasik Mahjong dikkat, haf\u0131za ve analiz gerektirir; bizim
-        oyunumuzda da oyuncu s\xFCrekli olarak sahay\u0131 tarar, e\u015Fle\u015Fmeleri
-        bulur ve hamlelerini planlar, bu da zihinsel aktiviteyi art\u0131r\u0131r."
+      Title: "Sembolleri Oku"
+      Description: "Mahjong taslari sadece sekil degil, ayni zamanda hafiza isaretleridir.
+        Bambu, sans, balik ve diger semboller oyuncunun gormeyi, ayirt etmeyi ve
+        hatirlamayi ogrenmesine yardim eder."
     - StageIndex: 9
       LayoutLevel: 9
       UseCustomLayout: 0
       CustomSlots: []
       Background: {fileID: -810623022255831621, guid: 5adc178a21b7bcb4b8321019ae6bcb49, type: 3}
-      Title: 
-      Description: "Bizim oyunumuzda her seviye farkl\u0131 yerle\u015Fimler ve g\xF6rsel
-        kombinasyonlar sundu\u011Fu i\xE7in oyuncunun beyni s\xFCrekli yeni desenlere
-        adapte olur, bu da \xF6\u011Frenme ve odaklanma yetene\u011Fini g\xFC\xE7lendirir."
+      Title: "Zihin Antrenmani"
+      Description: "Her yeni dizilim beyinden yeni bir okuma ister. Oyuncu gorur,
+        karsilastirir, hatirlar ve karar verir. Bu yuzden Mahjong dikkat, sabir
+        ve problem cozme becerisini gelistirir."
     - StageIndex: 10
       LayoutLevel: 10
       UseCustomLayout: 0
       CustomSlots: []
       Background: {fileID: 7258380301350862247, guid: ba0c54380548b5a40a547440220c7b01, type: 3}
-      Title: 
-      Description: "Mahjong tarih boyunca farkl\u0131 k\xFClt\xFCrlere ve teknolojilere
-        uyum sa\u011Flayarak geli\u015Fmi\u015Ftir; bizim oyunumuz ise bu evrimin
-        modern bir par\xE7as\u0131 olarak, mobil ve \xF6l\xE7eklenebilir bir yap\u0131
-        ile \xD6z Game platformuna entegre edilmi\u015Ftir."
+      Title: "Symbiosis Mahjong"
+      Description: "Bu ilk bolum oyunun temelini ogretti: esleri bul, acik taslari
+        oku, katmanlari planla ve sembolleri hatirla. Sonraki Story bolumlerinde
+        ayni sistemle farkli kulturleri ve bilgileri kesfedeceksin."
 --- !u!4 &655158105
 Transform:
   m_ObjectHideFlags: 0
@@ -2775,9 +2786,9 @@ MonoBehaviour:
   sidePadding: 20
   spacing: 20
   useTrayHeightAsTileHeight: 1
-  slotBackgroundSprite: {fileID: -824806295011409906, guid: 0a72523e1c48db14499c008d403c184c, type: 3}
+  slotBackgroundSprite: {fileID: 0}
   slotBackgroundColor: {r: 1, g: 1, b: 1, a: 1}
-  slotBackgroundExtraSize: {x: 14, y: 14}
+  slotBackgroundExtraSize: {x: 0, y: 0}
 --- !u!114 &1038906021
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4399,15 +4410,15 @@ RectTransform:
   m_GameObject: {fileID: 1786357568}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.975, y: 0.925, z: 1}
+  m_LocalScale: {x: 0.975, y: 0.975, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1038906019}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 516, y: 180}
+  m_AnchoredPosition: {x: 0, y: 2}
+  m_SizeDelta: {x: 478, y: 190}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1786357570
 MonoBehaviour:
@@ -4702,10 +4713,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MahjongGame.LayoutBuilder
   layout: {fileID: 11400000, guid: 13f25fe22cfbdd44eb578493b1b62270, type: 2}
-  gapX: -10
-  gapY: -12
-  layerShiftX: 8
-  layerShiftY: 4
+  gapX: -14
+  gapY: -30
+  layerShiftX: 48
+  layerShiftY: 66
 --- !u!4 &1994687770
 Transform:
   m_ObjectHideFlags: 0

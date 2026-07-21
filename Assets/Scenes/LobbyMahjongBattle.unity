@@ -432,7 +432,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4282896895
+    rgba: 4291761151
   m_fontColor: {r: 1, g: 0.82, b: 0.28, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -450,7 +450,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32
+  m_fontSize: 30
   m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -657,7 +657,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 63.95
+  m_fontSize: 72
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1037,7 +1037,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4282896895
+    rgba: 4291761151
   m_fontColor: {r: 1, g: 0.82, b: 0.28, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -1055,7 +1055,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32
+  m_fontSize: 30
   m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1179,7 +1179,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4282896895
+    rgba: 4291761151
   m_fontColor: {r: 1, g: 0.82, b: 0.28, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -1197,7 +1197,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32
+  m_fontSize: 30
   m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1475,29 +1475,12 @@ MonoBehaviour:
   characterId: Wolf_Male
   button: {fileID: 519423382}
   iconImage: {fileID: 1235427072}
-  iconModelView: {fileID: 0}
   nameText: {fileID: 376411823}
   priceText: {fileID: 1206531138}
-  applyStandardCardLayout: 1
-  cardSize: {x: 300, y: 450}
-  namePosition: {x: 0, y: 188}
-  nameSize: {x: 260, y: 46}
-  iconPosition: {x: 0, y: 34}
-  iconSize: {x: 245, y: 275}
-  statsPosition: {x: 0, y: -165}
-  statsSize: {x: 260, y: 116}
   showStatsOnlyWhenHighlighted: 1
-  useStatsBackdrop: 0
-  statsBackdropPadding: {x: 26, y: 18}
-  statsBackdropColor: {r: 0.06, g: 0.055, b: 0.045, a: 0.78}
-  statsTextColor: {r: 1, g: 0.92, b: 0.68, a: 1}
-  statsPriceColor: {r: 1, g: 0.78, b: 0.18, a: 1}
   lockedRoot: {fileID: 0}
   selectedRoot: {fileID: 0}
   disabledRoot: {fileID: 0}
-  ensureVisibleCardBackground: 1
-  cardBackgroundColor: {r: 0.08, g: 0.1, b: 0.13, a: 0.86}
-  selectedCardBackgroundColor: {r: 0.18, g: 0.13, b: 0.04, a: 0.92}
   scaleTarget: {fileID: 519423380}
   normalScale: {x: 1, y: 1, z: 1}
   highlightedScale: {x: 1.12, y: 1.12, z: 1}
@@ -1507,9 +1490,6 @@ MonoBehaviour:
   previewSelectSpriteImage: {fileID: 0}
   previewLobbySpriteImage: {fileID: 0}
   previewBattleSpriteImage: {fileID: 0}
-  previewSelectModelView: {fileID: 0}
-  previewLobbyModelView: {fileID: 0}
-  previewBattleModelView: {fileID: 0}
   autoFindPreviewUI: 1
   previewNameTextObjectName: PreviewNameText
   previewStatsTextObjectName: PreviewStatsText
@@ -1524,8 +1504,6 @@ MonoBehaviour:
   updatePreviewWhenHighlighted: 1
   selectCharacterOnClick: 1
   autoUseThisCharacterAsPreviewIfNothingSelected: 1
-  purchaseErrorMessageSeconds: 2
-  purchaseErrorFadeSeconds: 0.45
 --- !u!114 &519423382
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1786,7 +1764,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4282896895
+    rgba: 4291761151
   m_fontColor: {r: 1, g: 0.82, b: 0.28, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -1804,7 +1782,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32
+  m_fontSize: 30
   m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2146,45 +2124,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6418f6ea2f4cb174ea8cd9d6f29e5c79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MahjongGame.BattleLobbyUI
-  battleLobbySceneName: LobbyMahjongBattle
   battleGameSceneName: GameMahjongBattle
-  mainLobbySceneName: LobbyMahjong
+  mainLobbySceneName: Main
   friendLobbySceneName: 
   localWifiSceneName: 
-  randomMatchUsesOnlineRanked: 0
-  randomMatchButton: {fileID: 0}
-  autoCreateRandomMatchButton: 1
-  randomMatchButtonText: Random Match
-  randomMatchButtonPosition: {x: 0, y: -228}
-  randomMatchButtonSize: {x: 320, y: 76}
-  localWifiBattleButton: {fileID: 0}
-  autoCreateLocalWifiBattleButton: 1
-  localWifiBattleButtonText: Wi-Fi Battle
-  localWifiBattleButtonPosition: {x: 0, y: -420}
-  localWifiBattleButtonSize: {x: 320, y: 76}
-  rankedBattleButton: {fileID: 0}
-  autoCreateRankedBattleButton: 1
-  rankedBattleButtonText: Ranked Match
-  rankedBattleButtonPosition: {x: 0, y: -324}
-  rankedBattleButtonSize: {x: 320, y: 76}
-  battleLobbyButtonSprite: {fileID: -4847666954649907282, guid: dff6739ccd8ee2142b94cc7ba8e302ed, type: 3}
-  battleLobbyTopBarSprite: {fileID: -8714122752122185190, guid: 9450279e74f5671408eb826b3a9077c4, type: 3}
-  battleLobbyMainFont: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   returnToLobbyButton: {fileID: 3000000004}
   autoCreateReturnButton: 0
-  returnButtonText: Lobby
-  returnButtonPosition: {x: 42, y: -42}
-  returnButtonSize: {x: 220, y: 72}
-  battleProgressRoot: {fileID: 0}
-  battleLevelText: {fileID: 0}
-  battleExpText: {fileID: 0}
-  battleStatsText: {fileID: 0}
-  autoCreateBattleProgressUi: 1
-  battleProgressPosition: {x: -42, y: -42}
-  battleProgressSize: {x: 440, y: 154}
-  battleLevelFormat: Level {0}
-  battleExpFormat: 'EXP {0}/{1}  Next: {2}'
-  battleStatsFormat: Wins {0}  Losses {1}  MVP {2}%
+  returnButtonText: Platform
+  returnButtonPosition: {x: 0, y: -445}
+  returnButtonSize: {x: 300, y: 86}
   characterCarouselRoot: {fileID: 1975512414}
   openCharacterCarouselButton: {fileID: 0}
   characterCarouselObjectName: CharasterCarousel
@@ -2193,9 +2141,6 @@ MonoBehaviour:
   autoBindOpenCharacterButton: 1
   createOpenCharacterButtonIfMissing: 1
   openCharacterButtonText: Character
-  openCharacterCarouselWhenNoCharacterSelected: 1
-  autoOpenCharacterCarouselDelayFrames: 3
-  autoOpenCharacterCarouselMaxWaitSeconds: 0.5
   debugLogs: 1
 --- !u!1 &888723340
 GameObject:
@@ -2399,7 +2344,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4282896895
+    rgba: 4291761151
   m_fontColor: {r: 1, g: 0.82, b: 0.28, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -2417,7 +2362,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32
+  m_fontSize: 30
   m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2667,29 +2612,12 @@ MonoBehaviour:
   characterId: Bear_Female
   button: {fileID: 973722031}
   iconImage: {fileID: 1770460307}
-  iconModelView: {fileID: 0}
   nameText: {fileID: 441939132}
   priceText: {fileID: 1269158597}
-  applyStandardCardLayout: 1
-  cardSize: {x: 300, y: 450}
-  namePosition: {x: 0, y: 188}
-  nameSize: {x: 260, y: 46}
-  iconPosition: {x: 0, y: 34}
-  iconSize: {x: 245, y: 275}
-  statsPosition: {x: 0, y: -165}
-  statsSize: {x: 260, y: 116}
   showStatsOnlyWhenHighlighted: 1
-  useStatsBackdrop: 0
-  statsBackdropPadding: {x: 26, y: 18}
-  statsBackdropColor: {r: 0.06, g: 0.055, b: 0.045, a: 0.78}
-  statsTextColor: {r: 1, g: 0.92, b: 0.68, a: 1}
-  statsPriceColor: {r: 1, g: 0.78, b: 0.18, a: 1}
   lockedRoot: {fileID: 0}
   selectedRoot: {fileID: 0}
   disabledRoot: {fileID: 0}
-  ensureVisibleCardBackground: 1
-  cardBackgroundColor: {r: 0.08, g: 0.1, b: 0.13, a: 0.86}
-  selectedCardBackgroundColor: {r: 0.18, g: 0.13, b: 0.04, a: 0.92}
   scaleTarget: {fileID: 973722029}
   normalScale: {x: 1, y: 1, z: 1}
   highlightedScale: {x: 1.12, y: 1.12, z: 1}
@@ -2699,9 +2627,6 @@ MonoBehaviour:
   previewSelectSpriteImage: {fileID: 0}
   previewLobbySpriteImage: {fileID: 0}
   previewBattleSpriteImage: {fileID: 0}
-  previewSelectModelView: {fileID: 0}
-  previewLobbyModelView: {fileID: 0}
-  previewBattleModelView: {fileID: 0}
   autoFindPreviewUI: 1
   previewNameTextObjectName: PreviewNameText
   previewStatsTextObjectName: PreviewStatsText
@@ -2716,8 +2641,6 @@ MonoBehaviour:
   updatePreviewWhenHighlighted: 1
   selectCharacterOnClick: 1
   autoUseThisCharacterAsPreviewIfNothingSelected: 1
-  purchaseErrorMessageSeconds: 2
-  purchaseErrorFadeSeconds: 0.45
 --- !u!114 &973722031
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2829,29 +2752,12 @@ MonoBehaviour:
   characterId: Tiger_Male
   button: {fileID: 1009496958}
   iconImage: {fileID: 1789731061}
-  iconModelView: {fileID: 0}
   nameText: {fileID: 103144868}
   priceText: {fileID: 29316101}
-  applyStandardCardLayout: 1
-  cardSize: {x: 300, y: 450}
-  namePosition: {x: 0, y: 188}
-  nameSize: {x: 260, y: 46}
-  iconPosition: {x: 0, y: 34}
-  iconSize: {x: 245, y: 275}
-  statsPosition: {x: 0, y: -165}
-  statsSize: {x: 260, y: 116}
   showStatsOnlyWhenHighlighted: 1
-  useStatsBackdrop: 0
-  statsBackdropPadding: {x: 26, y: 18}
-  statsBackdropColor: {r: 0.06, g: 0.055, b: 0.045, a: 0.78}
-  statsTextColor: {r: 1, g: 0.92, b: 0.68, a: 1}
-  statsPriceColor: {r: 1, g: 0.78, b: 0.18, a: 1}
   lockedRoot: {fileID: 168080295}
   selectedRoot: {fileID: 2063096567}
   disabledRoot: {fileID: 0}
-  ensureVisibleCardBackground: 1
-  cardBackgroundColor: {r: 0.08, g: 0.1, b: 0.13, a: 0.86}
-  selectedCardBackgroundColor: {r: 0.18, g: 0.13, b: 0.04, a: 0.92}
   scaleTarget: {fileID: 1009496956}
   normalScale: {x: 1, y: 1, z: 1}
   highlightedScale: {x: 1.12, y: 1.12, z: 1}
@@ -2861,9 +2767,6 @@ MonoBehaviour:
   previewSelectSpriteImage: {fileID: 0}
   previewLobbySpriteImage: {fileID: 0}
   previewBattleSpriteImage: {fileID: 0}
-  previewSelectModelView: {fileID: 0}
-  previewLobbyModelView: {fileID: 0}
-  previewBattleModelView: {fileID: 0}
   autoFindPreviewUI: 1
   previewNameTextObjectName: PreviewNameText
   previewStatsTextObjectName: PreviewStatsText
@@ -2878,8 +2781,6 @@ MonoBehaviour:
   updatePreviewWhenHighlighted: 1
   selectCharacterOnClick: 1
   autoUseThisCharacterAsPreviewIfNothingSelected: 1
-  purchaseErrorMessageSeconds: 2
-  purchaseErrorFadeSeconds: 0.45
 --- !u!114 &1009496958
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2990,29 +2891,12 @@ MonoBehaviour:
   characterId: Fox_Male
   button: {fileID: 1065328725}
   iconImage: {fileID: 90089907}
-  iconModelView: {fileID: 0}
   nameText: {fileID: 925131099}
   priceText: {fileID: 1204243251}
-  applyStandardCardLayout: 1
-  cardSize: {x: 300, y: 450}
-  namePosition: {x: 0, y: 188}
-  nameSize: {x: 260, y: 46}
-  iconPosition: {x: 0, y: 34}
-  iconSize: {x: 245, y: 275}
-  statsPosition: {x: 0, y: -165}
-  statsSize: {x: 260, y: 116}
   showStatsOnlyWhenHighlighted: 1
-  useStatsBackdrop: 0
-  statsBackdropPadding: {x: 26, y: 18}
-  statsBackdropColor: {r: 0.06, g: 0.055, b: 0.045, a: 0.78}
-  statsTextColor: {r: 1, g: 0.92, b: 0.68, a: 1}
-  statsPriceColor: {r: 1, g: 0.78, b: 0.18, a: 1}
   lockedRoot: {fileID: 0}
   selectedRoot: {fileID: 0}
   disabledRoot: {fileID: 0}
-  ensureVisibleCardBackground: 1
-  cardBackgroundColor: {r: 0.08, g: 0.1, b: 0.13, a: 0.86}
-  selectedCardBackgroundColor: {r: 0.18, g: 0.13, b: 0.04, a: 0.92}
   scaleTarget: {fileID: 1065328723}
   normalScale: {x: 1, y: 1, z: 1}
   highlightedScale: {x: 1.12, y: 1.12, z: 1}
@@ -3022,9 +2906,6 @@ MonoBehaviour:
   previewSelectSpriteImage: {fileID: 0}
   previewLobbySpriteImage: {fileID: 0}
   previewBattleSpriteImage: {fileID: 0}
-  previewSelectModelView: {fileID: 0}
-  previewLobbyModelView: {fileID: 0}
-  previewBattleModelView: {fileID: 0}
   autoFindPreviewUI: 1
   previewNameTextObjectName: PreviewNameText
   previewStatsTextObjectName: PreviewStatsText
@@ -3039,8 +2920,6 @@ MonoBehaviour:
   updatePreviewWhenHighlighted: 1
   selectCharacterOnClick: 1
   autoUseThisCharacterAsPreviewIfNothingSelected: 1
-  purchaseErrorMessageSeconds: 2
-  purchaseErrorFadeSeconds: 0.45
 --- !u!114 &1065328725
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3188,29 +3067,12 @@ MonoBehaviour:
   characterId: Tiger_Female
   button: {fileID: 1123227013}
   iconImage: {fileID: 250621516}
-  iconModelView: {fileID: 0}
   nameText: {fileID: 1558876572}
   priceText: {fileID: 210211480}
-  applyStandardCardLayout: 1
-  cardSize: {x: 300, y: 450}
-  namePosition: {x: 0, y: 188}
-  nameSize: {x: 260, y: 46}
-  iconPosition: {x: 0, y: 34}
-  iconSize: {x: 245, y: 275}
-  statsPosition: {x: 0, y: -165}
-  statsSize: {x: 260, y: 116}
   showStatsOnlyWhenHighlighted: 1
-  useStatsBackdrop: 0
-  statsBackdropPadding: {x: 26, y: 18}
-  statsBackdropColor: {r: 0.06, g: 0.055, b: 0.045, a: 0.78}
-  statsTextColor: {r: 1, g: 0.92, b: 0.68, a: 1}
-  statsPriceColor: {r: 1, g: 0.78, b: 0.18, a: 1}
   lockedRoot: {fileID: 0}
   selectedRoot: {fileID: 0}
   disabledRoot: {fileID: 0}
-  ensureVisibleCardBackground: 1
-  cardBackgroundColor: {r: 0.08, g: 0.1, b: 0.13, a: 0.86}
-  selectedCardBackgroundColor: {r: 0.18, g: 0.13, b: 0.04, a: 0.92}
   scaleTarget: {fileID: 1123227011}
   normalScale: {x: 1, y: 1, z: 1}
   highlightedScale: {x: 1.12, y: 1.12, z: 1}
@@ -3220,9 +3082,6 @@ MonoBehaviour:
   previewSelectSpriteImage: {fileID: 0}
   previewLobbySpriteImage: {fileID: 0}
   previewBattleSpriteImage: {fileID: 0}
-  previewSelectModelView: {fileID: 0}
-  previewLobbyModelView: {fileID: 0}
-  previewBattleModelView: {fileID: 0}
   autoFindPreviewUI: 1
   previewNameTextObjectName: PreviewNameText
   previewStatsTextObjectName: PreviewStatsText
@@ -3237,8 +3096,6 @@ MonoBehaviour:
   updatePreviewWhenHighlighted: 1
   selectCharacterOnClick: 1
   autoUseThisCharacterAsPreviewIfNothingSelected: 1
-  purchaseErrorMessageSeconds: 2
-  purchaseErrorFadeSeconds: 0.45
 --- !u!114 &1123227013
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3986,7 +3843,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MahjongGame.BattleLobbyChar
   target: {fileID: 1360775234}
-  modelView: {fileID: 0}
   preserveAspect: 1
   hideOnStart: 1
   useSelectSpriteIfLobbySpriteMissing: 1
@@ -4086,29 +3942,12 @@ MonoBehaviour:
   characterId: Fox_Female
   button: {fileID: 1375777422}
   iconImage: {fileID: 2065973920}
-  iconModelView: {fileID: 0}
   nameText: {fileID: 1850345631}
   priceText: {fileID: 933465159}
-  applyStandardCardLayout: 1
-  cardSize: {x: 300, y: 450}
-  namePosition: {x: 0, y: 188}
-  nameSize: {x: 260, y: 46}
-  iconPosition: {x: 0, y: 34}
-  iconSize: {x: 245, y: 275}
-  statsPosition: {x: 0, y: -165}
-  statsSize: {x: 260, y: 116}
   showStatsOnlyWhenHighlighted: 1
-  useStatsBackdrop: 0
-  statsBackdropPadding: {x: 26, y: 18}
-  statsBackdropColor: {r: 0.06, g: 0.055, b: 0.045, a: 0.78}
-  statsTextColor: {r: 1, g: 0.92, b: 0.68, a: 1}
-  statsPriceColor: {r: 1, g: 0.78, b: 0.18, a: 1}
   lockedRoot: {fileID: 0}
   selectedRoot: {fileID: 0}
   disabledRoot: {fileID: 0}
-  ensureVisibleCardBackground: 1
-  cardBackgroundColor: {r: 0.08, g: 0.1, b: 0.13, a: 0.86}
-  selectedCardBackgroundColor: {r: 0.18, g: 0.13, b: 0.04, a: 0.92}
   scaleTarget: {fileID: 1375777420}
   normalScale: {x: 1, y: 1, z: 1}
   highlightedScale: {x: 1.12, y: 1.12, z: 1}
@@ -4118,9 +3957,6 @@ MonoBehaviour:
   previewSelectSpriteImage: {fileID: 0}
   previewLobbySpriteImage: {fileID: 0}
   previewBattleSpriteImage: {fileID: 0}
-  previewSelectModelView: {fileID: 0}
-  previewLobbyModelView: {fileID: 0}
-  previewBattleModelView: {fileID: 0}
   autoFindPreviewUI: 1
   previewNameTextObjectName: PreviewNameText
   previewStatsTextObjectName: PreviewStatsText
@@ -4135,8 +3971,6 @@ MonoBehaviour:
   updatePreviewWhenHighlighted: 1
   selectCharacterOnClick: 1
   autoUseThisCharacterAsPreviewIfNothingSelected: 1
-  purchaseErrorMessageSeconds: 2
-  purchaseErrorFadeSeconds: 0.45
 --- !u!114 &1375777422
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4495,7 +4329,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4282896895
+    rgba: 4291761151
   m_fontColor: {r: 1, g: 0.82, b: 0.28, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -4513,7 +4347,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32
+  m_fontSize: 30
   m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -5038,29 +4872,12 @@ MonoBehaviour:
   characterId: Wolf_Female
   button: {fileID: 1812624779}
   iconImage: {fileID: 475083787}
-  iconModelView: {fileID: 0}
   nameText: {fileID: 2072952727}
   priceText: {fileID: 1852456751}
-  applyStandardCardLayout: 1
-  cardSize: {x: 300, y: 450}
-  namePosition: {x: 0, y: 188}
-  nameSize: {x: 260, y: 46}
-  iconPosition: {x: 0, y: 34}
-  iconSize: {x: 245, y: 275}
-  statsPosition: {x: 0, y: -165}
-  statsSize: {x: 260, y: 116}
   showStatsOnlyWhenHighlighted: 1
-  useStatsBackdrop: 0
-  statsBackdropPadding: {x: 26, y: 18}
-  statsBackdropColor: {r: 0.06, g: 0.055, b: 0.045, a: 0.78}
-  statsTextColor: {r: 1, g: 0.92, b: 0.68, a: 1}
-  statsPriceColor: {r: 1, g: 0.78, b: 0.18, a: 1}
   lockedRoot: {fileID: 0}
   selectedRoot: {fileID: 0}
   disabledRoot: {fileID: 0}
-  ensureVisibleCardBackground: 1
-  cardBackgroundColor: {r: 0.08, g: 0.1, b: 0.13, a: 0.86}
-  selectedCardBackgroundColor: {r: 0.18, g: 0.13, b: 0.04, a: 0.92}
   scaleTarget: {fileID: 1812624777}
   normalScale: {x: 1, y: 1, z: 1}
   highlightedScale: {x: 1.12, y: 1.12, z: 1}
@@ -5070,9 +4887,6 @@ MonoBehaviour:
   previewSelectSpriteImage: {fileID: 0}
   previewLobbySpriteImage: {fileID: 0}
   previewBattleSpriteImage: {fileID: 0}
-  previewSelectModelView: {fileID: 0}
-  previewLobbyModelView: {fileID: 0}
-  previewBattleModelView: {fileID: 0}
   autoFindPreviewUI: 1
   previewNameTextObjectName: PreviewNameText
   previewStatsTextObjectName: PreviewStatsText
@@ -5087,8 +4901,6 @@ MonoBehaviour:
   updatePreviewWhenHighlighted: 1
   selectCharacterOnClick: 1
   autoUseThisCharacterAsPreviewIfNothingSelected: 1
-  purchaseErrorMessageSeconds: 2
-  purchaseErrorFadeSeconds: 0.45
 --- !u!114 &1812624779
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5242,7 +5054,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4282896895
+    rgba: 4291761151
   m_fontColor: {r: 1, g: 0.82, b: 0.28, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -5260,7 +5072,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32
+  m_fontSize: 30
   m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -5461,22 +5273,22 @@ PrefabInstance:
     - target: {fileID: 3538981413802146906, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -8714122752122185190, guid: 9450279e74f5671408eb826b3a9077c4, type: 3}
+      objectReference: {fileID: 9197304086652216982, guid: e3f021c322005564a8d72bed07dddc0e, type: 3}
     - target: {fileID: 4014278774976142748, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 32.0422
       objectReference: {fileID: 0}
     - target: {fileID: 4014278774976142748, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 0.00019836
       objectReference: {fileID: 0}
     - target: {fileID: 4014278774976142748, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 0.40289307
       objectReference: {fileID: 0}
     - target: {fileID: 4014278774976142748, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -0.00020599365
       objectReference: {fileID: 0}
     - target: {fileID: 4225183264373869470, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_Pivot.x
@@ -5504,11 +5316,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4225183264373869470, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 720
+      value: 600
       objectReference: {fileID: 0}
     - target: {fileID: 4225183264373869470, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 172
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 4225183264373869470, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5911,29 +5723,12 @@ MonoBehaviour:
   characterId: Bear_Male
   button: {fileID: 1994339426}
   iconImage: {fileID: 343077340}
-  iconModelView: {fileID: 0}
   nameText: {fileID: 670606353}
   priceText: {fileID: 604466550}
-  applyStandardCardLayout: 1
-  cardSize: {x: 300, y: 450}
-  namePosition: {x: 0, y: 188}
-  nameSize: {x: 260, y: 46}
-  iconPosition: {x: 0, y: 34}
-  iconSize: {x: 245, y: 275}
-  statsPosition: {x: 0, y: -165}
-  statsSize: {x: 260, y: 116}
   showStatsOnlyWhenHighlighted: 1
-  useStatsBackdrop: 0
-  statsBackdropPadding: {x: 26, y: 18}
-  statsBackdropColor: {r: 0.06, g: 0.055, b: 0.045, a: 0.78}
-  statsTextColor: {r: 1, g: 0.92, b: 0.68, a: 1}
-  statsPriceColor: {r: 1, g: 0.78, b: 0.18, a: 1}
   lockedRoot: {fileID: 0}
   selectedRoot: {fileID: 0}
   disabledRoot: {fileID: 0}
-  ensureVisibleCardBackground: 1
-  cardBackgroundColor: {r: 0.08, g: 0.1, b: 0.13, a: 0.86}
-  selectedCardBackgroundColor: {r: 0.18, g: 0.13, b: 0.04, a: 0.92}
   scaleTarget: {fileID: 1994339424}
   normalScale: {x: 1, y: 1, z: 1}
   highlightedScale: {x: 1.12, y: 1.12, z: 1}
@@ -5943,9 +5738,6 @@ MonoBehaviour:
   previewSelectSpriteImage: {fileID: 0}
   previewLobbySpriteImage: {fileID: 0}
   previewBattleSpriteImage: {fileID: 0}
-  previewSelectModelView: {fileID: 0}
-  previewLobbyModelView: {fileID: 0}
-  previewBattleModelView: {fileID: 0}
   autoFindPreviewUI: 1
   previewNameTextObjectName: PreviewNameText
   previewStatsTextObjectName: PreviewStatsText
@@ -5960,8 +5752,6 @@ MonoBehaviour:
   updatePreviewWhenHighlighted: 1
   selectCharacterOnClick: 1
   autoUseThisCharacterAsPreviewIfNothingSelected: 1
-  purchaseErrorMessageSeconds: 2
-  purchaseErrorFadeSeconds: 0.45
 --- !u!114 &1994339426
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6260,7 +6050,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4282896895
+    rgba: 4291761151
   m_fontColor: {r: 1, g: 0.82, b: 0.28, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -6278,7 +6068,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 32
+  m_fontSize: 30
   m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -6408,7 +6198,6 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -6475,8 +6264,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 42, y: -42}
-  m_SizeDelta: {x: 220, y: 72}
+  m_AnchoredPosition: {x: 0, y: -445}
+  m_SizeDelta: {x: 300, y: 86}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &3000000003
 MonoBehaviour:
@@ -6629,7 +6418,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Lobby
+  m_text: Platform
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -6656,7 +6445,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 34
+  m_fontSize: 28
   m_fontSizeBase: 28
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -6709,6 +6498,1209 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3000000006}
   m_CullTransparentMesh: 1
+--- !u!1 &3000001000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3000001002}
+  - component: {fileID: 3000001001}
+  m_Layer: 0
+  m_Name: BattleTileStore
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &3000001001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3000001000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29abf0c1d59137d41bcff58f2a350ee1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MahjongGame.BattleTileStore
+  battleTiles:
+  - Id: battle_tile_01
+    Prefab: {fileID: 1162972782420524311, guid: 83f0c256ee6a4c7cb1018d320c3bb251, type: 3}
+  - Id: battle_tile_02
+    Prefab: {fileID: 1162972782420524311, guid: 909e9d939aa0476d84dfd9155da046c2, type: 3}
+  - Id: battle_tile_03
+    Prefab: {fileID: 1162972782420524311, guid: 554c92258baa4845b399a0d4a7fb86c1, type: 3}
+  - Id: battle_tile_04
+    Prefab: {fileID: 1162972782420524311, guid: bf995772dead4cda8f5b22eec66e5939, type: 3}
+  - Id: battle_tile_09
+    Prefab: {fileID: 1162972782420524311, guid: c53338764bdc460a86b1290bffeeb5bb, type: 3}
+  - Id: battle_tile_11
+    Prefab: {fileID: 1162972782420524311, guid: b846dc53fed64989922451caccabb5f2, type: 3}
+  - Id: battle_tile_12
+    Prefab: {fileID: 1162972782420524311, guid: 1152467b1a31487295032401e4b6d25c, type: 3}
+  - Id: battle_tile_14
+    Prefab: {fileID: 1162972782420524311, guid: f9394e51e6ff43a9a75b6510834bdfc0, type: 3}
+  - Id: battle_tile_15
+    Prefab: {fileID: 1162972782420524311, guid: b6bcd8ab35384301999b5e9023200d14, type: 3}
+  - Id: battle_tile_16
+    Prefab: {fileID: 1162972782420524311, guid: a70cf94ff92a47b08694fb57bfb660af, type: 3}
+  - Id: battle_tile_19
+    Prefab: {fileID: 1162972782420524311, guid: 8876a913929748f7ad4ee99a79718b9c, type: 3}
+  - Id: battle_tile_20
+    Prefab: {fileID: 1162972782420524311, guid: ad570a99a4834ce5b7cd46e5d901400f, type: 3}
+  - Id: battle_tile_21
+    Prefab: {fileID: 1162972782420524311, guid: fe0d863f3b824b8f976c289f5a58ad81, type: 3}
+  - Id: battle_tile_22
+    Prefab: {fileID: 1162972782420524311, guid: 79596dc00a6a48cab3e78571dcee1ed2, type: 3}
+  - Id: battle_tile_24
+    Prefab: {fileID: 1162972782420524311, guid: 7d72a862796c449e8cf1988cb9775258, type: 3}
+  - Id: battle_tile_25
+    Prefab: {fileID: 1162972782420524311, guid: 4e41cebaf449492b826e0d752eaa5567, type: 3}
+  - Id: battle_tile_27
+    Prefab: {fileID: 1162972782420524311, guid: 422cb7da078f4b1295508387f918c0ad, type: 3}
+  - Id: battle_tile_28
+    Prefab: {fileID: 1162972782420524311, guid: b0a1b4c55caf4fad83399353e5531564, type: 3}
+  - Id: battle_tile_29
+    DisplayName: Ruby Phoenix Crest
+    Prefab: {fileID: 1162972782420524311, guid: 72b55cc5a79246d896fd1933a1a50eb7, type: 3}
+    Rarity: 2
+    IsDonate: 1
+    IsFree: 1
+    Description: A warm ruby crest that remembers every fallen flame. The phoenix mark feeds courage back into the hand that refuses to break.
+    PassiveBonus:
+      MaxHp: 0
+      Attack: 4
+      Armor: 0
+      ParryChance: 0
+      CritChance: 0.03
+      CritDamageMultiplier: 1
+    ActiveBonus:
+      Attack: 8
+      CritChance: 0.08
+      CritDamageMultiplier: 1.15
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 4
+    SymbiosisBonus:
+      MaxHp: 0
+      Attack: 3
+      Armor: 0
+      ParryChance: 0
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Phoenix Reprisal
+      Description: When this stone guides the build, ruby fire marks the next clean strike and pushes the hero toward a sharper critical hit.
+  - Id: battle_tile_31
+    DisplayName: Emerald Serpent Shield
+    Prefab: {fileID: 1162972782420524311, guid: 42a17dd7325c406087255053b75698f1, type: 3}
+    Rarity: 2
+    IsDonate: 1
+    IsFree: 1
+    Description: An old emerald ward curled around a black shield. It does not rush the strike; it waits, listens, and turns danger aside at the last breath.
+    PassiveBonus:
+      MaxHp: 20
+      Attack: 0
+      Armor: 0.02
+      ParryChance: 0.03
+      CritChance: 0
+      CritDamageMultiplier: 1
+    ActiveBonus:
+      Attack: 3
+      CritChance: 0
+      CritDamageMultiplier: 1
+      HealSelf: 16
+    SymbiosisAnimalTypes:
+    - 4
+    - 3
+    SymbiosisBonus:
+      MaxHp: 12
+      Attack: 0
+      Armor: 0.01
+      ParryChance: 0.02
+      CritChance: 0
+      CritDamageMultiplier: 1
+    Skill:
+      Name: Serpent Ward
+      Description: The serpent coils around the hero, turning pressure into guarded breath and restoring resolve after a matched hit.
+  - Id: battle_tile_37
+    DisplayName: Golden Lion Sun
+    Prefab: {fileID: 1162972782420524311, guid: d3c9aceeea9746dcba9235866cf37e42, type: 3}
+    Rarity: 3
+    IsDonate: 1
+    IsFree: 1
+    Description: A lion face hammered from sunlit gold. Its gaze turns hesitation into command and makes every clean match feel like a royal verdict.
+    PassiveBonus:
+      MaxHp: 10
+      Attack: 2
+      Armor: 0
+      ParryChance: 0
+      CritChance: 0.02
+      CritDamageMultiplier: 1.1
+    ActiveBonus:
+      Attack: 6
+      CritChance: 0.05
+      CritDamageMultiplier: 1.25
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 0
+    SymbiosisBonus:
+      MaxHp: 0
+      Attack: 3
+      Armor: 0
+      ParryChance: 0
+      CritChance: 0.03
+      CritDamageMultiplier: 1
+    Skill:
+      Name: Solar Command
+      Description: The lion sun calls the hand forward, making decisive matches strike with royal force.
+  - Id: battle_tile_33
+    DisplayName: Golden Dragon Mask
+    Prefab: {fileID: 1162972782420524311, guid: 2c0d56cb8a73405c905d0f6a7b213f33, type: 3}
+    Rarity: 3
+    IsDonate: 1
+    IsFree: 1
+    Description: A ceremonial dragon mask plated in old gold. It carries the breath of ancient rulers and wakes the hidden command inside a fearless strike.
+    PassiveBonus:
+      MaxHp: 0
+      Attack: 5
+      Armor: 0
+      ParryChance: 0
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    ActiveBonus:
+      Attack: 9
+      CritChance: 0.06
+      CritDamageMultiplier: 1.2
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 4
+    SymbiosisBonus:
+      MaxHp: 12
+      Attack: 3
+      Armor: 0
+      ParryChance: 0
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Dragon Edict
+      Description: The golden mask opens an ancient command: the next matching rhythm carries dragon authority into the blow.
+  - Id: battle_tile_34
+    DisplayName: Crimson Demon Mask
+    Prefab: {fileID: 1162972782420524311, guid: 9ed208d1d90c4e468c5a6494c19d7234, type: 3}
+    Rarity: 2
+    IsDonate: 1
+    IsFree: 1
+    Description: A red mask sealed with a restless oath. It does not protect the hand; it dares it to finish the fight before fear can answer.
+    PassiveBonus:
+      MaxHp: 0
+      Attack: 6
+      Armor: 0
+      ParryChance: 0
+      CritChance: 0.04
+      CritDamageMultiplier: 1
+    ActiveBonus:
+      Attack: 12
+      CritChance: 0.04
+      CritDamageMultiplier: 1.15
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 1
+    - 2
+    SymbiosisBonus:
+      MaxHp: 0
+      Attack: 3
+      Armor: 0
+      ParryChance: 0.01
+      CritChance: 0.03
+      CritDamageMultiplier: 1
+    Skill:
+      Name: Demon Dare
+      Description: The crimson mask burns caution away and turns a risky match into a heavier attack.
+  - Id: battle_tile_38
+    DisplayName: Turquoise Kraken Anchor
+    Prefab: {fileID: 1162972782420524311, guid: 7f59ce710f5041d6ab98dde854a4d536, type: 3}
+    Rarity: 2
+    IsDonate: 1
+    IsFree: 1
+    Description: A sea anchor wrapped in turquoise pressure and abyssal patience. It teaches the deck to hold its ground while the tide breaks around it.
+    PassiveBonus:
+      MaxHp: 24
+      Attack: 0
+      Armor: 0.02
+      ParryChance: 0.02
+      CritChance: 0
+      CritDamageMultiplier: 1
+    ActiveBonus:
+      Attack: 4
+      CritChance: 0
+      CritDamageMultiplier: 1
+      HealSelf: 18
+    SymbiosisAnimalTypes:
+    - 3
+    - 5
+    SymbiosisBonus:
+      MaxHp: 16
+      Attack: 0
+      Armor: 0.01
+      ParryChance: 0.02
+      CritChance: 0
+      CritDamageMultiplier: 1
+    Skill:
+      Name: Abyssal Hold
+      Description: The kraken anchor roots the hero in place, converting a matched hit into endurance and recovery.
+  - Id: battle_tile_47
+    DisplayName: Celestial Stag Antlers
+    Prefab: {fileID: 1162972782420524311, guid: 32b5c9b6691240ef91d474f7d9bb9147, type: 3}
+    Rarity: 4
+    IsDonate: 1
+    IsFree: 1
+    Description: Antlers drawn from a quiet constellation. They guide the warrior through the clean path between instinct and mercy.
+    PassiveBonus:
+      MaxHp: 18
+      Attack: 1
+      Armor: 0
+      ParryChance: 0.02
+      CritChance: 0.02
+      CritDamageMultiplier: 1
+    ActiveBonus:
+      Attack: 5
+      CritChance: 0.03
+      CritDamageMultiplier: 1
+      HealSelf: 12
+    SymbiosisAnimalTypes:
+    - 1
+    - 3
+    SymbiosisBonus:
+      MaxHp: 10
+      Attack: 1
+      Armor: 0
+      ParryChance: 0.03
+      CritChance: 0.01
+      CritDamageMultiplier: 1
+    Skill:
+      Name: Celestial Path
+      Description: The stag antlers reveal a clean route through danger, blending parry instinct with gentle recovery.
+  - Id: battle_tile_64
+    DisplayName: Crimson Vampire Chalice
+    Prefab: {fileID: 1162972782420524311, guid: 912ae075b9b84ef3b6068d6bb7ce9f64, type: 3}
+    Rarity: 5
+    IsDonate: 1
+    IsFree: 1
+    Description: A jeweled chalice filled with a red moon's promise. Every matched strike tastes the enemy's momentum and returns a little life to its bearer.
+    PassiveBonus:
+      MaxHp: 14
+      Attack: 2
+      Armor: 0
+      ParryChance: 0
+      CritChance: 0.03
+      CritDamageMultiplier: 1.05
+    ActiveBonus:
+      Attack: 7
+      CritChance: 0.04
+      CritDamageMultiplier: 1.1
+      HealSelf: 20
+    SymbiosisAnimalTypes:
+    - 2
+    - 1
+    SymbiosisBonus:
+      MaxHp: 8
+      Attack: 2
+      Armor: 0
+      ParryChance: 0
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Blood Chalice
+      Description: The chalice drinks from momentum; a successful match returns life while sharpening the strike.
+  - Id: battle_tile_30
+    DisplayName: Sapphire Frost Crown
+    Prefab: {fileID: 1162972782420524311, guid: 108d96f0ceb741789a9c9eb204ca9ed0, type: 3}
+    Rarity: 2
+    IsDonate: 1
+    IsFree: 1
+    Description: A crown cut from old winter sapphire. It quiets panic, seals the breath, and lets a calm ruler strike through frost.
+    PassiveBonus:
+      MaxHp: 16
+      Attack: 1
+      Armor: 0.01
+      ParryChance: 0.02
+      CritChance: 0.01
+      CritDamageMultiplier: 1.05
+    ActiveBonus:
+      Attack: 4
+      CritChance: 0.03
+      CritDamageMultiplier: 1.1
+      HealSelf: 10
+    SymbiosisAnimalTypes:
+    - 5
+    - 3
+    SymbiosisBonus:
+      MaxHp: 12
+      Attack: 1
+      Armor: 0.01
+      ParryChance: 0.02
+      CritChance: 0
+      CritDamageMultiplier: 1
+    Skill:
+      Name: Frost Dominion
+      Description: The crown settles cold command over the board, turning a matched hit into guarded recovery and sharper frost.
+  - Id: battle_tile_32
+    DisplayName: Amethyst Void Eye
+    Prefab: {fileID: 1162972782420524311, guid: e8e64d40c793454d9e1b1d7b7e849bf1, type: 3}
+    Rarity: 3
+    IsDonate: 1
+    IsFree: 1
+    Description: An amethyst eye watching from the hollow between moves. It reads hesitation and turns hidden fear into a precise cut.
+    PassiveBonus:
+      MaxHp: 0
+      Attack: 3
+      Armor: 0
+      ParryChance: 0
+      CritChance: 0.04
+      CritDamageMultiplier: 1.1
+    ActiveBonus:
+      Attack: 8
+      CritChance: 0.08
+      CritDamageMultiplier: 1.18
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 1
+    - 4
+    SymbiosisBonus:
+      MaxHp: 0
+      Attack: 2
+      Armor: 0
+      ParryChance: 0.01
+      CritChance: 0.03
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Void Gaze
+      Description: The eye opens for one clean match, exposing the weak point behind the enemy rhythm.
+  - Id: battle_tile_35
+    DisplayName: Cyan Crystal Sword
+    Prefab: {fileID: 1162972782420524311, guid: db47522c258b4794b2771fc8ad9e89f2, type: 3}
+    Rarity: 2
+    IsDonate: 1
+    IsFree: 1
+    Description: A cyan blade grown rather than forged. Its edge carries clear water and bright glass, cutting only when the hand is certain.
+    PassiveBonus:
+      MaxHp: 0
+      Attack: 4
+      Armor: 0
+      ParryChance: 0.01
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    ActiveBonus:
+      Attack: 9
+      CritChance: 0.04
+      CritDamageMultiplier: 1.12
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 2
+    - 5
+    SymbiosisBonus:
+      MaxHp: 0
+      Attack: 2
+      Armor: 0
+      ParryChance: 0.02
+      CritChance: 0.01
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Crystal Riposte
+      Description: The sword catches the shape of the match and sends it back as a clean cyan counterstrike.
+  - Id: battle_tile_39
+    DisplayName: White Holy Wing Spear
+    Prefab: {fileID: 1162972782420524311, guid: fd64cefb6d7942068b8e28b2e9775ae5, type: 3}
+    Rarity: 3
+    IsDonate: 1
+    IsFree: 1
+    Description: A spear wrapped in white wings and silent vows. It does not chase victory, it pierces the lie that keeps defeat alive.
+    PassiveBonus:
+      MaxHp: 18
+      Attack: 2
+      Armor: 0.01
+      ParryChance: 0.02
+      CritChance: 0.01
+      CritDamageMultiplier: 1
+    ActiveBonus:
+      Attack: 6
+      CritChance: 0.03
+      CritDamageMultiplier: 1.1
+      HealSelf: 16
+    SymbiosisAnimalTypes:
+    - 5
+    - 4
+    SymbiosisBonus:
+      MaxHp: 12
+      Attack: 2
+      Armor: 0.01
+      ParryChance: 0.02
+      CritChance: 0
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Winged Oath
+      Description: The spear lifts the bearer through a matched strike, mending resolve while the blow lands.
+  - Id: battle_tile_40
+    DisplayName: Green Necromancer Lantern
+    Prefab: {fileID: 1162972782420524311, guid: c17fcac15d1d4e5db4dafefc47231258, type: 3}
+    Rarity: 2
+    IsDonate: 1
+    IsFree: 1
+    Description: A green lantern full of whispering ash. It keeps memory from dying and teaches lost strength to return as poison light.
+    PassiveBonus:
+      MaxHp: 20
+      Attack: 0
+      Armor: 0.01
+      ParryChance: 0
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    ActiveBonus:
+      Attack: 4
+      CritChance: 0.03
+      CritDamageMultiplier: 1.05
+      HealSelf: 18
+    SymbiosisAnimalTypes:
+    - 1
+    - 3
+    SymbiosisBonus:
+      MaxHp: 12
+      Attack: 1
+      Armor: 0.01
+      ParryChance: 0
+      CritChance: 0.02
+      CritDamageMultiplier: 1
+    Skill:
+      Name: Graveglow
+      Description: The lantern drinks the echo of a match and returns part of it as eerie endurance.
+  - Id: battle_tile_41
+    DisplayName: Blue Thunder Hammer
+    Prefab: {fileID: 1162972782420524311, guid: ed40221dd26f4184ba6636b010c921e7, type: 3}
+    Rarity: 2
+    IsDonate: 1
+    IsFree: 1
+    Description: A hammer with blue lightning trapped in its stone heart. It waits for impact, then teaches the air to break.
+    PassiveBonus:
+      MaxHp: 8
+      Attack: 4
+      Armor: 0
+      ParryChance: 0
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    ActiveBonus:
+      Attack: 12
+      CritChance: 0.05
+      CritDamageMultiplier: 1.15
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 3
+    - 5
+    SymbiosisBonus:
+      MaxHp: 8
+      Attack: 2
+      Armor: 0.01
+      ParryChance: 0
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Thunderfall
+      Description: The hammer drops thunder into a matched hit and shakes extra force from the board.
+  - Id: battle_tile_42
+    DisplayName: Rose Dagger Relic
+    Prefab: {fileID: 1162972782420524311, guid: d0940d1524e54ca382ffdd8ecb4391de, type: 3}
+    Rarity: 3
+    IsDonate: 1
+    IsFree: 1
+    Description: A rose dagger grown around an old wound. Its beauty is careful, its thorn remembers exactly where armor opens.
+    PassiveBonus:
+      MaxHp: 0
+      Attack: 4
+      Armor: 0
+      ParryChance: 0.02
+      CritChance: 0.03
+      CritDamageMultiplier: 1.05
+    ActiveBonus:
+      Attack: 8
+      CritChance: 0.06
+      CritDamageMultiplier: 1.12
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 1
+    - 2
+    SymbiosisBonus:
+      MaxHp: 0
+      Attack: 2
+      Armor: 0
+      ParryChance: 0.02
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Thorn Kiss
+      Description: The relic kisses the next matched strike with thorned precision and a sharper critical edge.
+  - Id: battle_tile_43
+    DisplayName: Gryphon Shield
+    Prefab: {fileID: 1162972782420524311, guid: 497ddecf6704498099d90108b98ea72a, type: 3}
+    Rarity: 3
+    IsDonate: 1
+    IsFree: 1
+    Description: A golden gryphon rises across a shield of oath metal. Its wings remember the sky and its claws refuse surrender.
+    PassiveBonus:
+      MaxHp: 24
+      Attack: 1
+      Armor: 0.03
+      ParryChance: 0.02
+      CritChance: 0
+      CritDamageMultiplier: 1
+    ActiveBonus:
+      Attack: 5
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+      HealSelf: 18
+    SymbiosisAnimalTypes:
+    - 0
+    - 5
+    SymbiosisBonus:
+      MaxHp: 14
+      Attack: 1
+      Armor: 0.02
+      ParryChance: 0.02
+      CritChance: 0
+      CritDamageMultiplier: 1
+    Skill:
+      Name: Gryphon Guard
+      Description: The gryphon spreads its shield over a clean match, turning pressure into guarded momentum.
+  - Id: battle_tile_44
+    DisplayName: Violet Portal Key
+    Prefab: {fileID: 1162972782420524311, guid: b6ec6f91f81749d68765dd8d4b31c064, type: 3}
+    Rarity: 3
+    IsDonate: 1
+    IsFree: 1
+    Description: A violet key set before a storming doorway. It opens only for those willing to step between one heartbeat and the next.
+    PassiveBonus:
+      MaxHp: 6
+      Attack: 2
+      Armor: 0
+      ParryChance: 0.03
+      CritChance: 0.03
+      CritDamageMultiplier: 1.05
+    ActiveBonus:
+      Attack: 7
+      CritChance: 0.06
+      CritDamageMultiplier: 1.15
+      HealSelf: 8
+    SymbiosisAnimalTypes:
+    - 4
+    - 1
+    SymbiosisBonus:
+      MaxHp: 8
+      Attack: 2
+      Armor: 0
+      ParryChance: 0.02
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Portal Step
+      Description: The key folds distance around the match, letting the next strike arrive from an impossible angle.
+  - Id: battle_tile_45
+    DisplayName: Jade Lotus Skull
+    Prefab: {fileID: 1162972782420524311, guid: 341b87802aa5419da53853d9af9deff5, type: 3}
+    Rarity: 3
+    IsDonate: 1
+    IsFree: 1
+    Description: A skull nested in jade lotus leaves. It teaches decay to bloom and turns patient survival into a quiet threat.
+    PassiveBonus:
+      MaxHp: 22
+      Attack: 0
+      Armor: 0.02
+      ParryChance: 0.01
+      CritChance: 0.01
+      CritDamageMultiplier: 1
+    ActiveBonus:
+      Attack: 4
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+      HealSelf: 20
+    SymbiosisAnimalTypes:
+    - 3
+    - 1
+    SymbiosisBonus:
+      MaxHp: 16
+      Attack: 0
+      Armor: 0.01
+      ParryChance: 0.02
+      CritChance: 0.01
+      CritDamageMultiplier: 1
+    Skill:
+      Name: Lotus Afterlife
+      Description: The lotus opens under a matched hit, returning life from the place where fear expected rot.
+  - Id: battle_tile_46
+    DisplayName: Prismatic Crystal Relic
+    Prefab: {fileID: 1162972782420524311, guid: 37c0dd7480504918885efc8451fac71b, type: 3}
+    Rarity: 3
+    IsDonate: 1
+    IsFree: 1
+    Description: A prismatic crystal singing in every color at once. It does not choose a path, it aligns all paths into one hard beam.
+    PassiveBonus:
+      MaxHp: 10
+      Attack: 2
+      Armor: 0.01
+      ParryChance: 0.01
+      CritChance: 0.02
+      CritDamageMultiplier: 1.08
+    ActiveBonus:
+      Attack: 7
+      CritChance: 0.05
+      CritDamageMultiplier: 1.16
+      HealSelf: 10
+    SymbiosisAnimalTypes:
+    - 0
+    - 4
+    SymbiosisBonus:
+      MaxHp: 8
+      Attack: 2
+      Armor: 0.01
+      ParryChance: 0.01
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Prism Accord
+      Description: The crystal harmonizes the match and turns scattered force into one bright answer.
+  - Id: battle_tile_48
+    DisplayName: Magma Titan Gauntlet
+    Prefab: {fileID: 1162972782420524311, guid: 3740fb108a3a43869ac85e815eb1b92e, type: 3}
+    Rarity: 4
+    IsDonate: 1
+    IsFree: 1
+    Description: A titan gauntlet cracked with living magma. It is too heavy for doubt and too hot for retreat.
+    PassiveBonus:
+      MaxHp: 18
+      Attack: 5
+      Armor: 0.02
+      ParryChance: 0
+      CritChance: 0.01
+      CritDamageMultiplier: 1.08
+    ActiveBonus:
+      Attack: 14
+      CritChance: 0.04
+      CritDamageMultiplier: 1.2
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 3
+    - 0
+    SymbiosisBonus:
+      MaxHp: 18
+      Attack: 3
+      Armor: 0.02
+      ParryChance: 0
+      CritChance: 0.01
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Titan Grip
+      Description: The gauntlet closes around a matched strike and compresses it into molten impact.
+  - Id: battle_tile_49
+    DisplayName: Storm Eagle Talon
+    Prefab: {fileID: 1162972782420524311, guid: cb49548bd7bd4b889ae41f1df390cfd3, type: 3}
+    Rarity: 4
+    IsDonate: 1
+    IsFree: 1
+    Description: A storm eagle talon holding a shard of blue skyfire. It strikes where thunder has already chosen.
+    PassiveBonus:
+      MaxHp: 8
+      Attack: 4
+      Armor: 0
+      ParryChance: 0.03
+      CritChance: 0.04
+      CritDamageMultiplier: 1.08
+    ActiveBonus:
+      Attack: 11
+      CritChance: 0.08
+      CritDamageMultiplier: 1.18
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 0
+    - 5
+    SymbiosisBonus:
+      MaxHp: 8
+      Attack: 3
+      Armor: 0
+      ParryChance: 0.02
+      CritChance: 0.03
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Sky Talon
+      Description: The talon catches the match at its highest point and drops it as lightning.
+  - Id: battle_tile_50
+    DisplayName: Shadow Scythe Hourglass
+    Prefab: {fileID: 1162972782420524311, guid: 7baa3289046344ebbf9071c091946a33, type: 3}
+    Rarity: 4
+    IsDonate: 1
+    IsFree: 1
+    Description: A black scythe curved around an hourglass of purple dusk. It cuts not flesh first, but the moment that protected it.
+    PassiveBonus:
+      MaxHp: 8
+      Attack: 3
+      Armor: 0.01
+      ParryChance: 0.02
+      CritChance: 0.04
+      CritDamageMultiplier: 1.1
+    ActiveBonus:
+      Attack: 10
+      CritChance: 0.07
+      CritDamageMultiplier: 1.2
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 2
+    - 4
+    SymbiosisBonus:
+      MaxHp: 8
+      Attack: 2
+      Armor: 0
+      ParryChance: 0.02
+      CritChance: 0.03
+      CritDamageMultiplier: 1.08
+    Skill:
+      Name: Last Grain
+      Description: The hourglass loses one dark grain and the matched strike lands before the enemy is ready.
+  - Id: battle_tile_51
+    DisplayName: Coral Trident Shell
+    Prefab: {fileID: 1162972782420524311, guid: 8362af2e21334f80a7af4a04b64b2f79, type: 3}
+    Rarity: 4
+    IsDonate: 1
+    IsFree: 1
+    Description: A coral trident rising from pearl foam and deep tide. It carries the voice of reefs that endured every storm.
+    PassiveBonus:
+      MaxHp: 24
+      Attack: 2
+      Armor: 0.02
+      ParryChance: 0.02
+      CritChance: 0.01
+      CritDamageMultiplier: 1
+    ActiveBonus:
+      Attack: 7
+      CritChance: 0.03
+      CritDamageMultiplier: 1.08
+      HealSelf: 22
+    SymbiosisAnimalTypes:
+    - 5
+    - 3
+    SymbiosisBonus:
+      MaxHp: 18
+      Attack: 1
+      Armor: 0.02
+      ParryChance: 0.02
+      CritChance: 0
+      CritDamageMultiplier: 1
+    Skill:
+      Name: Reef Verdict
+      Description: The trident calls the tide through a match, restoring breath while the strike breaks like surf.
+  - Id: battle_tile_52
+    DisplayName: Jade Samurai Mask
+    Prefab: {fileID: 1162972782420524311, guid: 198f308c0e0a44e4b82be65f5b7a1140, type: 3}
+    Rarity: 4
+    IsDonate: 1
+    IsFree: 1
+    Description: A jade mask from a warrior who answered only to discipline. Its silence is sharper than any boast.
+    PassiveBonus:
+      MaxHp: 12
+      Attack: 4
+      Armor: 0.02
+      ParryChance: 0.03
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    ActiveBonus:
+      Attack: 9
+      CritChance: 0.05
+      CritDamageMultiplier: 1.15
+      HealSelf: 10
+    SymbiosisAnimalTypes:
+    - 2
+    - 5
+    SymbiosisBonus:
+      MaxHp: 10
+      Attack: 2
+      Armor: 0.01
+      ParryChance: 0.03
+      CritChance: 0.01
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Silent Iaido
+      Description: The mask holds the breath of the match, then releases one disciplined cut.
+  - Id: battle_tile_53
+    DisplayName: Bronze Minotaur Axe
+    Prefab: {fileID: 1162972782420524311, guid: 9ebc624a14d2404eae0b52c4b936e99b, type: 3}
+    Rarity: 4
+    IsDonate: 1
+    IsFree: 1
+    Description: A bronze axe bearing the glare of the labyrinth king. It loves straight answers and makes walls regret standing.
+    PassiveBonus:
+      MaxHp: 20
+      Attack: 5
+      Armor: 0.01
+      ParryChance: 0
+      CritChance: 0.02
+      CritDamageMultiplier: 1.08
+    ActiveBonus:
+      Attack: 15
+      CritChance: 0.03
+      CritDamageMultiplier: 1.18
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 3
+    - 0
+    SymbiosisBonus:
+      MaxHp: 18
+      Attack: 3
+      Armor: 0.01
+      ParryChance: 0
+      CritChance: 0.01
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Labyrinth Break
+      Description: The axe finds the center of the match and breaks through with brutal certainty.
+  - Id: battle_tile_54
+    DisplayName: Silver Spider Web Dagger
+    Prefab: {fileID: 1162972782420524311, guid: 536585f646114cbd8fded6956dc1fac6, type: 3}
+    Rarity: 4
+    IsDonate: 1
+    IsFree: 1
+    Description: A silver dagger woven through moonlit web. It waits without trembling and punishes the first wrong movement.
+    PassiveBonus:
+      MaxHp: 6
+      Attack: 3
+      Armor: 0
+      ParryChance: 0.04
+      CritChance: 0.04
+      CritDamageMultiplier: 1.08
+    ActiveBonus:
+      Attack: 9
+      CritChance: 0.08
+      CritDamageMultiplier: 1.16
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 1
+    - 2
+    SymbiosisBonus:
+      MaxHp: 8
+      Attack: 2
+      Armor: 0
+      ParryChance: 0.03
+      CritChance: 0.03
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Webbed Needle
+      Description: The web tightens around a matched hit and guides the dagger into the exposed point.
+  - Id: battle_tile_55
+    DisplayName: Lotus Moon Staff
+    Prefab: {fileID: 1162972782420524311, guid: 0467487c37734fefa374a5effcc7ee9d, type: 3}
+    Rarity: 4
+    IsDonate: 1
+    IsFree: 1
+    Description: A moon staff crowned with a sleeping lotus. It turns restless power into soft rhythm and soft rhythm into survival.
+    PassiveBonus:
+      MaxHp: 26
+      Attack: 1
+      Armor: 0.01
+      ParryChance: 0.03
+      CritChance: 0.01
+      CritDamageMultiplier: 1
+    ActiveBonus:
+      Attack: 5
+      CritChance: 0.03
+      CritDamageMultiplier: 1.05
+      HealSelf: 24
+    SymbiosisAnimalTypes:
+    - 1
+    - 3
+    SymbiosisBonus:
+      MaxHp: 18
+      Attack: 1
+      Armor: 0.01
+      ParryChance: 0.03
+      CritChance: 0
+      CritDamageMultiplier: 1
+    Skill:
+      Name: Moon Lotus
+      Description: The lotus opens in moonlight after a match, mending the hero without dulling the strike.
+  - Id: battle_tile_56
+    DisplayName: Blood Moon Bow
+    Prefab: {fileID: 1162972782420524311, guid: cafd1e1e1ddc45f789034ba9a30d1ef4, type: 3}
+    Rarity: 5
+    IsDonate: 1
+    IsFree: 1
+    Description: A bow bent around a burning blood moon. It does not miss because it fires at the wound destiny already marked.
+    PassiveBonus:
+      MaxHp: 6
+      Attack: 4
+      Armor: 0
+      ParryChance: 0.01
+      CritChance: 0.05
+      CritDamageMultiplier: 1.1
+    ActiveBonus:
+      Attack: 12
+      CritChance: 0.09
+      CritDamageMultiplier: 1.22
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 2
+    - 1
+    SymbiosisBonus:
+      MaxHp: 8
+      Attack: 3
+      Armor: 0
+      ParryChance: 0.01
+      CritChance: 0.04
+      CritDamageMultiplier: 1.08
+    Skill:
+      Name: Red Eclipse
+      Description: The bow darkens the match under a blood moon and releases a ruthless critical shot.
+  - Id: battle_tile_57
+    DisplayName: Plague Doctor Raven Mask
+    Prefab: {fileID: 1162972782420524311, guid: ff35024419804ecaa395c4b8ae6ffd4f, type: 3}
+    Rarity: 5
+    IsDonate: 1
+    IsFree: 1
+    Description: A raven mask with green lenses and bottled omens. It studies the sickness in battle and teaches it to serve.
+    PassiveBonus:
+      MaxHp: 18
+      Attack: 2
+      Armor: 0.01
+      ParryChance: 0.02
+      CritChance: 0.03
+      CritDamageMultiplier: 1.05
+    ActiveBonus:
+      Attack: 6
+      CritChance: 0.05
+      CritDamageMultiplier: 1.1
+      HealSelf: 18
+    SymbiosisAnimalTypes:
+    - 1
+    - 5
+    SymbiosisBonus:
+      MaxHp: 12
+      Attack: 2
+      Armor: 0.01
+      ParryChance: 0.02
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Raven Remedy
+      Description: The mask distills danger from a matched hit and returns it as bitter recovery.
+  - Id: battle_tile_58
+    DisplayName: Sun Priest Ankh
+    Prefab: {fileID: 1162972782420524311, guid: 6371c026cfe54c56ab4e148b9c679029, type: 3}
+    Rarity: 5
+    IsDonate: 1
+    IsFree: 1
+    Description: A sun priest ankh blazing with old noon. Its gold does not glitter for vanity, it remembers resurrection.
+    PassiveBonus:
+      MaxHp: 22
+      Attack: 3
+      Armor: 0.01
+      ParryChance: 0.01
+      CritChance: 0.03
+      CritDamageMultiplier: 1.08
+    ActiveBonus:
+      Attack: 8
+      CritChance: 0.05
+      CritDamageMultiplier: 1.12
+      HealSelf: 22
+    SymbiosisAnimalTypes:
+    - 4
+    - 0
+    SymbiosisBonus:
+      MaxHp: 16
+      Attack: 2
+      Armor: 0.01
+      ParryChance: 0.01
+      CritChance: 0.03
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Noon Rite
+      Description: The ankh invokes the sun over a clean match, restoring life and raising the strike.
+  - Id: battle_tile_59
+    DisplayName: Frost Wolf Axe
+    Prefab: {fileID: 1162972782420524311, guid: 69133029a6614a5c920f4da3ca4412cd, type: 3}
+    Rarity: 5
+    IsDonate: 1
+    IsFree: 1
+    Description: A frost axe carved with the head of a winter wolf. It hunts in silence and leaves only blue breath behind.
+    PassiveBonus:
+      MaxHp: 14
+      Attack: 4
+      Armor: 0.01
+      ParryChance: 0.02
+      CritChance: 0.03
+      CritDamageMultiplier: 1.08
+    ActiveBonus:
+      Attack: 11
+      CritChance: 0.06
+      CritDamageMultiplier: 1.18
+      HealSelf: 8
+    SymbiosisAnimalTypes:
+    - 2
+    - 5
+    SymbiosisBonus:
+      MaxHp: 12
+      Attack: 3
+      Armor: 0.01
+      ParryChance: 0.02
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Winter Hunt
+      Description: The wolf axe follows the matched trail and bites with cold, precise force.
+  - Id: battle_tile_60
+    DisplayName: Onyx Coffin Shield
+    Prefab: {fileID: 1162972782420524311, guid: fd177e203a8e49d1bff32add0642b11d, type: 3}
+    Rarity: 5
+    IsDonate: 1
+    IsFree: 1
+    Description: An onyx coffin shield sealed with black vows. It turns endings into walls and makes despair hold the line.
+    PassiveBonus:
+      MaxHp: 34
+      Attack: 0
+      Armor: 0.04
+      ParryChance: 0.02
+      CritChance: 0
+      CritDamageMultiplier: 1
+    ActiveBonus:
+      Attack: 4
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+      HealSelf: 26
+    SymbiosisAnimalTypes:
+    - 3
+    - 4
+    SymbiosisBonus:
+      MaxHp: 22
+      Attack: 0
+      Armor: 0.03
+      ParryChance: 0.02
+      CritChance: 0
+      CritDamageMultiplier: 1
+    Skill:
+      Name: Coffin Wall
+      Description: The shield closes around the match, absorbing dread and returning stubborn life.
+  - Id: battle_tile_61
+    DisplayName: Emerald Druid Horn
+    Prefab: {fileID: 1162972782420524311, guid: f430dada96c04484ac909a0299b6975a, type: 3}
+    Rarity: 5
+    IsDonate: 1
+    IsFree: 1
+    Description: An emerald horn grown from ancient woodland bone. It calls roots under the battlefield and asks them to remember the hero.
+    PassiveBonus:
+      MaxHp: 28
+      Attack: 1
+      Armor: 0.02
+      ParryChance: 0.03
+      CritChance: 0.01
+      CritDamageMultiplier: 1
+    ActiveBonus:
+      Attack: 5
+      CritChance: 0.03
+      CritDamageMultiplier: 1.08
+      HealSelf: 24
+    SymbiosisAnimalTypes:
+    - 3
+    - 1
+    SymbiosisBonus:
+      MaxHp: 20
+      Attack: 1
+      Armor: 0.02
+      ParryChance: 0.03
+      CritChance: 0
+      CritDamageMultiplier: 1
+    Skill:
+      Name: Rootcall
+      Description: The horn sounds beneath a matched strike and pulls endurance up through the earth.
+  - Id: battle_tile_62
+    DisplayName: Comet Spearhead
+    Prefab: {fileID: 1162972782420524311, guid: 0bb0e0bab2a34464b3011131379f32bb, type: 3}
+    Rarity: 5
+    IsDonate: 1
+    IsFree: 1
+    Description: A spearhead split between fire and blue star ice. It falls like a promise from the sky and leaves no easy answer.
+    PassiveBonus:
+      MaxHp: 10
+      Attack: 5
+      Armor: 0
+      ParryChance: 0.01
+      CritChance: 0.04
+      CritDamageMultiplier: 1.1
+    ActiveBonus:
+      Attack: 14
+      CritChance: 0.07
+      CritDamageMultiplier: 1.22
+      HealSelf: 0
+    SymbiosisAnimalTypes:
+    - 4
+    - 0
+    SymbiosisBonus:
+      MaxHp: 10
+      Attack: 3
+      Armor: 0
+      ParryChance: 0.01
+      CritChance: 0.03
+      CritDamageMultiplier: 1.08
+    Skill:
+      Name: Cometfall
+      Description: The spearhead turns the match into a falling star, bright, sudden, and difficult to survive.
+  - Id: battle_tile_63
+    DisplayName: Royal Chess Knight Lance
+    Prefab: {fileID: 1162972782420524311, guid: 1eab65feee7b49f1826d8c032ae32a9c, type: 3}
+    Rarity: 5
+    IsDonate: 1
+    IsFree: 1
+    Description: A royal lance crowned by a blue knight. It moves by old rules, then wins from the angle no common soldier saw.
+    PassiveBonus:
+      MaxHp: 16
+      Attack: 4
+      Armor: 0.01
+      ParryChance: 0.03
+      CritChance: 0.03
+      CritDamageMultiplier: 1.08
+    ActiveBonus:
+      Attack: 10
+      CritChance: 0.06
+      CritDamageMultiplier: 1.18
+      HealSelf: 10
+    SymbiosisAnimalTypes:
+    - 5
+    - 0
+    SymbiosisBonus:
+      MaxHp: 12
+      Attack: 3
+      Armor: 0.01
+      ParryChance: 0.02
+      CritChance: 0.02
+      CritDamageMultiplier: 1.05
+    Skill:
+      Name: Knight Fork
+      Description: The lance leaps through the matched pattern and strikes from a royal diagonal.
+  totalRounds: 1
+  roundConfigs:
+  - RoundIndex: 1
+    TilesToUse: 56
+    LayoutLevel: 3
+--- !u!4 &3000001002
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3000001000}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -6717,3 +7709,4 @@ SceneRoots:
   - {fileID: 2084086230}
   - {fileID: 790672615}
   - {fileID: 1176474852}
+  - {fileID: 3000001002}

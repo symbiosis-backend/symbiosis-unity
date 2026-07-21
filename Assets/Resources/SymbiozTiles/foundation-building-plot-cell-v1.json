@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "project": "Dynasty: Legacy Symbiosis",
+  "resourceFolder": "Assets/Resources/SymbiozTiles",
+  "id": "foundation-building-plot-cell-v1",
+  "file": "foundation-building-plot-cell-v1.png",
+  "resourcesLoadPath": "SymbiozTiles/foundation-building-plot-cell-v1",
+  "displayName": "Building Foundation Plot Cell",
+  "role": "One-cell unfinished foundation texture for marking future building locations.",
+  "footprint": {
+    "widthCells": 1,
+    "heightCells": 1
+  },
+  "usage": {
+    "objectKind": "BuildPlot",
+    "placement": "Use as a full square top-down cell when the player lays out a future building footprint.",
+    "visualMeaning": "unfinished foundation, construction marker, reserved place for a later building"
+  }
+}

@@ -43,10 +43,16 @@ namespace MahjongGame
             string value = GameLocalization.Text(localizationKey);
 
             if (tmpText != null)
+            {
                 tmpText.text = value;
+                LocalizedTextStyle.Apply(tmpText);
+            }
 
             if (legacyText != null)
+            {
                 legacyText.text = value;
+                LocalizedTextStyle.Apply(legacyText);
+            }
         }
 
         private void OnLanguageChanged(GameLanguage language)

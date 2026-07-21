@@ -8,6 +8,8 @@ namespace MahjongGame
     [DisallowMultipleComponent]
     public sealed class ProfileMainView : MonoBehaviour
     {
+        private const string ProfileAvatarFrameResourcePath = "ProfileAvatars/ProfileAvatarFrameGenerated";
+
         [Header("UI")]
         [SerializeField] private Image avatarImage;
         [SerializeField] private TextMeshProUGUI nameText;
@@ -29,6 +31,8 @@ namespace MahjongGame
         private RectTransform compactButtonRect;
         private RectTransform compactAvatarFrameRect;
         private TextMeshProUGUI openProfileText;
+        private Canvas modalOverlayCanvas;
+        private GraphicRaycaster modalOverlayRaycaster;
         private Image modalOverlayImage;
         private RectTransform modalOverlayRect;
         private RectTransform modalWindowRect;
@@ -37,14 +41,24 @@ namespace MahjongGame
         private RectTransform modalFrameRect;
         private Image modalFrameImage;
         private RectTransform modalAvatarFrameRect;
+        private RectTransform identityCardRect;
+        private Image identityCardImage;
+        private RectTransform detailsCardRect;
+        private Image detailsCardImage;
+        private TextMeshProUGUI modalHeaderText;
+        private RectTransform privacyToggleRect;
+        private Image privacyToggleImage;
         private Button compactButton;
         private Button overlayCloseButton;
         private Button modalWindowClickBlocker;
         private Button closeButton;
+        private Button privacyToggleButton;
+        private TextMeshProUGUI privacyToggleText;
         private TextMeshProUGUI titleSelectHeaderText;
         private readonly List<Button> titleButtons = new List<Button>();
         private readonly List<TextMeshProUGUI> titleButtonLabels = new List<TextMeshProUGUI>();
         private readonly List<string> titleButtonIds = new List<string>();
+        private static Sprite cachedProfileAvatarFrameSprite;
         private Transform uiParent;
         private bool expanded;
 
@@ -53,20 +67,32 @@ namespace MahjongGame
             ProfileRuntimeBootstrap.EnsureServices();
             FriendsBootstrap.EnsureForCurrentScene();
             GlobalChatBootstrap.EnsureForCurrentScene();
+            AllianceBootstrap.EnsureForCurrentScene();
             EnsureGeneratedProfileInfo();
             EnsureRuntimeUi();
             ProfileService.ProfileChanged += Refresh;
             CurrencyService.CurrencyChanged += Refresh;
+            if (AllianceService.I != null)
+                AllianceService.I.AllianceChanged += Refresh;
             AppSettings.OnLanguageChanged += OnLanguageChanged;
+            if (AllianceService.I != null && AllianceService.I.Current == null)
+                StartCoroutine(AllianceService.I.Refresh());
             Refresh();
         }
 
         private void OnDisable()
         {
+            expanded = false;
+            SetObjectActive(modalOverlayRect != null ? modalOverlayRect.gameObject : null, false);
             ProfileService.ProfileChanged -= Refresh;
             CurrencyService.CurrencyChanged -= Refresh;
+            if (AllianceService.I != null)
+                AllianceService.I.AllianceChanged -= Refresh;
             AppSettings.OnLanguageChanged -= OnLanguageChanged;
+            MainLobbyUiCoordinator.SetRightStackSuppressed(false);
+            SettingsMenuUI.SetMainSettingsButtonSuppressed(false);
             UnbindButtons();
+            MainGameLaunchBootstrap.RefreshVisibilityNow();
         }
 
         private void OnRectTransformDimensionsChange()
@@ -104,9 +130,7 @@ namespace MahjongGame
             if (nameText == null)
                 return;
 
-            nameText.text = string.IsNullOrWhiteSpace(profile.DisplayName)
-                ? GetFallbackName()
-                : profile.DisplayName.Trim();
+            nameText.text = AllianceIdentityFormatter.FormatOwnName(profile, GetFallbackName());
         }
 
         private void ApplyAvatar(PlayerProfile profile)
@@ -115,7 +139,7 @@ namespace MahjongGame
                 return;
 
             Sprite spriteToUse = fallbackAvatar;
-            Sprite resourceSprite = ProfileAvatarResources.GetSprite(profile.Gender, profile.AvatarId);
+            Sprite resourceSprite = ProfileAvatarResources.GetDisplaySprite(profile);
             if (resourceSprite != null)
                 spriteToUse = resourceSprite;
 
@@ -165,9 +189,30 @@ namespace MahjongGame
                 return;
 
             string dynastyName = profile != null ? profile.DynastyName : string.Empty;
-            dynastyText.text = string.IsNullOrWhiteSpace(dynastyName)
+            string dynastyLine = string.IsNullOrWhiteSpace(dynastyName)
                 ? GameLocalization.Text("profile.dynasty_empty")
                 : GameLocalization.Format("profile.dynasty", dynastyName.Trim());
+
+            dynastyText.text = dynastyLine + "\n" + BuildAllianceProfileLine(profile);
+        }
+
+        private static string BuildAllianceProfileLine(PlayerProfile profile)
+        {
+            string allianceName = AllianceIdentityFormatter.ResolveOwnName(profile);
+            string allianceTag = AllianceIdentityFormatter.ResolveOwnTag(profile);
+            string label = GameLocalization.Text("alliance.title");
+            if (string.IsNullOrWhiteSpace(label) || string.Equals(label, "alliance.title", System.StringComparison.Ordinal))
+                label = "Alliance";
+
+            if (string.IsNullOrWhiteSpace(allianceName) && string.IsNullOrWhiteSpace(allianceTag))
+                return label + ": -";
+
+            if (string.IsNullOrWhiteSpace(allianceName))
+                return label + ": [" + allianceTag + "]";
+
+            return string.IsNullOrWhiteSpace(allianceTag)
+                ? label + ": " + allianceName
+                : label + ": " + allianceName + " [" + allianceTag + "]";
         }
 
         private void ApplySlot(PlayerProfile profile)
@@ -240,17 +285,37 @@ namespace MahjongGame
 
         private void OpenProfile()
         {
+            if (!MainHubStateController.CanOpenMainWindow("Profile"))
+                return;
+
             expanded = true;
+            SettingsMenuUI.ForceCloseAllSettingsMenus();
+            MainLobbyUiCoordinator.SetRightStackSuppressed(true);
+            SettingsMenuUI.SetMainSettingsButtonSuppressed(true);
             if (modalOverlayRect != null)
                 modalOverlayRect.SetAsLastSibling();
             RaiseAuxiliaryMenuRoots();
             LayoutProfileInfo();
+            MainGameLaunchBootstrap.RefreshVisibilityNow();
+
+            ChatFirstVisitDialogueUI intro = ChatFirstVisitDialogueUI.Ensure(modalOverlayRect);
+            if (intro != null)
+            {
+                intro.TryShowForCurrentProfile(
+                    "profile",
+                    "main.info.profile.title",
+                    "main.info.profile.body",
+                    "main.intro.profile.white");
+            }
         }
 
         private void CloseProfile()
         {
             expanded = false;
+            MainLobbyUiCoordinator.SetRightStackSuppressed(false);
+            SettingsMenuUI.SetMainSettingsButtonSuppressed(false);
             LayoutProfileInfo();
+            MainGameLaunchBootstrap.RefreshVisibilityNow();
         }
 
         private void SelectTitle(string titleId)
@@ -334,6 +399,8 @@ namespace MahjongGame
                 compactButton = compact.GetComponent<Button>();
                 compactButton.targetGraphic = image;
                 MainLobbyButtonStyle.Apply(compactButton);
+                compactButton.image.preserveAspect = false;
+                MainInfoHintTarget.Attach(compactButton, "main.info.profile.title", "main.info.profile.body");
 
                 openProfileText = CreateGeneratedText(compact.transform, "OpenProfileText", GameLocalization.Text("menu.profile"), 24f, FontStyles.Bold);
             }
@@ -353,7 +420,7 @@ namespace MahjongGame
                 Image frameImage = frame.GetComponent<Image>();
                 frameImage.color = Color.white;
                 frameImage.raycastTarget = false;
-                MainLobbyButtonStyle.ApplyAvatarCard(frameImage);
+                ApplyProfileAvatarFrame(frameImage);
             }
             else if (compactParent != null && compactAvatarFrameRect.parent != compactParent)
             {
@@ -361,12 +428,18 @@ namespace MahjongGame
                 compactAvatarFrameRect.SetAsFirstSibling();
             }
 
+            if (compactAvatarFrameRect != null)
+                ApplyProfileAvatarFrame(compactAvatarFrameRect.GetComponent<Image>());
+
             if (modalOverlayRect == null)
             {
-                GameObject overlay = new GameObject("ProfileModalOverlay", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
+                GameObject overlay = new GameObject("ProfileModalOverlay", typeof(RectTransform), typeof(Canvas), typeof(CanvasRenderer), typeof(Image), typeof(Button), typeof(GraphicRaycaster));
                 overlay.transform.SetParent(overlayParent, false);
                 overlay.transform.SetAsLastSibling();
                 modalOverlayRect = overlay.GetComponent<RectTransform>();
+                modalOverlayCanvas = overlay.GetComponent<Canvas>();
+                modalOverlayRaycaster = overlay.GetComponent<GraphicRaycaster>();
+                ConfigureModalOverlayCanvas();
                 modalOverlayImage = overlay.GetComponent<Image>();
                 modalOverlayImage.color = new Color(0f, 0f, 0f, 0.68f);
                 modalOverlayImage.raycastTarget = true;
@@ -381,6 +454,7 @@ namespace MahjongGame
                 modalWindowClickBlocker = window.GetComponent<Button>();
                 modalWindowClickBlocker.targetGraphic = windowImage;
                 EnsureModalWindowLayers();
+                EnsureModalDecorations();
 
                 GameObject modalAvatarFrame = new GameObject("ModalAvatarFrame", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
                 modalAvatarFrame.transform.SetParent(window.transform, false);
@@ -388,9 +462,14 @@ namespace MahjongGame
                 Image avatarFrameImage = modalAvatarFrame.GetComponent<Image>();
                 avatarFrameImage.color = Color.white;
                 avatarFrameImage.raycastTarget = false;
-                MainLobbyButtonStyle.ApplyAvatarCard(avatarFrameImage);
+                ApplyProfileAvatarFrame(avatarFrameImage);
 
                 closeButton = CreateTextButton(window.transform, "CloseProfileButton", GameLocalization.Text("settings.close"), 24f);
+                MainLobbyButtonStyle.ApplyCloseIconButton(closeButton);
+                privacyToggleButton = CreateTextButton(window.transform, "ProfilePrivacyToggle", GameLocalization.Text("profile.privacy.public"), 22f);
+                privacyToggleRect = privacyToggleButton.transform as RectTransform;
+                privacyToggleImage = privacyToggleButton.GetComponent<Image>();
+                privacyToggleText = privacyToggleButton.GetComponentInChildren<TextMeshProUGUI>(true);
 
                 titleSelectHeaderText = CreateGeneratedText(window.transform, "TitleSelectHeader", GameLocalization.Text("profile.titles"), 24f, FontStyles.Bold);
                 SetObjectActive(titleSelectHeaderText.gameObject, false);
@@ -400,10 +479,16 @@ namespace MahjongGame
                 modalOverlayRect.SetParent(overlayParent, false);
             }
 
+            ConfigureModalOverlayCanvas();
+
+            if (modalAvatarFrameRect != null)
+                ApplyProfileAvatarFrame(modalAvatarFrameRect.GetComponent<Image>());
+
             if (modalWindowRect != null)
             {
                 ConfigureModalWindowRoot(modalWindowRect.GetComponent<Image>());
                 EnsureModalWindowLayers();
+                EnsureModalDecorations();
             }
 
             BindButtons();
@@ -437,6 +522,29 @@ namespace MahjongGame
             image.raycastTarget = true;
         }
 
+        private void ConfigureModalOverlayCanvas()
+        {
+            if (modalOverlayRect == null)
+                return;
+
+            if (modalOverlayCanvas == null)
+                modalOverlayCanvas = modalOverlayRect.GetComponent<Canvas>();
+            if (modalOverlayCanvas == null)
+                modalOverlayCanvas = modalOverlayRect.gameObject.AddComponent<Canvas>();
+
+            modalOverlayCanvas.overrideSorting = true;
+            Canvas parentCanvas = modalOverlayRect.parent != null
+                ? modalOverlayRect.parent.GetComponentInParent<Canvas>()
+                : null;
+            modalOverlayCanvas.sortingLayerID = parentCanvas != null ? parentCanvas.sortingLayerID : 0;
+            modalOverlayCanvas.sortingOrder = 32760;
+
+            if (modalOverlayRaycaster == null)
+                modalOverlayRaycaster = modalOverlayRect.GetComponent<GraphicRaycaster>();
+            if (modalOverlayRaycaster == null)
+                modalOverlayRaycaster = modalOverlayRect.gameObject.AddComponent<GraphicRaycaster>();
+        }
+
         private void EnsureModalWindowLayers()
         {
             if (modalWindowRect == null)
@@ -465,7 +573,7 @@ namespace MahjongGame
 
             if (modalBackgroundImage != null)
             {
-                MainLobbyButtonStyle.ApplyProfileWindow(modalBackgroundImage);
+                MainLobbyButtonStyle.ApplyDlsWindow(modalBackgroundImage);
                 modalBackgroundImage.raycastTarget = false;
             }
 
@@ -489,6 +597,72 @@ namespace MahjongGame
                 SetObjectActive(modalFrameRect.gameObject, false);
         }
 
+        private void EnsureModalDecorations()
+        {
+            if (modalWindowRect == null)
+                return;
+
+            identityCardRect = EnsureSolidPanel(
+                modalWindowRect,
+                "ProfileIdentityCard",
+                identityCardRect,
+                ref identityCardImage,
+                new Color(0.012f, 0.045f, 0.078f, 0.7f));
+            detailsCardRect = EnsureSolidPanel(
+                modalWindowRect,
+                "ProfileDetailsCard",
+                detailsCardRect,
+                ref detailsCardImage,
+                new Color(0.012f, 0.045f, 0.078f, 0.56f));
+
+            if (modalHeaderText == null)
+            {
+                Transform existing = modalWindowRect.Find("ProfileModalHeader");
+                modalHeaderText = existing != null ? existing.GetComponent<TextMeshProUGUI>() : null;
+            }
+
+            if (modalHeaderText == null)
+                modalHeaderText = CreateGeneratedText(modalWindowRect, "ProfileModalHeader", GameLocalization.Text("menu.profile"), 38f, FontStyles.Bold);
+
+            if (modalBackgroundRect != null)
+                modalBackgroundRect.SetAsFirstSibling();
+            if (identityCardRect != null)
+                identityCardRect.SetSiblingIndex(Mathf.Min(1, modalWindowRect.childCount - 1));
+            if (detailsCardRect != null)
+                detailsCardRect.SetSiblingIndex(Mathf.Min(2, modalWindowRect.childCount - 1));
+        }
+
+        private static RectTransform EnsureSolidPanel(
+            Transform parent,
+            string objectName,
+            RectTransform cachedRect,
+            ref Image cachedImage,
+            Color color)
+        {
+            if (cachedRect == null && parent != null)
+            {
+                Transform existing = parent.Find(objectName);
+                cachedRect = existing as RectTransform;
+            }
+
+            if (cachedRect == null)
+            {
+                GameObject panel = new GameObject(objectName, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+                panel.transform.SetParent(parent, false);
+                cachedRect = panel.transform as RectTransform;
+            }
+
+            if (cachedImage == null)
+                cachedImage = cachedRect.GetComponent<Image>();
+            if (cachedImage == null)
+                cachedImage = cachedRect.gameObject.AddComponent<Image>();
+
+            cachedImage.sprite = null;
+            cachedImage.color = color;
+            cachedImage.raycastTarget = false;
+            return cachedRect;
+        }
+
         private void BindButtons()
         {
             if (compactButton != null)
@@ -509,6 +683,12 @@ namespace MahjongGame
                 closeButton.onClick.AddListener(CloseProfile);
             }
 
+            if (privacyToggleButton != null)
+            {
+                privacyToggleButton.onClick.RemoveListener(ToggleProfilePrivacy);
+                privacyToggleButton.onClick.AddListener(ToggleProfilePrivacy);
+            }
+
             if (modalWindowClickBlocker != null)
                 modalWindowClickBlocker.onClick.RemoveAllListeners();
 
@@ -525,6 +705,9 @@ namespace MahjongGame
 
             if (closeButton != null)
                 closeButton.onClick.RemoveListener(CloseProfile);
+
+            if (privacyToggleButton != null)
+                privacyToggleButton.onClick.RemoveListener(ToggleProfilePrivacy);
 
             if (modalWindowClickBlocker != null)
                 modalWindowClickBlocker.onClick.RemoveAllListeners();
@@ -560,25 +743,10 @@ namespace MahjongGame
 
         private void LayoutCompact()
         {
-            const float x = CentralPointLayout.LeftX;
-            const float y = CentralPointLayout.TopY;
-            const float width = CentralPointLayout.MenuWidth;
-            const float frameSize = 243f;
-            const float avatarFillRatio = 0.78f;
-            float avatarSize = frameSize * avatarFillRatio;
-            float avatarInset = (frameSize - avatarSize) * 0.5f;
-            const float buttonWidth = 231f;
-            const float buttonHeight = 72f;
-            const float buttonGap = 15f;
-
-            float frameX = x + (width - frameSize) * 0.5f;
-            float avatarX = frameX + avatarInset;
-            float avatarY = y - avatarInset;
-
-            SetTopLeftRect(compactAvatarFrameRect, frameX, y, frameSize, frameSize);
+            MainLobbyUiCoordinator.LayoutProfileAvatarFrame(compactAvatarFrameRect);
             SetObjectActive(compactAvatarFrameRect != null ? compactAvatarFrameRect.gameObject : null, !expanded);
 
-            SetTopLeftRect(compactButtonRect, x + (width - buttonWidth) * 0.5f, y - frameSize - buttonGap, buttonWidth, buttonHeight);
+            MainLobbyUiCoordinator.LayoutLeftMenuButton(compactButtonRect, MainLobbyLeftMenuSlot.Profile);
 
             if (avatarImage != null)
             {
@@ -586,17 +754,17 @@ namespace MahjongGame
                     ? compactAvatarFrameRect.parent
                     : compactButtonRect;
                 avatarImage.transform.SetParent(avatarParent, false);
-                SetTopLeftRect(avatarImage.rectTransform, avatarX, avatarY, avatarSize, avatarSize);
+                MainLobbyUiCoordinator.LayoutProfileAvatar(avatarImage.rectTransform);
                 avatarImage.preserveAspect = false;
                 PlaceBehindFrame(avatarImage.rectTransform, compactAvatarFrameRect);
             }
 
-            ConfigureText(openProfileText, 30f, 18f, FontStyles.Bold, TextAlignmentOptions.Center, Color.white);
+            ConfigureText(openProfileText, 38f, 22f, FontStyles.Bold, TextAlignmentOptions.Center, Color.white);
             if (openProfileText != null)
                 openProfileText.text = GameLocalization.Text("menu.profile");
             if (openProfileText != null && compactButtonRect != null && openProfileText.transform.parent != compactButtonRect)
                 openProfileText.transform.SetParent(compactButtonRect, false);
-            SetTopLeftRect(openProfileText != null ? openProfileText.rectTransform : null, 14f, -6f, buttonWidth - 28f, buttonHeight - 12f);
+            MainLobbyButtonStyle.ApplyButtonLabelLayout(openProfileText);
 
             SetTextVisible(false);
         }
@@ -607,70 +775,56 @@ namespace MahjongGame
 
             float rootWidth = rootRect.rect.width > 0f ? rootRect.rect.width : Screen.width;
             float rootHeight = rootRect.rect.height > 0f ? rootRect.rect.height : Screen.height;
-            const float frameAspect = 1513f / 1024f;
-            float marginX = Mathf.Clamp(rootWidth * 0.045f, 18f, 72f);
-            float marginY = Mathf.Clamp(rootHeight * 0.055f, 18f, 96f);
-            float maxWidth = rootWidth - marginX * 2f;
-            float maxHeight = rootHeight - marginY * 2f;
-            if (maxWidth <= 0f || maxHeight <= 0f)
+            float marginX = Mathf.Clamp(rootWidth * 0.025f, 18f, 56f);
+            float marginY = Mathf.Clamp(rootHeight * 0.035f, 16f, 42f);
+            float windowWidth = rootWidth - marginX * 2f;
+            float windowHeight = rootHeight - marginY * 2f;
+            if (windowWidth <= 0f || windowHeight <= 0f)
                 return;
-            float windowWidth = Mathf.Min(maxWidth, maxHeight * frameAspect);
-            float windowHeight = windowWidth / frameAspect;
 
-            if (windowHeight > maxHeight)
-            {
-                windowHeight = maxHeight;
-                windowWidth = windowHeight * frameAspect;
-            }
-
-            float minimumWidth = Mathf.Min(720f, maxWidth);
-            if (windowWidth < minimumWidth)
-            {
-                windowWidth = minimumWidth;
-                windowHeight = Mathf.Min(maxHeight, windowWidth / frameAspect);
-
-                if (windowHeight >= maxHeight - 0.01f)
-                    windowWidth = Mathf.Min(maxWidth, windowHeight * frameAspect);
-            }
-
-            bool compactModal = windowWidth < 900f || windowHeight < 620f;
-            float windowX = (rootWidth - windowWidth) * 0.5f;
-            float windowY = -(rootHeight - windowHeight) * 0.5f;
-
-            SetTopLeftRect(modalWindowRect, windowX, windowY, windowWidth, windowHeight);
+            bool compactModal = windowWidth < 1350f || windowHeight < 700f;
+            SetTopLeftRect(modalWindowRect, marginX, -marginY, windowWidth, windowHeight);
             EnsureModalWindowLayers();
-
-            float closeButtonWidth = Mathf.Clamp(windowWidth * (compactModal ? 0.34f : 0.23f), 180f, 248f);
-            float closeButtonHeight = Mathf.Clamp(windowHeight * 0.11f, 60f, 78f);
-            float closeButtonBottomGap = Mathf.Clamp(windowHeight * 0.035f, 14f, 28f);
-            float footerClearance = closeButtonBottomGap + closeButtonHeight + Mathf.Clamp(windowHeight * 0.045f, 18f, 36f);
-
-            float insetX = Mathf.Clamp(windowWidth * (compactModal ? 0.075f : 0.085f), 34f, 96f);
-            float insetTop = Mathf.Clamp(windowHeight * 0.11f, 34f, 92f);
-            float insetBottom = Mathf.Max(footerClearance, Mathf.Clamp(windowHeight * 0.17f, 86f, 128f));
+            EnsureModalDecorations();
             SetStretchRect(modalBackgroundRect, 0f, 0f, 0f, 0f);
             SetStretchRect(modalFrameRect, 0f, 0f, 0f, 0f);
 
-            float contentLeft = insetX + Mathf.Clamp(windowWidth * 0.03f, 16f, 36f);
-            float contentTop = insetTop + Mathf.Clamp(windowHeight * 0.045f, 16f, 34f);
-            float contentRight = insetX + Mathf.Clamp(windowWidth * 0.03f, 16f, 36f);
-            float frameSize = Mathf.Clamp(windowHeight * (compactModal ? 0.39f : 0.36f), compactModal ? 188f : 220f, 340f);
-            float avatarFillRatio = 0.78f;
-            float avatarSize = frameSize * avatarFillRatio;
+            float closeSize = Mathf.Clamp(windowHeight * 0.085f, 64f, 86f);
+            SetTextButtonLabel(closeButton, string.Empty);
+            MainLobbyButtonStyle.ApplyCloseIconButton(closeButton);
+            SetTopLeftRect(closeButton != null ? closeButton.transform as RectTransform : null, windowWidth - closeSize - 26f, -28f, closeSize, closeSize);
+
+            if (modalHeaderText != null)
+            {
+                modalHeaderText.text = GameLocalization.Text("menu.profile");
+                ConfigureText(modalHeaderText, compactModal ? 34f : 42f, 24f, FontStyles.Bold, TextAlignmentOptions.Center, Color.white);
+                SetTopLeftRect(modalHeaderText.rectTransform, windowWidth * 0.5f - 240f, -34f, 480f, 58f);
+                modalHeaderText.transform.SetAsLastSibling();
+            }
+
+            float cardTop = compactModal ? 104f : 122f;
+            float cardBottom = compactModal ? 54f : 68f;
+            float outerX = Mathf.Clamp(windowWidth * 0.038f, 34f, 74f);
+            float cardGap = Mathf.Clamp(windowWidth * 0.022f, 22f, 40f);
+            float contentWidth = windowWidth - outerX * 2f;
+            float cardHeight = Mathf.Max(300f, windowHeight - cardTop - cardBottom);
+            float minimumDetailsWidth = compactModal ? 430f : 620f;
+            float preferredIdentityWidth = Mathf.Clamp(contentWidth * 0.32f, compactModal ? 300f : 390f, 590f);
+            float identityWidth = Mathf.Min(preferredIdentityWidth, Mathf.Max(270f, contentWidth - cardGap - minimumDetailsWidth));
+            float detailsX = outerX + identityWidth + cardGap;
+            float detailsWidth = Mathf.Max(300f, windowWidth - detailsX - outerX);
+
+            SetTopLeftRect(identityCardRect, outerX, -cardTop, identityWidth, cardHeight);
+            SetTopLeftRect(detailsCardRect, detailsX, -cardTop, detailsWidth, cardHeight);
+
+            float frameSize = Mathf.Clamp(
+                Mathf.Min(identityWidth * 0.68f, cardHeight * 0.54f),
+                compactModal ? 178f : 220f,
+                350f);
+            float avatarSize = frameSize * 0.79f;
             float avatarInset = (frameSize - avatarSize) * 0.5f;
-            float profileShiftLeft = 10f;
-            float profileShiftDown = windowHeight * 0.10f;
-            float avatarX = contentLeft - profileShiftLeft;
-            float avatarY = -contentTop - profileShiftDown;
-            float avatarOffsetRight = 12f;
-            float avatarOffsetUp = 12f;
-            float avatarFrameX = avatarX + avatarOffsetRight;
-            float avatarFrameY = avatarY + avatarOffsetUp;
-            float textX = avatarX + frameSize + Mathf.Clamp(windowWidth * 0.04f, 22f, 54f);
-            float fullTextWidth = Mathf.Max(compactModal ? 180f : 220f, windowWidth - textX - contentRight);
-            float sideWidth = Mathf.Clamp(windowWidth * (compactModal ? 0.16f : 0.13f), 84f, 144f);
-            float nameGap = 16f;
-            float nameWidth = Mathf.Max(140f, fullTextWidth - sideWidth - nameGap);
+            float avatarFrameX = outerX + (identityWidth - frameSize) * 0.5f;
+            float avatarFrameY = -cardTop - Mathf.Clamp(cardHeight * 0.055f, 20f, 34f);
 
             SetTopLeftRect(modalAvatarFrameRect, avatarFrameX, avatarFrameY, frameSize, frameSize);
 
@@ -685,43 +839,68 @@ namespace MahjongGame
             SetTextVisible(true);
             MoveTextToModalWindow();
 
-            float nameFontSize = compactModal ? 40f : 52f;
-            float dynastyFontSize = compactModal ? 28f : 34f;
-            float infoFontSize = compactModal ? 22f : 28f;
-            float nameHeight = compactModal ? 60f : 60f;
-            float dynastyHeight = compactModal ? 40f : 42f;
-            float infoLineHeight = compactModal ? 28f : 36f;
-            float infoGap = compactModal ? 8f : 10f;
-            float nameY = avatarY + (compactModal ? 2f : 4f);
-            float dynastyY = nameY - (nameHeight + 10f);
-            float infoStartY = dynastyY - (dynastyHeight + 10f);
+            float identityPadding = Mathf.Clamp(identityWidth * 0.07f, 20f, 34f);
+            float nameY = avatarFrameY - frameSize - 18f;
+            ConfigureText(nameText, compactModal ? 34f : 42f, compactModal ? 20f : 26f, FontStyles.Bold, TextAlignmentOptions.Center, Color.white);
+            SetTopLeftRect(nameText != null ? nameText.rectTransform : null, outerX + identityPadding, nameY, identityWidth - identityPadding * 2f, 58f);
 
-            ConfigureText(nameText, nameFontSize, compactModal ? 22f : 30f, FontStyles.Bold, TextAlignmentOptions.Left, Color.white, TextWrappingModes.Normal);
-            SetTopLeftRect(nameText != null ? nameText.rectTransform : null, textX, nameY, nameWidth, nameHeight);
+            float detailsPadding = Mathf.Clamp(detailsWidth * 0.045f, 28f, 48f);
+            float detailsTopY = -cardTop - Mathf.Clamp(cardHeight * 0.065f, 24f, 40f);
+            float slotWidth = Mathf.Clamp(detailsWidth * 0.22f, 130f, 210f);
+            float dynastyWidth = Mathf.Max(180f, detailsWidth - detailsPadding * 2f - slotWidth - 20f);
 
-            ConfigureText(slotText, compactModal ? 22f : 28f, compactModal ? 14f : 18f, FontStyles.Bold, TextAlignmentOptions.Center, new Color(0.78f, 0.9f, 1f, 1f));
-            SetTopLeftRect(slotText != null ? slotText.rectTransform : null, textX + nameWidth + nameGap, nameY + 4f, sideWidth, compactModal ? 34f : 40f);
+            ConfigureText(dynastyText, compactModal ? 25f : 31f, compactModal ? 17f : 21f, FontStyles.Bold, TextAlignmentOptions.Left, new Color(0.88f, 0.95f, 1f, 1f), TextWrappingModes.Normal);
+            SetTopLeftRect(dynastyText != null ? dynastyText.rectTransform : null, detailsX + detailsPadding, detailsTopY, dynastyWidth, compactModal ? 76f : 88f);
 
-            ConfigureText(dynastyText, dynastyFontSize, compactModal ? 18f : 21f, FontStyles.Bold, TextAlignmentOptions.Left, new Color(0.86f, 0.93f, 1f, 1f), TextWrappingModes.Normal);
-            SetTopLeftRect(dynastyText != null ? dynastyText.rectTransform : null, textX, dynastyY, fullTextWidth, dynastyHeight);
+            ConfigureText(slotText, compactModal ? 22f : 27f, 15f, FontStyles.Bold, TextAlignmentOptions.Center, new Color(0.72f, 0.88f, 1f, 1f));
+            SetTopLeftRect(slotText != null ? slotText.rectTransform : null, detailsX + detailsWidth - detailsPadding - slotWidth, detailsTopY + 2f, slotWidth, 42f);
 
-            ConfigureText(titleText, infoFontSize, compactModal ? 14f : 18f, FontStyles.Normal, TextAlignmentOptions.Left, new Color(0.78f, 0.86f, 0.98f, 1f));
-            SetTopLeftRect(titleText != null ? titleText.rectTransform : null, textX, infoStartY, fullTextWidth, infoLineHeight);
+            float infoFontSize = compactModal ? 23f : 29f;
+            float infoLineHeight = compactModal ? 42f : 50f;
+            float infoGap = compactModal ? 8f : 12f;
+            float infoStartY = detailsTopY - (compactModal ? 108f : 126f);
+            float infoWidth = detailsWidth - detailsPadding * 2f;
+            Color primaryInfoColor = new Color(0.8f, 0.89f, 1f, 1f);
+            Color secondaryInfoColor = new Color(0.68f, 0.79f, 0.92f, 1f);
 
-            ConfigureText(rankText, infoFontSize, compactModal ? 14f : 18f, FontStyles.Normal, TextAlignmentOptions.Left, new Color(0.78f, 0.86f, 0.98f, 1f));
-            SetTopLeftRect(rankText != null ? rankText.rectTransform : null, textX, infoStartY - (infoLineHeight + infoGap), fullTextWidth, infoLineHeight);
+            ConfigureText(titleText, infoFontSize, compactModal ? 15f : 19f, FontStyles.Normal, TextAlignmentOptions.Left, primaryInfoColor);
+            SetTopLeftRect(titleText != null ? titleText.rectTransform : null, detailsX + detailsPadding, infoStartY, infoWidth, infoLineHeight);
 
-            ConfigureText(publicIdText, infoFontSize, compactModal ? 14f : 18f, FontStyles.Normal, TextAlignmentOptions.Left, new Color(0.73f, 0.82f, 0.95f, 1f));
-            SetTopLeftRect(publicIdText != null ? publicIdText.rectTransform : null, textX, infoStartY - (infoLineHeight + infoGap) * 2f, fullTextWidth, infoLineHeight);
+            ConfigureText(rankText, infoFontSize, compactModal ? 15f : 19f, FontStyles.Normal, TextAlignmentOptions.Left, primaryInfoColor);
+            SetTopLeftRect(rankText != null ? rankText.rectTransform : null, detailsX + detailsPadding, infoStartY - (infoLineHeight + infoGap), infoWidth, infoLineHeight);
 
-            ConfigureText(ageGenderText, infoFontSize, compactModal ? 14f : 18f, FontStyles.Normal, TextAlignmentOptions.Left, new Color(0.73f, 0.82f, 0.95f, 1f));
-            SetTopLeftRect(ageGenderText != null ? ageGenderText.rectTransform : null, textX, infoStartY - (infoLineHeight + infoGap) * 3f, fullTextWidth, infoLineHeight);
+            ConfigureText(publicIdText, infoFontSize, compactModal ? 15f : 19f, FontStyles.Normal, TextAlignmentOptions.Left, secondaryInfoColor);
+            SetTopLeftRect(publicIdText != null ? publicIdText.rectTransform : null, detailsX + detailsPadding, infoStartY - (infoLineHeight + infoGap) * 2f, infoWidth, infoLineHeight);
+
+            ConfigureText(ageGenderText, infoFontSize, compactModal ? 15f : 19f, FontStyles.Normal, TextAlignmentOptions.Left, secondaryInfoColor);
+            SetTopLeftRect(ageGenderText != null ? ageGenderText.rectTransform : null, detailsX + detailsPadding, infoStartY - (infoLineHeight + infoGap) * 3f, infoWidth, infoLineHeight);
 
             HideTitleSelector();
-            SetTextButtonLabel(closeButton, GameLocalization.Text("settings.close"));
-            SetTopLeftRect(closeButton != null ? closeButton.transform as RectTransform : null, (windowWidth - closeButtonWidth) * 0.5f, -windowHeight + closeButtonBottomGap + closeButtonHeight, closeButtonWidth, closeButtonHeight);
+            bool profilePublic = ProfileService.I == null || ProfileService.I.Current == null || ProfileService.I.Current.IsProfilePublic;
+            SetTextButtonLabel(privacyToggleButton, profilePublic ? GameLocalization.Text("profile.privacy.public") : GameLocalization.Text("profile.privacy.private"));
+            ConfigureText(privacyToggleText, compactModal ? 20f : 24f, compactModal ? 13f : 15f, FontStyles.Bold, TextAlignmentOptions.Center, Color.white);
+            if (privacyToggleImage != null)
+                privacyToggleImage.color = profilePublic ? new Color(0.12f, 0.42f, 0.32f, 1f) : new Color(0.42f, 0.18f, 0.18f, 1f);
+            float privacyWidth = Mathf.Max(190f, identityWidth - identityPadding * 2f);
+            float privacyHeight = compactModal ? 54f : 62f;
+            float privacyY = -cardTop - cardHeight + privacyHeight + Mathf.Clamp(cardHeight * 0.055f, 20f, 34f);
+            SetTopLeftRect(privacyToggleRect, outerX + identityPadding, privacyY, privacyWidth, privacyHeight);
+            if (privacyToggleButton != null)
+                privacyToggleButton.transform.SetAsLastSibling();
+
             if (closeButton != null)
                 closeButton.transform.SetAsLastSibling();
+        }
+
+        private void ToggleProfilePrivacy()
+        {
+            PlayerProfile profile = ProfileService.I != null ? ProfileService.I.Current : null;
+            if (profile == null || ProfileService.I == null)
+                return;
+
+            profile.EnsureData();
+            ProfileService.I.SetProfilePublic(!profile.IsProfilePublic);
+            Refresh();
         }
 
         private void MoveTextToModalWindow()
@@ -919,7 +1098,7 @@ namespace MahjongGame
 
             TextMeshProUGUI text = CreateGeneratedText(buttonObject.transform, "Label", label, fontSize, FontStyles.Bold);
             ConfigureText(text, fontSize, 16f, FontStyles.Bold, TextAlignmentOptions.Center, Color.white);
-            Stretch(text.rectTransform);
+            MainLobbyButtonStyle.ApplyButtonLabelLayout(text);
             return button;
         }
 
@@ -941,7 +1120,7 @@ namespace MahjongGame
             TextAlignmentOptions alignment,
             Color color,
             TextWrappingModes wrappingMode = TextWrappingModes.NoWrap,
-            TextOverflowModes overflowMode = TextOverflowModes.Ellipsis)
+            TextOverflowModes overflowMode = TextOverflowModes.Truncate)
         {
             if (label == null)
                 return;
@@ -1002,6 +1181,37 @@ namespace MahjongGame
             int frameIndex = frame.GetSiblingIndex();
             content.SetSiblingIndex(frameIndex);
             frame.SetSiblingIndex(Mathf.Min(content.GetSiblingIndex() + 1, frame.parent.childCount - 1));
+        }
+
+        private static void ApplyProfileAvatarFrame(Image image)
+        {
+            if (image == null)
+                return;
+
+            if (cachedProfileAvatarFrameSprite == null)
+            {
+                cachedProfileAvatarFrameSprite = Resources.Load<Sprite>(ProfileAvatarFrameResourcePath);
+                if (cachedProfileAvatarFrameSprite == null)
+                {
+                    Sprite[] sprites = Resources.LoadAll<Sprite>(ProfileAvatarFrameResourcePath);
+                    if (sprites != null && sprites.Length > 0)
+                        cachedProfileAvatarFrameSprite = sprites[0];
+                }
+            }
+
+            if (cachedProfileAvatarFrameSprite != null)
+            {
+                image.sprite = cachedProfileAvatarFrameSprite;
+                image.type = Image.Type.Simple;
+                image.preserveAspect = false;
+                image.color = Color.white;
+            }
+            else
+            {
+                MainLobbyButtonStyle.ApplyAvatarCard(image);
+            }
+
+            image.raycastTarget = false;
         }
 
         private static void RaiseAuxiliaryMenuRoots()

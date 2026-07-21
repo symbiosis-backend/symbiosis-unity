@@ -575,12 +575,11 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 84df95e341d96274982b2eb9528b3fc2, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::OkeyGame.SceneNavigator
+  m_EditorClassIdentifier: Assembly-CSharp::MahjongGame.SceneNavigator
   entryScene: Entry
   mainScene: Main
-  lobbyOkeyScene: LobbyOkey
-  gameOkeyScene: GameOkey
   lobbyMahjongScene: LobbyMahjong
+  battleLobbyMahjongScene: LobbyMahjongBattle
   gameMahjongScene: GameMahjong
   useDoorFxForMahjong: 1
   useDoorFxForMainToMahjong: 1
@@ -2598,7 +2597,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &733623715
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3036,7 +3035,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &821187473
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3063,7 +3062,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 821187472}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1231469459ed97f4eb493ed07b347e88, type: 3}
   m_Name: 
@@ -3072,7 +3071,7 @@ MonoBehaviour:
   selectCharacterButton: {fileID: 1086178485}
   changeCharacterButton: {fileID: 1778401695}
   hideExplicitCharacterButtons: 1
-  openSelectionByLobbyCharacterClick: 1
+  openSelectionByLobbyCharacterClick: 0
   selectCharacterButtonText: {fileID: 0}
   changeCharacterButtonText: {fileID: 0}
   selectedCharacterNameText: {fileID: 0}
@@ -5755,7 +5754,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1410334271
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5851,7 +5850,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 1877849524339737772, guid: f66ab8f49189fad4798c4cffbe3abd52, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -7554,7 +7553,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1778401694
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8851,13 +8850,22 @@ MonoBehaviour:
   battleButtonRoot: {fileID: 540205830}
   resetProgressButtonRoot: {fileID: 665302428}
   storyButton: {fileID: 1410334272}
+  endlessButton: {fileID: 0}
   battleButton: {fileID: 1986478356}
   backButton: {fileID: 318088492}
   resetButton: {fileID: 665302430}
   gameSceneName: GameMahjong
   battleLobbySceneName: LobbyMahjongBattle
-  showResetProgressButton: 1
+  enableStoryMode: 1
+  showResetProgressButton: 0
   debugLogs: 1
+  hideShopInEndlessLobby: 1
+  hideBattleCharacterPreviewInEndlessLobby: 1
+  useSimpleBattleLobbyButton: 1
+  storyModeButtonText: STORY MODE
+  endlessButtonText: ENDLESS
+  battleLobbyButtonText: BATTLE LOBBY
+  mainBackButtonText: BACK
   useCloudEffect: 1
   rootCanvas: {fileID: 1173851079}
   cloudSprite: {fileID: -8489992787676191066, guid: 1418ed0d98bbc4541b3f9cd76ab912be, type: 3}
@@ -9027,10 +9035,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1173851080}
     m_Modifications:
+    - target: {fileID: 325074960693339824, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
+      propertyPath: ozTileIconSprite
+      value:
+      objectReference: {fileID: 7859090005025518239, guid: f5cf633304b2b0a478b233cab145a7f0, type: 3}
     - target: {fileID: 3538981413802146906, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 4916514817523440012, guid: ce4e12cc1ab6d7d498f8b604816a763a, type: 3}
+      objectReference: {fileID: 5160735193812045221, guid: 8eb9a597e7c44fe494e259cc67d78cab, type: 3}
+    - target: {fileID: 3538981413802146906, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
+      propertyPath: m_PreserveAspect
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4014278774976142748, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
@@ -9061,11 +9077,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4225183264373869470, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 720
+      value: 860
       objectReference: {fileID: 0}
     - target: {fileID: 4225183264373869470, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 172
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 4225183264373869470, guid: 6ad428674f265974196ca97ef0739d0d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -9146,7 +9162,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2146832483
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9212,7 +9228,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 286252576}
-        m_TargetAssemblyTypeName: OkeyGame.SceneNavigator, Assembly-CSharp
+        m_TargetAssemblyTypeName: MahjongGame.SceneNavigator, Assembly-CSharp
         m_MethodName: LoadMain
         m_Mode: 1
         m_Arguments:

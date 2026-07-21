@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using MahjongGame.Networking;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -7,7 +8,7 @@ namespace MahjongGame.Content
 {
     public sealed class ServerCharacterCatalogService : MonoBehaviour
     {
-        private const string CatalogUrl = "https://dlsymbiosis.com/content/characters";
+        private const string CatalogPath = "/content/characters";
 
         private static ServerCharacterCatalogService instance;
 
@@ -78,15 +79,26 @@ namespace MahjongGame.Content
             LastLoadSucceeded = false;
             LastError = string.Empty;
 
-            using UnityWebRequest request = UnityWebRequest.Get(CatalogUrl);
-            request.timeout = Mathf.Max(1, requestTimeoutSeconds);
-            yield return request.SendWebRequest();
+            string responseText = string.Empty;
+            string requestError = string.Empty;
+            bool failed = true;
 
-            if (request.result == UnityWebRequest.Result.ConnectionError ||
-                request.result == UnityWebRequest.Result.ProtocolError ||
-                request.result == UnityWebRequest.Result.DataProcessingError)
+            for (int i = 0; i < BackendEndpoints.BaseUrls.Length; i++)
             {
-                LastError = request.error;
+                using UnityWebRequest request = UnityWebRequest.Get(BackendEndpoints.BuildUrl(BackendEndpoints.BaseUrls[i], CatalogPath));
+                request.timeout = Mathf.Max(1, requestTimeoutSeconds);
+                yield return request.SendWebRequest();
+
+                responseText = request.downloadHandler != null ? request.downloadHandler.text : string.Empty;
+                requestError = request.error;
+                failed = BackendEndpoints.RequestFailed(request);
+                if (!failed || !BackendEndpoints.CanRetryWithFallback(request) || i == BackendEndpoints.BaseUrls.Length - 1)
+                    break;
+            }
+
+            if (failed)
+            {
+                LastError = requestError;
                 Debug.LogWarning("[ServerCharacterCatalogService] Character catalog request failed: " + LastError);
                 IsLoading = false;
                 yield break;
@@ -95,7 +107,7 @@ namespace MahjongGame.Content
             BattleCharacterDatabase.RemoteCharacterCatalog catalog = null;
             try
             {
-                catalog = JsonUtility.FromJson<BattleCharacterDatabase.RemoteCharacterCatalog>(request.downloadHandler.text);
+                catalog = JsonUtility.FromJson<BattleCharacterDatabase.RemoteCharacterCatalog>(responseText);
             }
             catch (Exception ex)
             {

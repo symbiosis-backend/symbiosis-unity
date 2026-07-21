@@ -19,7 +19,6 @@ namespace MahjongGame
         private readonly List<IncomingFriendRequest> incomingRequests = new List<IncomingFriendRequest>();
         private readonly List<OutgoingFriendRequest> outgoingRequests = new List<OutgoingFriendRequest>();
         private string lastError = string.Empty;
-        private Coroutine heartbeatRoutine;
 
         public event Action FriendsChanged;
         public event Action<string> ErrorChanged;
@@ -41,76 +40,71 @@ namespace MahjongGame
             PersistentObjectUtility.DontDestroyOnLoad(gameObject);
         }
 
-        private void OnEnable()
-        {
-            heartbeatRoutine = StartCoroutine(HeartbeatLoop());
-        }
-
-        private void OnDisable()
-        {
-            if (heartbeatRoutine != null)
-            {
-                StopCoroutine(heartbeatRoutine);
-                heartbeatRoutine = null;
-            }
-        }
-
         public IEnumerator Refresh(Action<bool, string> completed = null)
         {
-            string token = GetSessionToken();
-            if (string.IsNullOrWhiteSpace(token))
+            for (int attempt = 0; attempt < 2; attempt++)
             {
-                const string error = "Friends require server profile.";
-                SetError(error);
-                completed?.Invoke(false, error);
+                string token = GetSessionToken();
+                if (string.IsNullOrWhiteSpace(token))
+                {
+                    bool recovered = false;
+                    string recoveryError = string.Empty;
+                    if (attempt == 0)
+                        yield return RecoverSession(string.Empty, (success, error) => { recovered = success; recoveryError = error; });
+                    if (recovered)
+                        continue;
+
+                    string missingError = string.IsNullOrWhiteSpace(recoveryError) ? GameLocalization.Text("friends.error_profile") : recoveryError;
+                    SetError(missingError);
+                    completed?.Invoke(false, missingError);
+                    yield break;
+                }
+
+                string url = BaseUrl + "/friends/list?token=" + UnityWebRequest.EscapeURL(token);
+                using UnityWebRequest request = UnityWebRequest.Get(url);
+                request.timeout = 10;
+
+                yield return request.SendWebRequest();
+
+                string requestError = RequestFailed(request) ? ReadError(request) : string.Empty;
+                FriendListResponse response = string.IsNullOrWhiteSpace(requestError)
+                    ? ParseResponse<FriendListResponse>(request.downloadHandler.text)
+                    : null;
+                if (string.IsNullOrWhiteSpace(requestError) && (response == null || !response.success))
+                {
+                    requestError = response != null && !string.IsNullOrWhiteSpace(response.error)
+                        ? response.error
+                        : "Invalid friends response.";
+                }
+
+                if (!string.IsNullOrWhiteSpace(requestError))
+                {
+                    bool recovered = false;
+                    string recoveryError = string.Empty;
+                    if (attempt == 0 && ProfileService.IsSessionAuthenticationError(requestError))
+                        yield return RecoverSession(token, (success, error) => { recovered = success; recoveryError = error; });
+                    if (recovered)
+                        continue;
+
+                    string finalError = string.IsNullOrWhiteSpace(recoveryError) ? requestError : recoveryError;
+                    SetError(finalError);
+                    completed?.Invoke(false, finalError);
+                    yield break;
+                }
+
+                ReplaceList(friends, response.friends);
+                ReplaceList(incomingRequests, response.incomingRequests);
+                ReplaceList(outgoingRequests, response.outgoingRequests);
+                SetError(string.Empty);
+                FriendsChanged?.Invoke();
+                completed?.Invoke(true, string.Empty);
                 yield break;
             }
-
-            string url = BaseUrl + "/friends/list?token=" + UnityWebRequest.EscapeURL(token);
-            using UnityWebRequest request = UnityWebRequest.Get(url);
-            request.timeout = 10;
-
-            yield return request.SendWebRequest();
-
-            if (RequestFailed(request))
-            {
-                string error = ReadError(request);
-                SetError(error);
-                completed?.Invoke(false, error);
-                yield break;
-            }
-
-            FriendListResponse response = ParseResponse<FriendListResponse>(request.downloadHandler.text);
-            if (response == null || !response.success)
-            {
-                string error = response != null && !string.IsNullOrWhiteSpace(response.error)
-                    ? response.error
-                    : "Invalid friends response.";
-                SetError(error);
-                completed?.Invoke(false, error);
-                yield break;
-            }
-
-            ReplaceList(friends, response.friends);
-            ReplaceList(incomingRequests, response.incomingRequests);
-            ReplaceList(outgoingRequests, response.outgoingRequests);
-            SetError(string.Empty);
-            FriendsChanged?.Invoke();
-            completed?.Invoke(true, string.Empty);
         }
 
         public IEnumerator Search(string nickname, Action<bool, string, FriendUser[]> completed)
         {
-            string token = GetSessionToken();
             string cleanNickname = string.IsNullOrWhiteSpace(nickname) ? string.Empty : nickname.Trim();
-
-            if (string.IsNullOrWhiteSpace(token))
-            {
-                const string error = "Friends require server profile.";
-                SetError(error);
-                completed?.Invoke(false, error, null);
-                yield break;
-            }
 
             if (cleanNickname.Length < 2)
             {
@@ -118,48 +112,66 @@ namespace MahjongGame
                 yield break;
             }
 
-            string url = BaseUrl + "/friends/search?token=" + UnityWebRequest.EscapeURL(token) +
-                         "&nickname=" + UnityWebRequest.EscapeURL(cleanNickname);
-            using UnityWebRequest request = UnityWebRequest.Get(url);
-            request.timeout = 10;
-
-            yield return request.SendWebRequest();
-
-            if (RequestFailed(request))
+            for (int attempt = 0; attempt < 2; attempt++)
             {
-                string error = ReadError(request);
-                SetError(error);
-                completed?.Invoke(false, error, null);
+                string token = GetSessionToken();
+                if (string.IsNullOrWhiteSpace(token))
+                {
+                    bool recovered = false;
+                    string recoveryError = string.Empty;
+                    if (attempt == 0)
+                        yield return RecoverSession(string.Empty, (success, error) => { recovered = success; recoveryError = error; });
+                    if (recovered)
+                        continue;
+
+                    string missingError = string.IsNullOrWhiteSpace(recoveryError) ? GameLocalization.Text("friends.error_profile") : recoveryError;
+                    SetError(missingError);
+                    completed?.Invoke(false, missingError, null);
+                    yield break;
+                }
+
+                string url = BaseUrl + "/friends/search?token=" + UnityWebRequest.EscapeURL(token) +
+                             "&nickname=" + UnityWebRequest.EscapeURL(cleanNickname);
+                using UnityWebRequest request = UnityWebRequest.Get(url);
+                request.timeout = 10;
+
+                yield return request.SendWebRequest();
+
+                string requestError = RequestFailed(request) ? ReadError(request) : string.Empty;
+                FriendSearchResponse response = string.IsNullOrWhiteSpace(requestError)
+                    ? ParseResponse<FriendSearchResponse>(request.downloadHandler.text)
+                    : null;
+                if (string.IsNullOrWhiteSpace(requestError) && (response == null || !response.success))
+                {
+                    requestError = response != null && !string.IsNullOrWhiteSpace(response.error)
+                        ? response.error
+                        : "Invalid search response.";
+                }
+
+                if (!string.IsNullOrWhiteSpace(requestError))
+                {
+                    bool recovered = false;
+                    string recoveryError = string.Empty;
+                    if (attempt == 0 && ProfileService.IsSessionAuthenticationError(requestError))
+                        yield return RecoverSession(token, (success, error) => { recovered = success; recoveryError = error; });
+                    if (recovered)
+                        continue;
+
+                    string finalError = string.IsNullOrWhiteSpace(recoveryError) ? requestError : recoveryError;
+                    SetError(finalError);
+                    completed?.Invoke(false, finalError, null);
+                    yield break;
+                }
+
+                SetError(string.Empty);
+                completed?.Invoke(true, string.Empty, response.users ?? new FriendUser[0]);
                 yield break;
             }
-
-            FriendSearchResponse response = ParseResponse<FriendSearchResponse>(request.downloadHandler.text);
-            if (response == null || !response.success)
-            {
-                string error = response != null && !string.IsNullOrWhiteSpace(response.error)
-                    ? response.error
-                    : "Invalid search response.";
-                SetError(error);
-                completed?.Invoke(false, error, null);
-                yield break;
-            }
-
-            SetError(string.Empty);
-            completed?.Invoke(true, string.Empty, response.users ?? new FriendUser[0]);
         }
 
         public IEnumerator SendRequestByNickname(string nickname, Action<bool, string> completed = null)
         {
-            string token = GetSessionToken();
             string cleanNickname = string.IsNullOrWhiteSpace(nickname) ? string.Empty : nickname.Trim();
-
-            if (string.IsNullOrWhiteSpace(token))
-            {
-                const string error = "Friends require server profile.";
-                SetError(error);
-                completed?.Invoke(false, error);
-                yield break;
-            }
 
             if (string.IsNullOrWhiteSpace(cleanNickname))
             {
@@ -169,12 +181,14 @@ namespace MahjongGame
 
             FriendNicknameRequest payload = new FriendNicknameRequest
             {
-                token = token,
+                token = GetSessionToken(),
                 nickname = cleanNickname
             };
 
+            bool requestSucceeded = false;
             yield return PostJson(BaseUrl + "/friends/request-by-nickname", payload, (success, text) =>
             {
+                requestSucceeded = success;
                 if (!success)
                     SetError(text);
                 else
@@ -183,7 +197,8 @@ namespace MahjongGame
                 completed?.Invoke(success, text);
             });
 
-            yield return Refresh();
+            if (requestSucceeded)
+                yield return Refresh();
         }
 
         public IEnumerator Accept(int requestId, Action<bool, string> completed = null)
@@ -194,8 +209,14 @@ namespace MahjongGame
                 requestId = requestId
             };
 
-            yield return PostJson(BaseUrl + "/friends/accept", payload, completed);
-            yield return Refresh();
+            bool requestSucceeded = false;
+            yield return PostJson(BaseUrl + "/friends/accept", payload, (success, message) =>
+            {
+                requestSucceeded = success;
+                completed?.Invoke(success, message);
+            });
+            if (requestSucceeded)
+                yield return Refresh();
         }
 
         public IEnumerator Decline(int requestId, Action<bool, string> completed = null)
@@ -206,54 +227,94 @@ namespace MahjongGame
                 requestId = requestId
             };
 
-            yield return PostJson(BaseUrl + "/friends/decline", payload, completed);
-            yield return Refresh();
-        }
-
-        private IEnumerator HeartbeatLoop()
-        {
-            while (true)
+            bool requestSucceeded = false;
+            yield return PostJson(BaseUrl + "/friends/decline", payload, (success, message) =>
             {
-                string token = GetSessionToken();
-                if (!string.IsNullOrWhiteSpace(token))
-                {
-                    FriendTokenRequest payload = new FriendTokenRequest { token = token };
-                    yield return PostJson(BaseUrl + "/presence/heartbeat", payload, null);
-                }
-
-                yield return new WaitForSecondsRealtime(30f);
-            }
+                requestSucceeded = success;
+                completed?.Invoke(success, message);
+            });
+            if (requestSucceeded)
+                yield return Refresh();
         }
 
         private IEnumerator PostJson(string url, object payload, Action<bool, string> completed)
         {
-            string json = JsonUtility.ToJson(payload);
-            using UnityWebRequest request = new UnityWebRequest(url, "POST");
-            request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json));
-            request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Content-Type", "application/json");
-            request.timeout = 10;
-
-            yield return request.SendWebRequest();
-
-            if (RequestFailed(request))
+            for (int attempt = 0; attempt < 2; attempt++)
             {
-                string error = ReadError(request);
-                completed?.Invoke(false, error);
+                string requestToken = GetSessionToken();
+                if (string.IsNullOrWhiteSpace(requestToken))
+                {
+                    bool recoveredMissingSession = false;
+                    string missingSessionError = string.Empty;
+                    if (attempt == 0)
+                        yield return RecoverSession(string.Empty, (success, error) => { recoveredMissingSession = success; missingSessionError = error; });
+                    if (recoveredMissingSession)
+                        continue;
+
+                    completed?.Invoke(false, string.IsNullOrWhiteSpace(missingSessionError)
+                        ? GameLocalization.Text("network.session_expired")
+                        : missingSessionError);
+                    yield break;
+                }
+
+                ApplyCurrentSessionToken(payload, requestToken);
+                string json = JsonUtility.ToJson(payload);
+                using UnityWebRequest request = new UnityWebRequest(url, "POST");
+                request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json));
+                request.downloadHandler = new DownloadHandlerBuffer();
+                request.SetRequestHeader("Content-Type", "application/json");
+                request.timeout = 10;
+
+                yield return request.SendWebRequest();
+
+                string requestError = RequestFailed(request) ? ReadError(request) : string.Empty;
+                BasicResponse response = string.IsNullOrWhiteSpace(requestError)
+                    ? ParseResponse<BasicResponse>(request.downloadHandler.text)
+                    : null;
+                if (string.IsNullOrWhiteSpace(requestError) && (response == null || !response.success))
+                {
+                    requestError = response != null && !string.IsNullOrWhiteSpace(response.error)
+                        ? response.error
+                        : "Request failed.";
+                }
+
+                if (!string.IsNullOrWhiteSpace(requestError))
+                {
+                    bool recovered = false;
+                    string recoveryError = string.Empty;
+                    if (attempt == 0 && ProfileService.IsSessionAuthenticationError(requestError))
+                        yield return RecoverSession(requestToken, (success, error) => { recovered = success; recoveryError = error; });
+                    if (recovered)
+                        continue;
+
+                    completed?.Invoke(false, string.IsNullOrWhiteSpace(recoveryError) ? requestError : recoveryError);
+                    yield break;
+                }
+
+                completed?.Invoke(true, string.IsNullOrWhiteSpace(response.message) ? string.Empty : response.message);
+                yield break;
+            }
+        }
+
+        private static void ApplyCurrentSessionToken(object payload, string token)
+        {
+            if (payload is FriendTokenRequest tokenRequest)
+                tokenRequest.token = token;
+            else if (payload is FriendNicknameRequest nicknameRequest)
+                nicknameRequest.token = token;
+            else if (payload is FriendRequestAction actionRequest)
+                actionRequest.token = token;
+        }
+
+        private static IEnumerator RecoverSession(string failedToken, Action<bool, string> completed)
+        {
+            if (ProfileService.I == null)
+            {
+                completed?.Invoke(false, GameLocalization.Text("network.session_expired"));
                 yield break;
             }
 
-            BasicResponse response = ParseResponse<BasicResponse>(request.downloadHandler.text);
-            if (response == null || !response.success)
-            {
-                string error = response != null && !string.IsNullOrWhiteSpace(response.error)
-                    ? response.error
-                    : "Request failed.";
-                completed?.Invoke(false, error);
-                yield break;
-            }
-
-            completed?.Invoke(true, string.IsNullOrWhiteSpace(response.message) ? string.Empty : response.message);
+            yield return ProfileService.I.RecoverServerSession(failedToken, completed);
         }
 
         private static void ReplaceList<T>(List<T> target, T[] source)
@@ -283,7 +344,11 @@ namespace MahjongGame
 
         private static string GetSessionToken()
         {
-            return PlayerPrefs.GetString(KeySessionToken, string.Empty);
+            string token = ProfileService.I != null ? ProfileService.I.CurrentSessionToken : string.Empty;
+            if (!string.IsNullOrWhiteSpace(token))
+                return token;
+
+            return PlayerPrefs.GetString(ClientProfileScope.AppendToKey(KeySessionToken), string.Empty);
         }
 
         private static bool RequestFailed(UnityWebRequest request)
@@ -324,6 +389,10 @@ namespace MahjongGame
             public int id;
             public string nickname;
             public string publicPlayerId;
+            public int allianceId;
+            public string allianceTag;
+            public string allianceName;
+            public int allianceLevel;
             public bool online;
             public string lastSeenAt;
             public bool isFriend;

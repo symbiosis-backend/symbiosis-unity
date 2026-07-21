@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+#if UNITY_IOS && !UNITY_EDITOR
+using System.Runtime.InteropServices;
+#endif
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -13,11 +16,15 @@ namespace MahjongGame
         public static event Action<bool> OnSoundChanged;
         public static event Action<bool> OnMusicChanged;
         public static event Action<bool> OnVibrationChanged;
+        public static event Action<bool> OnInfoHintsChanged;
+        public static event Action<bool> OnChatAutoTranslateChanged;
         public static event Action<GameLanguage> OnLanguageChanged;
 
         private const string KEY_SOUND = "mahjong_sound_enabled";
         private const string KEY_MUSIC = "mahjong_music_enabled";
         private const string KEY_VIBRATION = "mahjong_vibration_enabled";
+        private const string KEY_INFO_HINTS = "mahjong_info_hints_enabled";
+        private const string KEY_CHAT_AUTO_TRANSLATE = "mahjong_chat_auto_translate_enabled";
         private const string KEY_LANGUAGE = "mahjong_language";
         private const string KEY_LANGUAGE_SELECTED = "mahjong_language_selected";
 
@@ -38,10 +45,18 @@ namespace MahjongGame
         };
 
         private readonly List<AudioSource> cachedSources = new();
+        private float nextHapticRealtime;
+
+#if UNITY_IOS && !UNITY_EDITOR
+        [DllImport("__Internal")]
+        private static extern void SymbiosisHapticImpact(int style);
+#endif
 
         public bool SoundEnabled { get; private set; } = true;
         public bool MusicEnabled { get; private set; } = true;
         public bool VibrationEnabled { get; private set; } = true;
+        public bool InfoHintsEnabled { get; private set; } = true;
+        public bool ChatAutoTranslateEnabled { get; private set; } = true;
         public GameLanguage Language { get; private set; } = GameLanguage.Turkish;
         public bool HasLanguagePreference { get; private set; }
 
@@ -76,6 +91,8 @@ namespace MahjongGame
             OnSoundChanged?.Invoke(SoundEnabled);
             OnMusicChanged?.Invoke(MusicEnabled);
             OnVibrationChanged?.Invoke(VibrationEnabled);
+            OnInfoHintsChanged?.Invoke(InfoHintsEnabled);
+            OnChatAutoTranslateChanged?.Invoke(ChatAutoTranslateEnabled);
             OnLanguageChanged?.Invoke(Language);
             RuntimeFileLogger.Write("[Startup] AppSettings Start done");
         }
@@ -100,6 +117,8 @@ namespace MahjongGame
             SoundEnabled = PlayerPrefs.GetInt(KEY_SOUND, 1) == 1;
             MusicEnabled = PlayerPrefs.GetInt(KEY_MUSIC, 1) == 1;
             VibrationEnabled = PlayerPrefs.GetInt(KEY_VIBRATION, 1) == 1;
+            InfoHintsEnabled = PlayerPrefs.GetInt(KEY_INFO_HINTS, 1) == 1;
+            ChatAutoTranslateEnabled = PlayerPrefs.GetInt(KEY_CHAT_AUTO_TRANSLATE, 1) == 1;
             Language = ReadLanguage();
             HasLanguagePreference = PlayerPrefs.GetInt(KEY_LANGUAGE_SELECTED, 0) == 1;
         }
@@ -144,6 +163,30 @@ namespace MahjongGame
             OnVibrationChanged?.Invoke(VibrationEnabled);
         }
 
+        public void SetInfoHintsEnabled(bool value)
+        {
+            if (InfoHintsEnabled == value)
+                return;
+
+            InfoHintsEnabled = value;
+            PlayerPrefs.SetInt(KEY_INFO_HINTS, value ? 1 : 0);
+            PlayerPrefs.Save();
+
+            OnInfoHintsChanged?.Invoke(InfoHintsEnabled);
+        }
+
+        public void SetChatAutoTranslateEnabled(bool value)
+        {
+            if (ChatAutoTranslateEnabled == value)
+                return;
+
+            ChatAutoTranslateEnabled = value;
+            PlayerPrefs.SetInt(KEY_CHAT_AUTO_TRANSLATE, value ? 1 : 0);
+            PlayerPrefs.Save();
+
+            OnChatAutoTranslateChanged?.Invoke(ChatAutoTranslateEnabled);
+        }
+
         public void SetLanguage(GameLanguage language)
         {
             if (!Enum.IsDefined(typeof(GameLanguage), language))
@@ -174,6 +217,11 @@ namespace MahjongGame
         public void SetTurkishLanguage()
         {
             SetLanguage(GameLanguage.Turkish);
+        }
+
+        public void SetGermanLanguage()
+        {
+            SetLanguage(GameLanguage.German);
         }
 
         public void ClearLanguagePreference()
@@ -237,6 +285,57 @@ namespace MahjongGame
 
 #if UNITY_ANDROID || UNITY_IOS
             Handheld.Vibrate();
+#endif
+        }
+
+        public void VibrateLight()
+        {
+            VibrateImpact(18L, 45, 0);
+        }
+
+        public void VibrateMedium()
+        {
+            VibrateImpact(42L, 115, 1);
+        }
+
+        private void VibrateImpact(long durationMilliseconds, int amplitude, int iosStyle)
+        {
+            if (!VibrationEnabled || Time.unscaledTime < nextHapticRealtime)
+                return;
+
+            nextHapticRealtime = Time.unscaledTime + (iosStyle == 0 ? 0.04f : 0.08f);
+
+#if UNITY_ANDROID && !UNITY_EDITOR
+            try
+            {
+                using AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+                using AndroidJavaObject activity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+                using AndroidJavaObject vibrator = activity?.Call<AndroidJavaObject>("getSystemService", "vibrator");
+                if (vibrator == null || !vibrator.Call<bool>("hasVibrator"))
+                    return;
+
+                using AndroidJavaClass version = new AndroidJavaClass("android.os.Build$VERSION");
+                int sdk = version.GetStatic<int>("SDK_INT");
+                if (sdk >= 26)
+                {
+                    using AndroidJavaClass vibrationEffect = new AndroidJavaClass("android.os.VibrationEffect");
+                    using AndroidJavaObject effect = vibrationEffect.CallStatic<AndroidJavaObject>(
+                        "createOneShot",
+                        durationMilliseconds,
+                        Mathf.Clamp(amplitude, 1, 255));
+                    vibrator.Call("vibrate", effect);
+                }
+                else
+                {
+                    vibrator.Call("vibrate", durationMilliseconds);
+                }
+            }
+            catch (Exception exception)
+            {
+                Debug.LogWarning($"[AppSettings] Haptic impact failed: {exception.Message}");
+            }
+#elif UNITY_IOS && !UNITY_EDITOR
+            SymbiosisHapticImpact(iosStyle);
 #endif
         }
 

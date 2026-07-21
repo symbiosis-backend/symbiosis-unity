@@ -59,6 +59,8 @@ namespace MahjongGame
             trayFX = GetComponent<TrayFX>();
             if (trayFX == null)
                 trayFX = GetComponentInChildren<TrayFX>(true);
+            if (trayFX == null)
+                trayFX = gameObject.AddComponent<TrayFX>();
 
             RebuildSlots();
         }

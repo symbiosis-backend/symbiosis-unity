@@ -15,7 +15,9 @@ namespace MahjongGame
         private const string UnlockedCharactersKey = "MahjongGame.Battle.UnlockedCharacterIds";
         private const string PurchasedCharactersKey = "MahjongGame.Battle.PurchasedCharacterIds";
         private const string EconomyMigrationKey = "MahjongGame.Battle.CharacterEconomyV1";
-        private const bool ForceUnlockAllCharactersForLocalTesting = true;
+        private const string EconomyMigrationV2Key = "MahjongGame.Battle.CharacterEconomyV2";
+        private const string GlobalProfileScope = "global";
+        private const bool ForceUnlockAllCharactersForLocalTesting = false;
 
         [Serializable]
         private sealed class UnlockedCharactersSaveData
@@ -29,15 +31,15 @@ namespace MahjongGame
         [Header("Persistence")]
         [SerializeField] private bool dontDestroyOnLoad = true;
         [SerializeField] private bool autoApplyStatsOnLoad = true;
-        [SerializeField] private bool autoUnlockStarterCharacters = true;
-        [SerializeField] private bool autoSelectFallbackStarter = true;
+        [SerializeField] private bool autoUnlockStarterCharacters = false;
+        [SerializeField] private bool autoSelectFallbackStarter = false;
         [SerializeField] private bool saveImmediatelyOnChange = true;
 
         [Header("Economy")]
-        [SerializeField] private int firstPaidCharacterPrice = 10000;
-        [SerializeField] private int paidCharacterPriceStep = 20000;
+        [SerializeField] private int firstPaidCharacterPrice = 5000;
+        [SerializeField] private int paidCharacterPriceStep = 5000;
         [SerializeField] private bool migrateLegacyFullUnlocks = true;
-        [SerializeField] private bool unlockAllCharactersForLocalTesting = true;
+        [SerializeField] private bool unlockAllCharactersForLocalTesting = false;
 
         [Header("Auto Find")]
         [SerializeField] private bool autoFindDatabase = true;
@@ -51,6 +53,7 @@ namespace MahjongGame
         [SerializeField] private List<string> purchasedCharacterIds = new List<string>();
 
         private Coroutine initializeRoutine;
+        private string loadedPrefsScopeKey = string.Empty;
 
         public event Action<string> SelectedCharacterChanged;
         public event Action SelectionStateChanged;
@@ -72,6 +75,9 @@ namespace MahjongGame
 
             if (dontDestroyOnLoad)
                 PersistentObjectUtility.DontDestroyOnLoad(gameObject);
+
+            ProfileService.ProfileChanged -= HandleProfileChanged;
+            ProfileService.ProfileChanged += HandleProfileChanged;
         }
 
         private void Start()
@@ -90,13 +96,21 @@ namespace MahjongGame
                 initializeRoutine = null;
             }
 
+            ProfileService.ProfileChanged -= HandleProfileChanged;
+
             if (Instance == this)
                 Instance = null;
         }
 
         public bool HasSelectedCharacter()
         {
-            return !string.IsNullOrWhiteSpace(selectedCharacterId) && GetSelectedCharacter() != null;
+            if (string.IsNullOrWhiteSpace(selectedCharacterId))
+                return false;
+
+            // A saved id alone is not a valid battle character. Profiles created after
+            // another player used the device can still have a stale/global id, and a
+            // catalog entry can exist while the character is not owned by this profile.
+            return CanSelect(selectedCharacterId);
         }
 
         public BattleCharacterDatabase.BattleCharacterData GetSelectedCharacter()
@@ -116,6 +130,21 @@ namespace MahjongGame
                 TryResolveDatabaseAndPrepare();
 
             if (IsLocalTestingUnlockEnabled() && IsEnabledCharacter(characterId))
+                return true;
+
+            return unlockedCharacterIds.Contains(characterId);
+        }
+
+        public bool IsPersistentlyUnlocked(string characterId)
+        {
+            if (string.IsNullOrWhiteSpace(characterId))
+                return false;
+
+            if (!DatabaseReady() && !TryResolveDatabaseAndPrepare())
+                return unlockedCharacterIds.Contains(characterId);
+
+            BattleCharacterDatabase.BattleCharacterData data = database.GetCharacterOrNull(characterId);
+            if (data != null && data.IsStarterFree)
                 return true;
 
             return unlockedCharacterIds.Contains(characterId);
@@ -159,16 +188,25 @@ namespace MahjongGame
             if (string.IsNullOrWhiteSpace(characterId) || IsUnlocked(characterId))
                 return 0;
 
-            if (unlockedCharacterIds.Count == 0)
-                return 0;
-
             BattleCharacterDatabase.BattleCharacterData data =
                 DatabaseReady() ? database.GetCharacterOrNull(characterId) : null;
 
-            if (data != null && data.PriceAmount > 0)
+            if (data == null)
+                return 0;
+
+            if (data.IsStarterFree || data.UnlockType == BattleCharacterDatabase.CharacterUnlockType.Default)
+                return 0;
+
+            if (IsFirstFreeCharacterChoice(data))
+                return 0;
+
+            if (ResolveUnlockCurrency(data) == BattleCharacterDatabase.CharacterPriceCurrencyType.OzAmetist)
                 return Mathf.Max(0, data.PriceAmount);
 
-            int purchasedCount = CountPurchasedCharacters();
+            if (unlockedCharacterIds.Count == 0)
+                return 0;
+
+            int purchasedCount = CountPurchasedOzTileCharacters();
             int price = firstPaidCharacterPrice + purchasedCount * paidCharacterPriceStep;
             return Mathf.Max(0, price);
         }
@@ -179,7 +217,30 @@ namespace MahjongGame
             if (price <= 0)
                 return true;
 
-            return CurrencyService.I != null && CurrencyService.I.CanSpendOzAltin(price);
+            BattleCharacterDatabase.BattleCharacterData data =
+                DatabaseReady() ? database.GetCharacterOrNull(characterId) : null;
+            BattleCharacterDatabase.CharacterPriceCurrencyType currency = ResolveUnlockCurrency(data);
+            return CanSpendCurrency(currency, price);
+        }
+
+        public bool IsFirstFreeCharacterChoice(string characterId)
+        {
+            if (string.IsNullOrWhiteSpace(characterId))
+                return false;
+
+            if (!DatabaseReady() && !TryResolveDatabaseAndPrepare())
+                return false;
+
+            return IsFirstFreeCharacterChoice(database.GetCharacterOrNull(characterId));
+        }
+
+        private bool IsFirstFreeCharacterChoice(BattleCharacterDatabase.BattleCharacterData data)
+        {
+            return data != null &&
+                   data.IsEnabled &&
+                   data.AnimalType != BattleCharacterDatabase.CharacterAnimalType.Dragon &&
+                   string.IsNullOrWhiteSpace(selectedCharacterId) &&
+                   purchasedCharacterIds.Count == 0;
         }
 
         public bool TryPurchaseCharacter(string characterId, bool selectAfterPurchase = true, bool applyStatsToHub = true)
@@ -200,9 +261,9 @@ namespace MahjongGame
             int price = GetUnlockPrice(characterId);
             if (price > 0)
             {
-                if (CurrencyService.I == null || !CurrencyService.I.SpendOzAltin(price))
+                if (!SpendCurrency(ResolveUnlockCurrency(data), price))
                 {
-                    Debug.Log($"[BattleCharacterSelectionService] Not enough Oz Altin to unlock '{characterId}'. Price={price}");
+                    Debug.Log($"[BattleCharacterSelectionService] Not enough currency to unlock '{characterId}'. Price={price}");
                     return false;
                 }
             }
@@ -210,6 +271,46 @@ namespace MahjongGame
             unlockedCharacterIds.Add(characterId);
             if (price > 0 && !purchasedCharacterIds.Contains(characterId))
                 purchasedCharacterIds.Add(characterId);
+
+            if (selectAfterPurchase)
+                selectedCharacterId = characterId;
+
+            if (applyStatsToHub && selectAfterPurchase)
+                ApplySelectedCharacterStatsToHub();
+
+            RaiseSelectionChanged();
+
+            if (saveImmediatelyOnChange)
+                Save();
+
+            return true;
+        }
+
+        public bool TryUnlockCharacterWithAmetist(string characterId, int price, bool selectAfterPurchase = true, bool applyStatsToHub = true)
+        {
+            if (string.IsNullOrWhiteSpace(characterId))
+                return false;
+
+            if (!DatabaseReady() && !TryResolveDatabaseAndPrepare())
+                return false;
+
+            BattleCharacterDatabase.BattleCharacterData data = database.GetCharacterOrNull(characterId);
+            if (data == null || !data.IsEnabled)
+                return false;
+
+            if (!IsPersistentlyUnlocked(characterId))
+            {
+                int safePrice = Mathf.Max(0, price);
+                if (safePrice > 0)
+                {
+                    if (CurrencyService.I == null || !CurrencyService.I.SpendOzAmetist(safePrice))
+                        return false;
+                }
+
+                unlockedCharacterIds.Add(characterId);
+                if (!purchasedCharacterIds.Contains(characterId))
+                    purchasedCharacterIds.Add(characterId);
+            }
 
             if (selectAfterPurchase)
                 selectedCharacterId = characterId;
@@ -235,7 +336,7 @@ namespace MahjongGame
 
         public bool ApplySelectedCharacterStatsToHub()
         {
-            if (!DatabaseReady() || string.IsNullOrWhiteSpace(selectedCharacterId))
+            if ((!DatabaseReady() && !TryResolveDatabaseAndPrepare()) || string.IsNullOrWhiteSpace(selectedCharacterId))
                 return false;
 
             return database.TryApplyCharacterStatsToHub(selectedCharacterId);
@@ -256,6 +357,8 @@ namespace MahjongGame
 
         public void Save()
         {
+            string scopeKey = GetPrefsScopeKey();
+            PlayerPrefs.SetString(GetScopedPrefsKey(SelectedCharacterKey, scopeKey), selectedCharacterId ?? string.Empty);
             PlayerPrefs.SetString(SelectedCharacterKey, selectedCharacterId ?? string.Empty);
 
             UnlockedCharactersSaveData saveData = new UnlockedCharactersSaveData
@@ -264,7 +367,7 @@ namespace MahjongGame
             };
 
             string json = JsonUtility.ToJson(saveData);
-            PlayerPrefs.SetString(UnlockedCharactersKey, json);
+            PlayerPrefs.SetString(GetScopedPrefsKey(UnlockedCharactersKey, scopeKey), json);
 
             UnlockedCharactersSaveData purchasedSaveData = new UnlockedCharactersSaveData
             {
@@ -272,8 +375,9 @@ namespace MahjongGame
             };
 
             string purchasedJson = JsonUtility.ToJson(purchasedSaveData);
-            PlayerPrefs.SetString(PurchasedCharactersKey, purchasedJson);
-            PlayerPrefs.SetInt(EconomyMigrationKey, 1);
+            PlayerPrefs.SetString(GetScopedPrefsKey(PurchasedCharactersKey, scopeKey), purchasedJson);
+            PlayerPrefs.SetInt(GetScopedPrefsKey(EconomyMigrationKey, scopeKey), 1);
+            PlayerPrefs.SetInt(GetScopedPrefsKey(EconomyMigrationV2Key, scopeKey), 1);
             PlayerPrefs.Save();
         }
 
@@ -291,8 +395,6 @@ namespace MahjongGame
 
         public void ResetForNewProfile()
         {
-            ClearPrefs();
-
             selectedCharacterId = string.Empty;
             unlockedCharacterIds.Clear();
             purchasedCharacterIds.Clear();
@@ -309,9 +411,6 @@ namespace MahjongGame
                     ApplySelectedCharacterStatsToHub();
             }
 
-            if (saveImmediatelyOnChange)
-                Save();
-
             RaiseSelectionChanged();
         }
 
@@ -321,6 +420,14 @@ namespace MahjongGame
             PlayerPrefs.DeleteKey(UnlockedCharactersKey);
             PlayerPrefs.DeleteKey(PurchasedCharactersKey);
             PlayerPrefs.DeleteKey(EconomyMigrationKey);
+            PlayerPrefs.DeleteKey(EconomyMigrationV2Key);
+
+            string scopeKey = GetPrefsScopeKey();
+            PlayerPrefs.DeleteKey(GetScopedPrefsKey(SelectedCharacterKey, scopeKey));
+            PlayerPrefs.DeleteKey(GetScopedPrefsKey(UnlockedCharactersKey, scopeKey));
+            PlayerPrefs.DeleteKey(GetScopedPrefsKey(PurchasedCharactersKey, scopeKey));
+            PlayerPrefs.DeleteKey(GetScopedPrefsKey(EconomyMigrationKey, scopeKey));
+            PlayerPrefs.DeleteKey(GetScopedPrefsKey(EconomyMigrationV2Key, scopeKey));
             PlayerPrefs.Save();
         }
 
@@ -398,15 +505,72 @@ namespace MahjongGame
 
         private void LoadFromPrefs()
         {
-            selectedCharacterId = PlayerPrefs.GetString(SelectedCharacterKey, string.Empty);
+            loadedPrefsScopeKey = GetPrefsScopeKey();
+            string readScopeKey = loadedPrefsScopeKey;
+
+            selectedCharacterId = PlayerPrefs.GetString(GetScopedPrefsKey(SelectedCharacterKey, readScopeKey), string.Empty);
             unlockedCharacterIds.Clear();
             purchasedCharacterIds.Clear();
 
-            string unlockedJson = PlayerPrefs.GetString(UnlockedCharactersKey, string.Empty);
+            string unlockedJson = PlayerPrefs.GetString(GetScopedPrefsKey(UnlockedCharactersKey, readScopeKey), string.Empty);
             LoadIdsFromJson(unlockedJson, unlockedCharacterIds);
 
-            string purchasedJson = PlayerPrefs.GetString(PurchasedCharactersKey, string.Empty);
+            string purchasedJson = PlayerPrefs.GetString(GetScopedPrefsKey(PurchasedCharactersKey, readScopeKey), string.Empty);
             LoadIdsFromJson(purchasedJson, purchasedCharacterIds);
+        }
+
+        private void HandleProfileChanged()
+        {
+            string scopeKey = GetPrefsScopeKey();
+            if (string.Equals(scopeKey, loadedPrefsScopeKey, StringComparison.Ordinal))
+                return;
+
+            LoadFromPrefs();
+            EnsureValidState();
+
+            if (autoApplyStatsOnLoad)
+                ApplySelectedCharacterStatsToHub();
+
+            RaiseSelectionChanged();
+        }
+
+        private static string GetScopedPrefsKey(string baseKey, string scopeKey)
+        {
+            if (string.IsNullOrWhiteSpace(scopeKey) || string.Equals(scopeKey, GlobalProfileScope, StringComparison.Ordinal))
+                return baseKey;
+
+            return baseKey + "." + scopeKey;
+        }
+
+        private static string GetPrefsScopeKey()
+        {
+            PlayerProfile profile = ProfileService.I != null ? ProfileService.I.Current : null;
+            if (profile == null)
+                return GlobalProfileScope;
+
+            if (!string.IsNullOrWhiteSpace(profile.OnlinePlayerId))
+                return "account_" + SanitizePrefsScope(profile.OnlinePlayerId);
+
+            if (!string.IsNullOrWhiteSpace(profile.LocalProfileId))
+                return "profile_" + SanitizePrefsScope(profile.LocalProfileId);
+
+            return GlobalProfileScope;
+        }
+
+        private static string SanitizePrefsScope(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return GlobalProfileScope;
+
+            string trimmed = value.Trim();
+            char[] chars = new char[trimmed.Length];
+            for (int i = 0; i < trimmed.Length; i++)
+            {
+                char c = trimmed[i];
+                chars[i] = char.IsLetterOrDigit(c) ? c : '_';
+            }
+
+            return new string(chars);
         }
 
         private void LoadIdsFromJson(string json, List<string> target)
@@ -441,7 +605,10 @@ namespace MahjongGame
             RemoveInvalidPurchasedIds();
 
             if (migrateLegacyFullUnlocks)
+            {
                 MigrateLegacyUnlocksIfNeeded();
+                MigrateForcedUnlockPrefsIfNeeded();
+            }
 
             if (autoUnlockStarterCharacters)
                 UnlockStartersOrFallback();
@@ -452,7 +619,7 @@ namespace MahjongGame
             if (!string.IsNullOrWhiteSpace(selectedCharacterId) && !CanSelect(selectedCharacterId))
                 selectedCharacterId = string.Empty;
 
-            if (string.IsNullOrWhiteSpace(selectedCharacterId) && autoSelectFallbackStarter && unlockedCharacterIds.Count > 0)
+            if (string.IsNullOrWhiteSpace(selectedCharacterId) && autoSelectFallbackStarter)
                 SelectFallbackCharacter();
 
             if (saveImmediatelyOnChange)
@@ -464,12 +631,17 @@ namespace MahjongGame
             if (unlockedCharacterIds.Count > 0)
                 return;
 
-            if (!string.IsNullOrWhiteSpace(selectedCharacterId) &&
-                database.GetCharacterOrNull(selectedCharacterId) != null)
+            List<BattleCharacterDatabase.BattleCharacterData> starters = database.GetStarterFreeCharacters();
+            if (starters != null && starters.Count > 0 && starters[0] != null && !string.IsNullOrWhiteSpace(starters[0].Id))
             {
-                unlockedCharacterIds.Add(selectedCharacterId);
+                unlockedCharacterIds.Add(starters[0].Id);
                 return;
             }
+
+            if (verboseLogs)
+                Debug.LogWarning("[BattleCharacterSelectionService] No starter character configured; unlocking the first enabled character as release fallback.");
+
+            UnlockFirstEnabledAsLastResort();
         }
 
         private void UnlockAllEnabledCharactersForTesting()
@@ -491,7 +663,7 @@ namespace MahjongGame
 
         private void MigrateLegacyUnlocksIfNeeded()
         {
-            if (PlayerPrefs.GetInt(EconomyMigrationKey, 0) == 1)
+            if (PlayerPrefs.GetInt(GetScopedPrefsKey(EconomyMigrationKey, loadedPrefsScopeKey), 0) == 1)
                 return;
 
             if (purchasedCharacterIds.Count > 0)
@@ -505,6 +677,28 @@ namespace MahjongGame
 
             if (!string.IsNullOrWhiteSpace(freeId))
                 unlockedCharacterIds.Add(freeId);
+        }
+
+        private void MigrateForcedUnlockPrefsIfNeeded()
+        {
+            if (PlayerPrefs.GetInt(GetScopedPrefsKey(EconomyMigrationV2Key, loadedPrefsScopeKey), 0) == 1)
+                return;
+
+            if (!DatabaseReady() || purchasedCharacterIds.Count > 0)
+                return;
+
+            List<BattleCharacterDatabase.BattleCharacterData> enabled = database.GetEnabledCharacters();
+            if (enabled == null || enabled.Count <= 1 || unlockedCharacterIds.Count < enabled.Count)
+                return;
+
+            string freeId = ChooseFreeCharacterForMigration();
+            unlockedCharacterIds.Clear();
+
+            if (!string.IsNullOrWhiteSpace(freeId))
+                unlockedCharacterIds.Add(freeId);
+
+            if (!string.IsNullOrWhiteSpace(selectedCharacterId) && !unlockedCharacterIds.Contains(selectedCharacterId))
+                selectedCharacterId = freeId;
         }
 
         private string ChooseFreeCharacterForMigration()
@@ -554,19 +748,8 @@ namespace MahjongGame
                 }
             }
 
-            List<BattleCharacterDatabase.BattleCharacterData> enabled = database.GetEnabledCharacters();
-            for (int i = 0; i < enabled.Count; i++)
-            {
-                BattleCharacterDatabase.BattleCharacterData data = enabled[i];
-                if (data == null || string.IsNullOrWhiteSpace(data.Id))
-                    continue;
-
-                if (!unlockedCharacterIds.Contains(data.Id))
-                    unlockedCharacterIds.Add(data.Id);
-
-                selectedCharacterId = data.Id;
-                return;
-            }
+            if (verboseLogs)
+                Debug.Log("[BattleCharacterSelectionService] No unlocked fallback character is available.");
         }
 
         private void RemoveInvalidUnlockedIds()
@@ -609,17 +792,82 @@ namespace MahjongGame
             }
         }
 
-        private int CountPurchasedCharacters()
+        private int CountPurchasedOzTileCharacters()
         {
             int count = 0;
             for (int i = 0; i < purchasedCharacterIds.Count; i++)
             {
                 string id = purchasedCharacterIds[i];
-                if (!string.IsNullOrWhiteSpace(id) && IsUnlocked(id))
+                if (string.IsNullOrWhiteSpace(id) || !IsUnlocked(id))
+                    continue;
+
+                BattleCharacterDatabase.BattleCharacterData data =
+                    DatabaseReady() ? database.GetCharacterOrNull(id) : null;
+                if (data != null && ResolveUnlockCurrency(data) == BattleCharacterDatabase.CharacterPriceCurrencyType.OzTile)
                     count++;
             }
 
             return count;
+        }
+
+        private static BattleCharacterDatabase.CharacterPriceCurrencyType ResolveUnlockCurrency(BattleCharacterDatabase.BattleCharacterData data)
+        {
+            if (data == null)
+                return BattleCharacterDatabase.CharacterPriceCurrencyType.OzTile;
+
+            return IsDonationCharacter(data)
+                ? BattleCharacterDatabase.CharacterPriceCurrencyType.OzAmetist
+                : BattleCharacterDatabase.CharacterPriceCurrencyType.OzTile;
+        }
+
+        private static bool IsDonationCharacter(BattleCharacterDatabase.BattleCharacterData data)
+        {
+            return data != null &&
+                   (data.AnimalType == BattleCharacterDatabase.CharacterAnimalType.Dragon ||
+                    data.UnlockType == BattleCharacterDatabase.CharacterUnlockType.PremiumCurrency ||
+                    data.PriceCurrency == BattleCharacterDatabase.CharacterPriceCurrencyType.OzAmetist);
+        }
+
+        private static bool CanSpendCurrency(BattleCharacterDatabase.CharacterPriceCurrencyType currency, int amount)
+        {
+            if (amount <= 0)
+                return true;
+
+            if (CurrencyService.I == null)
+                return false;
+
+            switch (currency)
+            {
+                case BattleCharacterDatabase.CharacterPriceCurrencyType.OzAmetist:
+                    return CurrencyService.I.CanSpendOzAmetist(amount);
+                case BattleCharacterDatabase.CharacterPriceCurrencyType.OzAltin:
+                    return CurrencyService.I.CanSpendOzAltin(amount);
+                case BattleCharacterDatabase.CharacterPriceCurrencyType.OzTile:
+                    return CurrencyService.I.CanSpendOzTile(amount);
+                default:
+                    return false;
+            }
+        }
+
+        private static bool SpendCurrency(BattleCharacterDatabase.CharacterPriceCurrencyType currency, int amount)
+        {
+            if (amount <= 0)
+                return true;
+
+            if (CurrencyService.I == null)
+                return false;
+
+            switch (currency)
+            {
+                case BattleCharacterDatabase.CharacterPriceCurrencyType.OzAmetist:
+                    return CurrencyService.I.SpendOzAmetist(amount);
+                case BattleCharacterDatabase.CharacterPriceCurrencyType.OzAltin:
+                    return CurrencyService.I.SpendOzAltin(amount);
+                case BattleCharacterDatabase.CharacterPriceCurrencyType.OzTile:
+                    return CurrencyService.I.SpendOzTile(amount);
+                default:
+                    return false;
+            }
         }
 
         private void RaiseSelectionChanged()

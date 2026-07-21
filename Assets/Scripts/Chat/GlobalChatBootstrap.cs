@@ -7,8 +7,7 @@ namespace MahjongGame
     {
         private static readonly string[] ChatSceneNames =
         {
-            "Main",
-            "LobbyMahjong"
+            "Main"
         };
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -17,6 +16,10 @@ namespace MahjongGame
             EnsureService();
             SceneManager.sceneLoaded -= OnSceneLoaded;
             SceneManager.sceneLoaded += OnSceneLoaded;
+            SceneManager.activeSceneChanged -= OnActiveSceneChanged;
+            SceneManager.activeSceneChanged += OnActiveSceneChanged;
+            DoorFx.SceneTransitionStarted -= OnSceneTransitionStarted;
+            DoorFx.SceneTransitionStarted += OnSceneTransitionStarted;
             EnsureForScene(SceneManager.GetActiveScene());
         }
 
@@ -24,6 +27,20 @@ namespace MahjongGame
         {
             EnsureService();
             EnsureForScene(scene);
+        }
+
+        private static void OnActiveSceneChanged(Scene previousScene, Scene nextScene)
+        {
+            if (!ShouldShowChatInScene(nextScene.name))
+                DestroySceneChatUi();
+        }
+
+        private static void OnSceneTransitionStarted(string targetSceneName)
+        {
+            if (ShouldShowChatInScene(targetSceneName))
+                return;
+
+            HideSceneChatUi();
         }
 
         public static void EnsureForCurrentScene()
@@ -35,14 +52,21 @@ namespace MahjongGame
         private static void EnsureService()
         {
             if (GlobalChatService.I != null)
+            {
+                PersistentObjectUtility.DontDestroyOnLoad(GlobalChatService.I.gameObject);
                 return;
+            }
 
             GameObject service = new GameObject("GlobalChatService");
             service.AddComponent<GlobalChatService>();
+            PersistentObjectUtility.DontDestroyOnLoad(service);
         }
 
         private static void EnsureForScene(Scene scene)
         {
+            if (!IsSceneReady(scene))
+                return;
+
             if (!ShouldShowChatInScene(scene.name))
             {
                 DestroySceneChatUi();
@@ -61,11 +85,42 @@ namespace MahjongGame
             GlobalChatUI.CreateInScene();
         }
 
+        private static bool IsSceneReady(Scene scene)
+        {
+            return scene.IsValid() && scene.isLoaded && scene == SceneManager.GetActiveScene();
+        }
+
         private static void DestroySceneChatUi()
         {
-            GlobalChatUI ui = Object.FindAnyObjectByType<GlobalChatUI>(FindObjectsInactive.Include);
-            if (ui != null)
-                Object.Destroy(ui.gameObject);
+            GlobalChatUI[] all = Object.FindObjectsByType<GlobalChatUI>(FindObjectsInactive.Include);
+            for (int i = 0; i < all.Length; i++)
+            {
+                GlobalChatUI ui = all[i];
+                if (ui == null)
+                    continue;
+
+                SafeDestroyRuntimeUi(ui.gameObject);
+            }
+        }
+
+        private static void HideSceneChatUi()
+        {
+            GlobalChatUI[] all = Object.FindObjectsByType<GlobalChatUI>(FindObjectsInactive.Include);
+            for (int i = 0; i < all.Length; i++)
+            {
+                GlobalChatUI ui = all[i];
+                if (ui != null)
+                    ui.gameObject.SetActive(false);
+            }
+        }
+
+        private static void SafeDestroyRuntimeUi(GameObject obj)
+        {
+            if (obj == null)
+                return;
+
+            obj.SetActive(false);
+            Object.Destroy(obj);
         }
 
         private static bool ShouldShowChatInScene(string sceneName)

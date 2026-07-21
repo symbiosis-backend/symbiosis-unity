@@ -7,6 +7,8 @@ namespace MahjongGame
     [DisallowMultipleComponent]
     public sealed class WeeklyRewardButton : MonoBehaviour
     {
+        private const string MainLobbySceneName = "Main";
+
         [Header("Links")]
         [SerializeField] private Button button;
         [SerializeField] private Image buttonImage;
@@ -27,6 +29,12 @@ namespace MahjongGame
 
         private void Awake()
         {
+            if (!IsMainLobbyScene())
+            {
+                gameObject.SetActive(false);
+                return;
+            }
+
             if (button == null)
                 button = GetComponent<Button>();
 
@@ -53,6 +61,12 @@ namespace MahjongGame
 
         private void OnEnable()
         {
+            if (!IsMainLobbyScene())
+            {
+                gameObject.SetActive(false);
+                return;
+            }
+
             ProfileService.ProfileChanged += OnProfileChanged;
             Refresh();
         }
@@ -72,7 +86,7 @@ namespace MahjongGame
             PlayerProfile profile = GetProfile();
             if (profile == null)
             {
-                ApplyState(false, blockedColor, blockedSprite, "No Profile");
+                ApplyState(false, blockedColor, blockedSprite, GameLocalization.Text("weekly.no_profile"));
                 return;
             }
 
@@ -84,18 +98,18 @@ namespace MahjongGame
 
             if (timeBlocked)
             {
-                ApplyState(true, blockedColor, blockedSprite, "Time Error");
+                ApplyState(true, blockedColor, blockedSprite, GameLocalization.Text("weekly.time_error"));
                 return;
             }
 
             if (canClaim)
             {
                 int dayNumber = WeeklyRewardService.GetCurrentDayNumber(profile);
-                ApplyState(true, availableColor, availableSprite, $"Reward\nDay {dayNumber}");
+                ApplyState(true, availableColor, availableSprite, GameLocalization.Format("weekly.button_available", dayNumber));
                 return;
             }
 
-            ApplyState(true, claimedColor, claimedSprite, "Claimed");
+            ApplyState(true, claimedColor, claimedSprite, GameLocalization.Text("weekly.claimed"));
         }
 
         private void OnClick()
@@ -119,6 +133,11 @@ namespace MahjongGame
 
             profile.EnsureData();
             return profile;
+        }
+
+        private bool IsMainLobbyScene()
+        {
+            return string.Equals(gameObject.scene.name, MainLobbySceneName, System.StringComparison.Ordinal);
         }
 
         private void ApplyState(bool interactable, Color color, Sprite sprite, string label)

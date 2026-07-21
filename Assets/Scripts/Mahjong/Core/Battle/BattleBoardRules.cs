@@ -49,66 +49,7 @@ namespace MahjongGame
 
         public bool IsTileFree(BattleTile tile)
         {
-            if (!IsReady || tile == null)
-                return false;
-
-            BattleBoard.BattleTileNode node = GetNode(tile);
-            if (node == null || node.Slot == null)
-                return false;
-
-            LayoutSlot slot = node.Slot;
-            IReadOnlyList<BattleTile> tiles = board.SpawnedTiles;
-
-            for (int i = 0; i < tiles.Count; i++)
-            {
-                BattleTile other = tiles[i];
-                if (!IsValidBlocker(other, tile))
-                    continue;
-
-                BattleBoard.BattleTileNode n = GetNode(other);
-                if (n == null || n.Slot == null)
-                    continue;
-
-                if (n.Slot.Z == slot.Z + 1)
-                {
-                    int dx = Mathf.Abs(n.Slot.X - slot.X);
-                    int dy = Mathf.Abs(n.Slot.Y - slot.Y);
-
-                    if (dx <= 1 && dy <= 1)
-                        return false;
-                }
-            }
-
-            bool left = false;
-            bool right = false;
-
-            for (int i = 0; i < tiles.Count; i++)
-            {
-                BattleTile other = tiles[i];
-                if (!IsValidBlocker(other, tile))
-                    continue;
-
-                BattleBoard.BattleTileNode n = GetNode(other);
-                if (n == null || n.Slot == null || n.Slot.Z != slot.Z)
-                    continue;
-
-                int dx = n.Slot.X - slot.X;
-                int dy = Mathf.Abs(n.Slot.Y - slot.Y);
-
-                if (dy == 0)
-                {
-                    if (dx < 0 && Mathf.Abs(dx) <= 1)
-                        left = true;
-
-                    if (dx > 0 && dx <= 1)
-                        right = true;
-                }
-
-                if (left && right)
-                    return false;
-            }
-
-            return true;
+            return IsReady && IsUsable(tile);
         }
 
         public List<BattleTile> GetFreeTiles()

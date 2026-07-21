@@ -1,0 +1,663 @@
+fileFormatVersion: 2
+guid: 54202eb8901bf5d4fafde7652a1bb158
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -4745021515214409496
+    second: architect-walk-pack-v5_0
+  - first:
+      213: 7194925029744500055
+    second: architect-walk-pack-v5_1
+  - first:
+      213: 3594464259135388765
+    second: architect-walk-pack-v5_2
+  - first:
+      213: -1091865633193993771
+    second: architect-walk-pack-v5_3
+  - first:
+      213: 5798905369163539548
+    second: architect-walk-pack-v5_4
+  - first:
+      213: 6916671858278189171
+    second: architect-walk-pack-v5_5
+  - first:
+      213: -7203435877539167186
+    second: architect-walk-pack-v5_6
+  - first:
+      213: 6544797805305504633
+    second: architect-walk-pack-v5_7
+  - first:
+      213: -5490416621115650568
+    second: architect-walk-pack-v5_8
+  - first:
+      213: 1019209726136391147
+    second: architect-walk-pack-v5_9
+  - first:
+      213: 2460150051474004378
+    second: architect-walk-pack-v5_10
+  - first:
+      213: -1649317133157416300
+    second: architect-walk-pack-v5_11
+  - first:
+      213: 7070202255705664789
+    second: architect-walk-pack-v5_12
+  - first:
+      213: -5613178142855871869
+    second: architect-walk-pack-v5_13
+  - first:
+      213: -7276992883307494682
+    second: architect-walk-pack-v5_14
+  - first:
+      213: -6602869517255879502
+    second: architect-walk-pack-v5_15
+  - first:
+      213: 1633682921434866797
+    second: architect-walk-pack-v5_16
+  - first:
+      213: 3504059612251767239
+    second: architect-walk-pack-v5_17
+  - first:
+      213: -520250668637181271
+    second: architect-walk-pack-v5_18
+  - first:
+      213: 3549679202136279528
+    second: architect-walk-pack-v5_19
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: architect-walk-pack-v5_0
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 791
+        width: 101
+        height: 206
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e03f06721c462eb0800000000000000
+      internalID: -4745021515214409496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-walk-pack-v5_1
+      rect:
+        serializedVersion: 2
+        x: 332
+        y: 791
+        width: 104
+        height: 206
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75ddc77b13289d360800000000000000
+      internalID: 7194925029744500055
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-walk-pack-v5_2
+      rect:
+        serializedVersion: 2
+        x: 589
+        y: 791
+        width: 101
+        height: 206
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5c3a9b033a12e130800000000000000
+      internalID: 3594464259135388765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-walk-pack-v5_3
+      rect:
+        serializedVersion: 2
+        x: 843
+        y: 791
+        width: 106
+        height: 206
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d9d307ddf9e8d0f0800000000000000
+      internalID: -1091865633193993771
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-walk-pack-v5_4
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 535
+        width: 99
+        height: 206
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c54291795b9d97050800000000000000
+      internalID: 5798905369163539548
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-walk-pack-v5_5
+      rect:
+        serializedVersion: 2
+        x: 334
+        y: 535
+        width: 100
+        height: 206
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 378cc94b864fcff50800000000000000
+      internalID: 6916671858278189171
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-walk-pack-v5_6
+      rect:
+        serializedVersion: 2
+        x: 590
+        y: 535
+        width: 99
+        height: 206
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2449fc1c31480c90800000000000000
+      internalID: -7203435877539167186
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-walk-pack-v5_7
+      rect:
+        serializedVersion: 2
+        x: 846
+        y: 535
+        width: 99
+        height: 206
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 973adf79deac3da50800000000000000
+      internalID: 6544797805305504633
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-walk-pack-v5_8
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 314
+        width: 99
+        height: 177
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8fd408d2c2f1ec3b0800000000000000
+      internalID: -5490416621115650568
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-walk-pack-v5_9
+      rect:
+        serializedVersion: 2
+        x: 334
+        y: 315
+        width: 99
+        height: 176
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be59bfd88d5f42e00800000000000000
+      internalID: 1019209726136391147
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-walk-pack-v5_10
+      rect:
+        serializedVersion: 2
+        x: 590
+        y: 316
+        width: 99
+        height: 175
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a995448ff65342220800000000000000
+      internalID: 2460150051474004378
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-walk-pack-v5_11
+      rect:
+        serializedVersion: 2
+        x: 846
+        y: 318
+        width: 99
+        height: 173
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 492cf2c4ec27c19e0800000000000000
+      internalID: -1649317133157416300
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-walk-pack-v5_12
+      rect:
+        serializedVersion: 2
+        x: 106
+        y: 279
+        width: 40
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51d6085fd776e1260800000000000000
+      internalID: 7070202255705664789
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-walk-pack-v5_13
+      rect:
+        serializedVersion: 2
+        x: 363
+        y: 279
+        width: 41
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 382c61e083cf912b0800000000000000
+      internalID: -5613178142855871869
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-walk-pack-v5_14
+      rect:
+        serializedVersion: 2
+        x: 618
+        y: 279
+        width: 40
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e2496d178de20b90800000000000000
+      internalID: -7276992883307494682
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-walk-pack-v5_15
+      rect:
+        serializedVersion: 2
+        x: 871
+        y: 279
+        width: 41
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2b455b55825ed54a0800000000000000
+      internalID: -6602869517255879502
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-walk-pack-v5_16
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 23
+        width: 101
+        height: 206
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d646fbf16f10ca610800000000000000
+      internalID: 1633682921434866797
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-walk-pack-v5_17
+      rect:
+        serializedVersion: 2
+        x: 333
+        y: 23
+        width: 101
+        height: 206
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c14f0ce6abe0a030800000000000000
+      internalID: 3504059612251767239
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-walk-pack-v5_18
+      rect:
+        serializedVersion: 2
+        x: 589
+        y: 23
+        width: 101
+        height: 206
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9aaa8b5f5c2b7c8f0800000000000000
+      internalID: -520250668637181271
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: architect-walk-pack-v5_19
+      rect:
+        serializedVersion: 2
+        x: 846
+        y: 23
+        width: 99
+        height: 206
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e9cce56d6ef24130800000000000000
+      internalID: 3549679202136279528
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      architect-walk-pack-v5_0: -4745021515214409496
+      architect-walk-pack-v5_1: 7194925029744500055
+      architect-walk-pack-v5_10: 2460150051474004378
+      architect-walk-pack-v5_11: -1649317133157416300
+      architect-walk-pack-v5_12: 7070202255705664789
+      architect-walk-pack-v5_13: -5613178142855871869
+      architect-walk-pack-v5_14: -7276992883307494682
+      architect-walk-pack-v5_15: -6602869517255879502
+      architect-walk-pack-v5_16: 1633682921434866797
+      architect-walk-pack-v5_17: 3504059612251767239
+      architect-walk-pack-v5_18: -520250668637181271
+      architect-walk-pack-v5_19: 3549679202136279528
+      architect-walk-pack-v5_2: 3594464259135388765
+      architect-walk-pack-v5_3: -1091865633193993771
+      architect-walk-pack-v5_4: 5798905369163539548
+      architect-walk-pack-v5_5: 6916671858278189171
+      architect-walk-pack-v5_6: -7203435877539167186
+      architect-walk-pack-v5_7: 6544797805305504633
+      architect-walk-pack-v5_8: -5490416621115650568
+      architect-walk-pack-v5_9: 1019209726136391147
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

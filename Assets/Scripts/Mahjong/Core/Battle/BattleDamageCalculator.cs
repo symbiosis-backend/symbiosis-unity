@@ -13,14 +13,21 @@ namespace MahjongGame
         public struct DamageResult
         {
             public int FinalDamage;
+            public int AbsorbedDamage;
             public bool IsCritical;
             public bool IsParried;
 
-            public DamageResult(int damage, bool crit, bool parry)
+            public DamageResult(int damage, bool crit)
+                : this(damage, 0, crit)
+            {
+            }
+
+            public DamageResult(int damage, int absorbedDamage, bool crit)
             {
                 FinalDamage = damage;
+                AbsorbedDamage = Mathf.Max(0, absorbedDamage);
                 IsCritical = crit;
-                IsParried = parry;
+                IsParried = false;
             }
         }
 
@@ -51,17 +58,16 @@ namespace MahjongGame
                 Instance = null;
         }
 
-        public DamageResult CalculateFromHub(float targetArmor, float targetParryChance)
+        public DamageResult CalculateFromHub(float targetArmor)
         {
             if (statsHub == null)
-                return new DamageResult(0, false, false);
+                return new DamageResult(0, false);
 
             return Calculate(
                 statsHub.Attack,
                 statsHub.CritChance,
                 statsHub.CritDamageMultiplier,
-                targetArmor,
-                targetParryChance
+                targetArmor
             );
         }
 
@@ -69,31 +75,19 @@ namespace MahjongGame
             int attack,
             float critChance,
             float critDamageMultiplier,
-            float targetArmor,
-            float targetParryChance)
+            float targetArmor)
         {
             attack = Mathf.Max(0, attack);
             critChance = Mathf.Clamp01(critChance);
             critDamageMultiplier = Mathf.Max(1f, critDamageMultiplier);
             targetArmor = Mathf.Clamp01(targetArmor);
-            targetParryChance = Mathf.Clamp01(targetParryChance);
-
-            bool parried = Roll(targetParryChance);
-
-            if (parried)
-            {
-                DamageResult parryResult = new DamageResult(0, false, true);
-                DamageCalculated?.Invoke(parryResult);
-                return parryResult;
-            }
-
             bool crit = Roll(critChance);
-
             float damage = attack;
 
             if (crit)
                 damage *= critDamageMultiplier;
 
+            float damageBeforeArmor = damage;
             damage *= (1f - targetArmor);
 
             int finalDamage = roundUp
@@ -103,15 +97,19 @@ namespace MahjongGame
             if (finalDamage < minimumDamage && attack > 0)
                 finalDamage = minimumDamage;
 
-            DamageResult result = new DamageResult(finalDamage, crit, false);
+            int rawDamage = roundUp
+                ? Mathf.CeilToInt(damageBeforeArmor)
+                : Mathf.RoundToInt(damageBeforeArmor);
+            int absorbedDamage = Mathf.Max(0, rawDamage - finalDamage);
+            DamageResult result = new DamageResult(finalDamage, absorbedDamage, crit);
 
             DamageCalculated?.Invoke(result);
             return result;
         }
 
-        public int CalculateDamageOnly(float targetArmor, float targetParryChance)
+        public int CalculateDamageOnly(float targetArmor)
         {
-            return CalculateFromHub(targetArmor, targetParryChance).FinalDamage;
+            return CalculateFromHub(targetArmor).FinalDamage;
         }
 
         private bool Roll(float chance)

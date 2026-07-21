@@ -9,25 +9,31 @@ namespace MahjongGame
     {
         [Header("Platform Currency")]
         public int OzAltin;
+        public int OzTile;
         public int OzAmetist;
+        public List<CurrencyWalletEntry> ExtraCurrencies;
 
         public int Altin => OzAltin;
+        public int Tile => OzTile;
         public int Ametist => OzAmetist;
 
         public event Action<int> AltinChanged;
+        public event Action<int> TileChanged;
         public event Action<int> AmetistChanged;
         public event Action CurrencyChanged;
 
         public GlobalCurrencyData()
         {
             OzAltin = 0;
+            OzTile = 0;
             OzAmetist = 0;
+            ExtraCurrencies = new List<CurrencyWalletEntry>();
         }
 
         public void AddAltin(int amount)
         {
             if (amount <= 0) return;
-            OzAltin += amount;
+            OzAltin = (int)Math.Min(int.MaxValue, (long)OzAltin + amount);
             NotifyAltinChanged();
         }
 
@@ -44,6 +50,79 @@ namespace MahjongGame
         public bool CanSpendAltin(int amount)
         {
             return amount >= 0 && OzAltin >= amount;
+        }
+
+        public int GetCurrency(string currencyId)
+        {
+            string id = CurrencyWalletEntry.NormalizeCurrencyId(currencyId);
+            if (id == CurrencyIds.OzAltin)
+                return OzAltin;
+            if (id == CurrencyIds.OzTile)
+                return OzTile;
+            if (id == CurrencyIds.OzAmetist)
+                return OzAmetist;
+
+            CurrencyWalletEntry entry = FindExtraCurrency(id);
+            return entry != null ? entry.Amount : 0;
+        }
+
+        public bool CanSpendCurrency(string currencyId, int amount)
+        {
+            return amount >= 0 && GetCurrency(currencyId) >= amount;
+        }
+
+        public bool TryChangeCurrency(string currencyId, int delta)
+        {
+            string id = CurrencyWalletEntry.NormalizeCurrencyId(currencyId);
+            if (string.IsNullOrWhiteSpace(id))
+                return false;
+
+            if (delta == 0)
+                return true;
+
+            int current = GetCurrency(id);
+            if (delta < 0 && current < -delta)
+                return false;
+
+            SetCurrency(id, current + delta);
+            return true;
+        }
+
+        public void SetCurrency(string currencyId, int value)
+        {
+            string id = CurrencyWalletEntry.NormalizeCurrencyId(currencyId);
+            int clamped = Mathf.Max(0, value);
+
+            if (id == CurrencyIds.OzAltin)
+            {
+                OzAltin = clamped;
+                NotifyAltinChanged();
+                return;
+            }
+
+            if (id == CurrencyIds.OzTile)
+            {
+                OzTile = clamped;
+                NotifyTileChanged();
+                return;
+            }
+
+            if (id == CurrencyIds.OzAmetist)
+            {
+                OzAmetist = clamped;
+                NotifyAmetistChanged();
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(id))
+                return;
+
+            CurrencyWalletEntry entry = EnsureExtraCurrency(id);
+            if (entry.Amount == clamped)
+                return;
+
+            entry.Amount = clamped;
+            CurrencyChanged?.Invoke();
         }
 
         public bool TryChangeAltin(int delta)
@@ -68,8 +147,49 @@ namespace MahjongGame
         public void AddAmetist(int amount)
         {
             if (amount <= 0) return;
-            OzAmetist += amount;
+            OzAmetist = (int)Math.Min(int.MaxValue, (long)OzAmetist + amount);
             NotifyAmetistChanged();
+        }
+
+        public void AddTile(int amount)
+        {
+            if (amount <= 0) return;
+            OzTile = (int)Math.Min(int.MaxValue, (long)OzTile + amount);
+            NotifyTileChanged();
+        }
+
+        public bool SpendTile(int amount)
+        {
+            if (amount < 0 || OzTile < amount)
+                return false;
+
+            OzTile -= amount;
+            NotifyTileChanged();
+            return true;
+        }
+
+        public bool CanSpendTile(int amount)
+        {
+            return amount >= 0 && OzTile >= amount;
+        }
+
+        public bool TryChangeTile(int delta)
+        {
+            if (delta == 0) return true;
+            if (delta > 0)
+            {
+                AddTile(delta);
+                return true;
+            }
+            return SpendTile(-delta);
+        }
+
+        public void SetTile(int value)
+        {
+            int clamped = Mathf.Max(0, value);
+            if (OzTile == clamped) return;
+            OzTile = clamped;
+            NotifyTileChanged();
         }
 
         public bool SpendAmetist(int amount)
@@ -108,8 +228,51 @@ namespace MahjongGame
 
         public void EnsureValid()
         {
+            if (ExtraCurrencies == null)
+                ExtraCurrencies = new List<CurrencyWalletEntry>();
+
             if (OzAltin < 0) OzAltin = 0;
+            if (OzTile < 0) OzTile = 0;
             if (OzAmetist < 0) OzAmetist = 0;
+
+            for (int i = ExtraCurrencies.Count - 1; i >= 0; i--)
+            {
+                CurrencyWalletEntry entry = ExtraCurrencies[i];
+                if (entry == null || string.IsNullOrWhiteSpace(entry.CurrencyId))
+                {
+                    ExtraCurrencies.RemoveAt(i);
+                    continue;
+                }
+
+                entry.CurrencyId = CurrencyWalletEntry.NormalizeCurrencyId(entry.CurrencyId);
+                entry.Amount = Mathf.Max(0, entry.Amount);
+            }
+        }
+
+        private CurrencyWalletEntry FindExtraCurrency(string currencyId)
+        {
+            if (ExtraCurrencies == null)
+                ExtraCurrencies = new List<CurrencyWalletEntry>();
+
+            for (int i = 0; i < ExtraCurrencies.Count; i++)
+            {
+                CurrencyWalletEntry entry = ExtraCurrencies[i];
+                if (entry != null && entry.CurrencyId == currencyId)
+                    return entry;
+            }
+
+            return null;
+        }
+
+        private CurrencyWalletEntry EnsureExtraCurrency(string currencyId)
+        {
+            CurrencyWalletEntry existing = FindExtraCurrency(currencyId);
+            if (existing != null)
+                return existing;
+
+            CurrencyWalletEntry created = new CurrencyWalletEntry(currencyId, 0);
+            ExtraCurrencies.Add(created);
+            return created;
         }
 
         private void NotifyAltinChanged()
@@ -123,13 +286,19 @@ namespace MahjongGame
             AmetistChanged?.Invoke(OzAmetist);
             CurrencyChanged?.Invoke();
         }
+
+        private void NotifyTileChanged()
+        {
+            TileChanged?.Invoke(OzTile);
+            CurrencyChanged?.Invoke();
+        }
     }
 
     [Serializable]
     public sealed class PlayerEnergyData
     {
         public const int DefaultMaxEnergy = 100;
-        public const int DefaultRefillIntervalSeconds = 300;
+        public const int DefaultRefillIntervalSeconds = 60;
 
         [Header("Energy")]
         public int CurrentEnergy;
@@ -219,8 +388,9 @@ namespace MahjongGame
         public void EnsureValid()
         {
             MaxEnergy = Mathf.Max(1, MaxEnergy <= 0 ? DefaultMaxEnergy : MaxEnergy);
-            RefillIntervalSeconds = Mathf.Max(1, RefillIntervalSeconds <= 0 ? DefaultRefillIntervalSeconds : RefillIntervalSeconds);
-            CurrentEnergy = Mathf.Clamp(CurrentEnergy, 0, MaxEnergy);
+            if (RefillIntervalSeconds <= 0 || RefillIntervalSeconds > DefaultRefillIntervalSeconds)
+                RefillIntervalSeconds = DefaultRefillIntervalSeconds;
+            CurrentEnergy = Mathf.Max(0, CurrentEnergy);
 
             if (LastUpdatedUtcTicks <= 0)
                 LastUpdatedUtcTicks = DateTime.UtcNow.Ticks;
@@ -351,6 +521,178 @@ namespace MahjongGame
     }
 
     [Serializable]
+    public sealed class MahjongBattleTileStackData
+    {
+        public string TileId;
+        public int Count;
+        public int UpgradeLevel;
+
+        public MahjongBattleTileStackData()
+        {
+            TileId = string.Empty;
+            Count = 0;
+            UpgradeLevel = 0;
+        }
+
+        public MahjongBattleTileStackData(string tileId, int count, int upgradeLevel = 0)
+        {
+            TileId = string.IsNullOrWhiteSpace(tileId) ? string.Empty : tileId.Trim();
+            Count = Mathf.Max(0, count);
+            UpgradeLevel = Mathf.Max(0, upgradeLevel);
+        }
+
+        public void EnsureValid()
+        {
+            TileId = string.IsNullOrWhiteSpace(TileId) ? string.Empty : TileId.Trim();
+            Count = Mathf.Max(0, Count);
+            UpgradeLevel = Mathf.Max(0, UpgradeLevel);
+        }
+    }
+
+    [Serializable]
+    public sealed class MahjongBattleTileInventoryData
+    {
+        public int SchemaVersion;
+        public string TotemTileId;
+        public List<string> ActiveTileIds;
+        public List<string> ReserveTileIds;
+        public List<MahjongBattleTileStackData> TileStacks;
+		public int AscendLegendaryPityCount;
+		public int AscendMythicPityCount;
+
+        public MahjongBattleTileInventoryData()
+        {
+            SchemaVersion = 0;
+            TotemTileId = string.Empty;
+            ActiveTileIds = new List<string>();
+            ReserveTileIds = new List<string>();
+            TileStacks = new List<MahjongBattleTileStackData>();
+			AscendLegendaryPityCount = 0;
+			AscendMythicPityCount = 0;
+        }
+
+        public void EnsureValid()
+        {
+            SchemaVersion = Mathf.Max(0, SchemaVersion);
+
+            if (ActiveTileIds == null)
+                ActiveTileIds = new List<string>();
+
+            if (ReserveTileIds == null)
+                ReserveTileIds = new List<string>();
+
+            if (TileStacks == null)
+                TileStacks = new List<MahjongBattleTileStackData>();
+
+			AscendLegendaryPityCount = Mathf.Max(0, AscendLegendaryPityCount);
+			AscendMythicPityCount = Mathf.Max(0, AscendMythicPityCount);
+
+            SanitizeList(ActiveTileIds);
+            SanitizeList(ReserveTileIds);
+            SanitizeStacks(TileStacks);
+            TotemTileId = string.IsNullOrWhiteSpace(TotemTileId) ? string.Empty : TotemTileId.Trim();
+
+            for (int i = ReserveTileIds.Count - 1; i >= 0; i--)
+            {
+                if (ActiveTileIds.Contains(ReserveTileIds[i]))
+                    ReserveTileIds.RemoveAt(i);
+            }
+
+            // The totem is a role assigned to one of the 18 active tile types.
+            // It is intentionally allowed to overlap ActiveTileIds.
+        }
+
+        private static void SanitizeList(List<string> ids)
+        {
+            for (int i = ids.Count - 1; i >= 0; i--)
+            {
+                string id = ids[i];
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    ids.RemoveAt(i);
+                    continue;
+                }
+
+                string trimmed = id.Trim();
+                int firstIndex = ids.FindIndex(value => string.Equals(value != null ? value.Trim() : string.Empty, trimmed, StringComparison.Ordinal));
+                if (firstIndex >= 0 && firstIndex != i)
+                {
+                    ids.RemoveAt(i);
+                    continue;
+                }
+
+                ids[i] = trimmed;
+            }
+        }
+
+        private static void SanitizeStacks(List<MahjongBattleTileStackData> stacks)
+        {
+            for (int i = stacks.Count - 1; i >= 0; i--)
+            {
+                MahjongBattleTileStackData stack = stacks[i];
+                if (stack == null)
+                {
+                    stacks.RemoveAt(i);
+                    continue;
+                }
+
+                stack.EnsureValid();
+                if (string.IsNullOrWhiteSpace(stack.TileId) || stack.Count <= 0)
+                {
+                    stacks.RemoveAt(i);
+                    continue;
+                }
+
+                int firstIndex = stacks.FindIndex(value =>
+                    value != null &&
+                    value.UpgradeLevel == stack.UpgradeLevel &&
+                    string.Equals(value.TileId != null ? value.TileId.Trim() : string.Empty, stack.TileId, StringComparison.Ordinal));
+                if (firstIndex >= 0 && firstIndex != i)
+                {
+                    MahjongBattleTileStackData first = stacks[firstIndex];
+                    long combinedCount = (long)Mathf.Max(0, first.Count) + Mathf.Max(0, stack.Count);
+                    first.Count = combinedCount >= int.MaxValue ? int.MaxValue : (int)combinedCount;
+                    stacks.RemoveAt(i);
+                }
+            }
+        }
+    }
+
+    [Serializable]
+    public sealed class MahjongBattleCharacterProgressData
+    {
+        public string CharacterId;
+        public int Level;
+        public int Experience;
+        public int MaxHpUpgrades;
+        public int AttackUpgrades;
+        public int ArmorUpgrades;
+        public int ParryUpgrades;
+        public int CritUpgrades;
+        public int CritDamageUpgrades;
+
+        public MahjongBattleCharacterProgressData()
+        {
+            CharacterId = string.Empty;
+            Level = 1;
+            Experience = 0;
+        }
+
+        public void EnsureValid()
+        {
+            CharacterId = string.IsNullOrWhiteSpace(CharacterId) ? string.Empty : CharacterId.Trim();
+            Level = Mathf.Max(1, Level);
+            Experience = Mathf.Max(0, Experience);
+            MaxHpUpgrades = Mathf.Max(0, MaxHpUpgrades);
+            AttackUpgrades = Mathf.Max(0, AttackUpgrades);
+            ArmorUpgrades = Mathf.Max(0, ArmorUpgrades);
+            ParryUpgrades = Mathf.Max(0, ParryUpgrades);
+            CritUpgrades = Mathf.Max(0, CritUpgrades);
+            CritDamageUpgrades = Mathf.Max(0, CritDamageUpgrades);
+        }
+    }
+
+    [Serializable]
     public sealed class MahjongBattleData
     {
         [Header("Battle Stats")]
@@ -375,6 +717,12 @@ namespace MahjongGame
         public int LastStakeUsed;
         public int TotalBattleRewardEarned;
 
+        [Header("Battle Tile Inventory")]
+        public MahjongBattleTileInventoryData TileInventory;
+
+        [Header("Character Progression")]
+        public List<MahjongBattleCharacterProgressData> CharacterProgression;
+
         public int TotalGames => TotalMatches;
         public bool HasMatches => TotalMatches > 0;
         public int WinRatePercent => TotalMatches > 0 ? Mathf.RoundToInt((float)Wins / TotalMatches * 100f) : 0;
@@ -395,10 +743,12 @@ namespace MahjongGame
             Experience = 0;
             WinStreak = 0;
             BestWinStreak = 0;
-            RankTier = "Unranked";
+            RankTier = "Bronze";
             RankPoints = 0;
             LastStakeUsed = 0;
             TotalBattleRewardEarned = 0;
+            TileInventory = new MahjongBattleTileInventoryData();
+            CharacterProgression = new List<MahjongBattleCharacterProgressData>();
         }
 
         public void AddWin(bool mvp = true)
@@ -458,8 +808,10 @@ namespace MahjongGame
 
         public void SetRank(string rankTier, int rankPoints)
         {
-            string newTier = string.IsNullOrWhiteSpace(rankTier) ? "Unranked" : rankTier.Trim();
             int newPoints = Mathf.Max(0, rankPoints);
+            string newTier = string.IsNullOrWhiteSpace(rankTier) || rankTier.Trim().Equals("Unranked", StringComparison.OrdinalIgnoreCase)
+                ? RankedBattleService.GetCurrentTier(newPoints)
+                : rankTier.Trim();
 
             bool tierChanged = RankTier != newTier;
             bool pointsChanged = RankPoints != newPoints;
@@ -505,10 +857,33 @@ namespace MahjongGame
             Experience = Mathf.Max(0, Experience);
             WinStreak = Mathf.Max(0, WinStreak);
             BestWinStreak = Mathf.Max(0, BestWinStreak);
-            RankTier = string.IsNullOrWhiteSpace(RankTier) ? "Unranked" : RankTier.Trim();
             RankPoints = Mathf.Max(0, RankPoints);
+            RankTier = string.IsNullOrWhiteSpace(RankTier) || RankTier.Trim().Equals("Unranked", StringComparison.OrdinalIgnoreCase)
+                ? RankedBattleService.GetCurrentTier(RankPoints)
+                : RankTier.Trim();
             LastStakeUsed = Mathf.Max(0, LastStakeUsed);
             TotalBattleRewardEarned = Mathf.Max(0, TotalBattleRewardEarned);
+            if (TileInventory == null)
+                TileInventory = new MahjongBattleTileInventoryData();
+            TileInventory.EnsureValid();
+            if (CharacterProgression == null)
+                CharacterProgression = new List<MahjongBattleCharacterProgressData>();
+            for (int i = CharacterProgression.Count - 1; i >= 0; i--)
+            {
+                MahjongBattleCharacterProgressData progress = CharacterProgression[i];
+                if (progress == null || string.IsNullOrWhiteSpace(progress.CharacterId))
+                {
+                    CharacterProgression.RemoveAt(i);
+                    continue;
+                }
+
+                progress.EnsureValid();
+                int firstIndex = CharacterProgression.FindIndex(item =>
+                    item != null &&
+                    string.Equals(item.CharacterId, progress.CharacterId, StringComparison.Ordinal));
+                if (firstIndex >= 0 && firstIndex != i)
+                    CharacterProgression.RemoveAt(i);
+            }
         }
     }
 
@@ -722,16 +1097,54 @@ namespace MahjongGame
     }
 
     [Serializable]
+    public sealed class AdRemovalData
+    {
+        public long NoAdsUntilUtcTicks;
+
+        public bool HasActiveNoAds()
+        {
+            return NoAdsUntilUtcTicks > DateTime.UtcNow.Ticks;
+        }
+
+        public int GetRemainingDays()
+        {
+            long remainingTicks = Math.Max(0L, NoAdsUntilUtcTicks - DateTime.UtcNow.Ticks);
+            if (remainingTicks <= 0)
+                return 0;
+
+            return Mathf.CeilToInt((float)TimeSpan.FromTicks(remainingTicks).TotalDays);
+        }
+
+        public void ExtendNoAds(TimeSpan duration)
+        {
+            long nowTicks = DateTime.UtcNow.Ticks;
+            long startTicks = Math.Max(nowTicks, NoAdsUntilUtcTicks);
+            long durationTicks = Math.Max(0L, duration.Ticks);
+            NoAdsUntilUtcTicks = startTicks + durationTicks;
+        }
+
+        public void EnsureValid()
+        {
+            if (NoAdsUntilUtcTicks < 0)
+                NoAdsUntilUtcTicks = 0;
+        }
+    }
+
+    [Serializable]
     public sealed class PlayerProfile
     {
-        public const int CurrentDataVersion = 8;
+        public const int CurrentDataVersion = 12;
 
         [Header("Identity")]
         public string LocalProfileId;
         public string PublicPlayerId;
         public string OnlinePlayerId;
+        public string AccountEmail;
         public string DynastyName;
         public string DynastyId;
+        public string AllianceTag;
+        public string AllianceName;
+        public int AllianceLevel;
         public int ProfileSlotIndex;
         public string DisplayName;
         public int Age;
@@ -748,6 +1161,7 @@ namespace MahjongGame
         public string GlobalTitleId;
         public string GlobalRankTier;
         public int GlobalRankPoints;
+        public bool IsProfilePublic;
 
         [Header("Global Progress")]
         public int AccountLevel;
@@ -762,8 +1176,20 @@ namespace MahjongGame
         [Header("Mahjong")]
         public MahjongProfileData Mahjong;
 
+        [Header("Ranked Battle")]
+        public RankedBattlePersistentData RankedBattle;
+
         [Header("Weekly Reward")]
         public WeeklyRewardData WeeklyReward;
+
+        [Header("Exchange Market")]
+        public ExchangeMarketData ExchangeMarket;
+
+        [Header("Ads")]
+        public AdRemovalData Ads;
+
+        [Header("Mailbox")]
+        public MailboxData Mailbox;
 
         [Header("Time")]
         public string CreatedAtUtc;
@@ -772,6 +1198,8 @@ namespace MahjongGame
         [Header("State")]
         public bool IsGuest;
         public bool IsProfileCompleted;
+        [NonSerialized] public bool IsDeveloper;
+        [NonSerialized] public bool HasInfiniteCurrency;
         public int DataVersion;
 
         public string Id => LocalProfileId;
@@ -784,6 +1212,7 @@ namespace MahjongGame
         public bool HasMahjongData => Mahjong != null;
         public bool HasCurrencies => Currencies != null;
         public bool HasEnergy => Energy != null;
+        public bool HasActiveNoAds => Ads != null && Ads.HasActiveNoAds();
 
         public event Action ProfileChanged;
         public event Action<string> DisplayNameChanged;
@@ -798,8 +1227,12 @@ namespace MahjongGame
             LocalProfileId = Guid.NewGuid().ToString("N");
             PublicPlayerId = GeneratePublicPlayerId();
             OnlinePlayerId = string.Empty;
+            AccountEmail = string.Empty;
             DynastyName = string.Empty;
             DynastyId = string.Empty;
+            AllianceTag = string.Empty;
+            AllianceName = string.Empty;
+            AllianceLevel = 0;
             ProfileSlotIndex = 1;
             DisplayName = string.Empty;
             Age = 0;
@@ -810,8 +1243,9 @@ namespace MahjongGame
             FrameId = string.Empty;
 
             GlobalTitleId = string.Empty;
-            GlobalRankTier = "Unranked";
+            GlobalRankTier = "Bronze";
             GlobalRankPoints = 0;
+            IsProfilePublic = true;
 
             AccountLevel = 1;
             AccountExp = 0;
@@ -819,7 +1253,11 @@ namespace MahjongGame
             Currencies = new GlobalCurrencyData();
             Energy = new PlayerEnergyData();
             Mahjong = new MahjongProfileData();
+            RankedBattle = new RankedBattlePersistentData();
             WeeklyReward = new WeeklyRewardData();
+            ExchangeMarket = new ExchangeMarketData();
+            Ads = new AdRemovalData();
+            Mailbox = new MailboxData();
 
             string now = DateTime.UtcNow.ToString("O");
             CreatedAtUtc = now;
@@ -827,6 +1265,8 @@ namespace MahjongGame
 
             IsGuest = true;
             IsProfileCompleted = false;
+            IsDeveloper = false;
+            HasInfiniteCurrency = false;
             DataVersion = CurrentDataVersion;
 
             HookNestedSignals();
@@ -1045,6 +1485,9 @@ namespace MahjongGame
         public bool TrySpendAltin(int amount)
         {
             EnsureData();
+            if (HasInfiniteCurrency)
+                return amount >= 0;
+
             bool ok = Currencies.SpendAltin(amount);
             if (ok) ProfileChanged?.Invoke();
             return ok;
@@ -1060,7 +1503,21 @@ namespace MahjongGame
         public bool TrySpendAmetist(int amount)
         {
             EnsureData();
+            if (HasInfiniteCurrency)
+                return amount >= 0;
+
             bool ok = Currencies.SpendAmetist(amount);
+            if (ok) ProfileChanged?.Invoke();
+            return ok;
+        }
+
+        public bool TrySpendTile(int amount)
+        {
+            EnsureData();
+            if (HasInfiniteCurrency)
+                return amount >= 0;
+
+            bool ok = Currencies.SpendTile(amount);
             if (ok) ProfileChanged?.Invoke();
             return ok;
         }
@@ -1072,16 +1529,38 @@ namespace MahjongGame
             if (amount > 0) ProfileChanged?.Invoke();
         }
 
+        public void AddTile(int amount)
+        {
+            EnsureData();
+            Currencies.AddTile(amount);
+            if (amount > 0) ProfileChanged?.Invoke();
+        }
+
         public bool CanSpendAltin(int amount)
         {
             EnsureData();
+            if (HasInfiniteCurrency)
+                return amount >= 0;
+
             return Currencies.CanSpendAltin(amount);
         }
 
         public bool CanSpendAmetist(int amount)
         {
             EnsureData();
+            if (HasInfiniteCurrency)
+                return amount >= 0;
+
             return Currencies.CanSpendAmetist(amount);
+        }
+
+        public bool CanSpendTile(int amount)
+        {
+            EnsureData();
+            if (HasInfiniteCurrency)
+                return amount >= 0;
+
+            return Currencies.CanSpendTile(amount);
         }
 
         public void EnsureData()
@@ -1109,8 +1588,20 @@ namespace MahjongGame
             if (Mahjong == null)
                 Mahjong = new MahjongProfileData();
 
+            if (RankedBattle == null)
+                RankedBattle = new RankedBattlePersistentData();
+
             if (WeeklyReward == null)
                 WeeklyReward = new WeeklyRewardData();
+
+            if (ExchangeMarket == null)
+                ExchangeMarket = new ExchangeMarketData();
+
+            if (Ads == null)
+                Ads = new AdRemovalData();
+
+            if (Mailbox == null)
+                Mailbox = new MailboxData();
 
             if (string.IsNullOrWhiteSpace(CreatedAtUtc))
                 CreatedAtUtc = DateTime.UtcNow.ToString("O");
@@ -1121,13 +1612,15 @@ namespace MahjongGame
             DisplayName = DisplayName ?? string.Empty;
             PublicPlayerId = PublicPlayerId ?? string.Empty;
             OnlinePlayerId = OnlinePlayerId ?? string.Empty;
+            AccountEmail = string.IsNullOrWhiteSpace(AccountEmail) ? string.Empty : AccountEmail.Trim().ToLowerInvariant();
             DynastyName = DynastyName ?? string.Empty;
             DynastyId = DynastyId ?? string.Empty;
+            AllianceTag = AllianceTag ?? string.Empty;
+            AllianceName = AllianceName ?? string.Empty;
+            AllianceLevel = Mathf.Max(0, AllianceLevel);
             ProfileSlotIndex = Mathf.Clamp(ProfileSlotIndex <= 0 ? 1 : ProfileSlotIndex, 1, 3);
             FrameId = FrameId ?? string.Empty;
             GlobalTitleId = GlobalTitleId ?? string.Empty;
-            GlobalRankTier = string.IsNullOrWhiteSpace(GlobalRankTier) ? "Unranked" : GlobalRankTier.Trim();
-
             AccountLevel = Mathf.Max(1, AccountLevel);
             AccountExp = Mathf.Max(0, AccountExp);
             Age = Mathf.Clamp(Age, 0, 120);
@@ -1135,12 +1628,21 @@ namespace MahjongGame
                 Gender = PlayerGender.NotSpecified;
             AvatarId = Mathf.Max(0, AvatarId);
             GlobalRankPoints = Mathf.Max(0, GlobalRankPoints);
+            GlobalRankTier = string.IsNullOrWhiteSpace(GlobalRankTier) || GlobalRankTier.Trim().Equals("Unranked", StringComparison.OrdinalIgnoreCase)
+                ? RankedBattleService.GetCurrentTier(GlobalRankPoints)
+                : GlobalRankTier.Trim();
+            if (DataVersion < 11)
+                IsProfilePublic = true;
             DataVersion = Mathf.Max(CurrentDataVersion, DataVersion);
 
             Currencies.EnsureValid();
             Energy.EnsureValid();
             Mahjong.EnsureData();
+            RankedBattle.EnsureValid();
             WeeklyReward.EnsureValid();
+            ExchangeMarket.EnsureData(ExchangeMarketService.Config);
+            Ads.EnsureValid();
+            Mailbox.EnsureValid();
             SanitizeFriendIds();
 
             HookNestedSignals();

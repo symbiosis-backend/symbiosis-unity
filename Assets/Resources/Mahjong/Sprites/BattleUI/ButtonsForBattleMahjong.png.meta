@@ -1,0 +1,1495 @@
+fileFormatVersion: 2
+guid: 28c64b04e83275d4ea1c96de7000f03e
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4349025994945419837
+    second: ButtonsForBattleMahjong_0
+  - first:
+      213: 2937002376369804551
+    second: ButtonsForBattleMahjong_1
+  - first:
+      213: 7822327887626917105
+    second: ButtonsForBattleMahjong_2
+  - first:
+      213: -8583684573277392371
+    second: ButtonsForBattleMahjong_3
+  - first:
+      213: 5307472652322679420
+    second: ButtonsForBattleMahjong_4
+  - first:
+      213: 3565958169851540485
+    second: ButtonsForBattleMahjong_5
+  - first:
+      213: -6412484239861926309
+    second: ButtonsForBattleMahjong_6
+  - first:
+      213: 6791096645258486592
+    second: ButtonsForBattleMahjong_7
+  - first:
+      213: -6427533163244799182
+    second: ButtonsForBattleMahjong_8
+  - first:
+      213: -1260813636671396659
+    second: ButtonsForBattleMahjong_9
+  - first:
+      213: 4179526487318122048
+    second: ButtonsForBattleMahjong_10
+  - first:
+      213: 5225020581019499029
+    second: ButtonsForBattleMahjong_11
+  - first:
+      213: 1689445213232409208
+    second: ButtonsForBattleMahjong_12
+  - first:
+      213: -5675692853080337322
+    second: ButtonsForBattleMahjong_13
+  - first:
+      213: -7384680961279663537
+    second: ButtonsForBattleMahjong_14
+  - first:
+      213: -6338313410109955964
+    second: ButtonsForBattleMahjong_15
+  - first:
+      213: 6662902837377758564
+    second: ButtonsForBattleMahjong_16
+  - first:
+      213: -5776740870385288854
+    second: ButtonsForBattleMahjong_17
+  - first:
+      213: 7582642304723989024
+    second: ButtonsForBattleMahjong_18
+  - first:
+      213: -746991792355440970
+    second: ButtonsForBattleMahjong_19
+  - first:
+      213: 8911793455209141405
+    second: ButtonsForBattleMahjong_20
+  - first:
+      213: 4327596899714033504
+    second: ButtonsForBattleMahjong_21
+  - first:
+      213: 4098126061864554520
+    second: ButtonsForBattleMahjong_22
+  - first:
+      213: -1689105060306987806
+    second: ButtonsForBattleMahjong_23
+  - first:
+      213: -2244986471838067241
+    second: ButtonsForBattleMahjong_24
+  - first:
+      213: 8866378644068242062
+    second: ButtonsForBattleMahjong_25
+  - first:
+      213: 3061857358435496744
+    second: ButtonsForBattleMahjong_26
+  - first:
+      213: 5148245900836001870
+    second: ButtonsForBattleMahjong_27
+  - first:
+      213: 2143871718990112880
+    second: ButtonsForBattleMahjong_28
+  - first:
+      213: 737658629066295856
+    second: ButtonsForBattleMahjong_29
+  - first:
+      213: -3060175088091228357
+    second: ButtonsForBattleMahjong_30
+  - first:
+      213: -2422817385672225382
+    second: ButtonsForBattleMahjong_31
+  - first:
+      213: 5058314672830237250
+    second: ButtonsForBattleMahjong_32
+  - first:
+      213: 9093753598285052763
+    second: ButtonsForBattleMahjong_33
+  - first:
+      213: -5476704596719787362
+    second: ButtonsForBattleMahjong_34
+  - first:
+      213: 7517668125206182113
+    second: ButtonsForBattleMahjong_35
+  - first:
+      213: -1107025421896006086
+    second: ButtonsForBattleMahjong_36
+  - first:
+      213: 1572364790047204027
+    second: ButtonsForBattleMahjong_37
+  - first:
+      213: 7797907705775561441
+    second: ButtonsForBattleMahjong_38
+  - first:
+      213: 4923337876916663264
+    second: ButtonsForBattleMahjong_39
+  - first:
+      213: -4141438241501255637
+    second: ButtonsForBattleMahjong_40
+  - first:
+      213: 8480578301033809
+    second: ButtonsForBattleMahjong_41
+  - first:
+      213: -5805579570038119200
+    second: ButtonsForBattleMahjong_42
+  - first:
+      213: -5758744068185231337
+    second: ButtonsForBattleMahjong_43
+  - first:
+      213: -9057735170968210262
+    second: ButtonsForBattleMahjong_44
+  - first:
+      213: 5437311289364885648
+    second: ButtonsForBattleMahjong_45
+  - first:
+      213: 5804583426625918969
+    second: ButtonsForBattleMahjong_46
+  - first:
+      213: -3327741430961088795
+    second: ButtonsForBattleMahjong_47
+  - first:
+      213: -3338399362260086567
+    second: ButtonsForBattleMahjong_48
+  - first:
+      213: 3099739131627956279
+    second: ButtonsForBattleMahjong_49
+  - first:
+      213: 5187770571519756197
+    second: ButtonsForBattleMahjong_50
+  - first:
+      213: 2161497501114863187
+    second: ButtonsForBattleMahjong_51
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_0
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 328
+        width: 577
+        height: 696
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d3a59aba918da5c30800000000000000
+      internalID: 4349025994945419837
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_1
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 484
+        width: 430
+        height: 181
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7051004b91452c820800000000000000
+      internalID: 2937002376369804551
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_2
+      rect:
+        serializedVersion: 2
+        x: 202
+        y: 723
+        width: 52
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1f452a2f4cd7e8c60800000000000000
+      internalID: 7822327887626917105
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_3
+      rect:
+        serializedVersion: 2
+        x: 250
+        y: 721
+        width: 61
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d02fcc1eb50a0e880800000000000000
+      internalID: -8583684573277392371
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_4
+      rect:
+        serializedVersion: 2
+        x: 306
+        y: 723
+        width: 50
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7a2bc0d14ee7a940800000000000000
+      internalID: 5307472652322679420
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_5
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 773
+        width: 441
+        height: 249
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50437edef04dc7130800000000000000
+      internalID: 3565958169851540485
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_6
+      rect:
+        serializedVersion: 2
+        x: 551
+        y: 379
+        width: 450
+        height: 303
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b563d330f874207a0800000000000000
+      internalID: -6412484239861926309
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_7
+      rect:
+        serializedVersion: 2
+        x: 635
+        y: 701
+        width: 76
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 043aaf70b62de3e50800000000000000
+      internalID: 6791096645258486592
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_8
+      rect:
+        serializedVersion: 2
+        x: 708
+        y: 685
+        width: 29
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23b30ce74a0dcc6a0800000000000000
+      internalID: -6427533163244799182
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_9
+      rect:
+        serializedVersion: 2
+        x: 734
+        y: 724
+        width: 20
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc4ab327da0b08ee0800000000000000
+      internalID: -1260813636671396659
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_10
+      rect:
+        serializedVersion: 2
+        x: 745
+        y: 717
+        width: 43
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04ecee53239a00a30800000000000000
+      internalID: 4179526487318122048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_11
+      rect:
+        serializedVersion: 2
+        x: 784
+        y: 721
+        width: 28
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51ab5cbf880038840800000000000000
+      internalID: 5225020581019499029
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_12
+      rect:
+        serializedVersion: 2
+        x: 809
+        y: 705
+        width: 46
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87aa33a687d127710800000000000000
+      internalID: 1689445213232409208
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_13
+      rect:
+        serializedVersion: 2
+        x: 852
+        y: 720
+        width: 29
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6545ce5db63eb31b0800000000000000
+      internalID: -5675692853080337322
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_14
+      rect:
+        serializedVersion: 2
+        x: 947
+        y: 595
+        width: 532
+        height: 429
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f42e55b9ac7548990800000000000000
+      internalID: -7384680961279663537
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_15
+      rect:
+        serializedVersion: 2
+        x: 1017
+        y: 411
+        width: 462
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4802d4b0989c908a0800000000000000
+      internalID: -6338313410109955964
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_16
+      rect:
+        serializedVersion: 2
+        x: 1174
+        y: 720
+        width: 67
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 465f7da34d2677c50800000000000000
+      internalID: 6662902837377758564
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_17
+      rect:
+        serializedVersion: 2
+        x: 1235
+        y: 723
+        width: 70
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a69343de8c4e4dfa0800000000000000
+      internalID: -5776740870385288854
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_18
+      rect:
+        serializedVersion: 2
+        x: 1303
+        y: 726
+        width: 24
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0223ce76005fa3960800000000000000
+      internalID: 7582642304723989024
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_19
+      rect:
+        serializedVersion: 2
+        x: 202
+        y: 471
+        width: 24
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b6858e2ce622a5f0800000000000000
+      internalID: -746991792355440970
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_20
+      rect:
+        serializedVersion: 2
+        x: 223
+        y: 471
+        width: 133
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d9454694eec0dab70800000000000000
+      internalID: 8911793455209141405
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_21
+      rect:
+        serializedVersion: 2
+        x: 663
+        y: 471
+        width: 140
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0676982a376be0c30800000000000000
+      internalID: 4327596899714033504
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_22
+      rect:
+        serializedVersion: 2
+        x: 795
+        y: 471
+        width: 70
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8101532c0f77fd830800000000000000
+      internalID: 4098126061864554520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_23
+      rect:
+        serializedVersion: 2
+        x: 1189
+        y: 471
+        width: 27
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e4561c95e71f88e0800000000000000
+      internalID: -1689105060306987806
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_24
+      rect:
+        serializedVersion: 2
+        x: 1212
+        y: 471
+        width: 117
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d5d884c2b438d0e0800000000000000
+      internalID: -2244986471838067241
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_25
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 0
+        width: 508
+        height: 411
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e821cc39664bb0b70800000000000000
+      internalID: 8866378644068242062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_26
+      rect:
+        serializedVersion: 2
+        x: 67
+        y: 62
+        width: 430
+        height: 131
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 823b67a8b07ed7a20800000000000000
+      internalID: 3061857358435496744
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_27
+      rect:
+        serializedVersion: 2
+        x: 199
+        y: 231
+        width: 59
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e48d0b7ce5e327740800000000000000
+      internalID: 5148245900836001870
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_28
+      rect:
+        serializedVersion: 2
+        x: 254
+        y: 235
+        width: 25
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 078696e38ff80cd10800000000000000
+      internalID: 2143871718990112880
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_29
+      rect:
+        serializedVersion: 2
+        x: 271
+        y: 231
+        width: 52
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03a8ff66d90bc3a00800000000000000
+      internalID: 737658629066295856
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_30
+      rect:
+        serializedVersion: 2
+        x: 317
+        y: 235
+        width: 23
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3792db88f21885d0800000000000000
+      internalID: -3060175088091228357
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_31
+      rect:
+        serializedVersion: 2
+        x: 335
+        y: 235
+        width: 26
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9dcd53ac6c606ed0800000000000000
+      internalID: -2422817385672225382
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_32
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 187
+        width: 461
+        height: 222
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 24a4134156eb23640800000000000000
+      internalID: 5058314672830237250
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_33
+      rect:
+        serializedVersion: 2
+        x: 540
+        y: 0
+        width: 461
+        height: 192
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5bf5b487b0833e70800000000000000
+      internalID: 9093753598285052763
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_34
+      rect:
+        serializedVersion: 2
+        x: 676
+        y: 235
+        width: 24
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e92a4c4af26def3b0800000000000000
+      internalID: -5476704596719787362
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_35
+      rect:
+        serializedVersion: 2
+        x: 699
+        y: 235
+        width: 24
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e8f03e545f145860800000000000000
+      internalID: 7517668125206182113
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_36
+      rect:
+        serializedVersion: 2
+        x: 718
+        y: 231
+        width: 163
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a36cf8a7e3e03a0f0800000000000000
+      internalID: -1107025421896006086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_37
+      rect:
+        serializedVersion: 2
+        x: 1015
+        y: 189
+        width: 464
+        height: 221
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb26810227922d510800000000000000
+      internalID: 1572364790047204027
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_38
+      rect:
+        serializedVersion: 2
+        x: 1015
+        y: 0
+        width: 464
+        height: 190
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1ea980a4ebbb73c60800000000000000
+      internalID: 7797907705775561441
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_39
+      rect:
+        serializedVersion: 2
+        x: 1189
+        y: 233
+        width: 49
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e3f7dec6b5335440800000000000000
+      internalID: 4923337876916663264
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_40
+      rect:
+        serializedVersion: 2
+        x: 1235
+        y: 233
+        width: 90
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2869149cd7a686c0800000000000000
+      internalID: -4141438241501255637
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_41
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 19
+        width: 25
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15d7f118a012e1000800000000000000
+      internalID: 8480578301033809
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_42
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 15
+        width: 33
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e4ec9ce3207e6fa0800000000000000
+      internalID: -5805579570038119200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_43
+      rect:
+        serializedVersion: 2
+        x: 254
+        y: 15
+        width: 66
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7107e67f7c4d410b0800000000000000
+      internalID: -5758744068185231337
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_44
+      rect:
+        serializedVersion: 2
+        x: 318
+        y: 15
+        width: 43
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa4b0e81ad57c4280800000000000000
+      internalID: -9057735170968210262
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_45
+      rect:
+        serializedVersion: 2
+        x: 703
+        y: 15
+        width: 19
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 090b0df3fc5357b40800000000000000
+      internalID: 5437311289364885648
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_46
+      rect:
+        serializedVersion: 2
+        x: 719
+        y: 17
+        width: 28
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f7582d5fd50e8050800000000000000
+      internalID: 5804583426625918969
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_47
+      rect:
+        serializedVersion: 2
+        x: 743
+        y: 19
+        width: 24
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e6d637bccc71d1d0800000000000000
+      internalID: -3327741430961088795
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_48
+      rect:
+        serializedVersion: 2
+        x: 766
+        y: 17
+        width: 67
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d0d816b77f9ba1d0800000000000000
+      internalID: -3338399362260086567
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_49
+      rect:
+        serializedVersion: 2
+        x: 1183
+        y: 15
+        width: 59
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 738ef0d215c740b20800000000000000
+      internalID: 3099739131627956279
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_50
+      rect:
+        serializedVersion: 2
+        x: 1238
+        y: 17
+        width: 25
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5a709ab49d9aef740800000000000000
+      internalID: 5187770571519756197
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ButtonsForBattleMahjong_51
+      rect:
+        serializedVersion: 2
+        x: 1260
+        y: 15
+        width: 76
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35e88d0768e2ffd10800000000000000
+      internalID: 2161497501114863187
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      ButtonsForBattleMahjong_0: 4349025994945419837
+      ButtonsForBattleMahjong_1: 2937002376369804551
+      ButtonsForBattleMahjong_10: 4179526487318122048
+      ButtonsForBattleMahjong_11: 5225020581019499029
+      ButtonsForBattleMahjong_12: 1689445213232409208
+      ButtonsForBattleMahjong_13: -5675692853080337322
+      ButtonsForBattleMahjong_14: -7384680961279663537
+      ButtonsForBattleMahjong_15: -6338313410109955964
+      ButtonsForBattleMahjong_16: 6662902837377758564
+      ButtonsForBattleMahjong_17: -5776740870385288854
+      ButtonsForBattleMahjong_18: 7582642304723989024
+      ButtonsForBattleMahjong_19: -746991792355440970
+      ButtonsForBattleMahjong_2: 7822327887626917105
+      ButtonsForBattleMahjong_20: 8911793455209141405
+      ButtonsForBattleMahjong_21: 4327596899714033504
+      ButtonsForBattleMahjong_22: 4098126061864554520
+      ButtonsForBattleMahjong_23: -1689105060306987806
+      ButtonsForBattleMahjong_24: -2244986471838067241
+      ButtonsForBattleMahjong_25: 8866378644068242062
+      ButtonsForBattleMahjong_26: 3061857358435496744
+      ButtonsForBattleMahjong_27: 5148245900836001870
+      ButtonsForBattleMahjong_28: 2143871718990112880
+      ButtonsForBattleMahjong_29: 737658629066295856
+      ButtonsForBattleMahjong_3: -8583684573277392371
+      ButtonsForBattleMahjong_30: -3060175088091228357
+      ButtonsForBattleMahjong_31: -2422817385672225382
+      ButtonsForBattleMahjong_32: 5058314672830237250
+      ButtonsForBattleMahjong_33: 9093753598285052763
+      ButtonsForBattleMahjong_34: -5476704596719787362
+      ButtonsForBattleMahjong_35: 7517668125206182113
+      ButtonsForBattleMahjong_36: -1107025421896006086
+      ButtonsForBattleMahjong_37: 1572364790047204027
+      ButtonsForBattleMahjong_38: 7797907705775561441
+      ButtonsForBattleMahjong_39: 4923337876916663264
+      ButtonsForBattleMahjong_4: 5307472652322679420
+      ButtonsForBattleMahjong_40: -4141438241501255637
+      ButtonsForBattleMahjong_41: 8480578301033809
+      ButtonsForBattleMahjong_42: -5805579570038119200
+      ButtonsForBattleMahjong_43: -5758744068185231337
+      ButtonsForBattleMahjong_44: -9057735170968210262
+      ButtonsForBattleMahjong_45: 5437311289364885648
+      ButtonsForBattleMahjong_46: 5804583426625918969
+      ButtonsForBattleMahjong_47: -3327741430961088795
+      ButtonsForBattleMahjong_48: -3338399362260086567
+      ButtonsForBattleMahjong_49: 3099739131627956279
+      ButtonsForBattleMahjong_5: 3565958169851540485
+      ButtonsForBattleMahjong_50: 5187770571519756197
+      ButtonsForBattleMahjong_51: 2161497501114863187
+      ButtonsForBattleMahjong_6: -6412484239861926309
+      ButtonsForBattleMahjong_7: 6791096645258486592
+      ButtonsForBattleMahjong_8: -6427533163244799182
+      ButtonsForBattleMahjong_9: -1260813636671396659
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -31,13 +31,10 @@ namespace MahjongGame
         [SerializeField] private Vector3 bearMaleLobbyEulerOffset = new Vector3(0f, 90f, -10f);
         [SerializeField] private Vector3 bearFemaleLobbyPositionOffset = new Vector3(0f, -0.30f, 0f);
         [SerializeField] private Vector3 bearFemaleLobbyEulerOffset = new Vector3(0f, 90f, -10f);
-        [SerializeField] private Vector3 foxMaleLobbyEulerOffset = new Vector3(0f, 180f, 0f);
         [SerializeField] private Vector3 wolfMaleLobbyPositionOffset = new Vector3(0.42f, 0.12f, 0f);
         [SerializeField] private Vector3 wolfMaleLobbyEulerOffset = new Vector3(0f, 90f, 0f);
         [SerializeField] private Vector3 standingLobbyPositionOffset = new Vector3(0f, 0.12f, 0f);
-        [SerializeField] private Vector3 standingBackFacingLobbyEulerOffset = new Vector3(0f, 180f, 0f);
         [SerializeField] private Vector3 tigerLobbyPositionOffset = new Vector3(0f, 0.27f, 0f);
-        [SerializeField] private Vector3 tigerMaleLobbyEulerOffset = new Vector3(-16f, 180f, 0f);
         [SerializeField] private Vector3 foxFemaleBattleEulerOffset = new Vector3(0f, 90f, 0f);
         [SerializeField] private Vector3 tigerFemaleBattleEulerOffset = new Vector3(0f, 90f, 0f);
         [SerializeField] private Vector3 modelLocalScale = Vector3.one;
@@ -54,11 +51,33 @@ namespace MahjongGame
         [Header("UI Render")]
         [SerializeField] private bool renderModelToUiTexture = true;
         [SerializeField] private Vector2Int renderTextureSize = new Vector2Int(512, 512);
+        [SerializeField] private bool matchRenderTextureToRectAspect = true;
+        [SerializeField, Min(128)] private int minRenderTextureSide = 384;
+        [SerializeField, Min(256)] private int maxRenderTextureSide = 1024;
         [SerializeField] private Color renderBackgroundColor = new Color(0f, 0f, 0f, 0f);
         [SerializeField] private Vector3 renderCameraPosition = new Vector3(0f, 1.2f, -5.5f);
         [SerializeField] private Vector3 renderLookAtOffset = new Vector3(0f, 1.05f, 0f);
         [SerializeField] private float renderFieldOfView = 28f;
         [SerializeField, Range(-1f, 2f)] private float lobbyRenderVerticalFrameOffset = 0f;
+        [SerializeField, Range(-1f, 2f)] private float profileRenderVerticalFrameOffset = 0.32f;
+        [SerializeField, Range(-2f, 2f)] private float profileRenderHorizontalFrameOffset = 0.34f;
+        [SerializeField] private bool profileRenderAnchorToFeet = false;
+        [SerializeField, Range(-0.5f, 0.6f)] private float profileRenderFeetBottomMargin = -0.08f;
+        [SerializeField, Range(1, 16)] private int profileRenderAnimatedBoundsSamples = 9;
+        [SerializeField, Range(0f, 0.5f)] private float profileRenderBoundsHorizontalPadding = 0.10f;
+        [SerializeField, Range(0f, 0.5f)] private float profileRenderBoundsTopPadding = 0.08f;
+        [SerializeField, Range(0f, 0.35f)] private float profileRenderBoundsBottomPadding = 0.04f;
+        [SerializeField] private bool battleRenderAnchorToFeet = true;
+        [SerializeField, Range(-0.3f, 0.25f)] private float battleRenderFeetBottomMargin = -0.08f;
+        [SerializeField] private bool useFixedBattleViewportHeight = true;
+        [SerializeField, Range(0.55f, 0.98f)] private float fixedBattleViewportHeight = 0.94f;
+        [SerializeField, Range(1f, 2.4f)] private float fixedBattleWidthSafetyLimit = 1.7f;
+        [SerializeField, Range(0.1f, 2.2f)] private float fixedBattleMinCameraDistance = 0.55f;
+        [SerializeField] private bool stabilizeBattleActionWorldPosition = true;
+        [SerializeField] private bool useBattleOrthographicRender = true;
+        [SerializeField, Range(0.55f, 0.98f)] private float battleOrthographicViewportHeight = 0.94f;
+        [SerializeField] private bool preserveBattleRenderImageAspect = true;
+        [SerializeField, Range(0.5f, 1.8f)] private float battleRenderImageAspect = 1.15f;
         [SerializeField, Range(-1f, 2f)] private float bearFemaleLobbyRenderVerticalFrameOffset = 0f;
         [SerializeField, Range(-1f, 2f)] private float foxMaleLobbyRenderVerticalFrameOffset = 0f;
         [SerializeField, Range(-1f, 2f)] private float tigerLobbyRenderVerticalFrameOffset = 0f;
@@ -66,6 +85,11 @@ namespace MahjongGame
         [SerializeField, Range(0.85f, 2.4f)] private float lobbyRenderFitPadding = 1.08f;
         [SerializeField, Range(0.85f, 2.2f)] private float battleRenderFitPadding = 1.06f;
         [SerializeField, Range(0.85f, 2.2f)] private float profileRenderFitPadding = 1.06f;
+        [SerializeField] private bool useFixedProfileViewportHeight = true;
+        [SerializeField, Range(0.35f, 0.95f)] private float fixedProfileViewportHeight = 0.86f;
+        [SerializeField, Range(0.35f, 1.5f)] private float fixedProfileViewportWidth = 1.18f;
+        [SerializeField, Range(1f, 1.35f)] private float fixedProfileWidthSafetyLimit = 1.12f;
+        [SerializeField, Range(0.1f, 2.2f)] private float fixedProfileMinCameraDistance = 0.55f;
         [SerializeField, Range(0.1f, 2f)] private float previewLightIntensity = 0.95f;
         [SerializeField] private Color previewLightColor = new Color(0.98f, 0.96f, 0.9f, 1f);
         [SerializeField] private bool animatePreviewFallback = false;
@@ -75,12 +99,17 @@ namespace MahjongGame
 
         [Header("Battle Actions")]
         [SerializeField] private bool pauseBattleAnimationsUntilAction = true;
+        [SerializeField] private bool useBattleActionAnimationClips = true;
+        [SerializeField] private bool useStableBattleActionFrame = true;
         [SerializeField] private string attackTriggerName = "Attack";
         [SerializeField] private string hitTriggerName = "Hit";
         [SerializeField, Min(0.05f)] private float actionReturnDelay = 0.55f;
         [SerializeField, Min(0.05f)] private float fallbackActionPulseDuration = 0.22f;
         [SerializeField, Min(0f)] private float fallbackAttackLunge = 0.08f;
         [SerializeField, Min(0f)] private float fallbackHitRecoil = 0.06f;
+        [SerializeField] private bool lockBattleActionRootScale = false;
+        [SerializeField] private bool lockBattleActionRootTransform = false;
+        private static readonly Vector3 OutcomeAnimationEulerOffset = new Vector3(0f, 90f, 0f);
 
         private GameObject currentInstance;
         private GameObject currentPrefab;
@@ -100,9 +129,41 @@ namespace MahjongGame
         private PlayableGraph animationGraph;
         private bool hasRuntimeAnimation;
         private Coroutine actionAnimationRoutine;
+        private bool isPlayingOutcomeAnimation;
+        private Bounds stableRenderBounds;
+        private bool hasStableRenderBounds;
+        private Bounds stableBattleRestBounds;
+        private bool hasStableBattleRestBounds;
+        private Bounds stableBattleActionBounds;
+        private bool hasStableBattleActionBounds;
+        private bool battleActionFrameLocked;
+        private Transform lockedActionAnimatorRoot;
+        private Vector3 lockedActionAnimatorLocalPosition;
+        private Quaternion lockedActionAnimatorLocalRotation;
+        private Vector3 lockedActionAnimatorLocalScale;
         private static int nextPreviewOriginId;
 
         public bool HasModel => currentInstance != null;
+
+        public void ConfigureProfileRenderFrame(
+            float fitPadding,
+            float verticalOffset,
+            float horizontalOffset,
+            bool anchorToFeet = false,
+            float feetBottomMargin = -0.08f)
+        {
+            profileRenderFitPadding = Mathf.Clamp(fitPadding, 0.85f, 2.2f);
+            profileRenderVerticalFrameOffset = Mathf.Clamp(verticalOffset, -1f, 2f);
+            profileRenderHorizontalFrameOffset = Mathf.Clamp(horizontalOffset, -2f, 2f);
+            profileRenderAnchorToFeet = anchorToFeet;
+            profileRenderFeetBottomMargin = Mathf.Clamp(feetBottomMargin, -0.5f, 0.6f);
+        }
+
+        public void ConfigureBattleRenderFrame(bool anchorToFeet = true, float feetBottomMargin = -0.08f)
+        {
+            battleRenderAnchorToFeet = anchorToFeet;
+            battleRenderFeetBottomMargin = Mathf.Clamp(feetBottomMargin, -0.3f, 0.25f);
+        }
 
         private void Awake()
         {
@@ -119,8 +180,11 @@ namespace MahjongGame
             if (currentInstance == null)
                 return;
 
-            if (!ShouldPauseBattleAnimation())
+            if (!ShouldHoldAnimationAtRest())
                 UpdateFallbackPreviewAnimation();
+
+            EnforceBattleActionRootTransform();
+            StabilizeBattleActionWorldPosition();
 
             if (renderModelToUiTexture)
                 UpdateRenderCameraFrame();
@@ -152,6 +216,8 @@ namespace MahjongGame
             context = modelContext;
             mirrorX = flipX;
             currentData = data;
+            isPlayingOutcomeAnimation = false;
+            ClearStableRenderBounds();
 
             GameObject prefab = ResolveLocalModelPrefab(data);
             if (prefab != null && ShowLocalModel(data, prefab))
@@ -203,11 +269,13 @@ namespace MahjongGame
                 currentPrefab = prefab;
                 currentInstance = Instantiate(prefab, modelRoot);
                 currentInstance.name = prefab.name;
-                ApplyModelTexture(data);
-                ApplyAnimator(data);
+                ClearStableRenderBounds();
             }
 
+            ApplyModelTexture(data);
+            ApplyAnimator(data);
             ApplyTransform();
+            CaptureBattleRestRenderBounds();
             ShowRenderTexture();
 
             if (renderModelToUiTexture)
@@ -241,6 +309,16 @@ namespace MahjongGame
             return PlayBattleAction(ResolveHitClip(), hitTriggerName, -fallbackHitRecoil);
         }
 
+        public bool PlayVictoryAnimation()
+        {
+            return PlayOutcomeAnimation(ResolveVictoryClip());
+        }
+
+        public bool PlayDefeatAnimation()
+        {
+            return PlayOutcomeAnimation(ResolveDefeatClip());
+        }
+
         private void EnsureModelRoot()
         {
             if (modelRoot != null)
@@ -259,6 +337,7 @@ namespace MahjongGame
         {
             StopActionAnimationRoutine();
             StopPlayableAnimation();
+            isPlayingOutcomeAnimation = false;
 
             if (loadRoutine != null)
             {
@@ -272,6 +351,7 @@ namespace MahjongGame
             {
                 ReleaseAddressableHandle();
                 HideRenderTexture();
+                ClearStableRenderBounds();
                 return;
             }
 
@@ -279,6 +359,7 @@ namespace MahjongGame
             currentInstance = null;
             ReleaseAddressableHandle();
             HideRenderTexture();
+            ClearStableRenderBounds();
         }
 
         private void BeginAddressableLoad(
@@ -292,8 +373,16 @@ namespace MahjongGame
 
             if (currentInstance != null && string.Equals(currentAddressKey, key, System.StringComparison.Ordinal))
             {
+                ApplyModelTexture(data);
+                ApplyAnimator(data);
                 ApplyTransform();
-                FollowUiAnchor();
+                CaptureBattleRestRenderBounds();
+                ShowRenderTexture();
+                if (renderModelToUiTexture)
+                    SetupRenderPreview();
+                else
+                    FollowUiAnchor();
+                EnsurePreviewAnimation(data);
                 return;
             }
 
@@ -378,9 +467,11 @@ namespace MahjongGame
 
             currentInstance = Instantiate(handle.Result, modelRoot);
             currentInstance.name = handle.Result.name;
+            ClearStableRenderBounds();
             ApplyModelTexture(data);
             ApplyAnimator(data);
             ApplyTransform();
+            CaptureBattleRestRenderBounds();
             ShowRenderTexture();
 
             if (renderModelToUiTexture)
@@ -524,7 +615,7 @@ namespace MahjongGame
                 animator.runtimeAnimatorController = controller;
                 animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
                 animator.enabled = true;
-                if (ShouldPauseBattleAnimation())
+                if (ShouldHoldAnimationAtRest())
                     PauseAnimatorAtRest(animator);
                 else
                     hasRuntimeAnimation = true;
@@ -549,7 +640,7 @@ namespace MahjongGame
             if (playableAnimator != null)
             {
                 playableAnimator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
-                if (ShouldPauseBattleAnimation())
+                if (ShouldHoldAnimationAtRest())
                 {
                     SampleClipAtRest(clip);
                     playableAnimator.enabled = false;
@@ -568,7 +659,7 @@ namespace MahjongGame
 
             if (clip.legacy)
             {
-                if (ShouldPauseBattleAnimation())
+                if (ShouldHoldAnimationAtRest())
                 {
                     SampleClipAtRest(clip);
                     hasRuntimeAnimation = false;
@@ -588,7 +679,7 @@ namespace MahjongGame
 
         private void EnsurePreviewAnimation(BattleCharacterDatabase.BattleCharacterData data)
         {
-            if (currentInstance == null || data == null || ShouldPauseBattleAnimation())
+            if (currentInstance == null || data == null || ShouldHoldAnimationAtRest())
                 return;
 
             if (hasRuntimeAnimation)
@@ -614,21 +705,48 @@ namespace MahjongGame
                 return false;
 
             StopActionAnimationRoutine();
+            isPlayingOutcomeAnimation = false;
+            ApplyTransform();
+
+            if (!useBattleActionAnimationClips && context == ModelContext.Battle)
+                return false;
 
             Animator animator = currentInstance.GetComponentInChildren<Animator>(true);
             if (clip != null && animator != null)
             {
+                CaptureBattleActionRootTransform(animator);
                 actionAnimationRoutine = StartCoroutine(PlayActionClipRoutine(animator, clip));
                 return true;
             }
 
             if (animator != null && HasAnimatorTrigger(animator, triggerName))
             {
+                CaptureBattleActionRootTransform(animator);
                 actionAnimationRoutine = StartCoroutine(PlayTriggerActionRoutine(animator, triggerName));
                 return true;
             }
 
             actionAnimationRoutine = StartCoroutine(PlayFallbackActionPulseRoutine(fallbackLocalX));
+            return false;
+        }
+
+        private bool PlayOutcomeAnimation(AnimationClip clip)
+        {
+            if (currentInstance == null)
+                return false;
+
+            StopActionAnimationRoutine();
+            isPlayingOutcomeAnimation = true;
+            ApplyTransform();
+            ClearBattleActionRootTransformLock();
+
+            Animator animator = currentInstance.GetComponentInChildren<Animator>(true);
+            if (clip != null && animator != null)
+            {
+                PlayClipWithPlayable(animator, clip);
+                return true;
+            }
+
             return false;
         }
 
@@ -640,6 +758,7 @@ namespace MahjongGame
             yield return new WaitForSeconds(delay);
 
             actionAnimationRoutine = null;
+            ClearBattleActionRootTransformLock();
 
             if (currentInstance != null && currentData != null)
                 ApplyAnimator(currentData);
@@ -657,6 +776,7 @@ namespace MahjongGame
             yield return new WaitForSeconds(Mathf.Max(0.05f, actionReturnDelay));
 
             actionAnimationRoutine = null;
+            ClearBattleActionRootTransformLock();
 
             if (ShouldPauseBattleAnimation())
                 PauseAnimatorAtRest(animator);
@@ -695,6 +815,7 @@ namespace MahjongGame
                 target.localPosition = basePosition;
 
             actionAnimationRoutine = null;
+            ClearBattleActionRootTransformLock();
         }
 
         private void StopActionAnimationRoutine()
@@ -704,6 +825,98 @@ namespace MahjongGame
 
             StopCoroutine(actionAnimationRoutine);
             actionAnimationRoutine = null;
+            ClearBattleActionRootTransformLock();
+        }
+
+        private void CaptureBattleActionRootTransform(Animator animator)
+        {
+            if (context != ModelContext.Battle || currentInstance == null)
+                return;
+
+            ApplyTransform();
+
+            if (useStableBattleActionFrame)
+            {
+                CaptureBattleRestRenderBounds();
+                stableBattleActionBounds = hasStableBattleRestBounds
+                    ? stableBattleRestBounds
+                    : CalculateBounds(currentInstance);
+                hasStableBattleActionBounds = true;
+                battleActionFrameLocked = true;
+            }
+
+            lockedActionAnimatorRoot = animator != null ? animator.transform : null;
+            if (lockedActionAnimatorRoot == null || lockedActionAnimatorRoot == currentInstance.transform)
+                return;
+
+            lockedActionAnimatorLocalPosition = lockedActionAnimatorRoot.localPosition;
+            lockedActionAnimatorLocalRotation = lockedActionAnimatorRoot.localRotation;
+            lockedActionAnimatorLocalScale = lockedActionAnimatorRoot.localScale;
+        }
+
+        private void EnforceBattleActionRootTransform()
+        {
+            if ((!lockBattleActionRootTransform && !lockBattleActionRootScale) ||
+                context != ModelContext.Battle ||
+                actionAnimationRoutine == null)
+            {
+                return;
+            }
+
+            if (lockBattleActionRootTransform)
+            {
+                ApplyTransform();
+            }
+            else if (lockBattleActionRootScale && currentInstance != null)
+            {
+                currentInstance.transform.localScale = ResolveContextScale();
+            }
+
+            if (lockedActionAnimatorRoot == null)
+                return;
+
+            if (lockBattleActionRootTransform)
+            {
+                lockedActionAnimatorRoot.localPosition = lockedActionAnimatorLocalPosition;
+                lockedActionAnimatorRoot.localRotation = lockedActionAnimatorLocalRotation;
+                lockedActionAnimatorRoot.localScale = lockedActionAnimatorLocalScale;
+            }
+            else if (lockBattleActionRootScale)
+            {
+                lockedActionAnimatorRoot.localScale = lockedActionAnimatorLocalScale;
+            }
+        }
+
+        private void StabilizeBattleActionWorldPosition()
+        {
+            if (!stabilizeBattleActionWorldPosition ||
+                context != ModelContext.Battle ||
+                actionAnimationRoutine == null ||
+                !battleActionFrameLocked ||
+                !hasStableBattleActionBounds ||
+                currentInstance == null)
+            {
+                return;
+            }
+
+            Bounds currentBounds = CalculateBounds(currentInstance);
+            if (currentBounds.size.sqrMagnitude <= 0.0001f)
+                return;
+
+            Vector3 delta = Vector3.zero;
+            delta.y = stableBattleActionBounds.min.y - currentBounds.min.y;
+            delta.z = stableBattleActionBounds.center.z - currentBounds.center.z;
+
+            if (delta.sqrMagnitude <= 0.000001f)
+                return;
+
+            currentInstance.transform.position += delta;
+        }
+
+        private void ClearBattleActionRootTransformLock()
+        {
+            lockedActionAnimatorRoot = null;
+            battleActionFrameLocked = false;
         }
 
         private static bool HasAnimatorTrigger(Animator animator, string triggerName)
@@ -744,6 +957,26 @@ namespace MahjongGame
             return currentData.HitAnimation != null
                 ? currentData.HitAnimation
                 : ResolveDefaultBattleActionClip();
+        }
+
+        private AnimationClip ResolveVictoryClip()
+        {
+            if (currentData == null)
+                return ResolveEmbeddedActionClip("win", "victory", "winner", "celebrate");
+
+            return currentData.VictoryAnimation != null
+                ? currentData.VictoryAnimation
+                : ResolveEmbeddedActionClip("win", "victory", "winner", "celebrate");
+        }
+
+        private AnimationClip ResolveDefeatClip()
+        {
+            if (currentData == null)
+                return ResolveEmbeddedActionClip("defeat", "lose", "loss", "failed", "hurt");
+
+            return currentData.DefeatAnimation != null
+                ? currentData.DefeatAnimation
+                : ResolveEmbeddedActionClip("defeat", "lose", "loss", "failed", "hurt");
         }
 
         private AnimationClip ResolveDefaultBattleActionClip()
@@ -807,6 +1040,11 @@ namespace MahjongGame
         private bool ShouldPauseBattleAnimation()
         {
             return pauseBattleAnimationsUntilAction && context == ModelContext.Battle;
+        }
+
+        private bool ShouldHoldAnimationAtRest()
+        {
+            return ShouldPauseBattleAnimation();
         }
 
         private void PauseAnimatorAtRest(Animator animator)
@@ -980,6 +1218,7 @@ namespace MahjongGame
             StopPlayableAnimation();
 
             animator.enabled = true;
+            animator.applyRootMotion = false;
             animationGraph = PlayableGraph.Create($"{name}_PreviewAnimation");
             animationGraph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
 
@@ -1042,12 +1281,16 @@ namespace MahjongGame
 
             currentInstance.transform.localPosition = ResolveContextPosition();
             currentInstance.transform.localRotation = Quaternion.Euler(ResolveContextEulerAngles());
+            currentInstance.transform.localScale = ResolveContextScale();
+        }
 
+        private Vector3 ResolveContextScale()
+        {
             Vector3 scale = modelLocalScale;
-            if (mirrorX)
+            if (mirrorX && context != ModelContext.Battle)
                 scale.x = -Mathf.Abs(scale.x);
 
-            currentInstance.transform.localScale = scale;
+            return scale;
         }
 
         private Vector3 ResolveContextEulerAngles()
@@ -1057,6 +1300,9 @@ namespace MahjongGame
             if (context == ModelContext.Profile)
                 eulerAngles += profileModelEulerOffset;
 
+            if (context == ModelContext.Profile && IsCurrentDataId("Dragon_Female"))
+                eulerAngles += new Vector3(0f, -10f, 0f);
+
             if (context == ModelContext.Lobby && IsCurrentPrefabNamed("BearMaleLobby"))
                 eulerAngles += bearMaleLobbyEulerOffset;
 
@@ -1064,16 +1310,22 @@ namespace MahjongGame
                 eulerAngles += bearFemaleLobbyEulerOffset;
 
             if (context == ModelContext.Lobby && IsCurrentPrefabNamed("FoxMaleLobby"))
-                eulerAngles += foxMaleLobbyEulerOffset;
+                eulerAngles += new Vector3(0f, 90f, 0f);
+
+            if (context == ModelContext.Lobby && IsCurrentPrefabNamed("FoxFemaleLobby"))
+                eulerAngles += new Vector3(0f, -90f, 0f);
 
             if (context == ModelContext.Lobby && IsCurrentPrefabNamed("WolfMaleLobby"))
                 eulerAngles += wolfMaleLobbyEulerOffset;
 
-            if (context == ModelContext.Lobby && IsCurrentPrefabNamed("WolfFemaleLobby", "TigerFemaleLobby"))
-                eulerAngles += standingBackFacingLobbyEulerOffset;
+            if (context == ModelContext.Lobby && IsCurrentPrefabNamed("WolfFemaleLobby"))
+                eulerAngles += new Vector3(0f, 90f, 0f);
+
+            if (context == ModelContext.Lobby && IsCurrentPrefabNamed("TigerFemaleLobby"))
+                eulerAngles += new Vector3(0f, 90f, 0f);
 
             if (context == ModelContext.Lobby && IsCurrentPrefabNamed("TigerMaleLobby"))
-                eulerAngles += tigerMaleLobbyEulerOffset;
+                eulerAngles += new Vector3(0f, 90f, 0f);
 
             if (context == ModelContext.Battle && IsCurrentPrefabNamed("FoxFemaleBattle"))
                 eulerAngles += foxFemaleBattleEulerOffset;
@@ -1087,8 +1339,15 @@ namespace MahjongGame
                     "FoxMaleBattle",
                     "WolfMaleBattle",
                     "WolfFemaleBattle",
-                    "TigerMaleBattle"))
+                    "TigerMaleBattle",
+                    "DogMaleBattle",
+                    "DogFemaleBattle",
+                    "DragonMaleBattle",
+                    "DragonFemaleBattle"))
                 eulerAngles += new Vector3(0f, 90f, 0f);
+
+            if (context == ModelContext.Battle && isPlayingOutcomeAnimation)
+                eulerAngles += OutcomeAnimationEulerOffset;
 
             return eulerAngles;
         }
@@ -1182,6 +1441,51 @@ namespace MahjongGame
             renderImage.raycastTarget = false;
             renderImage.color = Color.white;
             renderImage.transform.SetAsLastSibling();
+            ApplyRenderImageAspectLayout();
+        }
+
+        private void ApplyRenderImageAspectLayout()
+        {
+            if (renderImage == null)
+                return;
+
+            RectTransform imageRect = renderImage.rectTransform;
+            if (imageRect == null)
+                return;
+
+            if (context != ModelContext.Battle || !preserveBattleRenderImageAspect)
+            {
+                imageRect.anchorMin = Vector2.zero;
+                imageRect.anchorMax = Vector2.one;
+                imageRect.offsetMin = Vector2.zero;
+                imageRect.offsetMax = Vector2.zero;
+                imageRect.pivot = new Vector2(0.5f, 0.5f);
+                imageRect.localScale = Vector3.one;
+                return;
+            }
+
+            RectTransform parentRect = transform as RectTransform;
+            Vector2 parentSize = parentRect != null ? parentRect.rect.size : Vector2.zero;
+            float parentWidth = Mathf.Abs(parentSize.x);
+            float parentHeight = Mathf.Abs(parentSize.y);
+            if (parentWidth < 1f || parentHeight < 1f)
+                return;
+
+            float targetAspect = Mathf.Clamp(battleRenderImageAspect, 0.5f, 1.8f);
+            float width = parentWidth;
+            float height = width / targetAspect;
+            if (height > parentHeight)
+            {
+                height = parentHeight;
+                width = height * targetAspect;
+            }
+
+            imageRect.anchorMin = new Vector2(0.5f, 0f);
+            imageRect.anchorMax = new Vector2(0.5f, 0f);
+            imageRect.pivot = new Vector2(0.5f, 0f);
+            imageRect.anchoredPosition = Vector2.zero;
+            imageRect.sizeDelta = new Vector2(width, height);
+            imageRect.localScale = Vector3.one;
         }
 
         private RawImage FindChildRenderImage()
@@ -1214,10 +1518,14 @@ namespace MahjongGame
             if (renderCamera != null)
             {
                 renderCamera.targetTexture = renderTexture;
+                if (renderTexture != null && renderTexture.height > 0)
+                    renderCamera.aspect = renderTexture.width / (float)renderTexture.height;
+
                 renderCamera.cullingMask = 1 << previewLayer;
                 renderCamera.clearFlags = CameraClearFlags.SolidColor;
                 renderCamera.backgroundColor = renderBackgroundColor;
                 renderCamera.fieldOfView = renderFieldOfView;
+                renderCamera.orthographic = ShouldUseOrthographicBattleRender();
                 renderCamera.enabled = true;
             }
 
@@ -1240,8 +1548,9 @@ namespace MahjongGame
 
         private void EnsureRenderTexture()
         {
-            int width = Mathf.Max(128, renderTextureSize.x);
-            int height = Mathf.Max(128, renderTextureSize.y);
+            Vector2Int resolvedSize = ResolveRenderTextureSize();
+            int width = resolvedSize.x;
+            int height = resolvedSize.y;
 
             if (renderTexture != null && renderTexture.width == width && renderTexture.height == height)
                 return;
@@ -1257,6 +1566,61 @@ namespace MahjongGame
             };
 
             renderTexture.Create();
+
+            if (renderCamera != null && height > 0)
+                renderCamera.aspect = width / (float)height;
+        }
+
+        private Vector2Int ResolveRenderTextureSize()
+        {
+            int fallbackWidth = Mathf.Max(128, renderTextureSize.x);
+            int fallbackHeight = Mathf.Max(128, renderTextureSize.y);
+
+            if (!matchRenderTextureToRectAspect)
+                return new Vector2Int(fallbackWidth, fallbackHeight);
+
+            RectTransform targetRect = rectTransform != null ? rectTransform : transform as RectTransform;
+            if (targetRect == null)
+                return new Vector2Int(fallbackWidth, fallbackHeight);
+
+            Rect rect = targetRect.rect;
+            float rectWidth = Mathf.Abs(rect.width);
+            float rectHeight = Mathf.Abs(rect.height);
+            if (rectWidth < 8f || rectHeight < 8f)
+                return new Vector2Int(fallbackWidth, fallbackHeight);
+
+            int minSide = Mathf.Max(128, minRenderTextureSide);
+            int maxSide = Mathf.Max(minSide, maxRenderTextureSide);
+            float aspect = context == ModelContext.Battle && preserveBattleRenderImageAspect
+                ? Mathf.Clamp(battleRenderImageAspect, 0.5f, 1.8f)
+                : Mathf.Clamp(rectWidth / rectHeight, 0.25f, 2.5f);
+
+            int width;
+            int height;
+            if (aspect >= 1f)
+            {
+                width = maxSide;
+                height = Mathf.RoundToInt(width / aspect);
+                if (height < minSide)
+                {
+                    height = minSide;
+                    width = Mathf.RoundToInt(height * aspect);
+                }
+            }
+            else
+            {
+                height = maxSide;
+                width = Mathf.RoundToInt(height * aspect);
+                if (width < minSide)
+                {
+                    width = minSide;
+                    height = Mathf.RoundToInt(width / aspect);
+                }
+            }
+
+            width = Mathf.Clamp(width, minSide, maxSide);
+            height = Mathf.Clamp(height, minSide, maxSide);
+            return new Vector2Int(width, height);
         }
 
         private void EnsureRenderCamera()
@@ -1286,28 +1650,158 @@ namespace MahjongGame
 
         private void UpdateRenderCameraFrame()
         {
-            if (currentInstance == null || renderCamera == null)
+            if (currentInstance == null)
                 return;
 
-            Bounds bounds = CalculateBounds(currentInstance);
-            Vector3 target = bounds.size.sqrMagnitude > 0.0001f
-                ? bounds.center
+            ApplyRenderImageAspectLayout();
+            EnsureRenderTargetMatchesRect();
+
+            if (renderCamera == null)
+                return;
+
+            Bounds frameBounds = ResolveStableRenderBounds();
+            Vector3 target = frameBounds.size.sqrMagnitude > 0.0001f
+                ? frameBounds.center
                 : currentInstance.transform.position + renderLookAtOffset;
 
-            float radius = Mathf.Max(0.65f, bounds.extents.magnitude);
-            target += ResolveRenderFrameOffset(bounds, radius);
+            float radius = Mathf.Max(0.65f, frameBounds.extents.magnitude);
+            target += ResolveRenderFrameOffset(frameBounds, radius);
 
-            float distance = ResolveRenderCameraDistance(bounds, radius);
-            Vector3 cameraPosition = target + renderCameraPosition.normalized * distance;
+            float distance = ResolveRenderCameraDistance(frameBounds, radius);
+            Vector3 cameraPosition = target + ResolveRenderCameraDirection() * distance;
+            if (renderCamera.orthographic)
+                renderCamera.orthographicSize = ResolveOrthographicSize(frameBounds);
+
+            if (ShouldAnchorRenderFrameToFeet(frameBounds))
+                AlignCameraFrameToFeet(frameBounds, ref target, ref cameraPosition);
 
             renderCamera.transform.position = cameraPosition;
             renderCamera.transform.rotation = Quaternion.LookRotation(target - cameraPosition, Vector3.up);
+        }
+
+        private bool ShouldUseOrthographicBattleRender()
+        {
+            return context == ModelContext.Battle && useBattleOrthographicRender;
+        }
+
+        private Vector3 ResolveRenderCameraDirection()
+        {
+            if (ShouldUseOrthographicBattleRender())
+                return Vector3.back;
+
+            Vector3 direction = renderCameraPosition.sqrMagnitude > 0.0001f
+                ? renderCameraPosition.normalized
+                : Vector3.back;
+            return direction;
+        }
+
+        private float ResolveOrthographicSize(Bounds bounds)
+        {
+            float targetHeight = context == ModelContext.Battle
+                ? Mathf.Clamp(battleOrthographicViewportHeight, 0.55f, 0.98f)
+                : 0.9f;
+
+            float sizeByHeight = Mathf.Max(0.1f, bounds.extents.y) / targetHeight;
+            if (renderCamera == null)
+                return sizeByHeight;
+
+            float aspect = renderTexture != null && renderTexture.height > 0
+                ? renderTexture.width / (float)renderTexture.height
+                : Mathf.Max(0.1f, renderCamera.aspect);
+            float sizeByWidth = Mathf.Max(0.1f, bounds.extents.x) / Mathf.Max(0.1f, aspect);
+            float widthSafeSize = Mathf.Min(sizeByWidth, sizeByHeight * fixedBattleWidthSafetyLimit);
+            return Mathf.Max(0.1f, sizeByHeight, widthSafeSize);
+        }
+
+        private bool ShouldAnchorRenderFrameToFeet(Bounds bounds)
+        {
+            bool shouldAnchor =
+                (context == ModelContext.Profile && profileRenderAnchorToFeet) ||
+                (context == ModelContext.Battle && battleRenderAnchorToFeet);
+
+            return shouldAnchor &&
+                   bounds.size.sqrMagnitude > 0.0001f &&
+                   renderCamera != null &&
+                   renderTexture != null &&
+                   renderTexture.height > 0;
+        }
+
+        private void AlignCameraFrameToFeet(Bounds bounds, ref Vector3 target, ref Vector3 cameraPosition)
+        {
+            renderCamera.transform.position = cameraPosition;
+            renderCamera.transform.rotation = Quaternion.LookRotation(target - cameraPosition, Vector3.up);
+
+            Vector3 footViewport = renderCamera.WorldToViewportPoint(new Vector3(bounds.center.x, bounds.min.y, bounds.center.z));
+            float targetBottom = context == ModelContext.Battle
+                ? Mathf.Clamp(battleRenderFeetBottomMargin, -0.3f, 0.25f)
+                : Mathf.Clamp(profileRenderFeetBottomMargin, -0.5f, 0.6f);
+            float deltaViewportY = footViewport.y - targetBottom;
+            if (Mathf.Abs(deltaViewportY) < 0.0005f)
+                return;
+
+            float distance = Vector3.Distance(cameraPosition, target);
+            float verticalWorldSpan = 2f * distance * Mathf.Tan(Mathf.Max(1f, renderCamera.fieldOfView) * Mathf.Deg2Rad * 0.5f);
+            Vector3 shift = renderCamera.transform.up * (deltaViewportY * verticalWorldSpan);
+            target += shift;
+            cameraPosition += shift;
+        }
+
+        private void EnsureRenderTargetMatchesRect()
+        {
+            if (!renderModelToUiTexture)
+                return;
+
+            Vector2Int expectedSize = ResolveRenderTextureSize();
+            if (renderTexture != null &&
+                renderTexture.width == expectedSize.x &&
+                renderTexture.height == expectedSize.y)
+            {
+                return;
+            }
+
+            EnsureRenderImage();
+            EnsureRenderTexture();
+            EnsureRenderCamera();
+
+            if (previewLayer < 0)
+                previewLayer = ResolvePreviewLayer();
+
+            if (renderCamera != null)
+            {
+                renderCamera.targetTexture = renderTexture;
+                if (renderTexture != null && renderTexture.height > 0)
+                    renderCamera.aspect = renderTexture.width / (float)renderTexture.height;
+
+                renderCamera.cullingMask = 1 << previewLayer;
+                renderCamera.clearFlags = CameraClearFlags.SolidColor;
+                renderCamera.backgroundColor = renderBackgroundColor;
+                renderCamera.fieldOfView = renderFieldOfView;
+                renderCamera.orthographic = ShouldUseOrthographicBattleRender();
+                renderCamera.enabled = true;
+            }
+
+            if (renderLight != null)
+            {
+                renderLight.cullingMask = 1 << previewLayer;
+                renderLight.intensity = previewLightIntensity;
+                renderLight.color = previewLightColor;
+                renderLight.enabled = true;
+            }
+
+            if (renderImage != null)
+            {
+                renderImage.texture = renderTexture;
+                renderImage.enabled = renderTexture != null;
+            }
         }
 
         private float ResolveRenderCameraDistance(Bounds bounds, float radius)
         {
             if (renderCamera == null)
                 return Mathf.Max(2.2f, radius * ResolveRenderFitPadding());
+
+            if (ShouldUseOrthographicBattleRender())
+                return Mathf.Max(2.2f, radius * 2.4f);
 
             float aspect = renderTexture != null && renderTexture.height > 0
                 ? renderTexture.width / (float)renderTexture.height
@@ -1317,6 +1811,25 @@ namespace MahjongGame
             float horizontalFov = 2f * Mathf.Atan(Mathf.Tan(verticalFov * 0.5f) * Mathf.Max(0.1f, aspect));
             float distanceByHeight = Mathf.Max(0.1f, bounds.extents.y) / Mathf.Tan(verticalFov * 0.5f);
             float distanceByWidth = Mathf.Max(0.1f, bounds.extents.x) / Mathf.Tan(horizontalFov * 0.5f);
+
+            if (context == ModelContext.Profile && useFixedProfileViewportHeight)
+            {
+                float targetHeight = Mathf.Clamp(fixedProfileViewportHeight, 0.35f, 0.95f);
+                float targetWidth = Mathf.Clamp(fixedProfileViewportWidth, 0.35f, 1.5f);
+                float fixedHeightDistance = distanceByHeight / targetHeight;
+                float fixedWidthDistance = distanceByWidth / targetWidth;
+                float widthSafeDistance = Mathf.Min(fixedWidthDistance, fixedHeightDistance * fixedProfileWidthSafetyLimit);
+                return Mathf.Max(fixedProfileMinCameraDistance, fixedHeightDistance, widthSafeDistance);
+            }
+
+            if (context == ModelContext.Battle && useFixedBattleViewportHeight)
+            {
+                float targetHeight = Mathf.Clamp(fixedBattleViewportHeight, 0.55f, 0.98f);
+                float fixedHeightDistance = distanceByHeight / targetHeight;
+                float widthSafeDistance = Mathf.Min(distanceByWidth, fixedHeightDistance * fixedBattleWidthSafetyLimit);
+                return Mathf.Max(fixedBattleMinCameraDistance, fixedHeightDistance, widthSafeDistance);
+            }
+
             float fitDistance = Mathf.Max(distanceByHeight, distanceByWidth) * ResolveRenderFitPadding();
 
             return Mathf.Max(2.2f, fitDistance);
@@ -1339,10 +1852,18 @@ namespace MahjongGame
 
         private Vector3 ResolveRenderFrameOffset(Bounds bounds, float radius)
         {
+            float verticalReference = Mathf.Max(bounds.extents.y, radius * 0.35f);
+
+            if (context == ModelContext.Profile)
+            {
+                float horizontalReference = Mathf.Max(bounds.extents.x, radius * 0.22f);
+                return (Vector3.up * verticalReference * profileRenderVerticalFrameOffset) +
+                       (Vector3.right * horizontalReference * profileRenderHorizontalFrameOffset);
+            }
+
             if (context != ModelContext.Lobby)
                 return Vector3.zero;
 
-            float verticalReference = Mathf.Max(bounds.extents.y, radius * 0.35f);
             float offset = lobbyRenderVerticalFrameOffset;
 
             if (IsCurrentPrefabNamed("BearFemaleLobby"))
@@ -1366,6 +1887,100 @@ namespace MahjongGame
                 bounds.Encapsulate(renderers[i].bounds);
 
             return bounds;
+        }
+
+        private Bounds ResolveStableRenderBounds()
+        {
+            if (currentInstance == null)
+                return new Bounds(transform.position + renderLookAtOffset, Vector3.one);
+
+            if (context == ModelContext.Battle &&
+                battleActionFrameLocked &&
+                hasStableBattleActionBounds)
+            {
+                return stableBattleActionBounds;
+            }
+
+            if (context != ModelContext.Profile || !profileRenderAnchorToFeet)
+                return CalculateBounds(currentInstance);
+
+            if (!hasStableRenderBounds)
+            {
+                stableRenderBounds = CalculateProfileStableBounds();
+                hasStableRenderBounds = true;
+            }
+
+            return stableRenderBounds;
+        }
+
+        private void CaptureBattleRestRenderBounds()
+        {
+            if (context != ModelContext.Battle || currentInstance == null || battleActionFrameLocked)
+                return;
+
+            ApplyTransform();
+            stableBattleRestBounds = CalculateBounds(currentInstance);
+            hasStableBattleRestBounds = stableBattleRestBounds.size.sqrMagnitude > 0.0001f;
+        }
+
+        private void ClearStableRenderBounds()
+        {
+            hasStableRenderBounds = false;
+            hasStableBattleRestBounds = false;
+            hasStableBattleActionBounds = false;
+            battleActionFrameLocked = false;
+            lockedActionAnimatorRoot = null;
+        }
+
+        private Bounds CalculateProfileStableBounds()
+        {
+            Bounds bounds = CalculateBounds(currentInstance);
+            AnimationClip clip = currentData != null
+                ? ResolveIdleClip(currentData) ?? ResolveEmbeddedClipFromCurrentPrefab()
+                : ResolveEmbeddedClipFromCurrentPrefab();
+
+            if (clip != null && currentInstance != null)
+            {
+                int samples = Mathf.Clamp(profileRenderAnimatedBoundsSamples, 1, 16);
+                float length = Mathf.Max(0.0001f, clip.length);
+
+                for (int i = 0; i < samples; i++)
+                {
+                    float t = samples <= 1 ? 0f : (length * i) / (samples - 1);
+                    clip.SampleAnimation(currentInstance, t);
+                    ApplyTransform();
+                    bounds.Encapsulate(CalculateBounds(currentInstance));
+                }
+
+                ApplyTransform();
+                if (currentData != null)
+                    ApplyAnimator(currentData);
+            }
+
+            return ExpandProfileStableBounds(bounds);
+        }
+
+        private Bounds ExpandProfileStableBounds(Bounds bounds)
+        {
+            if (bounds.size.sqrMagnitude <= 0.0001f)
+                return bounds;
+
+            float xPadding = Mathf.Max(0f, bounds.size.x * profileRenderBoundsHorizontalPadding);
+            float zPadding = Mathf.Max(0f, bounds.size.z * profileRenderBoundsHorizontalPadding);
+            float topPadding = Mathf.Max(0f, bounds.size.y * profileRenderBoundsTopPadding);
+            float bottomPadding = Mathf.Max(0f, bounds.size.y * profileRenderBoundsBottomPadding);
+
+            Vector3 min = bounds.min - new Vector3(xPadding, bottomPadding, zPadding);
+            Vector3 max = bounds.max + new Vector3(xPadding, topPadding, zPadding);
+            bounds.SetMinMax(min, max);
+            return bounds;
+        }
+
+        private bool IsCurrentDataId(string id)
+        {
+            return currentData != null &&
+                   !string.IsNullOrWhiteSpace(id) &&
+                   string.Equals(currentData.Id, id, System.StringComparison.OrdinalIgnoreCase);
         }
 
         private int ResolvePreviewLayer()

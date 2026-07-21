@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Text;
 using MahjongGame;
+using MahjongGame.Networking;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -26,6 +27,7 @@ namespace MahjongGame.Multiplayer
         private bool matchmakingCancelRequested;
         private int lastEventSeq;
         private string activePathPrefix = RankedPathPrefix;
+        private string activeQueueMode = "ranked";
 
         public event Action<string> StatusChanged;
         public event Action<string> ErrorChanged;
@@ -42,7 +44,9 @@ namespace MahjongGame.Multiplayer
         public RankedOpponentInfo Opponent { get; private set; }
         public bool IsSearching => matchmakingRoutine != null;
         public bool IsInMatch => !string.IsNullOrWhiteSpace(MatchId);
-        public bool IsRandomMatchPath => string.Equals(activePathPrefix, RandomPathPrefix, StringComparison.Ordinal);
+        public bool IsRandomMatchPath => string.Equals(activeQueueMode, "random", StringComparison.Ordinal);
+        public bool IsDuelMatchPath => string.Equals(activeQueueMode, "duel", StringComparison.Ordinal);
+        public bool IsTournamentMatchPath => string.Equals(activeQueueMode, "tournament", StringComparison.Ordinal);
 
         public static OnlineRankedBattleNetwork EnsureInstance()
         {
@@ -67,8 +71,15 @@ namespace MahjongGame.Multiplayer
 
         private void OnDestroy()
         {
+            SendForfeitMatch();
+
             if (I == this)
                 I = null;
+        }
+
+        private void OnApplicationQuit()
+        {
+            SendForfeitMatch();
         }
 
         public void StartRankedSearch()
@@ -77,6 +88,7 @@ namespace MahjongGame.Multiplayer
                 StopCoroutine(matchmakingRoutine);
 
             activePathPrefix = RankedPathPrefix;
+            activeQueueMode = "ranked";
             ClearMatch();
             matchmakingCancelRequested = false;
             matchmakingRoutine = StartCoroutine(SearchRoutine(
@@ -91,13 +103,56 @@ namespace MahjongGame.Multiplayer
             if (matchmakingRoutine != null)
                 StopCoroutine(matchmakingRoutine);
 
-            activePathPrefix = RandomPathPrefix;
+            activePathPrefix = RankedPathPrefix;
+            activeQueueMode = "random";
             ClearMatch();
             matchmakingCancelRequested = false;
             matchmakingRoutine = StartCoroutine(SearchRoutine(
-                RandomPathPrefix,
+                RankedPathPrefix,
                 "Searching random match...",
                 "Looking for a player..."));
+        }
+
+        public void ActivateDuelMatch(RankedMatchInfo match)
+        {
+            if (match == null || string.IsNullOrWhiteSpace(match.matchId))
+                return;
+
+            activePathPrefix = RankedPathPrefix;
+            activeQueueMode = "duel";
+            ClearMatch();
+
+            MatchId = match.matchId;
+            MatchSeed = match.seed;
+            PlayerIndex = Mathf.Clamp(match.playerIndex, 1, 2);
+            Opponent = match.opponent;
+            lastEventSeq = 0;
+
+            SetStatus("Duel accepted");
+            SetError(string.Empty);
+            MatchFound?.Invoke(match);
+            Log($"Duel match activated: {MatchId} Seed={MatchSeed} PlayerIndex={PlayerIndex}");
+        }
+
+        public void ActivateTournamentMatch(RankedMatchInfo match)
+        {
+            if (match == null || string.IsNullOrWhiteSpace(match.matchId))
+                return;
+
+            activePathPrefix = RankedPathPrefix;
+            activeQueueMode = "tournament";
+            ClearMatch();
+
+            MatchId = match.matchId;
+            MatchSeed = match.seed;
+            PlayerIndex = Mathf.Clamp(match.playerIndex, 1, 2);
+            Opponent = match.opponent;
+            lastEventSeq = 0;
+
+            SetStatus("Tournament match ready");
+            SetError(string.Empty);
+            MatchFound?.Invoke(match);
+            Log($"Tournament match activated: {MatchId} Seed={MatchSeed} PlayerIndex={PlayerIndex}");
         }
 
         public void CancelRankedSearch()
@@ -170,6 +225,7 @@ namespace MahjongGame.Multiplayer
             RankedEventRequest payload = CreateEventRequest("board");
             payload.slots = slots;
             payload.tilePool = tilePool;
+            payload.loadout = MahjongSession.LocalBattleLoadout?.Clone();
             payload.maxHp = Mathf.Max(1, maxHp);
             payload.damagePerPair = Mathf.Max(1, damagePerPair);
             StartCoroutine(PostEvent(payload));
@@ -192,6 +248,17 @@ namespace MahjongGame.Multiplayer
                 return;
 
             StartCoroutine(PostEvent(CreateEventRequest("finish")));
+            StopMatchEventPolling();
+            MatchId = string.Empty;
+        }
+
+        public void SendForfeitMatch()
+        {
+            if (!IsInMatch)
+                return;
+
+            RankedEventRequest payload = CreateEventRequest("forfeit");
+            StartCoroutine(PostEvent(payload));
             StopMatchEventPolling();
             MatchId = string.Empty;
         }
@@ -266,6 +333,7 @@ namespace MahjongGame.Multiplayer
                              "&afterSeq=" + lastEventSeq;
 
                 using UnityWebRequest request = UnityWebRequest.Get(url);
+                BackendEndpoints.ApplyClientVersionHeaders(request);
                 request.timeout = 8;
                 yield return request.SendWebRequest();
 
@@ -311,6 +379,10 @@ namespace MahjongGame.Multiplayer
                 matchId = MatchId,
                 seed = MatchSeed,
                 playerIndex = PlayerIndex,
+                source = response.source,
+                tournamentId = response.tournamentId,
+                tournamentMatchId = response.tournamentMatchId,
+                roundIndex = response.roundIndex,
                 opponent = Opponent
             };
             MatchFound?.Invoke(match);
@@ -328,11 +400,19 @@ namespace MahjongGame.Multiplayer
                 battle = profile.Mahjong != null ? profile.Mahjong.Battle : null;
             }
 
+            BattleTileStore store = BattleTileStore.I != null
+                ? BattleTileStore.I
+                : FindAnyObjectByType<BattleTileStore>(FindObjectsInactive.Include);
+            BattleLoadoutSnapshot.TryCreateFromProfile(profile, store, out BattleLoadoutSnapshot loadout);
+
             return new RankedQueueRequest
             {
                 token = GetSessionToken(),
+                queueMode = activeQueueMode,
+                characterId = BattleCharacterSelectionService.Instance != null ? BattleCharacterSelectionService.Instance.SelectedCharacterId : string.Empty,
                 rankTier = battle != null ? battle.RankTier : "Unranked",
-                rankPoints = battle != null ? Mathf.Max(0, battle.RankPoints) : 0
+                rankPoints = battle != null ? Mathf.Max(0, battle.RankPoints) : 0,
+                loadout = loadout
             };
         }
 
@@ -392,6 +472,7 @@ namespace MahjongGame.Multiplayer
             request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json));
             request.downloadHandler = new DownloadHandlerBuffer();
             request.SetRequestHeader("Content-Type", "application/json");
+            BackendEndpoints.ApplyClientVersionHeaders(request);
             request.timeout = 10;
 
             yield return request.SendWebRequest();
@@ -486,6 +567,10 @@ namespace MahjongGame.Multiplayer
             public string matchId;
             public int seed;
             public int playerIndex;
+            public string source;
+            public int tournamentId;
+            public int tournamentMatchId;
+            public int roundIndex;
             public RankedOpponentInfo opponent;
         }
 
@@ -494,10 +579,15 @@ namespace MahjongGame.Multiplayer
         {
             public string id;
             public string displayName;
+            public string allianceTag;
+            public int allianceLevel;
             public string publicPlayerId;
             public int avatarId;
+            public string gender;
+            public string characterId;
             public string rankTier;
             public int rankPoints;
+            public BattleLoadoutSnapshot loadout;
         }
 
         [Serializable]
@@ -521,8 +611,11 @@ namespace MahjongGame.Multiplayer
         private sealed class RankedQueueRequest
         {
             public string token;
+            public string queueMode;
+            public string characterId;
             public string rankTier;
             public int rankPoints;
+            public BattleLoadoutSnapshot loadout;
         }
 
         [Serializable]
@@ -541,6 +634,10 @@ namespace MahjongGame.Multiplayer
             public string matchId;
             public int seed;
             public int playerIndex;
+            public string source;
+            public int tournamentId;
+            public int tournamentMatchId;
+            public int roundIndex;
             public RankedOpponentInfo opponent;
         }
 
@@ -559,6 +656,7 @@ namespace MahjongGame.Multiplayer
             public RankedBoardTile[] tiles;
             public RankedBoardSlot[] slots;
             public string[] tilePool;
+            public BattleLoadoutSnapshot loadout;
         }
 
         [Serializable]
@@ -591,6 +689,7 @@ namespace MahjongGame.Multiplayer
             public int hpAfter;
             public int maxHp;
             public RankedBoardTile[] tiles;
+            public BattleLoadoutSnapshot loadout;
             public string createdAt;
         }
 

@@ -96,6 +96,8 @@ namespace MahjongGame
 
         private void Setup()
         {
+            ApplyBattleFont();
+
             bool isBattle = MahjongSession.LaunchMode == MahjongLaunchMode.Battle;
 
             if (battleRoot != null)
@@ -111,7 +113,7 @@ namespace MahjongGame
             currentScore = Random.Range(minStartScore, maxStartScore + 1);
             hiddenTempo = Random.Range(minTempo, maxTempo);
 
-            ApplyVisuals(statusSearching);
+            ApplyVisuals(GetLocalizedStatusSearching());
 
             BindBoard();
             StartSimulation();
@@ -216,12 +218,12 @@ namespace MahjongGame
                 time += Time.deltaTime;
                 float t = Mathf.Clamp01(time / finishAnimTime);
                 hiddenTempo = Mathf.Lerp(startTempo, targetTempo, t);
-                ApplyVisuals(statusFinished);
+                ApplyVisuals(GetLocalizedStatusFinished());
                 yield return null;
             }
 
             hiddenTempo = targetTempo;
-            ApplyVisuals(statusFinished);
+            ApplyVisuals(GetLocalizedStatusFinished());
         }
 
         private IEnumerator FinishAsPlayerLost()
@@ -239,13 +241,13 @@ namespace MahjongGame
                 float t = Mathf.Clamp01(time / finishAnimTime);
                 hiddenTempo = Mathf.Lerp(startTempo, targetTempo, t);
                 currentScore = Mathf.RoundToInt(Mathf.Lerp(startScore, endScore, t));
-                ApplyVisuals(statusFinished);
+                ApplyVisuals(GetLocalizedStatusFinished());
                 yield return null;
             }
 
             hiddenTempo = 1f;
             currentScore = endScore;
-            ApplyVisuals(statusFinished);
+            ApplyVisuals(GetLocalizedStatusFinished());
         }
 
         private void ApplyStatusByTempo()
@@ -256,21 +258,85 @@ namespace MahjongGame
         private string GetStatusByTempo(float value)
         {
             if (value >= 0.72f)
-                return statusPressure;
+                return GetLocalizedStatusPressure();
 
             if (value >= 0.18f)
-                return statusPlaying;
+                return GetLocalizedStatusPlaying();
 
-            return statusSearching;
+            return GetLocalizedStatusSearching();
+        }
+
+        private string GetLocalizedStatusSearching()
+        {
+            return PickLanguageText(
+                "смотрит расклад",
+                "reading the board",
+                "taslari inceliyor",
+                "liest das Brett",
+                statusSearching);
+        }
+
+        private string GetLocalizedStatusPlaying()
+        {
+            return PickLanguageText(
+                "собирает пару",
+                "matching a pair",
+                "es ariyor",
+                "sucht ein Paar",
+                statusPlaying);
+        }
+
+        private string GetLocalizedStatusPressure()
+        {
+            return PickLanguageText(
+                "ускорился",
+                "picked up speed",
+                "hizlandi",
+                "wird schneller",
+                statusPressure);
+        }
+
+        private string GetLocalizedStatusFinished()
+        {
+            return PickLanguageText(
+                "закончил стол",
+                "finished the table",
+                "masayi bitirdi",
+                "hat das Brett beendet",
+                statusFinished);
+        }
+
+        private static string PickLanguageText(string russian, string english, string turkish, string german, string fallback)
+        {
+            GameLanguage language = AppSettings.I != null ? AppSettings.I.Language : GameLanguage.Turkish;
+            string value = language switch
+            {
+                GameLanguage.Russian => russian,
+                GameLanguage.English => english,
+                GameLanguage.Turkish => turkish,
+                GameLanguage.German => german,
+                _ => fallback
+            };
+
+            return string.IsNullOrWhiteSpace(value) ? fallback : value;
         }
 
         private void ApplyVisuals(string status)
         {
+            ApplyBattleFont();
+
             if (opponentScoreText != null)
                 opponentScoreText.text = scorePrefix + Mathf.Max(0, currentScore);
 
             if (opponentStatusText != null)
                 opponentStatusText.text = status;
+        }
+
+        private void ApplyBattleFont()
+        {
+            BattlePopupStyle.ApplyFontOnly(opponentScoreText);
+            BattlePopupStyle.ApplyFontOnly(opponentStatusText);
+            BattlePopupStyle.ApplyFontOnly(gainText);
         }
 
         private void PlayMoveFx(int gain)

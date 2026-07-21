@@ -47,8 +47,8 @@ MonoBehaviour:
   database: {fileID: 0}
   dontDestroyOnLoad: 1
   autoApplyStatsOnLoad: 1
-  autoUnlockStarterCharacters: 1
-  autoSelectFallbackStarter: 1
+  autoUnlockStarterCharacters: 0
+  autoSelectFallbackStarter: 0
   saveImmediatelyOnChange: 1
   autoFindDatabase: 1
   waitForDatabaseIfMissing: 1

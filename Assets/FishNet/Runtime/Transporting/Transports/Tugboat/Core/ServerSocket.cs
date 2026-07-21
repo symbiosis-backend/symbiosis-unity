@@ -137,6 +137,7 @@ namespace FishNet.Transporting.Tugboat.Server
             //Set bind addresses.
             IPAddress ipv4;
             IPAddress ipv6;
+            bool ipv6Disabled = string.Equals(_ipv6BindAddress, "disabled", StringComparison.OrdinalIgnoreCase);
             //Set ipv4
             if (!string.IsNullOrEmpty(_ipv4BindAddress))
             {
@@ -148,7 +149,12 @@ namespace FishNet.Transporting.Tugboat.Server
                 IPAddress.TryParse("0.0.0.0", out ipv4);
             }
             //Set ipv6.
-            if (!string.IsNullOrEmpty(_ipv6BindAddress))
+            if (ipv6Disabled)
+            {
+                ipv6 = null;
+                _server.IPv6Mode = IPv6Mode.Disabled;
+            }
+            else if (!string.IsNullOrEmpty(_ipv6BindAddress))
             {
                 if (!IPAddress.TryParse(_ipv6BindAddress, out ipv6))
                     ipv6 = null;
@@ -159,7 +165,7 @@ namespace FishNet.Transporting.Tugboat.Server
             }
 
             string ipv4FailText = (ipv4 == null) ? $"IPv4 address {_ipv4BindAddress} failed to parse. " : string.Empty;
-            string ipv6FailText = (ipv6 == null) ? $"IPv6 address {_ipv6BindAddress} failed to parse. " : string.Empty;
+            string ipv6FailText = (!ipv6Disabled && ipv6 == null) ? $"IPv6 address {_ipv6BindAddress} failed to parse. " : string.Empty;
             if (ipv4FailText != string.Empty || ipv6FailText != string.Empty)
             {
                 base.Transport.NetworkManager.Log($"{ipv4FailText}{ipv6FailText}Clear the bind address field to use any bind address.");

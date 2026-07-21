@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "project": "Dynasty: Legacy Symbiosis",
+  "resourceFolder": "Assets/Resources/SymbiozTiles",
+  "id": "sawmill-lumberyard-worksite-7x7",
+  "file": "sawmill-lumberyard-worksite-7x7.png",
+  "sourceFile": "sawmill-lumberyard-worksite-7x7-source.png",
+  "resourcesLoadPath": "SymbiozTiles/sawmill-lumberyard-worksite-7x7",
+  "displayName": "Sawmill Lumberyard Worksite",
+  "role": "Large wood resource gathering point where players approach to process logs and gather wood.",
+  "resourceType": "wood",
+  "footprint": {
+    "widthCells": 7,
+    "heightCells": 7
+  },
+  "usage": {
+    "objectKind": "Sawmill",
+    "placement": "Place from the selected anchor cell as a 7x7 worksite.",
+    "interaction": "Player approaches this area to gather wood."
+  }
+}

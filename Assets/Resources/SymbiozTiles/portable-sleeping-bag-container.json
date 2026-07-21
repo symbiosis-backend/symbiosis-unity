@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "project": "Dynasty: Legacy Symbiosis",
+  "resourceFolder": "Assets/Resources/SymbiozTiles",
+  "id": "portable-sleeping-bag-container",
+  "file": "portable-sleeping-bag-container.png",
+  "sourceFile": "portable-sleeping-bag-container-source.png",
+  "resourcesLoadPath": "SymbiozTiles/portable-sleeping-bag-container",
+  "displayName": "Portable Sleeping Bag Container",
+  "role": "Opened portable sleeping bag used as an upgradeable survival container UI.",
+  "usage": {
+    "worldObject": "Place the sleeping bag as a camp object, then allow upgrades over time.",
+    "uiWindow": "When opened, display this asset as the inside of the bag with compartments and survival items."
+  },
+  "upgradeConcept": [
+    "basic bedroll",
+    "organized survival pouch",
+    "reinforced camp bag",
+    "community travel kit"
+  ]
+}

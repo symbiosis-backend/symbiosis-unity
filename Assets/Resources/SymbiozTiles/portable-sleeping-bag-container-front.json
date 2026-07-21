@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "project": "Dynasty: Legacy Symbiosis",
+  "resourceFolder": "Assets/Resources/SymbiozTiles",
+  "id": "portable-sleeping-bag-container-front",
+  "file": "portable-sleeping-bag-container-front.png",
+  "sourceFile": "portable-sleeping-bag-container-front-source.png",
+  "resourcesLoadPath": "SymbiozTiles/portable-sleeping-bag-container-front",
+  "displayName": "Portable Sleeping Bag Container - Front",
+  "role": "Front-facing opened sleeping bag backpack used as an upgradeable inventory container UI.",
+  "layoutInstruction": "Use this as a straight front-facing bag window. Item icons should be placed into the visible inner cloth slots without rotating the window.",
+  "slotUsage": {
+    "orientation": "front-facing",
+    "tilt": "none",
+    "itemPlacement": "place item sprites over the interior slot compartments",
+    "recommendedUiUse": "container window for upgraded portable sleeping bag"
+  }
+}

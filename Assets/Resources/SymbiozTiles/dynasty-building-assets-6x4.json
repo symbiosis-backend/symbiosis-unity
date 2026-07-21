@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "project": "Dynasty: Legacy Symbiosis",
+  "resourceFolder": "Assets/Resources/SymbiozTiles",
+  "instruction": "These building images are large map objects. Place them from the selected anchor cell with a 6 cells wide by 4 cells tall footprint.",
+  "footprint": {
+    "widthCells": 6,
+    "heightCells": 4,
+    "anchor": "south-west selected cell",
+    "runtimeCenterOffsetCells": {
+      "x": 2.5,
+      "y": 1.5
+    }
+  },
+  "assets": [
+    {
+      "id": "community-storage-green-roof-6x4",
+      "objectKind": "CommunityStorage",
+      "hotkey": "T+1",
+      "resourcesLoadPath": "SymbiozTiles/community-storage-green-roof-6x4",
+      "file": "community-storage-green-roof-6x4.png",
+      "displayName": "Community Storage",
+      "role": "Green-roof community resource storage for shared settlement supplies.",
+      "footprint": {
+        "widthCells": 6,
+        "heightCells": 4
+      }
+    },
+    {
+      "id": "slum-trade-center-6x4",
+      "objectKind": "SlumTradeCenter",
+      "hotkey": "T+2",
+      "resourcesLoadPath": "SymbiozTiles/slum-trade-center-6x4",
+      "file": "slum-trade-center-6x4.png",
+      "displayName": "Slum Trade Center",
+      "role": "Open covered trade center for slums and outskirts exchange.",
+      "footprint": {
+        "widthCells": 6,
+        "heightCells": 4
+      }
+    }
+  ]
+}
