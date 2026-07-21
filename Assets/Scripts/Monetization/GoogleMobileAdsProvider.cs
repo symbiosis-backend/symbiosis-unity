@@ -9,6 +9,18 @@ namespace MahjongGame.Monetization
 {
     public sealed class GoogleMobileAdsProvider : IRewardedAdProvider, IInterstitialAdProvider
     {
+#if UNITY_IOS
+        // The first iOS release intentionally shares one unit per format. Placement IDs
+        // remain distinct in telemetry and can be split into dedicated AdMob units later.
+        private const string DefaultRewardedAdUnitId = "ca-app-pub-7247804880123488/6753866751";
+        private const string MainBonusRewardedAdUnitId = DefaultRewardedAdUnitId;
+        private const string BattleEnergyRewardedAdUnitId = DefaultRewardedAdUnitId;
+        private const string WeeklyRewardedAdUnitId = DefaultRewardedAdUnitId;
+        private const string SymbiGridRerollRewardedAdUnitId = DefaultRewardedAdUnitId;
+        private const string SymbiMineSecondChanceRewardedAdUnitId = DefaultRewardedAdUnitId;
+        private const string DefaultInterstitialAdUnitId = "ca-app-pub-7247804880123488/3519143416";
+        private const string SymbiGridInterstitialAdUnitId = DefaultInterstitialAdUnitId;
+#else
         private const string DefaultRewardedAdUnitId = "ca-app-pub-7247804880123488/6285404022";
         // Project support reuses the proven shop rewarded unit while keeping a
         // separate placement ID for its own +1 reward, daily limit and telemetry.
@@ -19,6 +31,7 @@ namespace MahjongGame.Monetization
         private const string SymbiMineSecondChanceRewardedAdUnitId = "ca-app-pub-7247804880123488/9738003187";
         private const string DefaultInterstitialAdUnitId = "ca-app-pub-7247804880123488/4369687124";
         private const string SymbiGridInterstitialAdUnitId = "ca-app-pub-7247804880123488/4979133542";
+#endif
 
         private readonly Dictionary<string, RewardedAd> rewardedAds = new Dictionary<string, RewardedAd>();
         private readonly Dictionary<string, float> rewardedLoadedAtTimes = new Dictionary<string, float>();
