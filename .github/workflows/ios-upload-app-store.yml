@@ -1,0 +1,202 @@
+name: Upload iOS IPA to App Store Connect
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_number:
+        description: Unity Build Automation build number
+        required: true
+        default: "1"
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dlsymbiosis-app-store-upload
+  cancel-in-progress: false
+
+jobs:
+  upload:
+    name: Validate and upload DLSymbiosis
+    runs-on: macos-15
+    timeout-minutes: 60
+    environment: app-store-connect
+
+    steps:
+      - name: Download and verify signed IPA from Unity
+        shell: bash
+        env:
+          UNITY_BUILD_API_KEY: ${{ secrets.UNITY_BUILD_API_KEY }}
+          BUILD_NUMBER: ${{ inputs.build_number }}
+          EXPECTED_SHA256: 2BF4C533A42D665C6FA6119FEAE1D4AC506440A1D38FD6A46CB0715589F27E07
+          UNITY_ORG_ID: "18968335639150"
+          UNITY_PROJECT_ID: "5d44265a-8c62-4419-b8a5-bd5cd51ba695"
+          UNITY_BUILD_TARGET: "dlsymbiosis-ios-release"
+        run: |
+          set -euo pipefail
+          set +x
+
+          case "$BUILD_NUMBER" in
+            ''|*[!0-9]*) echo "Invalid Unity build number"; exit 1 ;;
+          esac
+          case "$EXPECTED_SHA256" in
+            ''|*[!0-9A-Fa-f]*) echo "Invalid SHA-256"; exit 1 ;;
+          esac
+          test "${#EXPECTED_SHA256}" -eq 64
+
+          API_URL="https://build-api.cloud.unity3d.com/api/v1/orgs/${UNITY_ORG_ID}/projects/${UNITY_PROJECT_ID}/buildtargets/${UNITY_BUILD_TARGET}/builds/${BUILD_NUMBER}?include=links.artifacts"
+          IPA_DIR="$RUNNER_TEMP/dlsymbiosis-ipa"
+          IPA_PATH="$IPA_DIR/build.ipa"
+          mkdir -p "$IPA_DIR"
+
+          complete=false
+          for attempt in $(seq 1 20); do
+            metadata="$(curl --fail --silent --show-error \
+              --retry 5 --retry-all-errors --connect-timeout 30 \
+              -H "Authorization: Basic ${UNITY_BUILD_API_KEY}" \
+              "$API_URL")"
+
+            artifact="$(printf '%s' "$metadata" | jq -ce '
+              [(.links.artifacts | if type == "array" then .[] else . end) | .files[]? | select(.filename == "build.ipa")][0]
+              // error("build.ipa artifact not found")')"
+            href="$(printf '%s' "$artifact" | jq -er '.href')"
+            redirect="$(printf '%s' "$artifact" | jq -r '.redirect // false')"
+            expected_size="$(printf '%s' "$artifact" | jq -er '.size')"
+
+            test -n "$href"
+            case "$expected_size" in
+              ''|*[!0-9]*) echo "Unity returned an invalid artifact size"; exit 1 ;;
+            esac
+
+            current_size=0
+            if test -f "$IPA_PATH"; then
+              current_size="$(stat -f%z "$IPA_PATH")"
+            fi
+
+            if test "$current_size" -gt "$expected_size"; then
+              echo "Local IPA is larger than the Unity artifact"
+              exit 1
+            fi
+            if test "$current_size" -eq "$expected_size"; then
+              complete=true
+              break
+            fi
+
+            use_unity_auth=false
+            if test "$redirect" = true; then
+              case "$href" in
+                https://build-api.cloud.unity3d.com/*) api_href="$href" ;;
+                /*) api_href="https://build-api.cloud.unity3d.com${href}" ;;
+                *) echo "Unsupported Unity redirect URL"; exit 1 ;;
+              esac
+
+              signed_body="$(curl --fail --silent --show-error \
+                --retry 5 --retry-all-errors --connect-timeout 30 \
+                -H "Authorization: Basic ${UNITY_BUILD_API_KEY}" \
+                "$api_href")"
+              download_url="$(printf '%s' "$signed_body" | jq -er 'select(type == "string")')"
+            else
+              case "$href" in
+                https://*) download_url="$href" ;;
+                /*)
+                  download_url="https://build-api.cloud.unity3d.com${href}"
+                  use_unity_auth=true
+                  ;;
+                *) echo "Unsupported Unity artifact URL"; exit 1 ;;
+              esac
+            fi
+
+            case "$download_url" in
+              https://*) ;;
+              *) echo "Invalid Unity download URL"; exit 1 ;;
+            esac
+            echo "::add-mask::$download_url"
+            echo "Downloading Unity artifact (attempt ${attempt}, ${current_size}/${expected_size} bytes)"
+
+            if test "$use_unity_auth" = true; then
+              curl --fail --location --silent --show-error \
+                --retry 3 --retry-all-errors --connect-timeout 30 \
+                -H "Authorization: Basic ${UNITY_BUILD_API_KEY}" \
+                --continue-at - --output "$IPA_PATH" "$download_url" || true
+            else
+              curl --fail --location --silent --show-error \
+                --retry 3 --retry-all-errors --connect-timeout 30 \
+                --continue-at - --output "$IPA_PATH" "$download_url" || true
+            fi
+
+            downloaded_size=0
+            if test -f "$IPA_PATH"; then
+              downloaded_size="$(stat -f%z "$IPA_PATH")"
+            fi
+            if test "$downloaded_size" -eq "$expected_size"; then
+              complete=true
+              break
+            fi
+          done
+
+          if test "$complete" != true; then
+            echo "Unable to download the complete IPA from Unity"
+            exit 1
+          fi
+
+          actual_sha256="$(shasum -a 256 "$IPA_PATH" | awk '{print toupper($1)}')"
+          expected_upper="$(printf '%s' "$EXPECTED_SHA256" | tr '[:lower:]' '[:upper:]')"
+          test "$actual_sha256" = "$expected_upper"
+          unzip -tq "$IPA_PATH"
+
+          info_path="$(unzip -Z1 "$IPA_PATH" | awk '/^Payload\/[^/]+\.app\/Info\.plist$/ { print; exit }')"
+          test -n "$info_path"
+          unzip -p "$IPA_PATH" "$info_path" > "$RUNNER_TEMP/DLSymbiosis-Info.plist"
+
+          bundle_id="$(plutil -extract CFBundleIdentifier raw -o - "$RUNNER_TEMP/DLSymbiosis-Info.plist")"
+          marketing_version="$(plutil -extract CFBundleShortVersionString raw -o - "$RUNNER_TEMP/DLSymbiosis-Info.plist")"
+          app_build="$(plutil -extract CFBundleVersion raw -o - "$RUNNER_TEMP/DLSymbiosis-Info.plist")"
+          test "$bundle_id" = "com.ozkullar.dlsymbiosis"
+
+          echo "Verified ${bundle_id} ${marketing_version} (${app_build})"
+          echo "IPA_PATH=$IPA_PATH" >> "$GITHUB_ENV"
+
+      - name: Validate and upload to App Store Connect
+        shell: bash
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          set +x
+
+          test -n "$ASC_KEY_ID"
+          test -n "$ASC_ISSUER_ID"
+          test -n "$ASC_PRIVATE_KEY"
+          [[ "$ASC_KEY_ID" =~ ^[A-Za-z0-9]+$ ]]
+          [[ "$ASC_ISSUER_ID" =~ ^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$ ]]
+
+          xcrun --find altool >/dev/null
+
+          KEY_DIR="$HOME/.appstoreconnect/private_keys"
+          KEY_FILE="$KEY_DIR/AuthKey_${ASC_KEY_ID}.p8"
+          trap 'rm -rf "$KEY_DIR"' EXIT
+          umask 077
+          mkdir -p "$KEY_DIR"
+          printf '%s\n' "$ASC_PRIVATE_KEY" > "$KEY_FILE"
+          chmod 600 "$KEY_FILE"
+          grep -q 'BEGIN PRIVATE KEY' "$KEY_FILE"
+          grep -q 'END PRIVATE KEY' "$KEY_FILE"
+
+          xcrun altool --validate-app \
+            -f "$IPA_PATH" -t ios \
+            --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"
+
+          xcrun altool --upload-app \
+            -f "$IPA_PATH" -t ios \
+            --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"
+
+      - name: Remove sensitive build files
+        if: always()
+        shell: bash
+        run: |
+          rm -rf "$RUNNER_TEMP/dlsymbiosis-ipa"
+          rm -f "$RUNNER_TEMP/DLSymbiosis-Info.plist"
+          rm -rf "$HOME/.appstoreconnect/private_keys"
