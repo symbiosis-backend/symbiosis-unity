@@ -13,7 +13,7 @@ public static class IosCiBuild
     private const string VersionFilePath = "ProjectSettings/SymbiosisVersion.json";
     private const string DefaultBundleIdentifier = "com.ozkullar.dlsymbiosis";
     private const string DefaultAppleTeamId = "32VM68DZD8";
-    private const string DefaultAppStoreVersion = "1.0";
+    private const string DefaultAppStoreVersion = "1.0.23";
     private const string AppIconPath = "Assets/Scripts/Mahjong/Sprites/DLSicon.png";
 
     public static void PrepareIosSettings()
