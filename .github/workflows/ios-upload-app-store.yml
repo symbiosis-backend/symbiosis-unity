@@ -84,18 +84,23 @@ jobs:
             fi
 
             use_unity_auth=false
+            api_href=""
+            download_url=""
             if test "$redirect" = true; then
               case "$href" in
                 https://build-api.cloud.unity3d.com/*) api_href="$href" ;;
                 /*) api_href="https://build-api.cloud.unity3d.com${href}" ;;
+                https://*) download_url="$href" ;;
                 *) echo "Unsupported Unity redirect URL"; exit 1 ;;
               esac
 
-              signed_body="$(curl --fail --silent --show-error \
-                --retry 5 --retry-all-errors --connect-timeout 30 \
-                -H "Authorization: Basic ${UNITY_BUILD_API_KEY}" \
-                "$api_href")"
-              download_url="$(printf '%s' "$signed_body" | jq -er 'select(type == "string")')"
+              if test -n "${api_href:-}"; then
+                signed_body="$(curl --fail --silent --show-error \
+                  --retry 5 --retry-all-errors --connect-timeout 30 \
+                  -H "Authorization: Basic ${UNITY_BUILD_API_KEY}" \
+                  "$api_href")"
+                download_url="$(printf '%s' "$signed_body" | jq -er 'select(type == "string")')"
+              fi
             else
               case "$href" in
                 https://*) download_url="$href" ;;
