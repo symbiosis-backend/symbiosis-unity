@@ -68,22 +68,10 @@ public static class BattleLoreTutorialSession
 		PlayerPrefs.Save();
 	}
 
+	[Obsolete("Tutorial test reset has been removed from the project.")]
 	public static void ResetStageForTesting(int stage)
 	{
-		int num = NormalizePlayableStage(stage);
-		PlayerPrefs.SetInt(GetScopedPrefsKey("MahjongBattleLoreTutorial.Active"), 0);
-		PlayerPrefs.SetInt(GetScopedPrefsKey("MahjongBattleLoreTutorial.Stage"), num);
-		PlayerPrefs.SetInt(GetScopedPrefsKey("MahjongBattleLoreTutorial.CompletedStage"), NormalizeCompletedStage(num - 1));
-		PlayerPrefs.SetInt(GetScopedPrefsKey("MahjongBattleLoreTutorial.OpenOnLobbyReturn"), 0);
-		if (num <= 6)
-		{
-			PlayerPrefs.SetInt(GetScopedPrefsKey("MahjongBattleLoreTutorial.Chapter1RewardClaimed"), 0);
-		}
-		if (num <= 3)
-		{
-			PlayerPrefs.DeleteKey(GetScopedPrefsKey("MahjongBattleLoreTutorial.Stage3RewardTile"));
-		}
-		PlayerPrefs.Save();
+		Debug.LogWarning("[BattleLoreTutorialSession] Tutorial test reset was removed and cannot change player progress.");
 	}
 
 	public static void RequestOpenOnLobbyReturn()

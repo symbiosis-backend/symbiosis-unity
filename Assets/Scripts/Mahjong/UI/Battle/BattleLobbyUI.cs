@@ -2863,7 +2863,7 @@ public sealed class BattleLobbyUI : MonoBehaviour
 
 	private static string BattleLobbyText(string russian, string english, string turkish, string german = null)
 	{
-		switch ((!(AppSettings.I != null)) ? GameLanguage.English : AppSettings.I.Language)
+		switch ((!(AppSettings.I != null)) ? GameLanguage.Turkish : AppSettings.I.Language)
 		{
 		case GameLanguage.Russian:
 			if (!string.IsNullOrWhiteSpace(russian))

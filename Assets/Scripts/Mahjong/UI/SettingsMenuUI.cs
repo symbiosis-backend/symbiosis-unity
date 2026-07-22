@@ -2785,7 +2785,7 @@ namespace MahjongGame
             if (surrenderAdInProgress)
                 return;
 
-            if (NoAdsService.HasActiveNoAds())
+            if (BattleLoreTutorialSession.IsActive || NoAdsService.HasActiveNoAds())
             {
                 CompleteSurrenderBattle();
                 return;

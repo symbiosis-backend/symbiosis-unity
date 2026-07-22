@@ -2160,11 +2160,11 @@ public sealed class BattleCharacterButton : MonoBehaviour
 	private string BuildDossierStatsText(BattleCharacterDatabase.BattleCharacterData data, bool unlocked, bool includeStats)
 	{
 		string text = LocalText("Здоровье", "Health", "Can", "Gesundheit");
-		string text2 = LocalText("Атака", "Attack", "Saldiri", "Angriff");
-		string text3 = LocalText("Броня", "Armor", "Zirh", "Ruestung");
+		string text2 = LocalText("Атака", "Attack", "Saldırı", "Angriff");
+		string text3 = LocalText("Броня", "Armor", "Zırh", "Ruestung");
 		string text4 = LocalText("Крит", "Crit", "Kritik", "Krit");
 		string text5 = LocalText("Крит урон", "Crit Damage", "Kritik Hasar", "Kritischer Schaden");
-		string text8 = LocalText("Класс", "Class", "Sinif", "Klasse") + ": " + GetDossierClassName(data);
+		string text8 = LocalText("Класс", "Class", "Sınıf", "Klasse") + ": " + GetDossierClassName(data);
 		if (!includeStats)
 		{
 			return text8;
@@ -2184,7 +2184,7 @@ public sealed class BattleCharacterButton : MonoBehaviour
 		{
 			return string.Empty;
 		}
-		return LocalText("Класс", "Class", "Sinif", "Klasse") + ": " + GetDossierClassName(data);
+		return LocalText("Класс", "Class", "Sınıf", "Klasse") + ": " + GetDossierClassName(data);
 	}
 
 	private void RefreshDossierDescriptionText(BattleCharacterDatabase.BattleCharacterData data, bool unlocked)
@@ -2204,17 +2204,17 @@ public sealed class BattleCharacterButton : MonoBehaviour
 	{
 		if (data == null)
 		{
-			return LocalText("Боец", "Fighter", "Savaşci", "Kampfer");
+			return GameLocalization.Text("battle.character.rail.class.fighter");
 		}
 		return data.AnimalType switch
 		{
-			BattleCharacterDatabase.CharacterAnimalType.Tiger => LocalText("Авангард", "Vanguard", "Oncu", "Vorhut"), 
-			BattleCharacterDatabase.CharacterAnimalType.Fox => LocalText("Разведчик", "Scout", "Izci", "Spaher"), 
-			BattleCharacterDatabase.CharacterAnimalType.Wolf => LocalText("Дуэлянт", "Duelist", "Duellocu", "Duellant"), 
-			BattleCharacterDatabase.CharacterAnimalType.Bear => LocalText("Страж", "Sentinel", "Nobetci", "Wachter"), 
-			BattleCharacterDatabase.CharacterAnimalType.Dragon => LocalText("Арканист", "Arcanist", "Arkanist", "Arkanist"), 
-			BattleCharacterDatabase.CharacterAnimalType.Dog => LocalText("Следопыт", "Tracker", "Iz Surucu", "Faehrtenleser"), 
-			_ => LocalText("Боец", "Fighter", "Savaşci", "Kampfer"), 
+			BattleCharacterDatabase.CharacterAnimalType.Tiger => GameLocalization.Text("battle.character.rail.class.vanguard"),
+			BattleCharacterDatabase.CharacterAnimalType.Fox => GameLocalization.Text("battle.character.rail.class.scout"),
+			BattleCharacterDatabase.CharacterAnimalType.Wolf => GameLocalization.Text("battle.character.rail.class.duelist"),
+			BattleCharacterDatabase.CharacterAnimalType.Bear => GameLocalization.Text("battle.character.rail.class.sentinel"),
+			BattleCharacterDatabase.CharacterAnimalType.Dragon => GameLocalization.Text("battle.character.rail.class.arcanist"),
+			BattleCharacterDatabase.CharacterAnimalType.Dog => GameLocalization.Text("battle.character.rail.class.tracker"),
+			_ => GameLocalization.Text("battle.character.rail.class.fighter"),
 		};
 	}
 
@@ -2222,17 +2222,17 @@ public sealed class BattleCharacterButton : MonoBehaviour
 	{
 		if (data == null)
 		{
-			return LocalText("Бамбуковый круг", "Bamboo Circle", "Bambu Cemberi", "Bambuskreis");
+			return LocalText("Бамбуковый круг", "Bamboo Circle", "Bambu Çemberi", "Bambuskreis");
 		}
 		return data.AnimalType switch
 		{
-			BattleCharacterDatabase.CharacterAnimalType.Tiger => LocalText("Дом Пепельного Когтя", "Ash Claw House", "Kul Pencesi Hanesi", "Haus Aschenklaue"), 
-			BattleCharacterDatabase.CharacterAnimalType.Fox => LocalText("Дом Тихой Искры", "Quiet Spark House", "Sessiz Kivilcim Hanesi", "Haus Stiller Funke"), 
+			BattleCharacterDatabase.CharacterAnimalType.Tiger => LocalText("Дом Пепельного Когтя", "Ash Claw House", "Kül Pençesi Hanesi", "Haus Aschenklaue"),
+			BattleCharacterDatabase.CharacterAnimalType.Fox => LocalText("Дом Тихой Искры", "Quiet Spark House", "Sessiz Kıvılcım Hanesi", "Haus Stiller Funke"),
 			BattleCharacterDatabase.CharacterAnimalType.Wolf => LocalText("Дом Лунной Тропы", "Moon Trail House", "Ay Yolu Hanesi", "Haus Mondpfad"), 
 			BattleCharacterDatabase.CharacterAnimalType.Bear => LocalText("Дом Каменной Чаши", "Stone Bowl House", "Taş Kase Hanesi", "Haus Steinschale"), 
 			BattleCharacterDatabase.CharacterAnimalType.Dragon => LocalText("Дом Золотого Дыма", "Golden Smoke House", "Altın Duman Hanesi", "Haus Goldrauch"), 
-			BattleCharacterDatabase.CharacterAnimalType.Dog => LocalText("Дом Верного Следа", "True Trail House", "Sadik Iz Hanesi", "Haus Treue Spur"), 
-			_ => LocalText("Бамбуковый круг", "Bamboo Circle", "Bambu Cemberi", "Bambuskreis"), 
+			BattleCharacterDatabase.CharacterAnimalType.Dog => LocalText("Дом Верного Следа", "True Trail House", "Sadık İz Hanesi", "Haus Treue Spur"),
+			_ => LocalText("Бамбуковый круг", "Bamboo Circle", "Bambu Çemberi", "Bambuskreis"),
 		};
 	}
 
@@ -2241,19 +2241,19 @@ public sealed class BattleCharacterButton : MonoBehaviour
 		switch ((data != null && !string.IsNullOrWhiteSpace(data.Id)) ? data.Id.Trim().ToLowerInvariant() : string.Empty)
 		{
 		case "tiger_male":
-			return LocalText("Тигр из Пепельного Когтя пришел на арену после пожара в бамбуковом лесу.", "Tiger of Ash Claw came to the arena after the bamboo forest fire.", "Kul Pencesi Kaplan bambu ormani yanginindan sonra arenaya geldi.", "Tiger der Aschenklaue kam nach dem Brand im Bambuswald in die Arena.");
+			return LocalText("Тигр из Пепельного Когтя пришел на арену после пожара в бамбуковом лесу.", "Tiger of Ash Claw came to the arena after the bamboo forest fire.", "Kül Pençesi Kaplanı, bambu ormanı yangınından sonra arenaya geldi.", "Tiger der Aschenklaue kam nach dem Brand im Bambuswald in die Arena.");
 		case "tiger_female":
 			return LocalText("Тигрица хранит память о старой засаде и выходит на бой за честь своего дома.", "Tigress carries the memory of an old ambush and fights for her house's honor.", "Dişi Kaplan eski bir pusunun hatırasını taşır ve hanesinin onuru için savaşır.", "Tigerin tragt die Erinnerung an einen alten Hinterhalt und kampft fur die Ehre ihres Hauses.");
 		case "fox_male":
-			return LocalText("Лис известен как тихий участник чайных споров, где решают судьбу будущих дуэлей.", "Fox is known from quiet tea-house disputes where future duels are decided.", "Tilki gelecekteki duellolarin belirlendigi sessiz cay evi tartismalariyla taninir.", "Fuchs ist aus stillen Teehausstreiten bekannt, in denen kunftige Duelle entschieden werden.");
+			return LocalText("Лис известен как тихий участник чайных споров, где решают судьбу будущих дуэлей.", "Fox is known from quiet tea-house disputes where future duels are decided.", "Tilki, gelecekteki düelloların belirlendiği sessiz çay evi tartışmalarıyla tanınır.", "Fuchs ist aus stillen Teehausstreiten bekannt, in denen kunftige Duelle entschieden werden.");
 		case "fox_female":
 			return LocalText("Лисица ведет личный список долгов и появляется там, где спор нельзя решить словами.", "Vixen keeps a private ledger of debts and appears where words can no longer settle a dispute.", "Dişi Tilki kendi borç defterini tutar ve sözlerin yetmediği yerde ortaya çıkar.", "Fuechsin fuhrt ein eigenes Schuldbuch und erscheint, wo Worte nicht mehr reichen.");
 		case "wolf_male":
-			return LocalText("Волк пережил раскол Лунной Тропы и теперь доказывает право носить знак дома.", "Wolf survived the Moon Trail split and now proves his right to wear the house mark.", "Kurt Ay Yolu bolunmesini atlatti ve hane isaretini taşıma hakkini kanitlar.", "Wolf uberlebte die Spaltung des Mondpfads und beweist nun sein Recht auf das Hauszeichen.");
+			return LocalText("Волк пережил раскол Лунной Тропы и теперь доказывает право носить знак дома.", "Wolf survived the Moon Trail split and now proves his right to wear the house mark.", "Kurt, Ay Yolu bölünmesini atlattı ve hane işaretini taşıma hakkını kanıtlar.", "Wolf uberlebte die Spaltung des Mondpfads und beweist nun sein Recht auf das Hauszeichen.");
 		case "wolf_female":
 			return LocalText("Волчица несет серебряный жетон Лунной Тропы и принимает вызовы без свидетелей.", "She-Wolf carries the silver token of Moon Trail and accepts challenges without witnesses.", "Dişi Kurt Ay Yolu'nun gümüş nişanesini taşır ve tanıksız meydan okumaları kabul eder.", "Wolfin tragt das silberne Zeichen des Mondpfads und nimmt Duelle ohne Zeugen an.");
 		case "bear_male":
-			return LocalText("Медведь был хранителем Каменной Чаши, пока пожар не сделал его имя частью арены.", "Bear guarded the Stone Bowl until the fire made his name part of the arena.", "Ayi ates adini arenanin parcasi yapana kadar Taş Kase'nin koruyucusuydu.", "Bar bewachte die Steinschale, bis das Feuer seinen Namen in die Arena trug.");
+			return LocalText("Медведь был хранителем Каменной Чаши, пока пожар не сделал его имя частью арены.", "Bear guarded the Stone Bowl until the fire made his name part of the arena.", "Ayı, ateş adını arenanın parçası yapana kadar Taş Kase'nin koruyucusuydu.", "Bar bewachte die Steinschale, bis das Feuer seinen Namen in die Arena trug.");
 		case "bear_female":
 			return LocalText("Медведица пришла из северных залов Каменной Чаши, где имена записывают после боя.", "She-Bear came from the northern halls of Stone Bowl, where names are written after battle.", "Dişi Ayı isimlerin savaştan sonra yazıldığı Taş Kase'nin kuzey salonlarından geldi.", "Baerin kam aus den Nordhallen der Steinschale, wo Namen nach dem Kampf geschrieben werden.");
 		case "dragon_male":
@@ -2272,25 +2272,25 @@ public sealed class BattleCharacterButton : MonoBehaviour
 			case BattleCharacterDatabase.CharacterAnimalType.Tiger:
 				if (!flag)
 				{
-					return LocalText("Тигр носит знак Пепельного Когтя.", "Tiger carries the Ash Claw mark.", "Kaplan Kul Pencesi isaretini taşır.", "Tiger tragt das Zeichen der Aschenklaue.");
+					return LocalText("Тигр носит знак Пепельного Когтя.", "Tiger carries the Ash Claw mark.", "Kaplan, Kül Pençesi işaretini taşır.", "Tiger tragt das Zeichen der Aschenklaue.");
 				}
 				return LocalText("Имя Тигрицы записано среди бойцов Пепельного Когтя.", "Tigress is listed among the fighters of Ash Claw.", "Dişi Kaplan Kül Pençesi savaşçıları arasında yazılıdır.", "Tigerin steht unter den Kampfern der Aschenklaue.");
 			case BattleCharacterDatabase.CharacterAnimalType.Fox:
 				if (!flag)
 				{
-					return LocalText("Лис пришел из дома Тихой Искры.", "Fox came from Quiet Spark House.", "Tilki Sessiz Kivilcim Hanesi'nden geldi.", "Fuchs kam aus dem Haus Stiller Funke.");
+					return LocalText("Лис пришел из дома Тихой Искры.", "Fox came from Quiet Spark House.", "Tilki, Sessiz Kıvılcım Hanesi'nden geldi.", "Fuchs kam aus dem Haus Stiller Funke.");
 				}
 				return LocalText("Лисица известна в доме Тихой Искры.", "Vixen is known in Quiet Spark House.", "Dişi Tilki Sessiz Kıvılcım Hanesi'nde tanınır.", "Fuechsin ist im Haus Stiller Funke bekannt.");
 			case BattleCharacterDatabase.CharacterAnimalType.Wolf:
 				if (!flag)
 				{
-					return LocalText("Волк связан с расколом Лунной Тропы.", "Wolf is tied to the Moon Trail split.", "Kurt Ay Yolu bolunmesine baglidir.", "Wolf ist mit der Spaltung des Mondpfads verbunden.");
+					return LocalText("Волк связан с расколом Лунной Тропы.", "Wolf is tied to the Moon Trail split.", "Kurt, Ay Yolu bölünmesine bağlıdır.", "Wolf ist mit der Spaltung des Mondpfads verbunden.");
 				}
 				return LocalText("Волчица носит серебро Лунной Тропы.", "She-Wolf wears the silver of Moon Trail.", "Dişi Kurt Ay Yolu gümüşünü taşır.", "Wolfin tragt das Silber des Mondpfads.");
 			case BattleCharacterDatabase.CharacterAnimalType.Bear:
 				if (!flag)
 				{
-					return LocalText("Медведь был хранителем Каменной Чаши.", "Bear was a keeper of Stone Bowl.", "Ayi Taş Kase'nin koruyucusuydu.", "Bar war Huter der Steinschale.");
+					return LocalText("Медведь был хранителем Каменной Чаши.", "Bear was a keeper of Stone Bowl.", "Ayı, Taş Kase'nin koruyucusuydu.", "Bar war Huter der Steinschale.");
 				}
 				return LocalText("Медведица пришла из залов Каменной Чаши.", "She-Bear came from the halls of Stone Bowl.", "Dişi Ayı Taş Kase salonlarından geldi.", "Baerin kam aus den Hallen der Steinschale.");
 			case BattleCharacterDatabase.CharacterAnimalType.Dragon:
@@ -2306,7 +2306,7 @@ public sealed class BattleCharacterButton : MonoBehaviour
 				}
 				return LocalText("Верная служит дому Верного Следа.", "Faithful serves True Trail House.", "Sadık, Sadık İz Hanesi'ne hizmet eder.", "Treu dient dem Haus Treue Spur.");
 			default:
-				return LocalText("Связан с кругом бойцов Mahjong Battle.", "Bound to the Mahjong Battle circle.", "Mahjong Battle cemberine baglidir.", "An den Mahjong Battle Kreis gebunden.");
+				return LocalText("Связан с кругом бойцов Mahjong Battle.", "Bound to the Mahjong Battle circle.", "Mahjong Battle çemberine bağlıdır.", "An den Mahjong Battle Kreis gebunden.");
 			}
 		}
 		}
@@ -2526,7 +2526,7 @@ public sealed class BattleCharacterButton : MonoBehaviour
 		string priceText = price > 0
 			? "\n" + FormatPrice(price) + " " + GetCurrencyName(ResolveUnlockCurrency(data))
 			: string.Empty;
-		purchaseConfirmText.text = LocalText("Хотите купить?", "Buy this character?", "Satin almak istiyor musunuz?", "Moechtest du kaufen?") + priceText;
+		purchaseConfirmText.text = LocalText("Хотите купить?", "Buy this character?", "Satın almak istiyor musunuz?", "Moechtest du kaufen?") + priceText;
 		purchaseConfirmYesButton.Clicked = delegate
 		{
 			if (pendingPurchaseButton != null)
@@ -2610,7 +2610,7 @@ public sealed class BattleCharacterButton : MonoBehaviour
 		purchaseConfirmText.raycastTarget = false;
 		ApplyCharacterNameFont(purchaseConfirmText);
 		purchaseConfirmYesButton = CreatePurchaseConfirmButton(purchaseConfirmObject.transform, "YesButton", LocalText("Да", "Yes", "Evet", "Ja"), new Vector2(-210f, -138f));
-		purchaseConfirmNoButton = CreatePurchaseConfirmButton(purchaseConfirmObject.transform, "NoButton", LocalText("Нет", "No", "Hayir", "Nein"), new Vector2(210f, -138f));
+		purchaseConfirmNoButton = CreatePurchaseConfirmButton(purchaseConfirmObject.transform, "NoButton", LocalText("Нет", "No", "Hayır", "Nein"), new Vector2(210f, -138f));
 		purchaseConfirmObject.SetActive(value: false);
 	}
 
@@ -2751,7 +2751,7 @@ public sealed class BattleCharacterButton : MonoBehaviour
 
 	private static string LocalText(string russian, string english, string turkish, string german)
 	{
-		return ((AppSettings.I != null) ? AppSettings.I.Language : GameLanguage.Russian) switch
+		return ((AppSettings.I != null) ? AppSettings.I.Language : GameLanguage.Turkish) switch
 		{
 			GameLanguage.English => english, 
 			GameLanguage.Turkish => turkish, 

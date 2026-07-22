@@ -1058,7 +1058,7 @@ public sealed class BattleCharacterCircularCarousel : MonoBehaviour, IBeginDragH
 
 	private void OnFirstHeroDialogueLanguageChanged(GameLanguage _)
 	{
-		RefreshFirstHeroDialogue();
+		RefreshButtons();
 	}
 
 	private bool HasFirstFreeCharacterChoice()
@@ -1309,7 +1309,7 @@ public sealed class BattleCharacterCircularCarousel : MonoBehaviour, IBeginDragH
 		card.AvatarFrame.color = Color.white;
 		card.NameText.text = data.LocalizedDisplayName;
 		card.ClassText.text = BuildRailClassText(data);
-		card.PurchaseText.text = unlocked ? "КУПЛЕН" : BuildRailPurchaseText(data, price);
+		card.PurchaseText.text = unlocked ? GameLocalization.Text("battle.character.rail.owned") : BuildRailPurchaseText(data, price);
 		card.PurchaseText.color = unlocked ? new Color(1f, 0.86f, 0.42f, 1f) : new Color(1f, 0.58f, 0.28f, 1f);
 		card.Root.SetAsLastSibling();
 	}
@@ -1482,26 +1482,17 @@ public sealed class BattleCharacterCircularCarousel : MonoBehaviour, IBeginDragH
 
 	private static string BuildRailClassText(BattleCharacterDatabase.BattleCharacterData data)
 	{
-		string className = "Воин";
-		if (data != null)
+		string classKey = data?.AnimalType switch
 		{
-			switch (data.AnimalType)
-			{
-				case BattleCharacterDatabase.CharacterAnimalType.Dragon:
-					className = "Арканист";
-					break;
-				case BattleCharacterDatabase.CharacterAnimalType.Tiger:
-					className = data.Gender == BattleCharacterDatabase.CharacterGender.Female ? "Авангард" : "Дуэлянт";
-					break;
-				case BattleCharacterDatabase.CharacterAnimalType.Wolf:
-					className = "Разведчик";
-					break;
-				case BattleCharacterDatabase.CharacterAnimalType.Dog:
-					className = data.Gender == BattleCharacterDatabase.CharacterGender.Female ? "Страж" : "Суручу";
-					break;
-			}
-		}
-		return "Класс:\n" + className;
+			BattleCharacterDatabase.CharacterAnimalType.Tiger => "battle.character.rail.class.vanguard",
+			BattleCharacterDatabase.CharacterAnimalType.Fox => "battle.character.rail.class.scout",
+			BattleCharacterDatabase.CharacterAnimalType.Wolf => "battle.character.rail.class.duelist",
+			BattleCharacterDatabase.CharacterAnimalType.Bear => "battle.character.rail.class.sentinel",
+			BattleCharacterDatabase.CharacterAnimalType.Dragon => "battle.character.rail.class.arcanist",
+			BattleCharacterDatabase.CharacterAnimalType.Dog => "battle.character.rail.class.tracker",
+			_ => "battle.character.rail.class.fighter"
+		};
+		return GameLocalization.Format("battle.character.rail.class", GameLocalization.Text(classKey));
 	}
 
 	private static string BuildRailPurchaseText(BattleCharacterDatabase.BattleCharacterData data, int price)
@@ -1512,9 +1503,12 @@ public sealed class BattleCharacterCircularCarousel : MonoBehaviour, IBeginDragH
 		}
 		if (price <= 0)
 		{
-			return "Первый бесплатно";
+			return GameLocalization.Text("battle.character.rail.first_free");
 		}
-		return "Купить: " + FormatRailPrice(price) + " " + GetRailCurrencyName(ResolveRailUnlockCurrency(data));
+		return GameLocalization.Format(
+			"battle.character.rail.buy",
+			FormatRailPrice(price),
+			GetRailCurrencyName(ResolveRailUnlockCurrency(data)));
 	}
 
 	private static string FormatRailPrice(int value)
@@ -1535,9 +1529,10 @@ public sealed class BattleCharacterCircularCarousel : MonoBehaviour, IBeginDragH
 		switch (currency)
 		{
 			case BattleCharacterDatabase.CharacterPriceCurrencyType.OzAmetist:
-				return "Ametist";
-			case BattleCharacterDatabase.CharacterPriceCurrencyType.OzTile:
+				return GameLocalization.Text("common.oz_ametist");
 			case BattleCharacterDatabase.CharacterPriceCurrencyType.OzAltin:
+				return GameLocalization.Text("common.oz_altin");
+			case BattleCharacterDatabase.CharacterPriceCurrencyType.OzTile:
 				return "OzTile";
 			default:
 				return "OzTile";

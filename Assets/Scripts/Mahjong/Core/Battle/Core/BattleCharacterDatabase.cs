@@ -430,7 +430,7 @@ namespace MahjongGame
                 return string.Empty;
 
             string normalizedId = id.Trim().ToLowerInvariant();
-            GameLanguage language = AppSettings.I != null ? AppSettings.I.Language : GameLanguage.Russian;
+            GameLanguage language = AppSettings.I != null ? AppSettings.I.Language : GameLanguage.Turkish;
 
             switch (normalizedId)
             {
