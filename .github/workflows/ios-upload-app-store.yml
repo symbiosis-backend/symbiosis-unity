@@ -150,7 +150,7 @@ jobs:
           test "$actual_sha256" = "$expected_upper"
           unzip -tq "$IPA_PATH"
 
-          info_path="$(unzip -Z1 "$IPA_PATH" | awk '/^Payload\/[^/]+\.app\/Info\.plist$/ { print; exit }')"
+          info_path="$(unzip -Z1 "$IPA_PATH" | awk '/^Payload\/[^/]+\.app\/Info\.plist$/ && !found { print; found=1 }')"
           test -n "$info_path"
           unzip -p "$IPA_PATH" "$info_path" > "$RUNNER_TEMP/DLSymbiosis-Info.plist"
 
