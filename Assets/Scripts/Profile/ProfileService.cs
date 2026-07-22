@@ -1124,6 +1124,8 @@ namespace MahjongGame
                 currentProfile.Currencies.SetTile(user.ozTileBalance);
             }
 
+            Monetization.NoAdsService.ApplyServerNoAdsUntil(user.noAdsUntil);
+
             SaveIfRemembered();
             NotifyProfileChanged();
         }
@@ -1515,6 +1517,7 @@ namespace MahjongGame
             public int allianceLevel;
             public int goldBalance;
             public int amethystBalance;
+            public string noAdsUntil;
             public int ozTileBalance;
             public bool isDeveloper;
             public bool hasInfiniteCurrency;

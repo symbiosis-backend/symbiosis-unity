@@ -20,15 +20,13 @@ namespace MahjongGame
         private const string FreeClaimPrefix = "shop_ozametist_free_claimed_";
         private const string AdDatePrefix = "shop_ozametist_ad_date_";
         private const string AdCountPrefix = "shop_ozametist_ad_count_";
-        private const string StorePrefix = "com.ozkullar.dlsymbiosis.";
-
         private static readonly MonetizationProduct[] AmetistProducts =
         {
-            new MonetizationProduct(ProductSmall, StorePrefix + ProductSmall, 50, "$0.99"),
-            new MonetizationProduct(ProductMedium, StorePrefix + ProductMedium, 120, "$1.99"),
-            new MonetizationProduct(ProductBig, StorePrefix + ProductBig, 300, "$4.99"),
-            new MonetizationProduct(ProductLegend, StorePrefix + ProductLegend, 700, "$9.99"),
-            new MonetizationProduct(ProductWeeklyNoAds, StorePrefix + ProductWeeklyNoAds, 0, "$2.29")
+            new MonetizationProduct(ProductSmall, ProductSmall, 50, "$0.99"),
+            new MonetizationProduct(ProductMedium, ProductMedium, 120, "$1.99"),
+            new MonetizationProduct(ProductBig, ProductBig, 300, "$4.99"),
+            new MonetizationProduct(ProductLegend, ProductLegend, 700, "$9.99"),
+            new MonetizationProduct(ProductWeeklyNoAds, ProductWeeklyNoAds, 0, "$2.29")
         };
         private static MonetizationService catalogRegisteredForService;
 
@@ -123,12 +121,21 @@ namespace MahjongGame
 
         public static bool CanPurchase(string productId)
         {
+            if (!MonetizationService.ArePurchasesSupported)
+                return false;
+
             EnsureCatalogRegistered();
             return HasCurrencyProfile() && MonetizationService.Ensure().CanPurchase(productId);
         }
 
         public static void TryPurchaseAmetistPackage(string productId, Action<bool, int, string> onComplete)
         {
+            if (!MonetizationService.ArePurchasesSupported)
+            {
+                onComplete?.Invoke(false, 0, "shop.purchase_not_ready");
+                return;
+            }
+
             EnsureCatalogRegistered();
 
             MonetizationProduct product = MonetizationService.Ensure().GetProduct(productId);
@@ -152,13 +159,18 @@ namespace MahjongGame
                     return;
                 }
 
-                CurrencyService.I.AddOzAmetist(product.OzAmetistAmount);
                 onComplete?.Invoke(true, product.OzAmetistAmount, string.Empty);
             });
         }
 
         public static void TryPurchaseWeeklyNoAds(Action<bool, int, string> onComplete)
         {
+            if (!MonetizationService.ArePurchasesSupported)
+            {
+                onComplete?.Invoke(false, 0, "shop.purchase_not_ready");
+                return;
+            }
+
             EnsureCatalogRegistered();
 
             MonetizationProduct product = MonetizationService.Ensure().GetProduct(ProductWeeklyNoAds);
@@ -182,7 +194,6 @@ namespace MahjongGame
                     return;
                 }
 
-                NoAdsService.GrantWeeklyNoAds();
                 onComplete?.Invoke(true, NoAdsService.WeeklyNoAdsDays, string.Empty);
             });
         }

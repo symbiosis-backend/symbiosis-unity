@@ -1,7 +1,7 @@
 {
-  "versionName": "1.0.23",
-  "versionCode": 100024,
+  "versionName": "1.0.25",
+  "versionCode": 100026,
   "minimumVersionCode": 1,
   "forceUpdate": false,
-  "releaseNotes": "Main guidance and project support\n\nAdded first-visit guidance for Main sections, improved the direct developer feedback flow and rewarded project support, clarified shared profile storage, and improved Android UI stability."
+  "releaseNotes": "Android startup stability hotfix\n\nFixed an Android startup crash introduced by release code shrinking, protected ads and purchases from blocking game launch, kept tutorial ads disabled, and retained corrected lesson numbering."
 }

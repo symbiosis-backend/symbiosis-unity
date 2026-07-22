@@ -39,7 +39,19 @@ namespace MahjongGame.Monetization
 
         public bool IsRewardedAdsReady => rewardedAdProvider != null && rewardedAdProvider.IsInitialized;
         public bool IsInterstitialAdsReady => interstitialAdProvider != null && interstitialAdProvider.IsInitialized;
-        public bool IsPurchasesReady => purchaseProvider != null && purchaseProvider.IsInitialized;
+        public bool IsPurchasesReady => ArePurchasesSupported && purchaseProvider != null && purchaseProvider.IsInitialized;
+
+        public static bool ArePurchasesSupported
+        {
+            get
+            {
+#if UNITY_IOS && !UNITY_EDITOR
+                return false;
+#else
+                return true;
+#endif
+            }
+        }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void InitializeRuntime()
@@ -113,7 +125,18 @@ namespace MahjongGame.Monetization
             }
 
             if (purchaseProvider != null)
-                purchaseProvider.Initialize(products);
+            {
+                try
+                {
+                    purchaseProvider.Initialize(products);
+                }
+                catch (Exception exception)
+                {
+                    Debug.LogError($"[MonetizationService] Purchase provider initialization failed: {exception}");
+                    purchaseProvider = new StubPurchaseProvider(false);
+                    purchaseProvider.Initialize(products);
+                }
+            }
         }
 
         public MonetizationProduct GetProduct(string productId)
@@ -172,11 +195,17 @@ namespace MahjongGame.Monetization
 
         public bool CanPurchase(string productId)
         {
-            return purchaseProvider != null && purchaseProvider.CanPurchase(productId);
+            return ArePurchasesSupported && purchaseProvider != null && purchaseProvider.CanPurchase(productId);
         }
 
         public void Purchase(string productId, Action<PurchaseResult> onComplete)
         {
+            if (!ArePurchasesSupported)
+            {
+                onComplete?.Invoke(new PurchaseResult(PurchaseState.NotReady, productId, "shop.purchase_not_ready"));
+                return;
+            }
+
             if (purchaseProvider == null)
             {
                 onComplete?.Invoke(new PurchaseResult(PurchaseState.NotReady, productId, "Purchase provider is missing."));
@@ -208,10 +237,32 @@ namespace MahjongGame.Monetization
             return;
 #endif
 
-            GoogleMobileAdsProvider adsProvider = new GoogleMobileAdsProvider();
-            SetRewardedAdProvider(adsProvider);
-            SetInterstitialAdProvider(adsProvider);
-            SetPurchaseProvider(new UnityIapPurchaseProvider());
+            try
+            {
+                GoogleMobileAdsProvider adsProvider = new GoogleMobileAdsProvider();
+                SetRewardedAdProvider(adsProvider);
+                SetInterstitialAdProvider(adsProvider);
+            }
+            catch (Exception exception)
+            {
+                Debug.LogError($"[MonetizationService] Google Mobile Ads initialization failed: {exception}");
+                SetRewardedAdProvider(new StubRewardedAdProvider(false));
+                SetInterstitialAdProvider(new StubInterstitialAdProvider(false));
+            }
+
+#if UNITY_ANDROID
+            try
+            {
+                SetPurchaseProvider(new UnityIapPurchaseProvider());
+            }
+            catch (Exception exception)
+            {
+                Debug.LogError($"[MonetizationService] Unity IAP initialization failed: {exception}");
+                SetPurchaseProvider(new StubPurchaseProvider(false));
+            }
+#else
+            SetPurchaseProvider(new StubPurchaseProvider(false));
+#endif
 #endif
         }
     }

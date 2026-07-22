@@ -5175,11 +5175,13 @@ public sealed class BattleLobbyUI : MonoBehaviour
 				shopEnergyTabButton = CreateShopButton(gameObject.transform, "TabEnergy", BattleLobbyText("Энергия", "Energy", "Enerji", "Energie"), new Vector2(-910f, 168f), new Vector2(350f, 94f), Color.white, 38f);
 				shopCharactersTabButton = CreateShopButton(gameObject.transform, "TabCharacters", BattleLobbyText("Герои", "Heroes", "Kahraman", "Helden"), new Vector2(-910f, 56f), new Vector2(350f, 94f), Color.white, 38f);
 				shopBattleTilesTabButton = CreateShopButton(gameObject.transform, "TabBattleTiles", BattleLobbyText("Боевые камни", "Battle Tiles", "Savaş Taşları", "Kampfsteine"), new Vector2(-910f, -56f), new Vector2(350f, 94f), Color.white, 38f);
-				shopSkinsTabButton = CreateShopButton(gameObject.transform, "TabAmetist", BattleLobbyText("Аметист", "Ametist", "Ametist", "Ametist"), new Vector2(-910f, -168f), new Vector2(350f, 94f), Color.white, 38f);
+				if (MonetizationService.ArePurchasesSupported)
+					shopSkinsTabButton = CreateShopButton(gameObject.transform, "TabAmetist", BattleLobbyText("Аметист", "Ametist", "Ametist", "Ametist"), new Vector2(-910f, -168f), new Vector2(350f, 94f), Color.white, 38f);
 				shopEnergyTabButton.onClick.AddListener(ShowBattleShopEnergy);
 				shopCharactersTabButton.onClick.AddListener(ShowBattleShopCharacters);
 				shopBattleTilesTabButton.onClick.AddListener(ShowBattleShopBattleTiles);
-				shopSkinsTabButton.onClick.AddListener(ShowBattleShopSkins);
+				if (shopSkinsTabButton != null)
+					shopSkinsTabButton.onClick.AddListener(ShowBattleShopSkins);
 				shopEnergySection = CreateShopPanel(gameObject.transform, "EnergySection", new Vector2(1500f, 720f), new Vector2(210f, -96f), Color.white);
 				CreateEnergyShopSectionHeader(shopEnergySection.transform);
 				shopBuyEnergyButton = CreateEnergyShopButton(shopEnergySection.transform, "ButtonBuyEnergy", new Vector2(-365f, -45f), BattleLobbyText("Энергия за Аметист", "Ametist Energy", "Ametist Enerjisi", "Ametist-Energie"), shopEnergyAmetistPrice.ToString(), shopEnergyAmount.ToString(), LoadBattleLobbyAmetistIcon(), LoadBattleLobbyEnergyIcon());
@@ -5198,16 +5200,19 @@ public sealed class BattleLobbyUI : MonoBehaviour
 				shopBattleTileMediumButton.onClick.AddListener(OnClickOpenMediumBattleTilePack);
 				shopBattleTileHighButton.onClick.AddListener(OnClickOpenHighBattleTilePack);
 				shopBattleTileAmetistButton.onClick.AddListener(OnClickOpenAmetistBattleTilePack);
-				shopSkinsSection = CreateShopPanel(gameObject.transform, "AmetistSection", new Vector2(1500f, 540f), new Vector2(210f, -46f), Color.white);
-				CreateShopText(shopSkinsSection.transform, "AmetistTitle", BattleLobbyText("Сокровищница Аметиста", "Ametist Treasury", "Ametist Hazinesi", "Ametist-Schatzkammer"), new Vector2(0f, 222f), new Vector2(960f, 58f), 50f, TextAlignmentOptions.Center, Color.white);
-				shopAmetistSmallButton = CreateAmetistPackageButton(shopSkinsSection.transform, "AmetistSmall", "oz_ametist_small", new Vector2(-525f, -40f));
-				shopAmetistMediumButton = CreateAmetistPackageButton(shopSkinsSection.transform, "AmetistMedium", "oz_ametist_medium", new Vector2(-175f, -40f));
-				shopAmetistBigButton = CreateAmetistPackageButton(shopSkinsSection.transform, "AmetistBig", "oz_ametist_big", new Vector2(175f, -40f));
-				shopAmetistLegendButton = CreateAmetistPackageButton(shopSkinsSection.transform, "AmetistLegend", "oz_ametist_legend", new Vector2(525f, -40f));
-				shopAmetistSmallButton.onClick.AddListener(OnClickBuyAmetistSmall);
-				shopAmetistMediumButton.onClick.AddListener(OnClickBuyAmetistMedium);
-				shopAmetistBigButton.onClick.AddListener(OnClickBuyAmetistBig);
-				shopAmetistLegendButton.onClick.AddListener(OnClickBuyAmetistLegend);
+				if (MonetizationService.ArePurchasesSupported)
+				{
+					shopSkinsSection = CreateShopPanel(gameObject.transform, "AmetistSection", new Vector2(1500f, 540f), new Vector2(210f, -46f), Color.white);
+					CreateShopText(shopSkinsSection.transform, "AmetistTitle", BattleLobbyText("Сокровищница Аметиста", "Ametist Treasury", "Ametist Hazinesi", "Ametist-Schatzkammer"), new Vector2(0f, 222f), new Vector2(960f, 58f), 50f, TextAlignmentOptions.Center, Color.white);
+					shopAmetistSmallButton = CreateAmetistPackageButton(shopSkinsSection.transform, "AmetistSmall", "oz_ametist_small", new Vector2(-525f, -40f));
+					shopAmetistMediumButton = CreateAmetistPackageButton(shopSkinsSection.transform, "AmetistMedium", "oz_ametist_medium", new Vector2(-175f, -40f));
+					shopAmetistBigButton = CreateAmetistPackageButton(shopSkinsSection.transform, "AmetistBig", "oz_ametist_big", new Vector2(175f, -40f));
+					shopAmetistLegendButton = CreateAmetistPackageButton(shopSkinsSection.transform, "AmetistLegend", "oz_ametist_legend", new Vector2(525f, -40f));
+					shopAmetistSmallButton.onClick.AddListener(OnClickBuyAmetistSmall);
+					shopAmetistMediumButton.onClick.AddListener(OnClickBuyAmetistMedium);
+					shopAmetistBigButton.onClick.AddListener(OnClickBuyAmetistBig);
+					shopAmetistLegendButton.onClick.AddListener(OnClickBuyAmetistLegend);
+				}
 				Button closeShopButton = CreateShopButton(gameObject.transform, "ButtonCloseShop", BattleLobbyText("Закрыть", "Close", "Kapat", "Schliessen"), new Vector2(785f, 392f), new Vector2(92f, 92f), Color.white, 40f);
 				RectTransform closeShopRect = closeShopButton.transform as RectTransform;
 				closeShopRect.anchorMin = new Vector2(1f, 1f);
@@ -7446,6 +7451,12 @@ public sealed class BattleLobbyUI : MonoBehaviour
 
 	private void ShowBattleShopSkins()
 	{
+		if (!MonetizationService.ArePurchasesSupported)
+		{
+			ShowBattleShopEnergy();
+			return;
+		}
+
 		SetBattleShopSection(shopSkinsSection);
 		RefreshBattleShopUi();
 	}
@@ -7571,6 +7582,12 @@ public sealed class BattleLobbyUI : MonoBehaviour
 
 	private void BuyAmetistPackage(string productId)
 	{
+		if (!MonetizationService.ArePurchasesSupported)
+		{
+			SetBattleShopStatus(GameLocalization.Text("shop.purchase_not_ready"));
+			return;
+		}
+
 		SetBattleShopStatus(GameLocalization.Text("battle.shop.opening_purchase"));
 		OzAmetistShopService.TryPurchaseAmetistPackage(productId, delegate(bool success, int amount, string message)
 		{

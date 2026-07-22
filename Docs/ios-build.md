@@ -9,8 +9,9 @@ Current App Store setup date: 2026-07-21.
 - Bundle ID: `com.ozkullar.dlsymbiosis`
 - SKU suggestion: `symbiosis-ios-001`
 - Team ID: `32VM68DZD8`
-- Version: `1.0.23`
-- Build: `100024`
+- App Store version: `1.0`
+- Previous uploaded build: `100024` (marketing version `1.0.23`, not selectable for the `1.0` release)
+- Next iOS build: `100026` (marketing version `1.0`)
 - Primary category: `Games`
 - Privacy Policy URL: `https://dlsymbiosis.com/privacy`
 - Support URL: `https://dlsymbiosis.com/`
@@ -72,7 +73,7 @@ export BUILD_OUTPUT_PATH="Builds/iOS/Symbiosis-iOS"
 
 Optional overrides:
 
-- `BUILD_VERSION_NAME` sets App Store version, otherwise `ProjectSettings/SymbiosisVersion.json` is used.
+- `BUILD_VERSION_NAME` sets App Store version; otherwise iOS uses `1.0` for the current App Store release train.
 - `IOS_BUILD_NUMBER` sets Apple build number, otherwise `versionCode` from `ProjectSettings/SymbiosisVersion.json` is used.
 - `IOS_DISPLAY_NAME` sets the visible app name, default `Symbiosis`.
 - `IOS_MIN_TARGET` sets minimum iOS version, default `15.0`.

@@ -11,6 +11,7 @@ namespace MahjongGame.Monetization
         private StoreController storeController;
         private readonly Dictionary<string, MonetizationProduct> catalog = new Dictionary<string, MonetizationProduct>();
         private readonly Dictionary<string, Action<PurchaseResult>> pendingPurchases = new Dictionary<string, Action<PurchaseResult>>();
+        private readonly HashSet<string> validatingPurchaseTokens = new HashSet<string>();
         private bool connectStarted;
         private bool productsFetched;
 
@@ -47,6 +48,12 @@ namespace MahjongGame.Monetization
 
         public void Purchase(string productId, Action<PurchaseResult> onComplete)
         {
+            if (pendingPurchases.ContainsKey(productId))
+            {
+                onComplete?.Invoke(new PurchaseResult(PurchaseState.NotReady, productId, "shop.purchase_in_progress"));
+                return;
+            }
+
             Product product = GetStoreProduct(productId);
             if (product == null || !product.availableToPurchase)
             {
@@ -132,10 +139,35 @@ namespace MahjongGame.Monetization
         private void OnPurchasePending(PendingOrder order)
         {
             string productId = GetProductId(order);
-            if (string.IsNullOrWhiteSpace(productId))
+            string storeProductId = GetStoreProductId(order);
+            string purchaseToken = order?.Info?.TransactionID ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(productId) ||
+                string.IsNullOrWhiteSpace(storeProductId) ||
+                string.IsNullOrWhiteSpace(purchaseToken))
+            {
+                CompletePurchase(productId, new PurchaseResult(PurchaseState.Failed, productId, "shop.purchase_verification_failed"));
+                return;
+            }
+
+            if (!validatingPurchaseTokens.Add(purchaseToken))
                 return;
 
-            storeController.ConfirmPurchase(order);
+            MonetizationService service = MonetizationService.Ensure();
+            service.StartCoroutine(GooglePlayPurchaseValidationService.Verify(
+                storeProductId,
+                purchaseToken,
+                response =>
+                {
+                    validatingPurchaseTokens.Remove(purchaseToken);
+                    CompletePurchase(productId, new PurchaseResult(PurchaseState.Purchased, productId, string.Empty));
+                    storeController.ConfirmPurchase(order);
+                },
+                error =>
+                {
+                    validatingPurchaseTokens.Remove(purchaseToken);
+                    Debug.LogWarning($"Google Play purchase left pending for retry: {error}");
+                    CompletePurchase(productId, new PurchaseResult(PurchaseState.Failed, productId, error));
+                }));
         }
 
         private void OnPurchaseConfirmed(Order order)
@@ -146,8 +178,7 @@ namespace MahjongGame.Monetization
                 return;
             }
 
-            string productId = GetProductId(order);
-            CompletePurchase(productId, new PurchaseResult(PurchaseState.Purchased, productId, string.Empty));
+            Debug.Log($"Unity IAP purchase confirmed: {GetProductId(order)}");
         }
 
         private void OnPurchaseFailed(FailedOrder failedOrder)
@@ -185,6 +216,12 @@ namespace MahjongGame.Monetization
         {
             Product product = order?.CartOrdered?.Items()?.FirstOrDefault()?.Product;
             return product?.definition?.id ?? string.Empty;
+        }
+
+        private static string GetStoreProductId(Order order)
+        {
+            Product product = order?.CartOrdered?.Items()?.FirstOrDefault()?.Product;
+            return product?.definition?.storeSpecificId ?? string.Empty;
         }
     }
 }

@@ -33,6 +33,34 @@ namespace MahjongGame.Monetization
             SaveAndNotify();
         }
 
+        public static void ApplyServerNoAdsUntil(string noAdsUntilIso)
+        {
+            PlayerProfile profile = GetProfile();
+            if (profile == null)
+                return;
+
+            profile.EnsureData();
+            if (string.IsNullOrWhiteSpace(noAdsUntilIso))
+            {
+                profile.Ads.NoAdsUntilUtcTicks = 0L;
+                SaveAndNotify();
+                return;
+            }
+
+            if (!DateTime.TryParse(
+                    noAdsUntilIso,
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    System.Globalization.DateTimeStyles.AssumeUniversal | System.Globalization.DateTimeStyles.AdjustToUniversal,
+                    out DateTime noAdsUntilUtc))
+            {
+                Debug.LogWarning("Server no-ads expiry could not be parsed.");
+                return;
+            }
+
+            profile.Ads.NoAdsUntilUtcTicks = Math.Max(0L, noAdsUntilUtc.Ticks);
+            SaveAndNotify();
+        }
+
         private static PlayerProfile GetProfile()
         {
             if (ProfileService.I == null || ProfileService.I.Current == null)

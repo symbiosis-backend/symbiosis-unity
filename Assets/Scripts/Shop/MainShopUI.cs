@@ -314,7 +314,8 @@ namespace MahjongGame
             tabsLayout.childForceExpandHeight = false;
 
             CreateTabButton(tabs, ShopSection.Ametist, GetSectionLabel(ShopSection.Ametist));
-            CreateTabButton(tabs, ShopSection.Abonelik, GetSectionLabel(ShopSection.Abonelik));
+            if (MonetizationService.ArePurchasesSupported)
+                CreateTabButton(tabs, ShopSection.Abonelik, GetSectionLabel(ShopSection.Abonelik));
 
             RectTransform contentPanel = CreateImageRect(safeAreaRoot, "ShopContentPanel", Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero, Vector2.zero, Color.clear);
             SetInsetRect(contentPanel, 48f, 48f, 214f, 58f);
@@ -352,6 +353,9 @@ namespace MahjongGame
 
         private void ShowSection(ShopSection section)
         {
+            if (!MonetizationService.ArePurchasesSupported && section == ShopSection.Abonelik)
+                section = ShopSection.Ametist;
+
             activeSection = section;
             ClearContent();
             RefreshTabColors();
@@ -387,23 +391,28 @@ namespace MahjongGame
             float maxPackageHeight = Mathf.Clamp(packageWidth * 1.12f, 430f, 570f);
             float packageHeight = Mathf.Clamp(desiredPackageHeight, 380f, maxPackageHeight);
             float rewardWidth = Mathf.Max(380f, (availableWidth - rewardGap) * 0.5f);
-            float stackHeight = packageHeight + verticalGap + rewardHeight;
+            bool showPaidPackages = MonetizationService.ArePurchasesSupported;
+            float stackHeight = showPaidPackages ? packageHeight + verticalGap + rewardHeight : rewardHeight;
             float stackTop = Mathf.Max(0f, (availableHeight - stackHeight) * 0.5f);
 
-            RectTransform packageGrid = CreateRect(contentRoot, "AmetistPackageGrid", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -stackTop), new Vector2(availableWidth, packageHeight));
-            GridLayoutGroup packageLayout = packageGrid.gameObject.AddComponent<GridLayoutGroup>();
-            packageLayout.cellSize = new Vector2(packageWidth, packageHeight);
-            packageLayout.spacing = new Vector2(packageGap, 0f);
-            packageLayout.childAlignment = TextAnchor.UpperCenter;
-            packageLayout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-            packageLayout.constraintCount = 4;
+            if (showPaidPackages)
+            {
+                RectTransform packageGrid = CreateRect(contentRoot, "AmetistPackageGrid", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -stackTop), new Vector2(availableWidth, packageHeight));
+                GridLayoutGroup packageLayout = packageGrid.gameObject.AddComponent<GridLayoutGroup>();
+                packageLayout.cellSize = new Vector2(packageWidth, packageHeight);
+                packageLayout.spacing = new Vector2(packageGap, 0f);
+                packageLayout.childAlignment = TextAnchor.UpperCenter;
+                packageLayout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+                packageLayout.constraintCount = 4;
 
-            CreatePackageButton(packageGrid, OzAmetistShopService.ProductSmall, packageWidth, packageHeight);
-            CreatePackageButton(packageGrid, OzAmetistShopService.ProductMedium, packageWidth, packageHeight);
-            CreatePackageButton(packageGrid, OzAmetistShopService.ProductBig, packageWidth, packageHeight);
-            CreatePackageButton(packageGrid, OzAmetistShopService.ProductLegend, packageWidth, packageHeight);
+                CreatePackageButton(packageGrid, OzAmetistShopService.ProductSmall, packageWidth, packageHeight);
+                CreatePackageButton(packageGrid, OzAmetistShopService.ProductMedium, packageWidth, packageHeight);
+                CreatePackageButton(packageGrid, OzAmetistShopService.ProductBig, packageWidth, packageHeight);
+                CreatePackageButton(packageGrid, OzAmetistShopService.ProductLegend, packageWidth, packageHeight);
+            }
 
-            RectTransform rewardGrid = CreateRect(contentRoot, "AmetistRewardGrid", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -(stackTop + packageHeight + verticalGap)), new Vector2(availableWidth, rewardHeight));
+            float rewardTop = stackTop + (showPaidPackages ? packageHeight + verticalGap : 0f);
+            RectTransform rewardGrid = CreateRect(contentRoot, "AmetistRewardGrid", new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -rewardTop), new Vector2(availableWidth, rewardHeight));
             GridLayoutGroup rewardLayout = rewardGrid.gameObject.AddComponent<GridLayoutGroup>();
             rewardLayout.cellSize = new Vector2(rewardWidth, rewardHeight);
             rewardLayout.spacing = new Vector2(rewardGap, 0f);
@@ -809,7 +818,7 @@ namespace MahjongGame
 
         private void PurchaseAmetistPackage(string productId)
         {
-            if (purchaseRequestInProgress)
+            if (!MonetizationService.ArePurchasesSupported || purchaseRequestInProgress)
                 return;
 
             purchaseRequestInProgress = true;
@@ -831,7 +840,7 @@ namespace MahjongGame
 
         private void PurchaseWeeklyNoAds()
         {
-            if (purchaseRequestInProgress)
+            if (!MonetizationService.ArePurchasesSupported || purchaseRequestInProgress)
                 return;
 
             purchaseRequestInProgress = true;

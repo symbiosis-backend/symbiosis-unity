@@ -1451,11 +1451,15 @@ namespace MahjongGame
                 MahjongAssistBooster.Undo,
                 new Vector2(430f, 35f));
 
-            Button adButton = CreateBoosterBagActionButton(window.transform, "BtnBagRewardedAd", GameLocalization.Text("mahjong.bag.ad"), new Vector2(-270f, -315f), new Vector2(460f, 104f));
+            float adButtonX = MonetizationService.ArePurchasesSupported ? -270f : 0f;
+            Button adButton = CreateBoosterBagActionButton(window.transform, "BtnBagRewardedAd", GameLocalization.Text("mahjong.bag.ad"), new Vector2(adButtonX, -315f), new Vector2(460f, 104f));
             adButton.onClick.AddListener(OnClickBoosterBagRewardedAd);
 
-            Button packButton = CreateBoosterBagActionButton(window.transform, "BtnBagPack", GameLocalization.Text("mahjong.bag.pack"), new Vector2(270f, -315f), new Vector2(460f, 104f));
-            packButton.onClick.AddListener(OnClickBoosterBagPack);
+            if (MonetizationService.ArePurchasesSupported)
+            {
+                Button packButton = CreateBoosterBagActionButton(window.transform, "BtnBagPack", GameLocalization.Text("mahjong.bag.pack"), new Vector2(270f, -315f), new Vector2(460f, 104f));
+                packButton.onClick.AddListener(OnClickBoosterBagPack);
+            }
 
             boosterBagStatusText = CreateBagText(window.transform, "BagStatus", string.Empty, new Vector2(0f, -230f), new Vector2(900f, 42f), 24f, new Color(0.92f, 0.98f, 0.78f, 1f), TextAlignmentOptions.Center, false);
 
@@ -1653,7 +1657,7 @@ namespace MahjongGame
 
         private void OnClickBoosterBagPack()
         {
-            if (boosterBagPurchaseInProgress)
+            if (!MonetizationService.ArePurchasesSupported || boosterBagPurchaseInProgress)
                 return;
 
             MonetizationService service = MonetizationService.Ensure();

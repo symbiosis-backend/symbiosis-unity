@@ -13,12 +13,13 @@ public static class IosCiBuild
     private const string VersionFilePath = "ProjectSettings/SymbiosisVersion.json";
     private const string DefaultBundleIdentifier = "com.ozkullar.dlsymbiosis";
     private const string DefaultAppleTeamId = "32VM68DZD8";
+    private const string DefaultAppStoreVersion = "1.0";
     private const string AppIconPath = "Assets/Scripts/Mahjong/Sprites/DLSicon.png";
 
     public static void PrepareIosSettings()
     {
         AppVersion version = ReadVersionFile();
-        string versionName = ReadEnv("BUILD_VERSION_NAME", version.versionName);
+        string versionName = ReadEnv("BUILD_VERSION_NAME", DefaultAppStoreVersion);
         int buildNumber = GetBuildNumber(version);
 
         ConfigurePlayerSettings(versionName, buildNumber);
@@ -37,7 +38,7 @@ public static class IosCiBuild
     public static void BuildXcodeProject()
     {
         AppVersion version = ReadVersionFile();
-        string versionName = ReadEnv("BUILD_VERSION_NAME", version.versionName);
+        string versionName = ReadEnv("BUILD_VERSION_NAME", DefaultAppStoreVersion);
         int buildNumber = GetBuildNumber(version);
         string outputPath = ResolveProjectRelativePath(ReadEnv("BUILD_OUTPUT_PATH", DefaultXcodeOutputPath));
 

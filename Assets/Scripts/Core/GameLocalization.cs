@@ -1521,13 +1521,13 @@ namespace MahjongGame
                     value = Pick(language, "Аметист", "Amethyst", "Ametist");
                     return true;
                 case "shop.tab.subscription":
-                    value = Pick(language, "Подписка", "Subscription", "Abonelik");
+                    value = Pick(language, "Без рекламы", "No Ads", "Reklamsız");
                     return true;
                 case "shop.placeholder.mahjong":
                     value = Pick(language, "Пакеты скоро появятся.", "Packs are coming soon.", "Paketler yakinda.");
                     return true;
                 case "shop.placeholder.subscription":
-                    value = Pick(language, "Подписка пока в разработке.", "Subscription is in development.", "Abonelik gelistiriliyor.");
+                    value = Pick(language, "Покупка отключения рекламы пока недоступна.", "The no-ads purchase is not available yet.", "Reklamsız satın alma henüz kullanılamıyor.");
                     return true;
                 case "shop.no_ads_week_title":
                     value = Pick(language, "Неделя без рекламы", "One Week No Ads", "Bir Hafta Reklamsiz");
@@ -1618,6 +1618,15 @@ namespace MahjongGame
                     return true;
                 case "shop.purchase_not_ready":
                     value = Pick(language, "Покупки пока не подключены.", "Purchases are not connected yet.", "Satin almalar henuz baglanmadi.");
+                    return true;
+                case "shop.purchase_in_progress":
+                    value = Pick(language, "Эта покупка уже обрабатывается.", "This purchase is already being processed.", "Bu satin alma zaten isleniyor.");
+                    return true;
+                case "shop.purchase_auth_required":
+                    value = Pick(language, "Сначала войдите в игровой аккаунт.", "Sign in to your game account first.", "Once oyun hesabiniza giris yapin.");
+                    return true;
+                case "shop.purchase_verification_failed":
+                    value = Pick(language, "Не удалось проверить покупку. Она не потеряна — попробуйте снова после восстановления сети.", "The purchase could not be verified. It is not lost—try again after your connection returns.", "Satin alma dogrulanamadi. Kaybolmadi; baglanti geri geldiginde tekrar deneyin.");
                     return true;
                 case "shop.purchase_unknown":
                     value = Pick(language, "Пакет не найден.", "Package was not found.", "Paket bulunamadi.");
