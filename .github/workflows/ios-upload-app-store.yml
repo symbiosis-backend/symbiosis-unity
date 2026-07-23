@@ -6,7 +6,7 @@ on:
       build_number:
         description: Unity Build Automation build number
         required: true
-        default: "1"
+        default: "5"
         type: string
 
 permissions:
@@ -29,7 +29,7 @@ jobs:
         env:
           UNITY_BUILD_API_KEY: ${{ secrets.UNITY_BUILD_API_KEY }}
           BUILD_NUMBER: ${{ inputs.build_number }}
-          EXPECTED_SHA256: 2BF4C533A42D665C6FA6119FEAE1D4AC506440A1D38FD6A46CB0715589F27E07
+          EXPECTED_SHA256: F46155DB98158265C851F37AA0039C409E8B7A3F264DE82B1D0C1E83887A25E3
           UNITY_ORG_ID: "18968335639150"
           UNITY_PROJECT_ID: "5d44265a-8c62-4419-b8a5-bd5cd51ba695"
           UNITY_BUILD_TARGET: "dlsymbiosis-ios-release"
