@@ -279,8 +279,26 @@ namespace MahjongGame
             string whiteLine = string.IsNullOrWhiteSpace(activeWhiteLineArgumentKey)
                 ? GameLocalization.Text(activeWhiteLineKey)
                 : GameLocalization.Format(activeWhiteLineKey, GameLocalization.Text(activeWhiteLineArgumentKey));
+            if (string.Equals(activeDialogueId, "chat", StringComparison.Ordinal))
+                whiteLine += "\n\n" + ChatSafetyTip();
             SetTextIfChanged(whiteYinLineText, whiteLine);
             SetTextIfChanged(continueButtonLabel, GameLocalization.Text(activeContinueKey));
+        }
+
+        private static string ChatSafetyTip()
+        {
+            GameLanguage language = AppSettings.I != null ? AppSettings.I.Language : GameLanguage.English;
+            switch (language)
+            {
+                case GameLanguage.Russian:
+                    return "Безопасность: нажмите имя автора сообщения, чтобы пожаловаться или заблокировать. Блокировка сразу скрывает его сообщения.";
+                case GameLanguage.Turkish:
+                    return "Güvenlik: Bildirmek veya engellemek için mesaj gönderenin adına dokunun. Engelleme mesajlarını hemen gizler.";
+                case GameLanguage.German:
+                    return "Sicherheit: Tippe auf den Namen eines Absenders, um ihn zu melden oder zu blockieren. Blockieren blendet seine Nachrichten sofort aus.";
+                default:
+                    return "Safety: tap a sender’s name to Report or Block. Blocking hides their messages immediately.";
+            }
         }
 
         private static string NormalizeDialogueId(string dialogueId)

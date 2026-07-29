@@ -1,7 +1,7 @@
 {
   "versionName": "1.0.25",
-  "versionCode": 100026,
+  "versionCode": 100027,
   "minimumVersionCode": 1,
   "forceUpdate": false,
-  "releaseNotes": "Android startup stability hotfix\n\nFixed an Android startup crash introduced by release code shrinking, protected ads and purchases from blocking game launch, kept tutorial ads disabled, and retained corrected lesson numbering."
+  "releaseNotes": "iOS App Review compliance update\n\nAdded Terms and Community Guidelines acceptance, full in-app account deletion, and clearer chat reporting and blocking guidance while retaining the latest gameplay fixes."
 }

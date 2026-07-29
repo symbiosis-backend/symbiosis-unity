@@ -128,6 +128,8 @@ namespace MahjongGame
         private Button deleteSlotButton;
         private Button backButton;
         private Toggle rememberToggle;
+        private Toggle termsToggle;
+        private Button termsButton;
         private Image slotOneAvatarImage;
         private Image slotTwoAvatarImage;
         private Image slotThreeAvatarImage;
@@ -255,6 +257,8 @@ namespace MahjongGame
             currentAvatarIndex = Mathf.Clamp(currentAvatarIndex, 0, GetLastAvatarIndex());
             if (rememberToggle != null)
                 rememberToggle.isOn = ProfileService.I == null || !ProfileService.I.HasProfile() || ProfileService.I.RememberProfile;
+            if (termsToggle != null)
+                termsToggle.isOn = LegalConsent.HasAcceptedCurrentVersion;
 
             if (TryStartRememberedAccountSlotPicker())
                 return;
@@ -276,7 +280,7 @@ namespace MahjongGame
 
             loginMode = true;
             loginSlotsLoaded = false;
-            loadingRememberedAccountSlots = true;
+            loadingRememberedAccountSlots = LegalConsent.HasAcceptedCurrentVersion;
             confirmingDeleteSlot = false;
             creatingSlotForExistingAccount = false;
             registerStep = RegisterStep.Account;
@@ -297,6 +301,11 @@ namespace MahjongGame
             RefreshTabButtons();
             ApplyAvatarVisual();
             ApplyResponsiveLayout();
+
+            // Keep the remembered login visible while the player reviews a new Terms version.
+            // Continue/Login will accept the checked consent and resume the normal slot picker.
+            if (!LegalConsent.HasAcceptedCurrentVersion)
+                return true;
 
             continueInProgress = true;
             SetAccountButtonsInteractable(false);
@@ -383,6 +392,26 @@ namespace MahjongGame
                 BuildLandscapeProfileWindow();
                 MarkEditorHierarchyDirty();
             }
+
+            EnsureLegalConsentControls();
+        }
+
+        private void EnsureLegalConsentControls()
+        {
+            if (rightPaneRect == null)
+                return;
+
+            if (termsToggle == null)
+                termsToggle = FindComponentByPath<Toggle>(rightPaneRect, "LegalConsentToggle");
+            if (termsButton == null)
+                termsButton = FindComponentByPath<Button>(rightPaneRect, "ViewTermsButton");
+
+            if (termsToggle == null)
+                termsToggle = CreateToggle(rightPaneRect, "LegalConsentToggle", LegalConsent.ConsentLabel());
+            if (termsButton == null)
+                termsButton = CreateButton(rightPaneRect, "ViewTermsButton", LegalConsent.ViewTermsLabel(), 18f);
+
+            termsToggle.isOn = LegalConsent.HasAcceptedCurrentVersion;
         }
 
         private bool ShouldApplyEditorLayout()
@@ -512,6 +541,8 @@ namespace MahjongGame
             EnsureAccountInputLabels();
 
             rememberToggle = FindComponentByPath<Toggle>(rightPaneRect, "RememberProfileToggle");
+            termsToggle = FindComponentByPath<Toggle>(rightPaneRect, "LegalConsentToggle");
+            termsButton = FindComponentByPath<Button>(rightPaneRect, "ViewTermsButton");
             slotLabelText = FindComponentByPath<TextMeshProUGUI>(rightPaneRect, "SlotLabel");
             slotOneButton = FindComponentByPath<Button>(rightPaneRect, "SlotOneButton");
             slotTwoButton = FindComponentByPath<Button>(rightPaneRect, "SlotTwoButton");
@@ -630,6 +661,8 @@ namespace MahjongGame
             SetInputPlaceholder(passwordInput, PasswordText());
             SetInputPlaceholder(ageInput, AgeInputText());
             SetToggleLabel(rememberToggle, RememberProfileText());
+            SetToggleLabel(termsToggle, LegalConsent.ConsentLabel());
+            SetButtonLabel(termsButton, LegalConsent.ViewTermsLabel());
             SetButtonLabel(russianLanguageButton, "RU");
             SetButtonLabel(englishLanguageButton, "EN");
             SetButtonLabel(turkishLanguageButton, "TR");
@@ -763,6 +796,9 @@ namespace MahjongGame
 
             rememberToggle = CreateToggle(rightPane.transform, "RememberProfileToggle", RememberProfileText());
             rememberToggle.isOn = true;
+            termsToggle = CreateToggle(rightPane.transform, "LegalConsentToggle", LegalConsent.ConsentLabel());
+            termsToggle.isOn = LegalConsent.HasAcceptedCurrentVersion;
+            termsButton = CreateButton(rightPane.transform, "ViewTermsButton", LegalConsent.ViewTermsLabel(), 18f);
 
             ageInput = CreateInputField(rightPane.transform, "AgeInput", AgeInputText());
             ageInput.contentType = TMP_InputField.ContentType.IntegerNumber;
@@ -854,6 +890,9 @@ namespace MahjongGame
             if (deleteSlotButton != null)
                 deleteSlotButton.onClick.AddListener(OnClickDeleteSlot);
 
+            if (termsButton != null)
+                termsButton.onClick.AddListener(OpenTerms);
+
             if (backButton != null)
                 backButton.onClick.AddListener(OnClickBack);
 
@@ -898,6 +937,9 @@ namespace MahjongGame
 
             if (deleteSlotButton != null)
                 deleteSlotButton.onClick.RemoveListener(OnClickDeleteSlot);
+
+            if (termsButton != null)
+                termsButton.onClick.RemoveListener(OpenTerms);
 
             if (backButton != null)
                 backButton.onClick.RemoveListener(OnClickBack);
@@ -1049,6 +1091,12 @@ namespace MahjongGame
 
                 if (registerStep == RegisterStep.Account)
                 {
+                    if (!EnsureLegalConsentAccepted())
+                    {
+                        ResetContinueState();
+                        return;
+                    }
+
                     ShowRegisterStep(RegisterStep.Gender);
                     ResetContinueState();
                     return;
@@ -1262,6 +1310,9 @@ namespace MahjongGame
 
             try
             {
+                if (!EnsureLegalConsentAccepted())
+                    return;
+
                 continueInProgress = true;
                 SetAccountButtonsInteractable(false);
                 ReleaseActiveInputs();
@@ -1764,6 +1815,26 @@ namespace MahjongGame
         private bool ShouldRememberProfile()
         {
             return rememberToggle == null || rememberToggle.isOn;
+        }
+
+        private bool EnsureLegalConsentAccepted()
+        {
+            if (LegalConsent.HasAcceptedCurrentVersion)
+                return true;
+
+            if (termsToggle == null || !termsToggle.isOn)
+            {
+                SetError(LegalConsent.ConsentRequiredError());
+                return false;
+            }
+
+            LegalConsent.AcceptCurrentVersion();
+            return true;
+        }
+
+        private static void OpenTerms()
+        {
+            Application.OpenURL(LegalConsent.TermsUrl);
         }
 
         private void SetAccountButtonsInteractable(bool value)
@@ -3313,6 +3384,8 @@ namespace MahjongGame
             SetObjectActive(nicknameInputLabel != null ? nicknameInputLabel.gameObject : null, showProfileFields);
             SetObjectActive(ageInputLabel != null ? ageInputLabel.gameObject : null, showProfileFields);
             SetObjectActive(rememberToggle != null ? rememberToggle.gameObject : null, showRemember);
+            SetObjectActive(termsToggle != null ? termsToggle.gameObject : null, showAccountFields);
+            SetObjectActive(termsButton != null ? termsButton.gameObject : null, showAccountFields);
             SetObjectActive(continueButton != null ? continueButton.gameObject : null, !loginMode);
             SetObjectActive(loginButton != null ? loginButton.gameObject : null, loginMode);
             SetObjectActive(forgotPasswordButton != null ? forgotPasswordButton.gameObject : null, showForgotPassword);
@@ -3335,7 +3408,18 @@ namespace MahjongGame
 
             if (loginMode && !loginSlotsLoaded && !loadingRememberedAccountSlots)
             {
-                LayoutAccountLoginFields(fieldX, y, fieldAreaWidth, contentBottomLimit + primaryHeight + mediumGap, fieldHeight, mediumGap, mobileLandscape);
+                float rememberHeight = mobileLandscape ? 54f : 40f;
+                float legalHeight = mobileLandscape ? 58f : 44f;
+                float legalGap = mobileLandscape ? 10f : 6f;
+                float accountFooterHeight = rememberHeight + legalGap + legalHeight;
+                LayoutAccountLoginFields(
+                    fieldX,
+                    y,
+                    fieldAreaWidth,
+                    contentBottomLimit + Mathf.Max(primaryHeight, accountFooterHeight) + mediumGap,
+                    fieldHeight,
+                    mediumGap,
+                    mobileLandscape);
                 float forgotWidth = Mathf.Min(Mathf.Max(mobileLandscape ? 300f : 180f, fieldAreaWidth * (mobileLandscape ? 0.32f : 0.42f)), mobileLandscape ? 420f : 260f);
                 float entryEdgePadding = Mathf.Clamp(width * (mobileLandscape ? 0.026f : 0.032f), mobileLandscape ? 22f : 14f, mobileLandscape ? 38f : 24f);
                 float forgotX = entryEdgePadding;
@@ -3344,6 +3428,7 @@ namespace MahjongGame
                 float rememberWidth = Mathf.Min(fieldAreaWidth * 0.5f, mobileLandscape ? 360f : 260f);
                 float rememberX = fieldX + (fieldAreaWidth - rememberWidth) * 0.5f;
                 SetRect(rememberToggle != null ? rememberToggle.transform as RectTransform : null, rememberX, contentBottomLimit, rememberWidth, mobileLandscape ? 54f : 40f);
+                LayoutLegalConsent(fieldX, contentBottomLimit + rememberHeight + legalGap, fieldAreaWidth, legalHeight, mobileLandscape);
             }
             else if (loginMode)
             {
@@ -3378,10 +3463,20 @@ namespace MahjongGame
             else if (registerStep == RegisterStep.Account)
             {
                 float rememberHeight = mobileLandscape ? 54f : 40f;
-                LayoutAccountRegistrationFields(fieldX, y, fieldAreaWidth, contentBottomLimit + rememberHeight + mediumGap, fieldHeight, mediumGap, mobileLandscape);
+                float legalHeight = mobileLandscape ? 58f : 44f;
+                float legalGap = mobileLandscape ? 10f : 6f;
+                LayoutAccountRegistrationFields(
+                    fieldX,
+                    y,
+                    fieldAreaWidth,
+                    contentBottomLimit + rememberHeight + legalGap + legalHeight + mediumGap,
+                    fieldHeight,
+                    mediumGap,
+                    mobileLandscape);
                 float rememberWidth = Mathf.Min(fieldAreaWidth * 0.42f, mobileLandscape ? 420f : 280f);
                 float rememberX = fieldX + (fieldAreaWidth - rememberWidth) * 0.5f;
                 SetRect(rememberToggle != null ? rememberToggle.transform as RectTransform : null, rememberX, contentBottomLimit, rememberWidth, rememberHeight);
+                LayoutLegalConsent(fieldX, contentBottomLimit + rememberHeight + legalGap, fieldAreaWidth, legalHeight, mobileLandscape);
             }
             else if (registerStep == RegisterStep.Gender)
             {
@@ -3660,6 +3755,25 @@ namespace MahjongGame
             LayoutAccountRow(dynastyInputLabel, dynastyInput, x, inputX, blockTop - fieldHeight, labelWidth, inputWidth, fieldHeight, labelHeight, mobileLandscape);
             LayoutAccountRow(emailInputLabel, emailInput, x, inputX, blockTop - fieldHeight * 2f - rowGap, labelWidth, inputWidth, fieldHeight, labelHeight, mobileLandscape);
             LayoutAccountRow(passwordInputLabel, passwordInput, x, inputX, blockTop - fieldHeight * 3f - rowGap * 2f, labelWidth, inputWidth, fieldHeight, labelHeight, mobileLandscape);
+        }
+
+        private void LayoutLegalConsent(float x, float y, float width, float height, bool mobileLandscape)
+        {
+            float gap = mobileLandscape ? 12f : 8f;
+            float buttonWidth = Mathf.Clamp(width * 0.24f, mobileLandscape ? 180f : 120f, mobileLandscape ? 280f : 190f);
+            float toggleWidth = Mathf.Max(120f, width - buttonWidth - gap);
+
+            SetRect(termsToggle != null ? termsToggle.transform as RectTransform : null, x, y, toggleWidth, height);
+            SetRect(termsButton != null ? termsButton.transform as RectTransform : null, x + toggleWidth + gap, y, buttonWidth, height);
+
+            TMP_Text label = termsToggle != null ? termsToggle.GetComponentInChildren<TMP_Text>(true) : null;
+            if (label != null)
+            {
+                label.enableAutoSizing = true;
+                label.fontSizeMin = mobileLandscape ? 14f : 12f;
+                label.fontSizeMax = mobileLandscape ? 23f : 18f;
+                label.alignment = TextAlignmentOptions.MidlineLeft;
+            }
         }
 
         private void LayoutAccountLoginFields(float x, float topY, float width, float bottomLimit, float desiredFieldHeight, float desiredGap, bool mobileLandscape)

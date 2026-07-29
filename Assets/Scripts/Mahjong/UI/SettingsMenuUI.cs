@@ -65,6 +65,7 @@ namespace MahjongGame
         [SerializeField] private Button germanLanguageButton;
         [SerializeField] private Button changeProfileButton;
         [SerializeField] private Button logoutButton;
+        [SerializeField] private Button deleteAccountButton;
 
         [Header("Colors")]
         [SerializeField] private Color enabledColor = Color.white;
@@ -285,6 +286,7 @@ namespace MahjongGame
             EnsureGermanLanguageButton();
             EnsureLogoutButton();
             EnsureChangeProfileButton();
+            EnsureDeleteAccountButton();
             EnsureSurrenderButton();
             EnsureDefaultVisualStyles();
 
@@ -336,15 +338,25 @@ namespace MahjongGame
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            // A lobby or main-menu modal may suppress the persistent settings
-            // button. That state must never leak into an active battle.
+            // Suppression belongs to a modal in the previous scene. The settings
+            // launcher is persistent, so a full scene change must clear that
+            // transient state before visibility is rebuilt for the new scene.
+            if (mode == LoadSceneMode.Single)
+                mainSettingsButtonSuppressed = false;
+
             if (string.Equals(scene.name, battleGameplaySceneName, StringComparison.Ordinal))
             {
-                mainSettingsButtonSuppressed = false;
                 battleOpenButtonReadyAt = Time.unscaledTime + 0.75f;
             }
 
+            EnsurePersistentRoot();
+            if (transform.parent != persistentRoot.transform)
+                transform.SetParent(persistentRoot.transform, false);
+            EnsureRuntimeUi();
+            EnsureDeleteAccountButton();
+            EnsurePersistentRootRaycasterActive();
             CloseInstant();
+            BindUI();
             RefreshButtons();
             ApplySceneMode();
             ApplySceneVisualStyle();
@@ -356,7 +368,11 @@ namespace MahjongGame
 
         public void Open()
         {
-            if (!IsBattleGameScene && BattleLobbyUiCoordinator.HasModalOpen &&
+            bool isBattleLobby = string.Equals(
+                SceneManager.GetActiveScene().name,
+                battleLobbySceneName,
+                StringComparison.Ordinal);
+            if (isBattleLobby && BattleLobbyUiCoordinator.HasModalOpen &&
                 BattleLobbyUiCoordinator.ActiveModal != BattleLobbyModalKind.Settings)
             {
                 CloseInstant();
@@ -607,6 +623,12 @@ namespace MahjongGame
                 changeProfileButton.onClick.AddListener(ChangeProfile);
             }
 
+            if (deleteAccountButton != null)
+            {
+                deleteAccountButton.onClick.RemoveListener(DeleteAccount);
+                deleteAccountButton.onClick.AddListener(DeleteAccount);
+            }
+
             if (returnToMenuButton != null)
             {
                 returnToMenuButton.onClick.RemoveListener(ReturnToMenu);
@@ -663,6 +685,9 @@ namespace MahjongGame
 
             if (changeProfileButton != null)
                 changeProfileButton.onClick.RemoveListener(ChangeProfile);
+
+            if (deleteAccountButton != null)
+                deleteAccountButton.onClick.RemoveListener(DeleteAccount);
 
             if (returnToMenuButton != null)
                 returnToMenuButton.onClick.RemoveListener(ReturnToMenu);
@@ -765,10 +790,22 @@ namespace MahjongGame
             LoadSceneWithDoor(string.IsNullOrWhiteSpace(entrySceneName) ? "Entry" : entrySceneName);
         }
 
+        private void DeleteAccount()
+        {
+            CloseInstant();
+            AccountDeletionUI.Show(string.IsNullOrWhiteSpace(entrySceneName) ? "Entry" : entrySceneName);
+        }
+
         private void RefreshButtons()
         {
             if (AppSettings.I == null)
                 return;
+
+            TMP_Text deleteLabel = deleteAccountButton != null
+                ? deleteAccountButton.GetComponentInChildren<TMP_Text>(true)
+                : null;
+            if (deleteLabel != null)
+                deleteLabel.text = DeleteAccountButtonLabel();
 
             RefreshInfoHintsButtonLabel();
 
@@ -913,6 +950,9 @@ namespace MahjongGame
             if (logoutButton == null)
                 logoutButton = FindButtonByName("BtnLogoutProfile");
 
+            if (deleteAccountButton == null)
+                deleteAccountButton = FindButtonByName("BtnDeleteAccount");
+
             if (surrenderButton == null)
                 surrenderButton = FindButtonByName("BtnSurrender");
         }
@@ -1017,6 +1057,26 @@ namespace MahjongGame
             AdjustProfileActionButtonLayout();
         }
 
+        private void EnsureDeleteAccountButton()
+        {
+            if (deleteAccountButton != null || windowRect == null)
+            {
+                AdjustProfileActionButtonLayout();
+                return;
+            }
+
+            deleteAccountButton = CreateRuntimeTextButton(
+                windowRect,
+                "BtnDeleteAccount",
+                new Vector2(0.5f, 0.5f),
+                new Vector2(0f, -95f),
+                new Vector2(300f, 76f),
+                DeleteAccountButtonLabel(),
+                null,
+                RuntimeButtonStyle.Danger);
+            AdjustProfileActionButtonLayout();
+        }
+
         private void EnsureGermanLanguageButton()
         {
             if (germanLanguageButton != null || windowRect == null)
@@ -1040,8 +1100,15 @@ namespace MahjongGame
 
             RectTransform logoutRect = logoutButton != null ? logoutButton.GetComponent<RectTransform>() : null;
             RectTransform changeRect = changeProfileButton != null ? changeProfileButton.GetComponent<RectTransform>() : null;
+            RectTransform deleteRect = deleteAccountButton != null ? deleteAccountButton.GetComponent<RectTransform>() : null;
 
-            if (logoutRect != null && changeRect != null)
+            if (logoutRect != null && changeRect != null && deleteRect != null)
+            {
+                SetCenteredRuntimeRect(changeRect, new Vector2(-330f, -95f), new Vector2(280f, 76f));
+                SetCenteredRuntimeRect(logoutRect, new Vector2(0f, -95f), new Vector2(280f, 76f));
+                SetCenteredRuntimeRect(deleteRect, new Vector2(330f, -95f), new Vector2(280f, 76f));
+            }
+            else if (logoutRect != null && changeRect != null)
             {
                 SetCenteredRuntimeRect(changeRect, new Vector2(-170f, -95f), new Vector2(300f, 76f));
                 SetCenteredRuntimeRect(logoutRect, new Vector2(170f, -95f), new Vector2(300f, 76f));
@@ -1294,6 +1361,22 @@ namespace MahjongGame
             }
         }
 
+        private static string DeleteAccountButtonLabel()
+        {
+            GameLanguage language = AppSettings.I != null ? AppSettings.I.Language : GameLanguage.English;
+            switch (language)
+            {
+                case GameLanguage.Russian:
+                    return "Удалить аккаунт";
+                case GameLanguage.Turkish:
+                    return "Hesabı Sil";
+                case GameLanguage.German:
+                    return "Konto löschen";
+                default:
+                    return "Delete Account";
+            }
+        }
+
         private void ApplyMainSettingsVisuals(string sceneName)
         {
             if (IsMahjongLobbySceneName(sceneName))
@@ -1392,6 +1475,7 @@ namespace MahjongGame
             }
             ApplyTextButtonGraphic(changeProfileButton, LoadMainSettingsWideTextButtonSprite(sceneName) ?? textButtonSprite);
             ApplyTextButtonGraphic(logoutButton, LoadMainSettingsWideTextButtonSprite(sceneName) ?? textButtonSprite);
+            ApplyTextButtonGraphic(deleteAccountButton, LoadMainSettingsWideTextButtonSprite(sceneName) ?? textButtonSprite);
             if (string.Equals(sceneName, "Main", StringComparison.Ordinal))
                 MainLobbyButtonStyle.ApplyCloseIconButton(closeButton);
             else
@@ -1482,8 +1566,9 @@ namespace MahjongGame
             ApplyButtonRect(turkishLanguageButton, new Vector2(110f, 65f) * layoutScale, new Vector2(160f, 104f) * layoutScale);
             ApplyButtonRect(germanLanguageButton, new Vector2(330f, 65f) * layoutScale, new Vector2(160f, 104f) * layoutScale);
 
-            ApplyButtonRect(changeProfileButton, new Vector2(-250f, -135f) * layoutScale, new Vector2(430f, 112f) * layoutScale);
-            ApplyButtonRect(logoutButton, new Vector2(250f, -135f) * layoutScale, new Vector2(430f, 112f) * layoutScale);
+            ApplyButtonRect(changeProfileButton, new Vector2(-430f, -135f) * layoutScale, new Vector2(350f, 112f) * layoutScale);
+            ApplyButtonRect(logoutButton, new Vector2(0f, -135f) * layoutScale, new Vector2(350f, 112f) * layoutScale);
+            ApplyButtonRect(deleteAccountButton, new Vector2(430f, -135f) * layoutScale, new Vector2(350f, 112f) * layoutScale);
             ApplyButtonRect(infoHintsButton, new Vector2(0f, -330f) * layoutScale, new Vector2(420f, 96f) * layoutScale);
             ApplyAnchoredButtonRect(
                 closeButton,
@@ -2876,6 +2961,7 @@ namespace MahjongGame
             bool showGameButtons = IsGameScene;
             bool showSurrender = IsBattleGameScene;
             bool showProfileActions = !IsGameScene;
+            bool showDeleteAccount = string.Equals(SceneManager.GetActiveScene().name, "Main", StringComparison.Ordinal);
 
             if (gameButtonsRoot != null)
                 gameButtonsRoot.SetActive(showGameButtons);
@@ -2885,6 +2971,9 @@ namespace MahjongGame
 
             if (logoutButton != null)
                 logoutButton.gameObject.SetActive(showProfileActions);
+
+            if (deleteAccountButton != null)
+                deleteAccountButton.gameObject.SetActive(showDeleteAccount);
 
             if (returnToMenuButton != null)
                 returnToMenuButton.gameObject.SetActive(showGameButtons);
@@ -2927,8 +3016,10 @@ namespace MahjongGame
             if (openButton == null)
                 return;
 
+            string activeSceneName = SceneManager.GetActiveScene().name;
             bool battleGameplay = IsBattleGameScene;
-            bool blockedByBattleModal = !battleGameplay && BattleLobbyUiCoordinator.HasModalOpen &&
+            bool battleLobby = string.Equals(activeSceneName, battleLobbySceneName, StringComparison.Ordinal);
+            bool blockedByBattleModal = battleLobby && BattleLobbyUiCoordinator.HasModalOpen &&
                                         BattleLobbyUiCoordinator.ActiveModal != BattleLobbyModalKind.Settings;
             bool suppressed = !battleGameplay && mainSettingsButtonSuppressed;
             bool blockedByIntro = !battleGameplay && IsBlockedByIntro;
@@ -3029,9 +3120,6 @@ namespace MahjongGame
 
         private void EnsureRuntimeUi()
         {
-            if (openButton != null && panelRoot != null)
-                return;
-
             RectTransform rootRect = GetComponent<RectTransform>();
             if (rootRect != null)
             {
@@ -3041,8 +3129,14 @@ namespace MahjongGame
                 rootRect.offsetMax = Vector2.zero;
             }
 
-            openButton = CreateRuntimeIconButton(transform, "BtnOpenSettings", new Vector2(1f, 1f), new Vector2(-58f, -42f), new Vector2(82f, 82f), "Menü");
-            openButtonRect = openButton.GetComponent<RectTransform>();
+            if (openButton == null)
+            {
+                openButton = CreateRuntimeIconButton(transform, "BtnOpenSettings", new Vector2(1f, 1f), new Vector2(-58f, -42f), new Vector2(82f, 82f), "Menü");
+                openButtonRect = openButton.GetComponent<RectTransform>();
+            }
+
+            if (panelRoot != null)
+                return;
 
             panelRoot = CreateRuntimePanel(transform, "PanelRoot", Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero, new Color(0.02f, 0.015f, 0.012f, 0.78f));
             panelRootRect = panelRoot.GetComponent<RectTransform>();
@@ -3067,6 +3161,7 @@ namespace MahjongGame
             germanLanguageButton = CreateRuntimeTextButton(window.transform, "BtnLanguageDE", new Vector2(0.5f, 0.5f), new Vector2(315f, 10f), new Vector2(140f, 76f), "DE", "settings.language_de", RuntimeButtonStyle.Language);
             changeProfileButton = CreateRuntimeTextButton(window.transform, "BtnChangeProfile", new Vector2(0.5f, 0.5f), new Vector2(-170f, -95f), new Vector2(300f, 76f), "Change Profile", "settings.change_profile", RuntimeButtonStyle.Action);
             logoutButton = CreateRuntimeTextButton(window.transform, "BtnLogoutProfile", new Vector2(0.5f, 0.5f), new Vector2(170f, -95f), new Vector2(300f, 76f), "Logout", "settings.logout", RuntimeButtonStyle.Danger);
+            deleteAccountButton = CreateRuntimeTextButton(window.transform, "BtnDeleteAccount", new Vector2(0.5f, 0.5f), new Vector2(0f, -95f), new Vector2(300f, 76f), DeleteAccountButtonLabel(), null, RuntimeButtonStyle.Danger);
 
             gameButtonsRoot = new GameObject("GameButtonsRoot", typeof(RectTransform));
             gameButtonsRoot.transform.SetParent(window.transform, false);

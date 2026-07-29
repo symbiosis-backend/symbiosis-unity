@@ -37,12 +37,21 @@ namespace MahjongGame
         private const string KeyRememberProfile = "symbiosis_remember_profile";
         private const string KeyRememberedAccountEmail = "symbiosis_remembered_account_email";
         private const string KeyRememberedAccountPassword = "symbiosis_remembered_account_password";
+        private const string OzkullarDeveloperAccountEmail = "ozkullar@developer.symbiosis.local";
 
         public PlayerProfile Current => currentProfile;
         public string LastServerError => lastServerError;
         public string CurrentSessionToken => GetSessionToken();
         public bool RememberProfile => ShouldRememberProfile();
         public bool HasRememberedAccount => ShouldRememberProfile() && HasRememberedAccountCredentials();
+        public bool HasVerifiedOzkullarDeveloperSession =>
+            currentProfile != null &&
+            currentProfile.IsDeveloper &&
+            !string.IsNullOrWhiteSpace(GetSessionToken()) &&
+            string.Equals(
+                CurrentAccountEmail,
+                OzkullarDeveloperAccountEmail,
+                StringComparison.OrdinalIgnoreCase);
         public string CurrentAccountEmail
         {
             get
@@ -913,6 +922,45 @@ namespace MahjongGame
             Debug.Log("[ProfileService] Profile deleted");
         }
 
+        public IEnumerator DeleteAccountOnServer(string password, Action<bool, string> completed)
+        {
+            lastServerError = string.Empty;
+            string token = GetSessionToken();
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                lastServerError = "Invalid session";
+                completed?.Invoke(false, lastServerError);
+                yield break;
+            }
+
+            ServerDeleteAccountRequest payload = new ServerDeleteAccountRequest
+            {
+                token = token,
+                password = password ?? string.Empty,
+                confirmation = "DELETE"
+            };
+
+            bool ok = false;
+            string error = string.Empty;
+            yield return SendProfileRequest(
+                "/account/delete",
+                JsonUtility.ToJson(payload),
+                _ => ok = true,
+                requestError => error = requestError,
+                requireUser: false
+            );
+
+            if (ok)
+            {
+                DeleteProfile();
+                SetRememberProfile(false);
+                LastAccountSlots = Array.Empty<AccountSlotInfo>();
+                LastAccountDynastyName = string.Empty;
+            }
+
+            completed?.Invoke(ok, string.IsNullOrWhiteSpace(error) ? lastServerError : error);
+        }
+
         public void Logout()
         {
             DeleteProfile();
@@ -1481,6 +1529,14 @@ namespace MahjongGame
             public string email;
             public string password;
             public int slotIndex;
+        }
+
+        [Serializable]
+        private sealed class ServerDeleteAccountRequest
+        {
+            public string token;
+            public string password;
+            public string confirmation;
         }
 
         [Serializable]

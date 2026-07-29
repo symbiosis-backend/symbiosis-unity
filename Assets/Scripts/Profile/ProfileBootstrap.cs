@@ -142,6 +142,15 @@ namespace MahjongGame
 
             SetLoadingVisible(true);
 
+            if (!LegalConsent.HasAcceptedCurrentVersion)
+            {
+                LogRuntime("Current Terms and Community Guidelines have not been accepted; showing account setup");
+                SetLoadingVisible(false);
+                SetProfileSetupVisible(true);
+                resolvingServerProfile = false;
+                yield break;
+            }
+
             if (ProfileService.I.HasRememberedAccount)
             {
                 LogRuntime("Remembered account found; showing slot picker");

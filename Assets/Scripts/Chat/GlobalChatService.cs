@@ -321,6 +321,68 @@ namespace MahjongGame
                 completed);
         }
 
+        public IEnumerator EditDeveloperSupportMessage(GlobalChatMessage message, string text, Action<bool, string> completed = null)
+        {
+            string cleanText = ChatModerationFilter.Clean(text, out bool moderated);
+            if (message == null || message.id <= 0 || !message.isDeveloper || string.IsNullOrWhiteSpace(cleanText))
+            {
+                string error = GameLocalization.Text("chat.support.edit_empty");
+                SetError(error);
+                completed?.Invoke(false, error);
+                yield break;
+            }
+
+            if (cleanText.Length > 1000)
+                cleanText = cleanText.Substring(0, 1000);
+            if (moderated)
+                SetError(GameLocalization.Text("chat.moderated"));
+
+            DeveloperSupportEditRequest payload = new DeveloperSupportEditRequest
+            {
+                text = cleanText,
+                version = message.version
+            };
+            yield return PostDeveloperSupport(
+                $"{BaseUrl}/chat/developer/{message.id}/edit",
+                payload,
+                GameLocalization.Text("chat.support.edit_saved"),
+                completed);
+        }
+
+        public IEnumerator EditDeveloperComment(
+            GlobalChatMessage message,
+            DeveloperSupportComment comment,
+            string text,
+            Action<bool, string> completed = null)
+        {
+            string cleanText = ChatModerationFilter.Clean(text, out bool moderated);
+            if (message == null || message.id <= 0 ||
+                comment == null || comment.id <= 0 || !comment.isDeveloper ||
+                string.IsNullOrWhiteSpace(cleanText))
+            {
+                string error = GameLocalization.Text("chat.support.edit_empty");
+                SetError(error);
+                completed?.Invoke(false, error);
+                yield break;
+            }
+
+            if (cleanText.Length > 800)
+                cleanText = cleanText.Substring(0, 800);
+            if (moderated)
+                SetError(GameLocalization.Text("chat.moderated"));
+
+            DeveloperSupportEditRequest payload = new DeveloperSupportEditRequest
+            {
+                text = cleanText,
+                version = message.version
+            };
+            yield return PostDeveloperSupport(
+                $"{BaseUrl}/chat/developer/{message.id}/comment/{comment.id}/edit",
+                payload,
+                GameLocalization.Text("chat.support.edit_saved"),
+                completed);
+        }
+
         public IEnumerator SetDeveloperStatus(GlobalChatMessage message, string status, bool active = true, Action<bool, string> completed = null)
         {
             if (message == null || message.id <= 0 || !IsDeveloperSupportStatus(status))
@@ -1088,7 +1150,9 @@ namespace MahjongGame
             {
                 token = token,
                 blockedUserId = message.userId,
-                reason = "blocked_from_chat"
+                reason = "blocked_from_chat",
+                channel = NormalizeChannel(message.channel),
+                messageId = Math.Max(0, message.id)
             };
 
             yield return PostSimple($"{BaseUrl}/users/block", payload, GameLocalization.Text("chat.blocked"), (success, responseMessage) =>
@@ -1458,6 +1522,8 @@ namespace MahjongGame
                 supportSendRequest.token = token;
             else if (payload is DeveloperSupportCommentRequest supportCommentRequest)
                 supportCommentRequest.token = token;
+            else if (payload is DeveloperSupportEditRequest supportEditRequest)
+                supportEditRequest.token = token;
             else if (payload is DeveloperSupportStatusRequest supportStatusRequest)
                 supportStatusRequest.token = token;
             else if (payload is DeveloperSupportVoteRequest supportVoteRequest)
@@ -1499,6 +1565,7 @@ namespace MahjongGame
             public string[] statuses;
             public int version;
             public string updatedAt;
+            public string editedAt;
             public string closedAt;
             public int likeCount;
             public int dislikeCount;
@@ -1521,6 +1588,7 @@ namespace MahjongGame
             public string translationStatus;
             public bool isTranslated;
             public string createdAt;
+            public string editedAt;
         }
 
         [Serializable]
@@ -1548,6 +1616,8 @@ namespace MahjongGame
             public string token;
             public int blockedUserId;
             public string reason;
+            public string channel;
+            public long messageId;
         }
 
         [Serializable]
@@ -1562,6 +1632,14 @@ namespace MahjongGame
         {
             public string token;
             public string text;
+        }
+
+        [Serializable]
+        private sealed class DeveloperSupportEditRequest
+        {
+            public string token;
+            public string text;
+            public int version;
         }
 
         [Serializable]
