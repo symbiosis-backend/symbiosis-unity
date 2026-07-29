@@ -6,7 +6,12 @@ on:
       build_number:
         description: Unity Build Automation build number
         required: true
-        default: "5"
+        default: "6"
+        type: string
+      expected_sha256:
+        description: Expected IPA SHA-256. Leave empty to discover the hash without uploading.
+        required: false
+        default: ""
         type: string
 
 permissions:
@@ -29,7 +34,7 @@ jobs:
         env:
           UNITY_BUILD_API_KEY: ${{ secrets.UNITY_BUILD_API_KEY }}
           BUILD_NUMBER: ${{ inputs.build_number }}
-          EXPECTED_SHA256: F46155DB98158265C851F37AA0039C409E8B7A3F264DE82B1D0C1E83887A25E3
+          EXPECTED_SHA256: ${{ inputs.expected_sha256 }}
           UNITY_ORG_ID: "18968335639150"
           UNITY_PROJECT_ID: "5d44265a-8c62-4419-b8a5-bd5cd51ba695"
           UNITY_BUILD_TARGET: "dlsymbiosis-ios-release"
@@ -40,10 +45,12 @@ jobs:
           case "$BUILD_NUMBER" in
             ''|*[!0-9]*) echo "Invalid Unity build number"; exit 1 ;;
           esac
-          case "$EXPECTED_SHA256" in
-            ''|*[!0-9A-Fa-f]*) echo "Invalid SHA-256"; exit 1 ;;
-          esac
-          test "${#EXPECTED_SHA256}" -eq 64
+          if test -n "$EXPECTED_SHA256"; then
+            case "$EXPECTED_SHA256" in
+              *[!0-9A-Fa-f]*) echo "Invalid SHA-256"; exit 1 ;;
+            esac
+            test "${#EXPECTED_SHA256}" -eq 64
+          fi
 
           API_URL="https://build-api.cloud.unity3d.com/api/v1/orgs/${UNITY_ORG_ID}/projects/${UNITY_PROJECT_ID}/buildtargets/${UNITY_BUILD_TARGET}/builds/${BUILD_NUMBER}?include=links.artifacts"
           IPA_DIR="$RUNNER_TEMP/dlsymbiosis-ipa"
@@ -146,8 +153,14 @@ jobs:
           fi
 
           actual_sha256="$(shasum -a 256 "$IPA_PATH" | awk '{print toupper($1)}')"
-          expected_upper="$(printf '%s' "$EXPECTED_SHA256" | tr '[:lower:]' '[:upper:]')"
-          test "$actual_sha256" = "$expected_upper"
+          echo "Verified artifact SHA-256: $actual_sha256"
+          if test -z "$EXPECTED_SHA256"; then
+            echo "Discovery-only run: App Store upload will be skipped."
+            echo "DISCOVERY_ONLY=true" >> "$GITHUB_ENV"
+          else
+            expected_upper="$(printf '%s' "$EXPECTED_SHA256" | tr '[:lower:]' '[:upper:]')"
+            test "$actual_sha256" = "$expected_upper"
+          fi
           unzip -tq "$IPA_PATH"
 
           info_path="$(unzip -Z1 "$IPA_PATH" | awk '/^Payload\/[^\/]+\.app\/Info\.plist$/ && !found { print; found=1 }')"
@@ -163,6 +176,7 @@ jobs:
           echo "IPA_PATH=$IPA_PATH" >> "$GITHUB_ENV"
 
       - name: Validate and upload to App Store Connect
+        if: env.DISCOVERY_ONLY != 'true'
         shell: bash
         env:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
