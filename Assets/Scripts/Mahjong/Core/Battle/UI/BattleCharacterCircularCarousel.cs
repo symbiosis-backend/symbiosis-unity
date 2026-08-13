@@ -1059,6 +1059,7 @@ public sealed class BattleCharacterCircularCarousel : MonoBehaviour, IBeginDragH
 	private void OnFirstHeroDialogueLanguageChanged(GameLanguage _)
 	{
 		RefreshButtons();
+		RefreshFirstHeroDialogue();
 	}
 
 	private bool HasFirstFreeCharacterChoice()
@@ -1482,17 +1483,9 @@ public sealed class BattleCharacterCircularCarousel : MonoBehaviour, IBeginDragH
 
 	private static string BuildRailClassText(BattleCharacterDatabase.BattleCharacterData data)
 	{
-		string classKey = data?.AnimalType switch
-		{
-			BattleCharacterDatabase.CharacterAnimalType.Tiger => "battle.character.rail.class.vanguard",
-			BattleCharacterDatabase.CharacterAnimalType.Fox => "battle.character.rail.class.scout",
-			BattleCharacterDatabase.CharacterAnimalType.Wolf => "battle.character.rail.class.duelist",
-			BattleCharacterDatabase.CharacterAnimalType.Bear => "battle.character.rail.class.sentinel",
-			BattleCharacterDatabase.CharacterAnimalType.Dragon => "battle.character.rail.class.arcanist",
-			BattleCharacterDatabase.CharacterAnimalType.Dog => "battle.character.rail.class.tracker",
-			_ => "battle.character.rail.class.fighter"
-		};
-		return GameLocalization.Format("battle.character.rail.class", GameLocalization.Text(classKey));
+		return GameLocalization.Format(
+			"battle.character.rail.class",
+			BattleCharacterDatabase.GetLocalizedClassName(data));
 	}
 
 	private static string BuildRailPurchaseText(BattleCharacterDatabase.BattleCharacterData data, int price)

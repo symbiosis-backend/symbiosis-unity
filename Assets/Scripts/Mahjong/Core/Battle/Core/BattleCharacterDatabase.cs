@@ -424,6 +424,22 @@ namespace MahjongGame
             return string.IsNullOrWhiteSpace(id) ? string.Empty : id.Trim();
         }
 
+        public static string GetLocalizedClassName(BattleCharacterData data)
+        {
+            string classKey = data?.AnimalType switch
+            {
+                CharacterAnimalType.Tiger => "battle.character.rail.class.vanguard",
+                CharacterAnimalType.Fox => "battle.character.rail.class.scout",
+                CharacterAnimalType.Wolf => "battle.character.rail.class.duelist",
+                CharacterAnimalType.Bear => "battle.character.rail.class.sentinel",
+                CharacterAnimalType.Dragon => "battle.character.rail.class.arcanist",
+                CharacterAnimalType.Dog => "battle.character.rail.class.tracker",
+                _ => "battle.character.rail.class.fighter"
+            };
+
+            return GameLocalization.Text(classKey);
+        }
+
         private static string GetBuiltInArchetypeDisplayName(string id)
         {
             if (string.IsNullOrWhiteSpace(id))

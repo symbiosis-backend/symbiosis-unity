@@ -212,7 +212,7 @@ namespace MahjongGame
             return true;
         }
 
-        public static RankedBattleResult ApplyRankedResult(bool playerWon)
+        public static RankedBattleResult ApplyRankedResult(bool playerWon, bool syncRankToServer = true)
         {
             PlayerProfile profile = GetProfile();
             if (profile == null)
@@ -299,6 +299,8 @@ namespace MahjongGame
 
             LastAppliedResult = result;
             SaveProfile();
+            if (syncRankToServer)
+                ProfileService.I?.SyncBattleRankToServer();
             return result;
         }
 

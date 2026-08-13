@@ -438,19 +438,54 @@ namespace MahjongGame
                     continue;
 
                 List<PairPlacement> placements = new();
-                if (!TryPlacePairsBackwards(slotCopy, pairCopy, placements))
+                if (!TryPlacePairsBackwards(
+                        slotCopy,
+                        pairCopy,
+                        placements,
+                        seed + attempt * 13007))
                     continue;
 
                 placements.Reverse();
 
                 result.Clear();
+                BattleTileData[] bySlot = new BattleTileData[usableCount];
+                bool placementValid = true;
+
                 for (int i = 0; i < placements.Count; i++)
                 {
-                    result.Add(placements[i].First);
-                    result.Add(placements[i].Second);
+                    PairPlacement placement = placements[i];
+                    int firstSlotIndex = FindSlotIndex(slotCopy, placement.FirstSlot);
+                    int secondSlotIndex = FindSlotIndex(slotCopy, placement.SecondSlot);
+
+                    if (firstSlotIndex < 0 ||
+                        secondSlotIndex < 0 ||
+                        firstSlotIndex == secondSlotIndex ||
+                        bySlot[firstSlotIndex] != null ||
+                        bySlot[secondSlotIndex] != null)
+                    {
+                        placementValid = false;
+                        break;
+                    }
+
+                    bySlot[firstSlotIndex] = placement.First;
+                    bySlot[secondSlotIndex] = placement.Second;
                 }
 
-                if (result.Count != usableCount)
+                if (!placementValid)
+                    continue;
+
+                for (int i = 0; i < bySlot.Length; i++)
+                {
+                    if (bySlot[i] == null)
+                    {
+                        placementValid = false;
+                        break;
+                    }
+
+                    result.Add(bySlot[i]);
+                }
+
+                if (!placementValid || result.Count != usableCount)
                     continue;
 
                 if (validateConstructiveWithSolver && solvability != null && !solvability.IsSolvable(slotCopy, result))
@@ -636,8 +671,10 @@ namespace MahjongGame
         private bool TryPlacePairsBackwards(
             List<LayoutSlot> allSlots,
             List<PairData> pairs,
-            List<PairPlacement> placements)
+            List<PairPlacement> placements,
+            int seed)
         {
+            System.Random rng = new(seed);
             List<ConstructiveNode> nodes = new();
             for (int i = 0; i < allSlots.Count; i++)
             {
@@ -653,6 +690,8 @@ namespace MahjongGame
                 List<int> freeIndices = GetFreeIndicesForConstructive(nodes);
                 if (freeIndices.Count < 2)
                     return false;
+
+                ShuffleIndices(freeIndices, rng);
 
                 if (!TryPickConstructivePair(nodes, freeIndices, i, pairs.Count, out int aIndex, out int bIndex))
                     return false;
@@ -687,6 +726,33 @@ namespace MahjongGame
             });
 
             return true;
+        }
+
+        private int FindSlotIndex(IReadOnlyList<LayoutSlot> slots, LayoutSlot target)
+        {
+            if (slots == null || target == null)
+                return -1;
+
+            for (int i = 0; i < slots.Count; i++)
+            {
+                LayoutSlot slot = slots[i];
+                if (slot != null && slot.X == target.X && slot.Y == target.Y && slot.Z == target.Z)
+                    return i;
+            }
+
+            return -1;
+        }
+
+        private void ShuffleIndices(List<int> indices, System.Random rng)
+        {
+            if (indices == null || rng == null)
+                return;
+
+            for (int i = indices.Count - 1; i > 0; i--)
+            {
+                int j = rng.Next(0, i + 1);
+                (indices[i], indices[j]) = (indices[j], indices[i]);
+            }
         }
 
         private bool TryPickConstructivePair(

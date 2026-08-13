@@ -861,6 +861,26 @@ namespace MahjongGame
                 StartCoroutine(UpdateProfilePrivacyOnServer(token, isPublic));
         }
 
+        public void SyncBattleRankToServer()
+        {
+            if (currentProfile == null)
+                return;
+
+            currentProfile.EnsureData();
+            MahjongBattleData battle = currentProfile.Mahjong != null
+                ? currentProfile.Mahjong.Battle
+                : null;
+            if (battle == null)
+                return;
+
+            string token = GetSessionToken();
+            if (string.IsNullOrWhiteSpace(token))
+                return;
+
+            int rankPoints = Mathf.Max(0, battle.RankPoints);
+            StartCoroutine(UpdateBattleRankOnServer(token, rankPoints));
+        }
+
         private IEnumerator UpdateProfilePrivacyOnServer(string token, bool isPublic)
         {
             ProfilePrivacyRequest payload = new ProfilePrivacyRequest
@@ -875,6 +895,24 @@ namespace MahjongGame
                 response => ApplyServerUser(response.user),
                 requestError => Debug.LogWarning("[ProfileService] Profile privacy update failed: " + requestError),
                 logErrors: false
+            );
+        }
+
+        private IEnumerator UpdateBattleRankOnServer(string token, int rankPoints)
+        {
+            BattleRankRequest payload = new BattleRankRequest
+            {
+                token = token,
+                rankPoints = Mathf.Max(0, rankPoints)
+            };
+
+            yield return SendProfileRequest(
+                "/profiles/battle-rank",
+                JsonUtility.ToJson(payload),
+                _ => { },
+                requestError => Debug.LogWarning("[ProfileService] Battle rank sync failed: " + requestError),
+                logErrors: false,
+                requireUser: false
             );
         }
 
@@ -1158,6 +1196,7 @@ namespace MahjongGame
                 : user.createdAt;
             currentProfile.LastLoginUtc = DateTime.UtcNow.ToString("O");
             currentProfile.EnsureData();
+            ApplyServerBattleRank(user);
 
             if (CurrencyService.I != null)
             {
@@ -1176,6 +1215,38 @@ namespace MahjongGame
 
             SaveIfRemembered();
             NotifyProfileChanged();
+        }
+
+        private void ApplyServerBattleRank(ServerUserDto user)
+        {
+            if (currentProfile == null || user == null || !user.hasBattleRank)
+                return;
+
+            currentProfile.EnsureData();
+            MahjongBattleData battle = currentProfile.Mahjong != null
+                ? currentProfile.Mahjong.Battle
+                : null;
+            if (battle == null)
+                return;
+
+            int localRankPoints = Mathf.Max(0, battle.RankPoints);
+            int serverRankPoints = Mathf.Max(0, user.battleRankPoints);
+            int mergedRankPoints = Mathf.Max(localRankPoints, serverRankPoints);
+            string mergedRankTier = RankedBattleService.GetCurrentTier(mergedRankPoints);
+            bool shouldRestoreServerRank = localRankPoints > serverRankPoints;
+
+            battle.SetRank(mergedRankTier, mergedRankPoints);
+            currentProfile.GlobalRankTier = mergedRankTier;
+            currentProfile.GlobalRankPoints = mergedRankPoints;
+
+            if (shouldRestoreServerRank)
+                StartCoroutine(SyncRestoredBattleRankToServer());
+        }
+
+        private IEnumerator SyncRestoredBattleRankToServer()
+        {
+            yield return null;
+            SyncBattleRankToServer();
         }
 
         private void EnsureLocalProfileForServerUser(ServerUserDto user)
@@ -1523,6 +1594,13 @@ namespace MahjongGame
         }
 
         [Serializable]
+        private sealed class BattleRankRequest
+        {
+            public string token;
+            public int rankPoints;
+        }
+
+        [Serializable]
         private sealed class ServerLoginRequest
         {
             public string deviceId;
@@ -1585,6 +1663,9 @@ namespace MahjongGame
             public bool isProfilePublic = true;
             public bool profileCompleted;
             public bool isGuest;
+            public bool hasBattleRank;
+            public string battleRankTier;
+            public int battleRankPoints;
             public string createdAt;
             public string updatedAt;
         }

@@ -2202,20 +2202,7 @@ public sealed class BattleCharacterButton : MonoBehaviour
 
 	private static string GetDossierClassName(BattleCharacterDatabase.BattleCharacterData data)
 	{
-		if (data == null)
-		{
-			return GameLocalization.Text("battle.character.rail.class.fighter");
-		}
-		return data.AnimalType switch
-		{
-			BattleCharacterDatabase.CharacterAnimalType.Tiger => GameLocalization.Text("battle.character.rail.class.vanguard"),
-			BattleCharacterDatabase.CharacterAnimalType.Fox => GameLocalization.Text("battle.character.rail.class.scout"),
-			BattleCharacterDatabase.CharacterAnimalType.Wolf => GameLocalization.Text("battle.character.rail.class.duelist"),
-			BattleCharacterDatabase.CharacterAnimalType.Bear => GameLocalization.Text("battle.character.rail.class.sentinel"),
-			BattleCharacterDatabase.CharacterAnimalType.Dragon => GameLocalization.Text("battle.character.rail.class.arcanist"),
-			BattleCharacterDatabase.CharacterAnimalType.Dog => GameLocalization.Text("battle.character.rail.class.tracker"),
-			_ => GameLocalization.Text("battle.character.rail.class.fighter"),
-		};
+		return BattleCharacterDatabase.GetLocalizedClassName(data);
 	}
 
 	private static string GetDossierHouseName(BattleCharacterDatabase.BattleCharacterData data)

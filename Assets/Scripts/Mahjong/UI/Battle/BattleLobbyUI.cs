@@ -1102,6 +1102,7 @@ public sealed class BattleLobbyUI : MonoBehaviour
 		RefreshBattleTileInventoryUi();
 		RefreshEnergyUi();
 		RebuildBattleShopForLanguage();
+		RefreshSelectedBattleCharacterViews();
 	}
 
 	private void HandleActiveSceneChanged(Scene previous, Scene current)
@@ -3599,20 +3600,7 @@ public sealed class BattleLobbyUI : MonoBehaviour
 
 	private string ResolveBattleLobbyCharacterClassName(BattleCharacterDatabase.BattleCharacterData character)
 	{
-		if (character == null)
-		{
-			return string.Empty;
-		}
-		return character.AnimalType switch
-		{
-			BattleCharacterDatabase.CharacterAnimalType.Tiger => BattleLobbyText("Авангард", "Vanguard", "Oncu", "Vorhut"),
-			BattleCharacterDatabase.CharacterAnimalType.Fox => BattleLobbyText("Разведчик", "Scout", "Izci", "Spaher"),
-			BattleCharacterDatabase.CharacterAnimalType.Wolf => BattleLobbyText("Дуэлянт", "Duelist", "Duellocu", "Duellant"),
-			BattleCharacterDatabase.CharacterAnimalType.Bear => BattleLobbyText("Страж", "Sentinel", "Nobetci", "Wachter"),
-			BattleCharacterDatabase.CharacterAnimalType.Dragon => BattleLobbyText("Арканист", "Arcanist", "Arkanist", "Arkanist"),
-			BattleCharacterDatabase.CharacterAnimalType.Dog => BattleLobbyText("Следопыт", "Tracker", "Iz Surucu", "Faehrtenleser"),
-			_ => character.AnimalType.ToString(),
-		};
+		return BattleCharacterDatabase.GetLocalizedClassName(character);
 	}
 
 	private string BuildBattleLobbyCharacterStatsLine(BattleCharacterDatabase.BattleCharacterData character)

@@ -404,6 +404,7 @@ namespace MahjongGame.Multiplayer
                 ? BattleTileStore.I
                 : FindAnyObjectByType<BattleTileStore>(FindObjectsInactive.Include);
             BattleLoadoutSnapshot.TryCreateFromProfile(profile, store, out BattleLoadoutSnapshot loadout);
+            RankedPendingMatch pendingMatch = RankedBattleService.GetPendingMatch();
 
             return new RankedQueueRequest
             {
@@ -412,6 +413,9 @@ namespace MahjongGame.Multiplayer
                 characterId = BattleCharacterSelectionService.Instance != null ? BattleCharacterSelectionService.Instance.SelectedCharacterId : string.Empty,
                 rankTier = battle != null ? battle.RankTier : "Unranked",
                 rankPoints = battle != null ? Mathf.Max(0, battle.RankPoints) : 0,
+                leagueId = pendingMatch != null && pendingMatch.Active
+                    ? (int)pendingMatch.LeagueId
+                    : -1,
                 loadout = loadout
             };
         }
@@ -587,6 +591,7 @@ namespace MahjongGame.Multiplayer
             public string characterId;
             public string rankTier;
             public int rankPoints;
+            public int leagueId;
             public BattleLoadoutSnapshot loadout;
         }
 
@@ -615,6 +620,7 @@ namespace MahjongGame.Multiplayer
             public string characterId;
             public string rankTier;
             public int rankPoints;
+            public int leagueId;
             public BattleLoadoutSnapshot loadout;
         }
 

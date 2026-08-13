@@ -590,7 +590,8 @@ namespace MahjongGame
             if (botController != null)
                 botController.StopBot();
 
-            if (IsOnlineRankedBattleActive())
+            bool wasOnlineRankedBattle = IsOnlineRankedBattleActive();
+            if (wasOnlineRankedBattle)
             {
                 if (playerForfeited)
                     OnlineRankedBattleNetwork.I.SendForfeitMatch();
@@ -598,7 +599,7 @@ namespace MahjongGame
                     OnlineRankedBattleNetwork.I.SendMatchFinished();
             }
 
-            ApplyBattleMatchResult(playerWon);
+            ApplyBattleMatchResult(playerWon, wasOnlineRankedBattle);
             ShowResultPanel(playerWon);
             MatchFinished?.Invoke(this, playerWon);
             NotifyStateChanged();
@@ -6260,7 +6261,7 @@ namespace MahjongGame
             return impactClip;
         }
 
-        private void ApplyBattleMatchResult(bool playerWon)
+        private void ApplyBattleMatchResult(bool playerWon, bool wasOnlineRankedBattle)
         {
             lastResultGoldReward = 0;
             lastResultWasRanked = false;
@@ -6297,7 +6298,9 @@ namespace MahjongGame
                                  RankedBattleService.HasPendingMatch();
             if (rankedPending)
             {
-                RankedBattleResult rankedResult = RankedBattleService.ApplyRankedResult(playerWon);
+                RankedBattleResult rankedResult = RankedBattleService.ApplyRankedResult(
+                    playerWon,
+                    syncRankToServer: !wasOnlineRankedBattle);
                 if (rankedResult != null && rankedResult.Applied)
                 {
                     lastResultWasRanked = true;

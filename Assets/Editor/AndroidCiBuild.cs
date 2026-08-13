@@ -46,7 +46,11 @@ public static class AndroidCiBuild
         PlayerSettings.SetScriptingBackend(NamedBuildTarget.Android, ScriptingImplementation.IL2CPP);
         PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARMv7 | AndroidArchitecture.ARM64;
         PlayerSettings.Android.minifyDebug = false;
-        PlayerSettings.Android.minifyRelease = true;
+        // R8 removed Java classes used through Unity JNI/reflection in 1.0.24,
+        // causing some Android devices to stop during application startup.
+        // Keep release minification disabled until all Ads/IAP SDK keep rules
+        // are validated on physical devices and in a closed Play test track.
+        PlayerSettings.Android.minifyRelease = false;
         ApplyKeystoreFromEnvironment();
         EditorUserBuildSettings.buildAppBundle = buildAppBundle;
 
@@ -90,7 +94,7 @@ public static class AndroidCiBuild
             throw new FileNotFoundException("Android build reported success, but the artifact was not created.", absoluteOutputPath);
         }
 
-        Debug.Log("[AndroidCiBuild] " + artifactName + " built at " + artifact.FullName + " bytes=" + artifact.Length + " product=" + productName + " version=" + versionName + " code=" + versionCode + " backend=IL2CPP architectures=ARMv7|ARM64");
+        Debug.Log("[AndroidCiBuild] " + artifactName + " built at " + artifact.FullName + " bytes=" + artifact.Length + " product=" + productName + " version=" + versionName + " code=" + versionCode + " backend=IL2CPP architectures=ARMv7|ARM64 r8=disabled-hotfix");
     }
 
     private static string ResolveProjectRelativePath(string path)
