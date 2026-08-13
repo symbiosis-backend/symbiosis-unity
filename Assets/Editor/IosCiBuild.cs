@@ -32,7 +32,7 @@ public static class IosCiBuild
                   PlayerSettings.GetApplicationIdentifier(NamedBuildTarget.iOS) +
                   " version=" + versionName +
                   " build=" + buildNumber +
-                  " target=iPhone orientation=Landscape backend=IL2CPP");
+                  " target=iPhone orientation=ScenePolicy backend=IL2CPP");
     }
 
     public static void BuildXcodeProject()
@@ -106,7 +106,7 @@ public static class IosCiBuild
         PlayerSettings.SetManagedStrippingLevel(NamedBuildTarget.iOS, ManagedStrippingLevel.Low);
 
         PlayerSettings.defaultInterfaceOrientation = UIOrientation.AutoRotation;
-        PlayerSettings.allowedAutorotateToPortrait = false;
+        PlayerSettings.allowedAutorotateToPortrait = true;
         PlayerSettings.allowedAutorotateToPortraitUpsideDown = false;
         PlayerSettings.allowedAutorotateToLandscapeLeft = true;
         PlayerSettings.allowedAutorotateToLandscapeRight = true;

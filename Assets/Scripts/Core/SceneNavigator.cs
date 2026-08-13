@@ -1237,12 +1237,8 @@ namespace MahjongGame
 
         private bool IsPortraitOnlyScene(string sceneName)
         {
-#if UNITY_IOS
-            return false;
-#else
             return sceneName == symbiGridScene
                 || sceneName == orbiosisScene;
-#endif
         }
 
         private bool TryStartMoonFxThenLoad(string sceneName, bool useDoorFx, string doorSpriteResourcePath, bool reverseDoorMirroring)

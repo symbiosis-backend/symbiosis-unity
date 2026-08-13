@@ -23,10 +23,6 @@ namespace MahjongGame
 
         private static void ApplyForScene(Scene scene)
         {
-#if UNITY_IOS
-            ApplyLandscapeOnly();
-            return;
-#endif
             if (IsLandscapeOnlyScene(scene.name))
             {
                 ApplyLandscapeOnly();
@@ -66,6 +62,9 @@ namespace MahjongGame
         {
             return string.Equals(sceneName, EntrySceneName, System.StringComparison.Ordinal)
                 || string.Equals(sceneName, MainSceneName, System.StringComparison.Ordinal)
+                || string.Equals(sceneName, "LobbyMahjong", System.StringComparison.Ordinal)
+                || string.Equals(sceneName, "LobbyMahjongBattle", System.StringComparison.Ordinal)
+                || string.Equals(sceneName, "GameMahjong", System.StringComparison.Ordinal)
                 || string.Equals(sceneName, "SymbiozFlagship", System.StringComparison.Ordinal);
         }
 

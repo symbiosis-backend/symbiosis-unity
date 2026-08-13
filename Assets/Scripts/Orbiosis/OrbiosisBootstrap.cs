@@ -1599,15 +1599,7 @@ namespace MahjongGame.Orbiosis
 
         private static void EnsureVertical()
         {
-#if UNITY_IOS
-            MahjongGame.SceneOrientationPolicy.ApplyLandscapeOnly();
-#else
-            Screen.autorotateToPortrait = true;
-            Screen.autorotateToPortraitUpsideDown = false;
-            Screen.autorotateToLandscapeLeft = false;
-            Screen.autorotateToLandscapeRight = false;
-            Screen.orientation = ScreenOrientation.Portrait;
-#endif
+            MahjongGame.SceneOrientationPolicy.ApplyPortraitOnly();
         }
 
         private static void EnsureCamera()
@@ -1633,11 +1625,7 @@ namespace MahjongGame.Orbiosis
 
         private static Vector2 GetReferenceResolution()
         {
-#if UNITY_IOS
-            return new Vector2(1600f, 900f);
-#else
             return new Vector2(900f, 1600f);
-#endif
         }
 
         private void BuildInterface()
@@ -26290,10 +26278,15 @@ namespace MahjongGame.Orbiosis
             DoorFx doorFx = DoorFx.EnsureRuntime();
             if (doorFx != null && doorFx.isActiveAndEnabled && doorFx.IsReady())
             {
-                doorFx.LoadScene(MainSceneName, OrbiosisDoorSpriteResourcePath);
+                doorFx.LoadScene(
+                    MainSceneName,
+                    OrbiosisDoorSpriteResourcePath,
+                    false,
+                    MahjongGame.SceneOrientationPolicy.ApplyLandscapeOnly);
                 return;
             }
 
+            MahjongGame.SceneOrientationPolicy.ApplyLandscapeOnly();
             SceneManager.LoadScene(MainSceneName);
         }
 
