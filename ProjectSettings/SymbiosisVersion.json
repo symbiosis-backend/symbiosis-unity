@@ -1,7 +1,7 @@
 {
   "versionName": "1.0.26",
-  "versionCode": 100028,
+  "versionCode": 100029,
   "minimumVersionCode": 1,
   "forceUpdate": false,
-  "releaseNotes": "Battle Mahjong stability update\n\nImproved tile shuffling, fixed localized character class names, and made ranked progress persist reliably across logins and devices."
+  "releaseNotes": "Battle Mahjong stability update\n\nImproved tile shuffling, fixed localized character class names, made ranked progress persist reliably across logins and devices, and fixed scene orientation switching."
 }
